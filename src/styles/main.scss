@@ -1,0 +1,349 @@
+$back-color 					: #303030;
+$text-color 					: #ffffff;
+
+$editor-back-color				: #505050;
+$editor-text-color 				: #f0f0f0;
+
+$panel-back-color 				: #303030;
+$panel-text-color				: #ffffff;
+
+$node-back-color 				: #303030;
+$node-text-color 				: #ffffff;
+$node-border-color 				: #606060;
+$node-header-back-color 		: #f0f0f0;
+$node-header-text-color 		: #303030;
+$node-header-selected-back-color: #f0c040;
+$node-header-error-back-color 	: #800000;
+$node-header-error-text-color 	: #f0f0f0;
+
+$socket-back-color 				: $node-back-color;
+$socket-border-color 			: $node-border-color;
+$socket-selected-back-color		: #f0f0f0;
+$socket-hover-border-color 		: #80f040;
+$socket-open-border-color 		: #40a020;
+
+$grid-color 					: #606060;
+
+$node-border-width 				: 2px;
+$socket-border-width 			: $node-border-width;
+$socket-size 					: 10px;
+$socket-radius 					: $socket-size / 2 + $node-border-width;
+$node-border-radius 			: 5px;
+$node-close-width 				: 20px;
+$standard-padding 				: 10px;
+$half-padding					: 5px;
+$standard-font-size 			: 14px;
+$palette-font-size 				: 12px;
+$content-font-size 				: 12px;
+
+html, body
+{
+	height: 100%;
+}
+
+body
+{
+	font: $standard-font-size "Open Sans", Helvetica, Arial, sans-serif;
+	background: $editor-back-color;
+	color: $editor-text-color;
+}
+
+body, h1, h2, h3, h4, h5, h6, ul, li
+{
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+ul
+{
+	list-style-type: none;
+}
+
+header
+{
+	background: #f0f0f0;
+	color: #303030;
+	flex: 0 1 auto;
+}
+
+h1
+{
+	padding: $half-padding;
+	font-size: 16px;
+}
+
+main
+{
+	flex: 1 0 auto;
+	display: flex;
+}
+
+main > section
+{
+	width: 0;
+}
+
+#palette, #properties
+{
+	background: $panel-back-color;
+	color: $panel-text-color;
+
+	h1
+	{
+		padding: $half-padding 0;
+		font-size: $standard-font-size;
+	}
+}
+
+#palette
+{
+	flex: 1 0 auto;
+}
+
+#properties
+{
+	flex: 2 0 auto;
+}
+
+#nodes
+{
+	flex: 8 0 auto;
+	position: relative;
+
+	svg
+	{
+	  position:absolute;
+	  top:0px;
+	  left:0px;
+	  z-index:-100;
+	  width:100%;
+	  height:100%;
+	}
+}
+
+.node
+{
+	width: 200px;
+	height: 150px;
+
+	user-select: none;
+
+	border: $node-border-width solid $node-border-color;
+	border-radius: $node-border-radius;
+	background: $node-back-color;
+	color: $node-text-color;
+	position: absolute;
+
+	&.selected
+	{
+		h2
+		{
+			background: $node-header-selected-back-color;
+		}
+	}
+
+	&.error
+	{
+		h2
+		{
+			background: $node-header-error-back-color;
+			color: $node-header-error-text-color;
+		}
+	}
+
+	h2
+	{
+		font-size: $standard-font-size;
+		text-align: center;
+		display: block;
+		border-radius: $node-border-radius $node-border-radius 0 0;
+		background: $node-header-back-color;
+		color: $node-header-text-color;
+		padding-right: $node-close-width;
+		font-weight: bold;
+		cursor: default;
+	}
+
+	a.close
+	{
+		// If we need more buttons, this block can be shared amongst them
+		display: block;
+		position: absolute;
+		padding: 1px $half-padding;
+		font-weight: bold;
+		font-size: 16px;
+		text-decoration: none;
+		line-height: 1;
+
+		top: 0;
+		right: 0;
+
+		color: $node-header-text-color;
+
+		&::before
+		{
+			content: "×";
+		}
+	}
+
+	a.copy
+	{
+		bottom: 0;
+		right: 0;
+
+		color: $text-color;
+
+		&::before
+		{
+			content: "C";
+		}
+	}
+
+	.inputs, .outputs
+	{
+		position: absolute;
+		top: 30px;
+	}
+
+	.inputs
+	{
+		left: -$socket-radius;
+	}
+
+	.outputs
+	{
+		right: -$socket-radius;
+	}
+
+	.input, .output
+	{
+		width: $socket-size;
+		height: $socket-size;
+		border-radius: $socket-radius;
+		border: $socket-border-width solid $socket-border-color;
+		cursor: pointer;
+		margin-bottom: $half-padding;
+		background: #ffffff;
+
+		&.empty
+		{
+			background: $socket-back-color;
+		}
+		&.selected
+		{
+			background: $socket-selected-back-color;
+		}
+	}
+
+	.output
+	{
+		text-align: right;
+	}
+
+	.content
+	{
+		padding: $standard-padding $standard-padding * 2;
+		font: $content-font-size Consolas;
+		word-wrap: break-word;
+		overflow: hidden;
+		height: 100px;
+	}
+}
+
+.wiring
+{
+	.input, .output
+	{
+		cursor: default;
+
+		&.target
+		{
+			border-color: $socket-open-border-color;
+			opacity: 1;
+			cursor: pointer;
+
+			&:hover
+			{
+				border-color: $socket-hover-border-color;
+			}
+		}
+	}
+}
+
+#palette
+{
+	padding: $standard-padding;
+	font-size: $palette-font-size;
+
+	li
+	{
+		padding-left: $half-padding;
+	}
+
+	a
+	{
+		color: #c0c0c0;
+		text-decoration: none;
+	}
+}
+
+#properties
+{
+	padding: $standard-padding;
+
+	textarea
+	{
+		display: block;
+		width: 100%;
+		max-width: 100%;
+		height: 100px;
+	}
+
+	h1
+	{
+		color: #a0a0a0;
+		margin-bottom: $half-padding;
+
+		span
+		{
+			color: $text-color;
+		}
+	}
+
+	> div > div
+	{
+		margin-bottom: $half-padding;
+	}
+
+	label
+	{
+		display: inline-block;
+		min-width: 120px;
+	}
+
+	input
+	{
+		box-sizing: border-box;
+		margin: 0;
+	}
+
+	textarea
+	{
+		font: $content-font-size Consolas;
+	}
+
+	#output-list textarea
+	{
+		border: 0;
+		background: #c0c0c0;
+		color: #303030;
+	}
+}
+
+#test-input
+{
+	width: 100%;
+	height: 100px;
+}

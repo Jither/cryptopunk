@@ -1,0 +1,178 @@
+import test from "ava";
+import { EnigmaTransform } from "transforms/mechanical/enigma";
+import { hexToBytes, bytesToHex } from "cryptopunk.utils";
+
+test("Decrypts Enigma Instruction Manual example, 1930", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "II",
+		rotor1: "I",
+		rotor2: "III",
+		reflector: "A",
+		ringSettings: "24,13,22",
+		rotorPositions: "A,B,L",
+		plugPairs: "AM,FI,NV,PS,TU,WZ"
+	};
+	const ciphertext = "GCDSE AHUGW TQGRK VLFGX UCALX VYMIG MMNMF DXTGN VHVRM MEVOU YFZSL RHDRR XFJWC FHUHM UNZEF RDISI KBGPM YVXUZ";
+	const expected   = "FEIND LIQEI NFANT ERIEK OLONN EBEOB AQTET XANFA NGSUE DAUSG ANGBA ERWAL DEXEN DEDRE IKMOS TWAER TSNEU STADT";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Operation Barbarossa A, 1941", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "II",
+		rotor1: "IV",
+		rotor2: "V",
+		reflector: "B",
+		ringSettings: "2,21,12",
+		rotorPositions: "B,L,A",
+		plugPairs: "AV,BS,CG,DL,FU,HZ,IN,KM,OW,RX"
+	};
+	const ciphertext = "EDPUD NRGYS ZRCXN UYTPO MRMBO FKTBZ REZKM LXLVE FGUEY SIOZV EQMIK UBPMM YLKLT TDEIS MDICA GYKUA CTCDO MOHWX MUUIA UBSTS LRNBZ SZWNR FXWFY SSXJZ VIJHI DISHP RKLKA YUPAD TXQSP INQMA TLPIF SVKDA SCTAC DPBOP VHJK-";
+	const expected   = "AUFKL XABTE ILUNG XVONX KURTI NOWAX KURTI NOWAX NORDW ESTLX SEBEZ XSEBE ZXUAF FLIEG ERSTR ASZER IQTUN GXDUB ROWKI XDUBR OWKIX OPOTS CHKAX OPOTS CHKAX UMXEI NSAQT DREIN ULLXU HRANG ETRET ENXAN GRIFF XINFX RGTX-";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Operation Barbarossa B, 1941", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "II",
+		rotor1: "IV",
+		rotor2: "V",
+		reflector: "B",
+		ringSettings: "2,21,12",
+		rotorPositions: "L,S,D",
+		plugPairs: "AV,BS,CG,DL,FU,HZ,IN,KM,OW,RX"
+	};
+	const ciphertext = "SFBWD NJUSE GQOBH KRTAR EEZMW KPPRB XOHDR OEQGB BGTQV PGVKB VVGBI MHUSZ YDAJQ IROAX SSSNR EHYGG RPISE ZBOVM QIEMM ZCYSG QDGRE RVBIL EKXYQ IRGIR QNRDN VRXCY YTNJR";
+	const expected   = "DREIG EHTLA NGSAM ABERS IQERV ORWAE RTSXE INSSI EBENN ULLSE QSXUH RXROE MXEIN SXINF RGTXD REIXA UFFLI EGERS TRASZ EMITA NFANG XEINS SEQSX KMXKM XOSTW XKAME NECXK";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Scharnhorst (Konteradmiral Erich Bey), 1943", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "III",
+		rotor1: "VI",
+		rotor2: "VIII",
+		reflector: "B",
+		ringSettings: "1,8,13",
+		rotorPositions: "U,Z,V",
+		plugPairs: "AN,EZ,HK,IJ,LR,MQ,OT,PV,SW,UX"
+	};
+	const ciphertext = "YKAEN ZAPMS CHZBF OCUVM RMDPY COFHA DZIZM EFXTH FLOLP ZLFGG BOTGO XGRET DWTJI QHLMX VJWKZ UASTR";
+	const expected   = "STEUE REJTA NAFJO RDJAN STAND ORTQU AAACC CVIER NEUNN EUNZW OFAHR TZWON ULSMX XSCHA RNHOR STHCO";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts U-264 (Kapitänleutnant Hartwig Looks), 1942", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "beta",
+		rotor1: "II",
+		rotor2: "IV",
+		rotor3: "I",
+		reflector: "B Thin",
+		ringSettings: "1,1,1,22",
+		rotorPositions: "V,J,N,A",
+		plugPairs: "AT,BL,DF,GJ,HM,NW,OP,QY,RZ,VX"
+	};
+	const ciphertext = "NCZW VUSX PNYM INHZ XMQX SFWX WLKJ AHSH NMCO CCAK UQPM KCSM HKSE INJU SBLK IOSX CKUB HMLL XCSJ USRR DVKO HULX WCCB GVLI YXEO AHXR HKKF VDRE WEZL XOBA FGYU JQUK GRTV UKAM EURB VEKS UHHV OYHA BCJW MAKL FKLM YFVN RIZR VVRT KOFD ANJM OLBG FFLE OPRG TFLV RHOW OPBE KVWM UQFM PWPA RMFH AGKX IIBG";
+	const expected   = "VONV ONJL OOKS JHFF TTTE INSE INSD REIZ WOYY QNNS NEUN INHA LTXX BEIA NGRI FFUN TERW ASSE RGED RUEC KTYW ABOS XLET ZTER GEGN ERST ANDN ULAC HTDR EINU LUHR MARQ UANT ONJO TANE UNAC HTSE YHSD REIY ZWOZ WONU LGRA DYAC HTSM YSTO SSEN ACHX EKNS VIER MBFA ELLT YNNN NNNO OOVI ERYS ICHT EINS NULL";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Practical Cryptography example", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "II",
+		rotor1: "V",
+		rotor2: "I",
+		reflector: "B",
+		ringSettings: "W,O,B",
+		rotorPositions: "K,J,S",
+		plugPairs: "PO,ML,IU,KJ,NH,YT"
+	};
+	const ciphertext = "YXBMXADQBDBAAYIMKDODAYIXNBDQZFJKOLFVEEQBCLUUXDFVQYGKEYBVRHONJKPJMKUNLYLZUKBKJOAJTWVWMOMDPGVXEPUKXBVSGHROFOSBCNKEHEHAKWKOGWTBZFXSYCGSUUPPIZTRTFVCXZVCXTFLMTPTAQVMREGWSBFZBM";
+	const expected   = "THEENIGMACIPHERWASAFIELDCIPHERUSEDBYTHEGERMANSDURINGWORLDWARIITHEENIGMAISONEOFTHEBETTERKNOWNHISTORICALENCRYPTIONMACHINESANDITACTUALLYREFERSTOARANGEOFSIMILARCIPHERMACHINES";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Message from Dönitz - 1 May 1945", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "beta",
+		rotor1: "V",
+		rotor2: "VI",
+		rotor3: "VIII",
+		reflector: "C Thin",
+		ringSettings: "E,P,E,L",
+		rotorPositions: "C,D,S,Z",
+		plugPairs: "AE BF CM DQ HU JN LX PR SZ VW"
+	};
+	const ciphertext = "LANOTCTOUARBBFPMHPHGCZXTDYGAHGUFXGEWKBLKGJWLQXXTGPJJAVTOCKZFSLPPQIHZFXOEBWIIEKFZLCLOAQJULJOYHSSMBBGWHZANVOIIPYRBRTDJQDJJOQKCXWDNBBTYVXLYTAPGVEATXSONPNYNQFUDBBHHVWEPYEYDOHNLXKZDNWRHDUWUJUMWWVIIWZXIVIUQDRHYMNCYEFUAPNHOTKHKGDNPSAKNUAGHJZSMJBMHVTREQEDGXHLZWIFUSKDQVELNMIMITHBHDBWVHDFYHJOQIHORTDJDBWXEMEAYXGYQXOHFDMYUXXNOJAZRSGHPLWMLRECWWUTLRTTVLBHYOORGLGOWUXNXHMHYFAACQEKTHSJW";
+	const expected   = "KRKRALLEXXFOLGENDESISTSOFORTBEKANNTZUGEBENXXICHHABEFOLGELNBEBEFEHLERHALTENXXJANSTERLEDESBISHERIGXNREICHSMARSCHALLSJGOERINGJSETZTDERFUEHRERSIEYHVRRGRZSSADMIRALYALSSEINENNACHFOLGEREINXSCHRIFTLSCHEVOLLMACHTUNTERWEGSXABSOFORTSOLLENSIESAEMTLICHEMASSNAHMENVERFUEGENYDIESICHAUSDERGEGENWAERTIGENLAGEERGEBENXGEZXREICHSLEITEIKKTULPEKKJBORMANNJXXOBXDXMMMDURNHFKSTXKOMXADMXUUUBOOIEXKP";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts Norrköping Enigma intercept Page 69 OWLS Graf Spree", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "I",
+		rotor1: "VI",
+		rotor2: "V",
+		reflector: "B",
+		ringSettings: "A,H,X",
+		rotorPositions: "E,K,D",
+		plugPairs: "AO BU CR EW JT KS MP NY"
+	};
+
+	const ciphertext = "QQMWTQJWJTMNSXYLNSACMHXZZRXWLNQZZZDZVLVUTKXDXWSLSKNWEZNFCFRGLIUHXPVKINZAJVECMOTVPVNZIMRBUIEUBZGFMZYPRMMEWTFZFGVLQSYQGWNDMQDNRZOVYMGAVLFMRAFZRYRMICPEZSMKBMHJUTDUQSBABROQLEFPRBZFJQSRPMRYXWOXIJLDVIFVXJLMRQFGYHIMELRSDOTAIVVXMXMDPISBHLIMMBFMKJSWTJMCCPEGKPJAVBWKJUZQBDEWDJYBMTYM";
+	const expected = "GRAFSPEEVONSEEKRIEGSLTGXXJDEVONSHIREJJDEYONSHIRAJWESTLICHSCHOTTLANDXJYOLBERTJJCOLBERTJJAIGLEJJAIGLEJMIGTELMEERYJALGERIEJJALGERIEJJJULOSVERNEJJJULESDERNEJVONXASABLANCANACHGIBRALTARXENGLISCHJAFRICSTARJJAFRICSTARJMITZWOHECKGESCHUETZENNEUNXEINSLWOXTENERIFEAUSNACHBUENOSAIRESDF";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
+
+test("Decrypts H.M.S. Hurricane intercept, 1942", t => {
+	const tf = new EnigmaTransform();
+
+	const options = {
+		rotor0: "beta",
+		rotor1: "VI",
+		rotor2: "I",
+		rotor3: "III",
+		reflector: "B Thin",
+		ringSettings: "Z,Z,D,G",
+		rotorPositions: "N,A,Q,L",
+		plugPairs: "BQ CR DI EJ KW MT OS PX UZ GH"
+	};
+	const ciphertext = "HCEYZTCSOPUPPZDICQRDLWXXFACTTJMBRDVCJJMMZRPYIKHZAWGLYXWTMJPQUEFSZBOTVRLALZXWVXTSLFFFAUDQFBWRRYAPSBOWJMKLDUYUPFUQDOWVHAHCDWAUARSWTKOFVOYFPUFHVZFDGGPOOVGRMBPXXZCANKMONFHXPCKHJZBUMXJWXKAUODXZUCVCXPFT";
+	const expected   = "BOOTKLARXBEIJSCHNOORBETWAZWOSIBENXNOVXSECHSNULCBMXPROVIANTBISZWONULXDEZXBENOETIGEGLMESERYNOCHVIEFKLHRXSTEHEMARQUBRUNOBRUNFZWOFUHFXLAGWWIEJKCHAEFERJXNNTWWWFUNFYEINSFUNFMBSTEIGENDYGUTESIWXDVVVJRASCH";
+	const actual = tf.transform(ciphertext, options);
+
+	t.is(actual, expected);
+});
