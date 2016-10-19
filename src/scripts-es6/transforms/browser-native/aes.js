@@ -20,6 +20,7 @@ class NativeAesBaseTransform extends NativeBaseTransform
 			throw new TransformError("No key specified");
 		}
 
+		// TODO: Remove when ALL bytes results are Uint8Array
 		const key = Uint8Array.from(keyBytes);
 		const keyLength = key.byteLength * 8;
 
@@ -32,6 +33,7 @@ class NativeAesBaseTransform extends NativeBaseTransform
 
 	constructIV(ivBytes, name)
 	{
+		// TODO: Rewrite when ALL bytes results are Uint8Array
 		const iv = ivBytes.length > 0 ? Uint8Array.from(ivBytes) : new Uint8Array(16);
 		const ivLength = iv.byteLength * 8;
 		if (ivLength !== 128)
@@ -43,12 +45,14 @@ class NativeAesBaseTransform extends NativeBaseTransform
 
 	_transform(mode, messageBytes, keyBytes, ivBytes, ivName, additional, allowAnyIVLength)
 	{
+		// TODO: Remove when ALL bytes results are Uint8Array
 		const message = Uint8Array.from(messageBytes);
 		const keyBuffer = this.constructKey(keyBytes);
 
 		let iv;
 		if (allowAnyIVLength)
 		{
+			// TODO: Remove when ALL bytes results are Uint8Array
 			iv = Uint8Array.from(ivBytes);
 		}
 		else
@@ -209,6 +213,7 @@ class NativeAesGcmEncryptTransform extends NativeAesBaseTransform
 
 		if (authBytes.length > 0)
 		{
+			// TODO: Remove when ALL bytes results are Uint8Array
 			additional.additionalData = Uint8Array.from(authBytes);
 		}
 
@@ -236,6 +241,7 @@ class NativeAesGcmDecryptTransform extends NativeAesBaseTransform
 
 		if (authBytes.length > 0)
 		{
+			// TODO: Remove when ALL bytes results are Uint8Array
 			additional.additionalData = Uint8Array.from(authBytes);
 		}
 

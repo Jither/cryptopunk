@@ -81,7 +81,8 @@ class Utf8ToBytesTransform extends Transform
 				result.push(0x80 | (code & 0x3f));
 			}
 		}
-		return result;
+		// TODO: Conversion for now - try to get this to work internally with Uint8Array.
+		return Uint8Array.from(result);
 	}
 }
 
@@ -275,7 +276,8 @@ class Utf16ToBytesTransform extends Transform
 				}
 			}
 		}
-		return result;
+		// TODO: Conversion for now - try to get this to work with Uint8Array
+		return Uint8Array.from(result);
 	}
 }
 

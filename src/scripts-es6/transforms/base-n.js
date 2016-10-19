@@ -103,7 +103,8 @@ class BaseNToBytesTransform extends Transform
 			result.splice(result.length - padBytes);
 		}
 
-		return result;
+		// TODO: Conversion for now - get this to work with Uint8Array internally
+		return Uint8Array.from(result);
 	}
 }
 

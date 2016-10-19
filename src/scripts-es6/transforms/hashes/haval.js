@@ -154,6 +154,7 @@ class HavalTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		// TODO: Consider DataView (can't use Uint32Array - non-portable)
 		const x = bytesToInt32sLE(this.padMessage(bytes, options));
 
 		let h0 = 0x243f6a88;

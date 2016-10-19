@@ -12,6 +12,7 @@ class Sha1Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
+		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
 
 		// Little endian heritage from MD4/5:

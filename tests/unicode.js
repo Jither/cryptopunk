@@ -10,6 +10,20 @@ function testUcs2Decode(t, expectedHex, input, options)
 	t.deepEqual(tf.transform(input, options), expected);
 }
 
+function testUtf8Decode(t, expectedHex, input, options)
+{
+	const expected = hexToBytes(expectedHex);
+	const tf = new Utf8ToBytesTransform();
+	t.deepEqual(tf.transform(input, options), expected);
+}
+
+function testUtf16Decode(t, expectedHex, input, options)
+{
+	const expected = hexToBytes(expectedHex);
+	const tf = new Utf16ToBytesTransform();
+	t.deepEqual(tf.transform(input, options), expected);
+}
+
 // UCS-2
 
 test("Decodes UCS-2 (BE)", testUcs2Decode, "5b834e0d662f4e004e2a586b5b576e38620f", "它不是一个填字游戏");
@@ -44,56 +58,25 @@ test("UCS-2 Encoder handles empty array gracefully", t => {
 });
 
 // UTF-8
-test("Decodes UTF-8 Latin", t => {
-	const tf = new Utf8ToBytesTransform();
-
-	t.deepEqual(tf.transform("æøåÆØÅ§¤ñ"), [0xc3, 0xa6, 0xc3, 0xb8, 0xc3, 0xa5, 0xc3, 0x86, 0xc3, 0x98, 0xc3, 0x85, 0xc2, 0xa7, 0xc2, 0xa4, 0xc3, 0xb1]);
-});
-
-test("Decodes UTF-8 BMP", t => {
-	const tf = new Utf8ToBytesTransform();
-
-	t.deepEqual(tf.transform("Ξεσκεπάζω"), [0xce, 0x9e, 0xce, 0xb5, 0xcf, 0x83, 0xce, 0xba, 0xce, 0xb5, 0xcf, 0x80, 0xce, 0xac, 0xce, 0xb6, 0xcf, 0x89]);
-});
-
-test("Decodes UTF-8 SMP", t => {
-	const tf = new Utf8ToBytesTransform();
-
-	t.deepEqual(tf.transform("𠜎𠾴𢵌𨳒"), [0xf0, 0xa0, 0x9c, 0x8e, 0xf0, 0xa0, 0xbe, 0xb4, 0xf0, 0xa2, 0xb5, 0x8c, 0xf0, 0xa8, 0xb3, 0x92]);
-});
+test("Decodes UTF-8 Latin", testUtf8Decode, "c3a6c3b8c3a5c386c398c385c2a7c2a4c3b1", "æøåÆØÅ§¤ñ");
+test("Decodes UTF-8 BMP", 	testUtf8Decode, "ce9eceb5cf83cebaceb5cf80ceacceb6cf89", "Ξεσκεπάζω");
+test("Decodes UTF-8 SMP",	testUtf8Decode, "f0a09c8ef0a0beb4f0a2b58cf0a8b392", "𠜎𠾴𢵌𨳒");
 
 test("UTF-8 Decoder handles empty string gracefully", t => {
 	const tf = new Utf8ToBytesTransform();
 
-	t.deepEqual(tf.transform(""), []);
+	const actual = tf.transform("");
+	t.true(actual instanceof Uint8Array);
+	t.is(actual.length, 0);
 });
 
 
 // UTF-16
 
-test("Decodes UTF-16 BMP (BE)", t => {
-	const tf = new Utf16ToBytesTransform();
-
-	t.deepEqual(tf.transform("Ξεσκεπάζω"), [0x03, 0x9e, 0x03, 0xb5, 0x03, 0xc3, 0x03, 0xba, 0x03, 0xb5, 0x03, 0xc0, 0x03, 0xac, 0x03, 0xb6, 0x03, 0xc9]);
-});
-
-test("Decodes UTF-16 SMP (BE)", t => {
-	const tf = new Utf16ToBytesTransform();
-
-	t.deepEqual(tf.transform("𠜎𠾴𢵌𨳒"), [0xd8, 0x41, 0xdf, 0x0e, 0xd8, 0x43, 0xdf, 0xb4, 0xd8, 0x4b, 0xdd, 0x4c, 0xd8, 0x63, 0xdc, 0xd2]);
-});
-
-test("Decodes UTF-16 BMP (LE)", t => {
-	const tf = new Utf16ToBytesTransform();
-
-	t.deepEqual(tf.transform("Ξεσκεπάζω", { littleEndian: true }), [0x9e, 0x03, 0xb5, 0x03, 0xc3, 0x03, 0xba, 0x03, 0xb5, 0x03, 0xc0, 0x03, 0xac, 0x03, 0xb6, 0x03, 0xc9, 0x03]);
-});
-
-test("Decodes UTF-16 SMP (LE)", t => {
-	const tf = new Utf16ToBytesTransform();
-
-	t.deepEqual(tf.transform("𠜎𠾴𢵌𨳒", { littleEndian: true }), [0x41, 0xd8, 0x0e, 0xdf, 0x43, 0xd8, 0xb4, 0xdf, 0x4b, 0xd8, 0x4c, 0xdd, 0x63, 0xd8, 0xd2, 0xdc]);
-});
+test("Decodes UTF-16 BMP (BE)",	testUtf16Decode, "039e03b503c303ba03b503c003ac03b603c9", "Ξεσκεπάζω");
+test("Decodes UTF-16 SMP (BE)", testUtf16Decode, "d841df0ed843dfb4d84bdd4cd863dcd2", "𠜎𠾴𢵌𨳒");
+test("Decodes UTF-16 BMP (LE)", testUtf16Decode, "9e03b503c303ba03b503c003ac03b603c903", "Ξεσκεπάζω", { littleEndian: true });
+test("Decodes UTF-16 SMP (LE)", testUtf16Decode, "41d80edf43d8b4df4bd84cdd63d8d2dc", "𠜎𠾴𢵌𨳒", { littleEndian: true });
 
 test("Encodes UTF-16 BMP (BE)", t => {
 	const tf = new BytesToUtf16Transform();

@@ -40,6 +40,7 @@ class Sha256Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
+		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
 
 		let [a, b, c, d, e, f, g, h] = this.getInitialHashValues();

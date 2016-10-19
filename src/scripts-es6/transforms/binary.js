@@ -46,7 +46,8 @@ class BinaryToBytesTransform extends Transform
 			result.unshift(value);
 		}
 
-		return result;
+		// TODO: Conversion for now - attempt to get this to work with TypedArray internally
+		return Uint8Array.from(result);
 	}
 }
 

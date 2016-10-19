@@ -57,7 +57,7 @@ class Sha512Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
-		// TODO: Optimize with TypedArrays
+		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 64));
 
 		let [a, b, c, d, e, f, g, h] = this.getInitialHashValues();

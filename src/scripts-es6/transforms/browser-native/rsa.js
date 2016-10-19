@@ -26,6 +26,7 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		// TODO: Remove when ALL bytes results are Uint8Array
 		const plaintext = Uint8Array.from(bytes);
 		const eBytes = intToByteArray(options.e);
 
@@ -40,6 +41,7 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 
 		if (labelBytes.length > 0)
 		{
+			// TODO: Remove when ALL bytes results are Uint8Array
 			methodParams.label = Uint8Array.from(labelBytes);
 		}
 
@@ -109,6 +111,7 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		// TODO: Remove when ALL bytes results are Uint8Array
 		const ciphertext = Uint8Array.from(bytes);
 		const eBytes = intToByteArray(options.e);
 

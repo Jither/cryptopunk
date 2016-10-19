@@ -44,7 +44,8 @@ class HexToBytesTransform extends Transform
 		{
 			result.unshift(value);
 		}
-		return result;
+		// TODO: Conversion for now - try to get this to work with TypedArray internally
+		return Uint8Array.from(result);
 	}
 }
 

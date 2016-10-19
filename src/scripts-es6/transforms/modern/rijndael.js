@@ -108,28 +108,30 @@ class RijndaelBaseTransform extends Transform
 		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount);
 
 		const blockCount = Math.ceil(bytes.length / 16);
-		// TODO: Optimize for TypedArrays
-		const result = [];
+
+		const result = new Uint8Array(16 * blockCount);
+
 		for (let index = 0; index < blockCount; index++)
 		{
 			const startIndex = index * 16;
+			// TODO: Work on TypedArray
 			const block = bytes.slice(startIndex, startIndex + 16);
 			if (block.length < 16)
 			{
-				// Pad block
+				// Pad block - pure 0 padding isn't proper padding (non-reversible), but since
+				// we don't know where the output might be used, we can't assume a padding scheme (for now)
 				for (let i = block.length; i < 16; i++)
 				{
 					block.push(0);
 				}
 			}
-			result.push(...this.transformBlock(block, roundKeys));
+			this.transformBlock(bytes, roundKeys, result, index * 16);
 		}
 
-		// TODO: Work on Uint8Array internally - this is just to clean up some test results for now...
-		return Uint8Array.from(result);
+		return result;
 	}
 
-	transformBlock(bytes, roundKeys)
+	transformBlock(bytes, roundKeys, dest, destIndex)
 	{
 		// Get constants specific to encryption/decryption:
 		const [BO1, BO2, BO3, T1, T2, T3, T4, sBox] = this.getDirectionSpecific();
@@ -168,7 +170,6 @@ class RijndaelBaseTransform extends Transform
 		}
 
 		// Round transform N
-		const result = [];
 		for (let index = 0; index < 4; index++)
 		{
 			const key = roundKeys[roundCount][index];
@@ -179,15 +180,11 @@ class RijndaelBaseTransform extends Transform
 				sBox[text[(index + BO3) % 4]       & 0xff] ^
 				key;
 
-			result.push(
-				value >> 24 & 0xff,
-				value >> 16 & 0xff,
-				value >>  8 & 0xff,
-				value & 0xff
-			);
+			dest[destIndex++] = value >> 24 & 0xff;
+			dest[destIndex++] = value >> 16 & 0xff;
+			dest[destIndex++] = value >>  8 & 0xff;
+			dest[destIndex++] = value & 0xff;
 		}
-
-		return result;
 	}
 
 	prepareRoundKeys(keyBytes, roundCount)
