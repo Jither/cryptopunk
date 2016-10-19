@@ -91,7 +91,7 @@ class CodePageToBytesTransform extends Transform
 		options = Object.assign({}, this.defaults, options);
 		const codepage = CODE_PAGES[options.codepage];
 
-		const result = [];
+		const result = new Uint8Array(str.length);
 		for (let i = 0; i < str.length; i++)
 		{
 			const chr = str.charAt(i);
@@ -100,7 +100,7 @@ class CodePageToBytesTransform extends Transform
 			{
 				throw new TransformError(`Character '${chr}' doesn't exist in ${SELECT_VALUES[options.codepage]}`);
 			}
-			result.push(code);
+			result[i] = code;
 		}
 		return result;
 	}

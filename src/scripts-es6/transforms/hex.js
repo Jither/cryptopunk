@@ -19,6 +19,7 @@ class HexToBytesTransform extends Transform
 			str = removeWhiteSpace(str);
 		}
 
+		// Can't predetermine length, so no TypedArray
 		const result = [];
 		let position = 0, value = 0;
 		for (let i = str.length - 1; i >= 0; i--)

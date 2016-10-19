@@ -31,7 +31,7 @@ class RandomBytesGenerator extends Transform
 		const result = new Uint8Array(options.length);
 		window.crypto.getRandomValues(result);
 
-		return Array.from(result);
+		return result;
 	}
 }
 
@@ -47,12 +47,8 @@ class NullBytesGenerator extends Transform
 	transform(options)
 	{
 		options = Object.assign({}, this.defaults, options);
-		const result = [];
-		for (let i = 0; i < options.length; i++)
-		{
-			result.push(0);
-		}
-
+		// TypedArrays are initialized to zero
+		const result = new Uint8Array(options.length);
 		return result;
 	}
 }

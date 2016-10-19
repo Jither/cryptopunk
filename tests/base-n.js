@@ -75,7 +75,9 @@ test("Base32 decoder can infer padding", t => {
 test ("Base32 decoder handles empty string gracefully", t => {
 	const tf = new Base32ToBytesTransform();
 
-	t.deepEqual(tf.transform(""), []);
+	const actual = tf.transform("");
+	t.true(actual instanceof Uint8Array);
+	t.is(actual.length, 0);
 });
 
 test("Decodes Base64", t => {
@@ -113,5 +115,7 @@ test("Base64 url-safe decoder handles the non-alphanumeric chars", t => {
 test ("Base64 decoder handles empty string gracefully", t => {
 	const tf = new Base64ToBytesTransform();
 
-	t.deepEqual(tf.transform(""), []);
+	const actual = tf.transform("");
+	t.true(actual instanceof Uint8Array);
+	t.is(actual.length, 0);
 });

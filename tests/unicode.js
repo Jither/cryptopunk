@@ -1,27 +1,28 @@
 import test from "ava";
 import { Ucs2ToBytesTransform, BytesToUcs2Transform, Utf8ToBytesTransform, Utf16ToBytesTransform, BytesToUtf16Transform } from "transforms/unicode";
 import { TransformError } from "transforms/transforms";
+import { hexToBytes } from "cryptopunk.utils";
+
+function testUcs2Decode(t, expectedHex, input, options)
+{
+	const expected = hexToBytes(expectedHex);
+	const tf = new Ucs2ToBytesTransform();
+	t.deepEqual(tf.transform(input, options), expected);
+}
 
 // UCS-2
 
-test("Decodes simple UCS-2 (BE)", t => {
-	const tf = new Ucs2ToBytesTransform();
-
-	t.deepEqual(tf.transform("它不是一个填字游戏"), [0x5b, 0x83, 0x4e, 0x0d, 0x66, 0x2f, 0x4e, 0x00, 0x4e, 0x2a, 0x58, 0x6b, 0x5b, 0x57, 0x6e, 0x38, 0x62, 0x0f]);
-});
-
-test("Decodes UCS-2 (LE)", t => {
-	const tf = new Ucs2ToBytesTransform();
-
-	t.deepEqual(tf.transform("它不是一个填字游戏", { littleEndian: true }), [0x83, 0x5b, 0x0d, 0x4e, 0x2f, 0x66, 0x00, 0x4e, 0x2a, 0x4e, 0x6b, 0x58, 0x57, 0x5b, 0x38, 0x6e, 0x0f, 0x62]);
-});
+test("Decodes UCS-2 (BE)", testUcs2Decode, "5b834e0d662f4e004e2a586b5b576e38620f", "它不是一个填字游戏");
+test("Decodes UCS-2 (LE)", testUcs2Decode, "835b0d4e2f66004e2a4e6b58575b386e0f62", "它不是一个填字游戏", { littleEndian: true });
 
 // TODO: Test SMP (shouldn't decode in UCS-2)
 
 test("UCS-2 Decoder handles empty string gracefully", t => {
 	const tf = new Ucs2ToBytesTransform();
 
-	t.deepEqual(tf.transform(""), []);
+	const actual = tf.transform("");
+	t.true(actual instanceof Uint8Array);
+	t.is(actual.length, 0);
 });
 
 test("Encodes simple UCS-2 (BE)", t => {

@@ -66,49 +66,48 @@ function exerciseEncrypt(k, b)
 {
 	const tf = new RijndaelEncryptTransform();
 
-	const S = [];
-	for (let i = 0; i < k + b; i++)
-	{
-		S.push(0);
-	}
+	const n = k + b;
+	const S = new Uint8Array(n);
+
 	for (let i = 0; i < 1000; i++)
 	{
-		const n = S.length;
-		const key = S.slice(n - k);
-		const plaintext = S.slice(n - k - b, n - k);
+		const plaintext = S.subarray(0, b);
+		const key = S.subarray(b);
 		// We encrypt twice per iteration (this is meant to test reuse of round keys in other implementations)
 		let ciphertext = tf.transform(plaintext, key);
 		ciphertext = tf.transform(ciphertext, key);
-		// Remove everything we don't need anymore:
-		S.splice(0, n-k);
-		// And append the new ciphertext
-		S.push(...ciphertext);
+		// Move old key to front and append ciphertext
+		S.set(key);
+		S.set(ciphertext, k);
 	}
 
-	return S.slice(S.length - b);
+	return S.subarray(S.length - b);
 }
 
 function exerciseDecrypt(k, b, key, ciphertext)
 {
 	const tf = new RijndaelDecryptTransform();
 
-	const S = hexToBytes(key).concat(hexToBytes(ciphertext));
+	const keyBytes = hexToBytes(key);
+	const ciphertextBytes = hexToBytes(ciphertext);
+	const n = b + k;
+	const S = new Uint8Array(n);
+	S.set(keyBytes);
+	S.set(ciphertextBytes, k);
 	// We encrypted 1000 times, so we need to decrypt 999 to get back to our origin
 	for (let i = 0; i < 999; i++)
 	{
-		const n = S.length;
-		const ciphertext = S.slice(n - b);
-		const key = S.slice(n - k - b, n - b);
+		const key = S.subarray(0, k);
+		const ciphertext = S.subarray(k);
 		// We decrypt twice per iteration (this is meant to test reuse of round keys in other implementations)
 		let plaintext = tf.transform(ciphertext, key);
 		plaintext = tf.transform(plaintext, key);
-		// Remove everything we don't need anymore:
-		S.splice(n - b, b);
-		// And prepend the new plaintext
-		S.unshift(...plaintext);
+		// Move old key to end of buffer and prepend the new plaintext
+		S.set(key, n - k);
+		S.set(plaintext);
 	}
 
-	return S.slice(0, b);
+	return S.subarray(0, b);
 }
 
 // Based on twofish vector construction

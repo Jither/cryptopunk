@@ -48,26 +48,28 @@ function bytesToHex(bytes)
 
 function asciiToBytes(ascii)
 {
-	const bytes = [];
+	const bytes = new Uint8Array(ascii.length);
 	for (let c = 0; c < ascii.length; c++)
 	{
-		bytes.push(ascii.charCodeAt(c));
+		bytes[c] = ascii.charCodeAt(c);
 	}
 	return bytes;
 }
 
 function hexToBytes(hex)
 {
-	const bytes = [];
+	const bytes = new Uint8Array(Math.ceil(hex.length / 2));
+	let destIndex = 0;
 	for (let c = 0; c < hex.length; c += 2)
 	{
-		bytes.push(parseInt(hex.substr(c, 2), 16));
+		bytes[destIndex++] = parseInt(hex.substr(c, 2), 16);
 	}
 	return bytes;
 }
 
 function bytesToInt32sBE(bytes)
 {
+	// TODO: Uint32Array - but make sure it's big endian
 	const result = [];
 	for (let i = 0; i < bytes.length; i += 4)
 	{
@@ -83,6 +85,7 @@ function bytesToInt32sBE(bytes)
 
 function bytesToInt32sLE(bytes)
 {
+	// TODO: Uint32Array - but make sure it's little endian
 	const result = [];
 	for (let i = 0; i < bytes.length; i += 4)
 	{
@@ -98,49 +101,53 @@ function bytesToInt32sLE(bytes)
 
 function int32sToBytesBE(ints)
 {
-	const result = [];
+	const result = new Uint8Array(ints.length * 4);
+	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
+		// TODO: Access with DataView?
 		const value = ints[i];
-		result.push((value >> 24) & 0xff);
-		result.push((value >> 16) & 0xff);
-		result.push((value >>  8) & 0xff);
-		result.push((value) & 0xff);
+		result[index++] = (value >> 24) & 0xff;
+		result[index++] = (value >> 16) & 0xff;
+		result[index++] = (value >>  8) & 0xff;
+		result[index++] = (value) & 0xff;
 	}
 	return result;
 }
 
 function int32sToBytesLE(ints)
 {
-	const result = [];
+	const result = new Uint8Array(ints.length * 4);
+	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
+		// TODO: Access with DataView?
 		const value = ints[i];
-		result.push((value      ) & 0xff);
-		result.push((value >>  8) & 0xff);
-		result.push((value >> 16) & 0xff);
-		result.push((value >> 24) & 0xff);
+		result[index++] = value & 0xff;
+		result[index++] = (value >>  8) & 0xff;
+		result[index++] = (value >> 16) & 0xff;
+		result[index++] = (value >> 24) & 0xff;
 	}
 	return result;
 }
 
 function int32ToBytesBE(value)
 {
-	const result = [];
-	result.push((value >> 24) & 0xff);
-	result.push((value >> 16) & 0xff);
-	result.push((value >>  8) & 0xff);
-	result.push((value) & 0xff);
+	const result = new Uint8Array(4);
+	result[0] = (value >> 24) & 0xff;
+	result[1] = (value >> 16) & 0xff;
+	result[2] = (value >>  8) & 0xff;
+	result[3] = value & 0xff;
 	return result;
 }
 
 function int32ToBytesLE(value)
 {
-	const result = [];
-	result.push((value      ) & 0xff);
-	result.push((value >>  8) & 0xff);
-	result.push((value >> 16) & 0xff);
-	result.push((value >> 24) & 0xff);
+	const result = new Uint8Array(4);
+	result[0] = value & 0xff;
+	result[1] = (value >>  8) & 0xff;
+	result[2] = (value >> 16) & 0xff;
+	result[3] = (value >> 24) & 0xff;
 	return result;
 }
 
@@ -163,7 +170,7 @@ function mod(n, m)
 
 function intToByteArray(num)
 {
-	const result = [];
+	const result = new Uint8Array();
 
 	while (num !== 0)
 	{

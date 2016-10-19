@@ -130,24 +130,24 @@ class HavalTransform extends Transform
 	{
 		let paddingLength = bytes.length % 128;
 		paddingLength = (paddingLength < 118 ? 118 : 246) - paddingLength;
-		const padding = new Array(paddingLength);
-		padding[0] = 1;
-		for (let i = 1; i < paddingLength; i++)
-		{
-			padding[i] = 0;
-		}
+		const result = new Uint8Array(bytes.length + paddingLength + 10);
+		// Copy message to new array:
+		result.set(bytes);
+
+		result[bytes.length] = 1;
 
 		// Version number, round count, hash length (last 3 bits) and bit length of message are stored in
 		// the last 10 bytes after the padding:
+		let index = bytes.length + paddingLength;
 		const info = HAVAL_VERSION | (options.passes << 3) | (options.length << 6);
-		padding.push(info & 0xff);
-		padding.push(info >>> 8);
+		result[index++] = info & 0xff;
+		result[index++] = info >>> 8;
 
 		// Like MD4/MD5/SHA, we only store the size up to 2^32 bits. Little endian
 		const bitLengthLo = bytes.length << 3;
 		const bitLengthHi = bytes.length >>> 29;
-		padding.push(...int32sToBytesLE([bitLengthLo, bitLengthHi]));
-		return bytes.concat(padding);
+		result.set(int32sToBytesLE([bitLengthLo, bitLengthHi]), index);
+		return result;
 	}
 
 	transform(bytes, options)

@@ -50,6 +50,7 @@ class Utf8ToBytesTransform extends Transform
 
 	transform(str, options)
 	{
+		// Can't predetermine length, so no TypedArray here
 		const result = [];
 		let i = 0;
 		while (i < str.length)
@@ -164,19 +165,20 @@ class Ucs2ToBytesTransform extends Transform
 	transform(str, options)
 	{
 		options = Object.assign({}, this.defaults, options);
-		const result = [];
+		const result = new Uint8Array(str.length * 2);
+		let destIndex = 0;
 		for (let i = 0; i < str.length; i++)
 		{
 			const code = str.charCodeAt(i);
 			if (options.littleEndian)
 			{
-				result.push(code & 0xff);
-				result.push(code >> 8);
+				result[destIndex++] = code & 0xff;
+				result[destIndex++] = code >> 8;
 			}
 			else
 			{
-				result.push(code >> 8);
-				result.push(code & 0xff);
+				result[destIndex++] = code >> 8;
+				result[destIndex++] = code & 0xff;
 			}
 		}
 		return result;
@@ -221,6 +223,7 @@ class Utf16ToBytesTransform extends Transform
 	transform(str, options)
 	{
 		options = Object.assign({}, this.defaults, options);
+		// Can't predetermine length, so no TypedArray
 		const result = [];
 		let i = 0;
 		while (i < str.length)

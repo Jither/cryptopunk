@@ -42,28 +42,29 @@ class Md2Transform extends Transform
 	{
 		// Pad to multiple of 16 bytes. If already a multiple, still add 16 bytes:
 		const paddingLength = 16 - bytes.length % 16;
-		const padding = new Array(paddingLength);
+
+		const paddedMessageLength = bytes.length + paddingLength;
+
+		// 16 additional bytes for checksum:
+		const padded = new Uint8Array(paddedMessageLength + 16);
+		padded.set(bytes);
+
+		let index = bytes.length;
 		// Use the padding length as pad byte
-		this.clearArray(padding, paddingLength);
-
-		const padded = bytes.concat(padding);
-
-		const checksum = new Array(16);
-		this.clearArray(checksum);
+		padded.fill(paddingLength, index, index + paddingLength);
+		index += paddingLength;
 
 		let l = 0;
-		for (let i = 0; i < padded.length / 16; i++)
+		for (let i = 0; i < paddedMessageLength / 16; i++)
 		{
 			for (let j = 0; j < 16; j++)
 			{
 				const c = padded[i * 16 + j];
-				l = checksum[j] ^= S_BOX[c ^ l]; 
+				l = padded[index + j] ^= S_BOX[c ^ l]; 
 			}
 		}
 
-		padded.push(...checksum);
-
-		const bufferX = new Array(48);
+		const bufferX = new Uint8Array(48);
 
 		for (let i = 0; i < padded.length / 16; i++)
 		{
@@ -86,8 +87,7 @@ class Md2Transform extends Transform
 				t = (t + j) & 0xff;
 			}
 		}
-		bufferX.splice(16);
-		return bufferX;
+		return bufferX.subarray(0, 16);
 	}
 }
 

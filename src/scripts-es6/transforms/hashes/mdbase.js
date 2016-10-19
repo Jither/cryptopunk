@@ -29,17 +29,15 @@ class MdBaseTransform extends Transform
 			paddingLength += P2;
 		}
 
-		// Reserve space for padding
-		let padding = new Array(paddingLength);
+		// Reserve space for message, padding, and length extension (depends on word size)
+		const result = new Uint8Array(bytes.length + paddingLength + wordsize / 4);
+		result.set(bytes);
+
 		// "Padding is performed as follows: a single "1" bit is appended to the
 		// message, and then "0" bits are appended so that the length in bits of
 		// the padded message becomes congruent to 448, modulo 512.
 		// In all, at least one bit and at most 512 bits are appended."
-		padding[0] = 0x80; // "1" bit
-		for (let i = 1; i < paddingLength; i++)
-		{
-			padding[i] = 0; // "0" bits
-		}
+		result[bytes.length] = 0x80; // "1" bit
 
 		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
 		// (very theoretical) maximum message length we would be able to handle.
@@ -50,18 +48,19 @@ class MdBaseTransform extends Transform
 		const bitLengthLo = length << 3;
 		const bitLengthHi = length >>> 29;
 
+		let index = bytes.length + paddingLength;
 		if (this.endianness === "LE")
 		{
 			const bitLength = wordsize === 32 ? [bitLengthLo, bitLengthHi] : [bitLengthLo, bitLengthHi, 0, 0];
-			padding = padding.concat(int32sToBytesLE(bitLength));
+			result.set(int32sToBytesLE(bitLength), index)
 		}
 		else
 		{
 			const bitLength = wordsize === 32 ? [bitLengthHi, bitLengthLo] : [0, 0, bitLengthHi, bitLengthLo];
-			padding = padding.concat(int32sToBytesBE(bitLength));
+			result.set(int32sToBytesBE(bitLength), index)
 		}
 
-		return bytes.concat(padding);
+		return result;
 	}
 }
 

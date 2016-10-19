@@ -11,7 +11,7 @@ class AsciiToBytesTransform extends Transform
 
 	transform(str)
 	{
-		const result = [];
+		const result = new Uint8Array(str.length);
 		for (let i = 0; i < str.length; i++)
 		{
 			const code = str.charCodeAt(i);
@@ -20,7 +20,7 @@ class AsciiToBytesTransform extends Transform
 				const c = str.charAt(i);
 				throw new TransformError(`Character '${c}' is not valid ASCII.`);
 			}
-			result.push(code);
+			result[i] = code;
 		}
 		return result;
 	}

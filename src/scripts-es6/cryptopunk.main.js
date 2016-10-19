@@ -94,10 +94,10 @@ class TransformNodeController
 						value = "";
 						break;
 					case "bytes":
-						value = [];
+						value = new Uint8Array();
 						// This is to ensure that transforms don't mutate the array
 						// (For development/testing purposes)
-						Object.freeze(value);
+						// Object.freeze(value);
 						break;
 				}
 			}
@@ -188,7 +188,7 @@ class TransformNodeController
 		}
 		else
 		{
-			this.node.contentElement.innerText = Array.isArray(output) ? this.toHex(output) : output;
+			this.node.contentElement.innerText = typeof output === "string" ? output : this.toHex(output);
 		}
 		propertyPanel.updateOutputs(this.node);
 	}

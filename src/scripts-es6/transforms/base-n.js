@@ -56,12 +56,14 @@ class BaseNToBytesTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		// For now, no predetermined length, so no TypedArray
+		const result = [];
+
 		if (str === "")
 		{
-			return [];
+			return new Uint8Array();
 		}
 
-		const result = [];
 		const alphabet = this.alphabet;
 		const base = alphabet.length;
 
@@ -129,7 +131,7 @@ class BytesToBaseNTransform extends Transform
 			return "";
 		}
 
-		const arrPad = [];
+		const arrPad = new Uint8Array();
 		let pad;
 		if (this.usesPadding)
 		{

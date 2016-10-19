@@ -49,6 +49,7 @@ class CrcTransform extends Transform
 
 	makeCrcTable(polynomial, width)
 	{
+		// TODO: Endian DataView?
 		const result = [];
 		const shl = width - 8;
 		const mask = 1 << (width - 1);
@@ -66,6 +67,7 @@ class CrcTransform extends Transform
 
 	makeReflectedCrcTable(polynomial)
 	{
+		// TODO: Endian DataView?
 		const result = [];
 		for (let n = 0; n < 256; n++)
 		{
@@ -122,10 +124,11 @@ class CrcTransform extends Transform
 		}
 		crc = (crc ^ variant.xorOut) & maskOut;
 
-		const result = [];
-		for (let i = 0; i < variant.width / 8; i++)
+		const length = variant.width / 8;
+		const result = new Uint8Array(length);
+		for (let i = length - 1; i >= 0; i--)
 		{
-			result.unshift(crc & 0xff);
+			result[i] = crc & 0xff;
 			crc >>>= 8;
 		}
 		return result;

@@ -49,11 +49,9 @@ class NumbersToBytesTransform extends Transform
 
 		str = str.trim();
 
-		const result = [];
-
 		if (str === "")
 		{
-			return result;
+			return new Uint8Array();
 		}
 
 		const max = this.unitToMax(options.unit);
@@ -62,6 +60,17 @@ class NumbersToBytesTransform extends Transform
 
 		const numbers = str.split(/\s+/g);
 
+		let byteLength;
+		switch (options.unit)
+		{
+			case "byte": byteLength = numbers.length; break;
+			case "short": byteLength = numbers.length * 2; break;
+			case "int": byteLength = numbers.length * 4; break;
+
+		}
+		const result = new Uint8Array(byteLength);
+
+		let destIndex = 0;
 		for (let i = 0; i < numbers.length; i++)
 		{
 			const num = numbers[i];
@@ -78,17 +87,17 @@ class NumbersToBytesTransform extends Transform
 			switch (options.unit)
 			{
 				case "byte":
-					result.push(value);
+					result[destIndex++] = value;
 					break;
 				case "short":
-					result.push((value >> 8) & 0xff);
-					result.push(value & 0xff);
+					result[destIndex++] = (value >> 8) & 0xff;
+					result[destIndex++] = value & 0xff;
 					break;
 				case "int":
-					result.push((value >> 24) & 0xff);
-					result.push((value >> 16) & 0xff);
-					result.push((value >> 8) & 0xff);
-					result.push(value & 0xff);
+					result[destIndex++] = (value >> 24) & 0xff;
+					result[destIndex++] = (value >> 16) & 0xff;
+					result[destIndex++] = (value >> 8) & 0xff;
+					result[destIndex++] = value & 0xff;
 					break;
 			}
 		}

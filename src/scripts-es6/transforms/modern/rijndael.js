@@ -108,6 +108,7 @@ class RijndaelBaseTransform extends Transform
 		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount);
 
 		const blockCount = Math.ceil(bytes.length / 16);
+		// TODO: Optimize for TypedArrays
 		const result = [];
 		for (let index = 0; index < blockCount; index++)
 		{
@@ -124,7 +125,8 @@ class RijndaelBaseTransform extends Transform
 			result.push(...this.transformBlock(block, roundKeys));
 		}
 
-		return result;
+		// TODO: Work on Uint8Array internally - this is just to clean up some test results for now...
+		return Uint8Array.from(result);
 	}
 
 	transformBlock(bytes, roundKeys)
