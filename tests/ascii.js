@@ -1,7 +1,7 @@
 import test from "ava";
+import { testStringToBytes, testBytesToString } from "./_testutils";
 import { AsciiToBytesTransform, BytesToAsciiTransform } from "transforms/ascii";
 import { TransformError } from "transforms/transforms";
-import { hexToBytes } from "cryptopunk.utils";
 
 function testAsciiDecode(t, expectedHex, input)
 {
@@ -10,8 +10,8 @@ function testAsciiDecode(t, expectedHex, input)
 	t.deepEqual(tf.transform(input), expected);
 }
 
-test("Decodes simple ASCII", testAsciiDecode, "61626341424378797a313233212540", "abcABCxyz123!%@");
-test("Decodes control codes", testAsciiDecode, "090d0a011f", "\t\r\n\x01\x1f");
+test("Decodes simple ASCII", testStringToBytes, AsciiToBytesTransform, "61626341424378797a313233212540", "abcABCxyz123!%@");
+test("Decodes control codes", testStringToBytes, AsciiToBytesTransform, "090d0a011f", "\t\r\n\x01\x1f");
 
 test("Decoder throws on invalid ASCII", t => {
 	const tf = new AsciiToBytesTransform();
@@ -20,15 +20,5 @@ test("Decoder throws on invalid ASCII", t => {
 	t.true(error instanceof TransformError);
 })
 
-test("Encodes simple ASCII", t => {
-	const tf = new BytesToAsciiTransform();
-
-	t.is(tf.transform([0x61, 0x62, 0x63, 0x41, 0x42, 0x43, 0x78, 0x79, 0x7a, 0x31, 0x32, 0x33, 0x21, 0x25, 0x40]), "abcABCxyz123!%@");
-});
-
-test("Encoder skips uncommon control codes", t => {
-	const tf = new BytesToAsciiTransform();
-
-	t.is(tf.transform([0x09, 0x0d, 0x01, 0x1f, 0x0a]), "\t\r\n");
-});
-
+test("Encodes simple ASCII", testBytesToString, BytesToAsciiTransform, "abcABCxyz123!%@", "61626341424378797a313233212540");
+test("Encoder skips uncommon control codes", testBytesToString, BytesToAsciiTransform, "\t\r\n", "090d011f0a");
