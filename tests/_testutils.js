@@ -11,7 +11,7 @@ function testBytesToString(t, transformType, expected, inputHex, ...rest)
 {
 	const input = hexToBytes(inputHex);
 	const tf = new transformType();
-	t.deepEqual(tf.transform(input, ...rest), expected);
+	t.is(tf.transform(input, ...rest), expected);
 }
 
 function testAsciiHash(t, transformType, expectedHex, input, ...rest)
@@ -22,8 +22,25 @@ function testAsciiHash(t, transformType, expectedHex, input, ...rest)
 	t.deepEqual(tf.transform(bytesInput, ...rest), expected);
 }
 
+function testHandlesEmptyString(t, transformType)
+{
+	const tf = new transformType();
+	const actual = tf.transform("");
+	t.true(actual instanceof Uint8Array);
+	t.is(actual.length, 0);
+}
+
+function testHandlesEmptyArray(t, transformType)
+{
+	const tf = new transformType();
+
+	t.is(tf.transform(new Uint8Array()), "");
+}
+
 export {
 	testStringToBytes,
 	testBytesToString,
-	testAsciiHash
+	testAsciiHash,
+	testHandlesEmptyString,
+	testHandlesEmptyArray
 };

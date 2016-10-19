@@ -1,5 +1,5 @@
 import test from "ava";
-import { testBytesToString, testStringToBytes } from "./_testutils";
+import { testBytesToString, testStringToBytes, testHandlesEmptyString, testHandlesEmptyArray } from "./_testutils";
 import { HexToBytesTransform, BytesToHexTransform } from "transforms/hex";
 import { TransformError } from "transforms/transforms";
 
@@ -15,13 +15,7 @@ test("Decodes trailing zeroes #2", testStringToBytes, HexToBytesTransform, "01ab
 test("Decodes non-byte-alignment as missing leading zero #1", testStringToBytes, HexToBytesTransform, "01ab", "1 ab");
 test("Decodes non-byte-alignment as missing leading zero #2", testStringToBytes, HexToBytesTransform, "0152ab", "1 52 ab");
 
-test("Decoder handles empty string gracefully", t => {
-	const tf = new HexToBytesTransform();
-
-	const actual = tf.transform("");
-	t.true(actual instanceof Uint8Array);
-	t.is(actual.length, 0);
-});
+test("Decoder handles empty string gracefully", testHandlesEmptyString, HexToBytesTransform);
 
 test("Decoder throws on invalid characters", t => {
 	const tf = new HexToBytesTransform();
@@ -38,8 +32,4 @@ test("Encodes leading zero bytes #2", testBytesToString, BytesToHexTransform, "0
 test("Encodes trailing zero bytes #1", testBytesToString, BytesToHexTransform, "ab cd 00", "abcd00");
 test("Encodes trailing zero bytes #2", testBytesToString, BytesToHexTransform, "ab cd 00 00", "abcd0000");
 
-test("Encoder handles empty array gracefully", t => {
-	const tf = new BytesToHexTransform();
-
-	t.is(tf.transform([]), "");
-});
+test("Encoder handles empty array gracefully", testHandlesEmptyArray, BytesToHexTransform);

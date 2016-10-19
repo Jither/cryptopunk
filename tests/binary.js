@@ -1,5 +1,5 @@
 import test from "ava";
-import { testStringToBytes, testBytesToString } from "./_testutils";
+import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "./_testutils";
 import { BinaryToBytesTransform, BytesToBinaryTransform } from "transforms/binary";
 import { TransformError } from "transforms/transforms";
 
@@ -14,13 +14,7 @@ test("Decodes trailing zeroes #2", testStringToBytes, BinaryToBytesTransform, "0
 test("Decodes non-byte-alignment as missing leading zeroes #1", testStringToBytes, BinaryToBytesTransform, "01ab", "1 10101011");
 test("Decodes non-byte-alignment as missing leading zeroes #2", testStringToBytes, BinaryToBytesTransform, "0152ab", "1 01010010 10101011");
 
-test("Decoder handles empty string gracefully", t => {
-	const tf = new BinaryToBytesTransform();
-
-	const actual = tf.transform("");
-	t.true(actual instanceof Uint8Array);
-	t.is(actual.length, 0);
-});
+test("Decoder handles empty string gracefully", testHandlesEmptyString, BinaryToBytesTransform);
 
 test("Decoder throws on invalid characters", t => {
 	const tf = new BinaryToBytesTransform();
@@ -37,8 +31,4 @@ test("Encodes leading zero bytes #2", testBytesToString, BytesToBinaryTransform,
 test("Encodes trailing zero bytes #1", testBytesToString, BytesToBinaryTransform, "10101011 11001101 00000000", "abcd00");
 test("Encodes trailing zero bytes #2", testBytesToString, BytesToBinaryTransform, "10101011 11001101 00000000 00000000", "abcd0000");
 
-test("Encoder handles empty array gracefully", t => {
-	const tf = new BytesToBinaryTransform();
-
-	t.is(tf.transform([]), "");
-});
+test("Encoder handles empty array gracefully", testHandlesEmptyArray, BytesToBinaryTransform);

@@ -1,4 +1,5 @@
 import test from "ava";
+import { testHandlesEmptyString } from "./_testutils";
 import { TransformError } from "transforms/transforms";
 import { hexToBytes } from "cryptopunk.utils";
 import {
@@ -7,6 +8,8 @@ import {
 	Base64ToBytesTransform, 
 	Base64UrlToBytesTransform
 } from "transforms/base-n";
+
+// TODO: Test encoding
 
 test("Decodes Base32", t => {
 	const tf = new Base32ToBytesTransform();
@@ -73,13 +76,8 @@ test("Base32 decoder can infer padding", t => {
 });
 
 
-test ("Base32 decoder handles empty string gracefully", t => {
-	const tf = new Base32ToBytesTransform();
-
-	const actual = tf.transform("");
-	t.true(actual instanceof Uint8Array);
-	t.is(actual.length, 0);
-});
+test ("Base32-HEX decoder handles empty string gracefully", testHandlesEmptyString, Base32HexToBytesTransform);
+test ("Base32 decoder handles empty string gracefully", testHandlesEmptyString, Base32ToBytesTransform);
 
 test("Decodes Base64", t => {
 	const tf = new Base64ToBytesTransform();
@@ -113,10 +111,4 @@ test("Base64 url-safe decoder handles the non-alphanumeric chars", t => {
 	t.deepEqual(tf.transform("Pz8_Pj4-"), hexToBytes("3f3f3f3e3e3e"));
 });
 
-test ("Base64 decoder handles empty string gracefully", t => {
-	const tf = new Base64ToBytesTransform();
-
-	const actual = tf.transform("");
-	t.true(actual instanceof Uint8Array);
-	t.is(actual.length, 0);
-});
+test ("Base64 decoder handles empty string gracefully", testHandlesEmptyString, Base64ToBytesTransform);
