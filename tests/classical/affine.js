@@ -1,5 +1,5 @@
 import test from "ava";
-import { AffineEncryptTransform, AffineDecryptTransform } from "transforms/affine";
+import { AffineEncryptTransform, AffineDecryptTransform } from "transforms/classical/affine";
 import { TransformError } from "transforms/transforms";
 
 test("Encrypts Affine cipher (default)", t => {

@@ -7,6 +7,14 @@ const eleOutputs = [];
 
 let currentNode;
 
+function applyFromOptions(ele, option, attrName)
+{
+	if (typeof option.options[attrName] !== "undefined")
+	{
+		ele.setAttribute(attrName, option.options[attrName]);
+	}
+}
+
 function getPropertyEditorFor(name, option, value, changedCallback)
 {
 	const eleEditor = document.createElement("div");
@@ -22,6 +30,9 @@ function getPropertyEditorFor(name, option, value, changedCallback)
 			eleInput = document.createElement("input");
 			eleInput.type = "number";
 			eleInput.value = value;
+			applyFromOptions(eleInput, option, "min");
+			applyFromOptions(eleInput, option, "max");
+			applyFromOptions(eleInput, option, "step");
 			eleInput.addEventListener("input", () => changedCallback(name, parseInt(eleInput.value, 10)));
 			break;
 		case "short-string":

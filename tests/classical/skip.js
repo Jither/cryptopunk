@@ -1,5 +1,5 @@
 import test from "ava";
-import { SkipDecryptTransform, SkipEncryptTransform } from "transforms/skip";
+import { SkipDecryptTransform, SkipEncryptTransform } from "transforms/classical/skip";
 import { TransformError } from "transforms/transforms";
 
 test("Decrypts simple skip cipher", t => {

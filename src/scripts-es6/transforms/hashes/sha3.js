@@ -54,7 +54,7 @@ class ShakeTransform extends KeccakBaseTransform
 	{
 		super();
 		this.addOption("instance", "Instance", "SHAKE-128", { type: "select", values: SHAKE_INSTANCES })
-			.addOption("length", "Length", 128);
+			.addOption("length", "Length", 128, { min: 0, step: 8 });
 	}
 
 	transform(bytes, options)

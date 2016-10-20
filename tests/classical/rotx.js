@@ -1,5 +1,5 @@
 import test from "ava";
-import { RotXTransform, Rot47Transform } from "transforms/rotx";
+import { RotXTransform, Rot47Transform } from "transforms/classical/rotx";
 import { TransformError } from "transforms/transforms";
 
 test("Transforms simple ROT-13 (by default)", t => {

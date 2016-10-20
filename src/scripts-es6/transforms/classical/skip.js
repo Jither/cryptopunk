@@ -1,5 +1,5 @@
-import { Transform, TransformError } from "./transforms";
-import { coprime, mod } from "../cryptopunk.utils";
+import { Transform, TransformError } from "../transforms";
+import { coprime, mod } from "../../cryptopunk.utils";
 
 class SkipEncryptTransform extends Transform
 {

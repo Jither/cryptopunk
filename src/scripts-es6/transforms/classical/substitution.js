@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "./transforms";
+import { Transform, TransformError } from "../transforms";
 
 class SubstitutionTransform extends Transform
 {

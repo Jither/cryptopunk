@@ -135,18 +135,28 @@ class KeccakBaseTransform extends Transform
 		options = Object.assign({}, this.defaults, options);
 
 		const capacity = options.capacity;
+		// "The rate r is a positive integer that is strictly less than the width b [1600]"
+		// "The capacity, denoted by c, is the positive integer b - r. Thus, r + c = b."
+		// It follows that the capacity must also be 0 < c < 1600. And r = b - c
+		if (capacity <= 0 || capacity >= 1600)
+		{
+			throw new TransformError(`Capacity must be > 0 and < 1600. Was: ${capacity}`);
+		}
+
 		if (capacity % 8 !== 0)
 		{
 			throw new TransformError(`Capacity must be a multiple of 8. Was: ${capacity}`);
 		}
+
 		if (options.length % 8 !== 0)
 		{
 			throw new TransformError(`Length must be a multiple of 8. Was: ${options.length}`);
 		}
-		// TODO: Check ranges of rate/capacity/suffix
+
 		const rate = 1600 - capacity;
 		const rateInBytes = rate / 8;
 		const suffix = options.suffix;
+
 		let remainingOutput = options.length / 8;
 
 		const state = new Uint8Array(200);
@@ -161,7 +171,7 @@ class KeccakBaseTransform extends Transform
 			blockSize = remainingInput < rateInBytes ? remainingInput : rateInBytes;
 			for (let i = 0; i < blockSize; i++)
 			{
-				state[i] ^= bytes[i];
+				state[i] ^= input[i];
 			}
 			position += blockSize;
 			remainingInput -= blockSize;
@@ -173,6 +183,7 @@ class KeccakBaseTransform extends Transform
 			}
 		}
 
+		// Add suffix bits
 		state[blockSize] ^= suffix;
 
 		if (((suffix & 0x80) !== 0) && (blockSize === rateInBytes - 1))
@@ -203,16 +214,15 @@ class KeccakBaseTransform extends Transform
 	}
 }
 
-// TODO: Check parameters
 class KeccakTransform extends KeccakBaseTransform
 {
 	constructor()
 	{
 		super(1024, 512, 0x01);
 		this
-			.addOption("capacity", "Capacity", 1024)
-			.addOption("length", "Length", 512)
-			.addOption("suffix", "Suffix", 0x01);
+			.addOption("capacity", "Capacity", 1024, { min: 8, max: 1592, step: 8 })
+			.addOption("length", "Length", 512, { min: 0, step: 8 })
+			.addOption("suffix", "Suffix", 0x01, { min: 0, max: 255 });
 	}
 }
 

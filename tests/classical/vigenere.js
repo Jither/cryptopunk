@@ -1,5 +1,5 @@
 import test from "ava";
-import { VigenereEncryptTransform, VigenereDecryptTransform } from "transforms/vigenere";
+import { VigenereEncryptTransform, VigenereDecryptTransform } from "transforms/classical/vigenere";
 import { TransformError } from "transforms/transforms";
 
 test("Encrypts Vigenere", t => {

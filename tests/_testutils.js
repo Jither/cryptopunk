@@ -22,6 +22,14 @@ function testAsciiHash(t, transformType, expectedHex, input, ...rest)
 	t.deepEqual(tf.transform(bytesInput, ...rest), expected);
 }
 
+function testBytesHash(t, transformType, expectedHex, inputHex, ...rest)
+{
+	const expected = hexToBytes(expectedHex);
+	const bytesInput = hexToBytes(inputHex);
+	const tf = new transformType();
+	t.deepEqual(tf.transform(bytesInput, ...rest), expected);
+}
+
 function testHandlesEmptyString(t, transformType)
 {
 	const tf = new transformType();
@@ -41,6 +49,7 @@ export {
 	testStringToBytes,
 	testBytesToString,
 	testAsciiHash,
+	testBytesHash,
 	testHandlesEmptyString,
 	testHandlesEmptyArray
 };

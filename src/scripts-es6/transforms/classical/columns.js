@@ -1,5 +1,5 @@
-import { Transform, TransformError } from "./transforms";
-import { removeWhiteSpace } from "../cryptopunk.utils";
+import { Transform, TransformError } from "../transforms";
+import { removeWhiteSpace } from "../../cryptopunk.utils";
 
 class ColumnarTranspositionEncryptTransform extends Transform
 {

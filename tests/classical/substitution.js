@@ -1,5 +1,5 @@
 import test from "ava";
-import { SimpleSubstitutionTransform } from "transforms/substitution";
+import { SimpleSubstitutionTransform } from "transforms/classical/substitution";
 import { TransformError } from "transforms/transforms";
 
 test("Does simple substitution (default Atbash)", t => {
