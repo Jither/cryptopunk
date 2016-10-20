@@ -22,7 +22,7 @@ function testAsciiHash(t, transformType, expectedHex, input, ...rest)
 	t.deepEqual(tf.transform(bytesInput, ...rest), expected);
 }
 
-function testBytesHash(t, transformType, expectedHex, inputHex, ...rest)
+function testBytesToBytes(t, transformType, expectedHex, inputHex, ...rest)
 {
 	const expected = hexToBytes(expectedHex);
 	const bytesInput = hexToBytes(inputHex);
@@ -48,8 +48,9 @@ function testHandlesEmptyArray(t, transformType)
 export {
 	testStringToBytes,
 	testBytesToString,
+	testBytesToBytes,
 	testAsciiHash,
-	testBytesHash,
+	testBytesToBytes as testBytesHash,
 	testHandlesEmptyString,
 	testHandlesEmptyArray
 };

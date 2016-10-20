@@ -27,6 +27,7 @@ import * as stringManipulation from "./transforms/string-manipulation";
 import * as substitution from "./transforms/classical/substitution";
 import * as unicode from "./transforms/unicode";
 import * as vigenere from "./transforms/classical/vigenere";
+import * as xor from "./transforms/modern/xor";
 import * as propertyPanel from "./cryptopunk.property-panel";
 
 import * as generators from "./transforms/generators";
@@ -183,7 +184,10 @@ class TransformNodeController
 	{
 		this.node.error = !!errorMessage;
 		this.node.value = output;
-		this.node.outputs[0].value = output;
+		if (this.node.outputs.length > 0)
+		{
+			this.node.outputs[0].value = output;
+		}
 		if (errorMessage)
 		{
 			this.node.contentElement.innerText = errorMessage;
@@ -336,6 +340,9 @@ addPaletteItem(vigenere.VigenereEncryptTransform, "Vigènere", "Vigènere Encryp
 
 addPaletteCategory("Mechanical");
 addPaletteItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
+
+addPaletteCategory("Modern two-way");
+addPaletteItem(xor.XorTransform, "XOR");
 
 addPaletteCategory("Modern decryption");
 addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");

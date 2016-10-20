@@ -4,6 +4,8 @@ import { bytesToInt32sBE, } from "../../cryptopunk.utils";
 // Pure implementation of Rijndael (AES) allowing
 // experimentation without modes of operation etc.
 
+// TODO: Larger block sizes (192, 256)
+
 const KEY_SIZES = [
 	128,
 	192,
