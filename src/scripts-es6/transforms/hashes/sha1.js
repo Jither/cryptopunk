@@ -38,11 +38,7 @@ class Sha1Transform extends MdBaseTransform
 				x[index] = extension;
 			}
 
-			const aa = a;
-			const bb = b;
-			const cc = c;
-			const dd = d;
-			const ee = e;
+			const [aa, bb, cc, dd, ee] = [a, b, c, d, e];
 
 			for (let index = 0; index < x.length; index++)
 			{

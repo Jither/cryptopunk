@@ -68,10 +68,8 @@ class Md5Transform extends MdBaseTransform
 
 		for (let index = 0; index < x.length; index += 16)
 		{
-			const aa = a;
-			const bb = b;
-			const cc = c;
-			const dd = d;
+			// TODO: Use subarray rather than index + 0
+			const [aa, bb, cc, dd] = [a, b, c, d];
 
 			a = f(a, b, c, d, x[index +  0], S11, 0xd76aa478);
 			d = f(d, a, b, c, x[index +  1], S12, 0xe8c7b756);
