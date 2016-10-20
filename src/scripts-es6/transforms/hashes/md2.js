@@ -26,7 +26,7 @@ class Md2Transform extends Transform
 	{
 		super();
 		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Output");
+			.addOutput("bytes", "Hash");
 	}
 
 	clearArray(arr, value)

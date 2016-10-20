@@ -7,7 +7,7 @@ class MdBaseTransform extends Transform
 	{
 		super();
 		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Output");
+			.addOutput("bytes", "Hash");
 	}
 
 	padMessage(bytes, wordsize)

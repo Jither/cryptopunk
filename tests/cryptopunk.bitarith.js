@@ -1,5 +1,5 @@
 import test from "ava";
-import { add64, and64, not64, ror64, shr64, xor64 } from "cryptopunk.bitarith";
+import { add64, and64, not64, rol64, ror64, shr64, xor64 } from "cryptopunk.bitarith";
 
 function assert64(t, action, expectedHex, ... termsHex)
 {
@@ -55,6 +55,17 @@ test("ror64 does ROR(40) correctly"            , assert64, ror64, "6789abcdef012
 test("ror64 does ROR(44) correctly"            , assert64, ror64, "56789abcdef01234", "0123456789abcdef", 44);
 test("ror64 does ROR(48) correctly"            , assert64, ror64, "456789abcdef0123", "0123456789abcdef", 48);
 test("ror64 does ROR(0 ) correctly"            , assert64, ror64, "0123456789abcdef", "0123456789abcdef", 0);
+
+test("rol64 does ROL(16) correctly"            , assert64, rol64, "456789abcdef0123", "0123456789abcdef", 16);
+test("rol64 does ROL(20) correctly"            , assert64, rol64, "56789abcdef01234", "0123456789abcdef", 20);
+test("rol64 does ROL(24) correctly"            , assert64, rol64, "6789abcdef012345", "0123456789abcdef", 24);
+test("rol64 does ROL(28) correctly"            , assert64, rol64, "789abcdef0123456", "0123456789abcdef", 28);
+test("rol64 does ROL(32) correctly"            , assert64, rol64, "89abcdef01234567", "0123456789abcdef", 32);
+test("rol64 does ROL(36) correctly"            , assert64, rol64, "9abcdef012345678", "0123456789abcdef", 36);
+test("rol64 does ROL(40) correctly"            , assert64, rol64, "abcdef0123456789", "0123456789abcdef", 40);
+test("rol64 does ROL(44) correctly"            , assert64, rol64, "bcdef0123456789a", "0123456789abcdef", 44);
+test("rol64 does ROL(48) correctly"            , assert64, rol64, "cdef0123456789ab", "0123456789abcdef", 48);
+test("rol64 does ROL(0 ) correctly"            , assert64, rol64, "0123456789abcdef", "0123456789abcdef", 0);
 
 test("shr64 does SHR(16) correctly"            , assert64, shr64, "00000123456789ab", "0123456789abcdef", 16);
 test("shr64 does SHR(20) correctly"            , assert64, shr64, "000000123456789a", "0123456789abcdef", 20);

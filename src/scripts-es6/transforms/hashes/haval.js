@@ -121,7 +121,7 @@ class HavalTransform extends Transform
 	{
 		super();
 		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Output")
+			.addOutput("bytes", "Hash")
 			.addOption("passes", "Passes", 5, { type: "select", values: PASSES_VALUES })
 			.addOption("length", "Length", 128, { type: "select", values: LENGTH_VALUES });
 	}

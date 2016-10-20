@@ -80,6 +80,34 @@ function not64(term)
 	return { hi: ~term.hi, lo: ~term.lo };
 }
 
+function rol64(val, count)
+{
+	const result = {};
+	if (count === 0)
+	{
+		result.hi = val.hi;
+		result.lo = val.lo;
+	}
+	else if (count === 32)
+	{
+		// Javascript can shift at most 31 bits
+		// Besides, this is simpler:
+		result.hi = val.lo;
+		result.lo = val.hi;
+	}
+	else if (count < 32)
+	{
+		result.hi = (val.hi << count) | ((val.lo >>> (32 - count)) & 0xffffffff);
+		result.lo = (val.lo << count) | ((val.hi >>> (32 - count)) & 0xffffffff);
+	}
+	else
+	{
+		result.hi = (val.lo << (count - 32)) | ((val.hi >>> (64 - count)) & 0xffffffff);
+		result.lo = (val.hi << (count - 32)) | ((val.lo >>> (64 - count)) & 0xffffffff);
+	}
+	return result;
+}
+
 function ror64(val, count)
 {
 	const result = {};
@@ -149,6 +177,7 @@ export {
 	add64,
 	and64,
 	not64,
+	rol64,
 	ror64,
 	xor64,
 	shr64
