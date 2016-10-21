@@ -45,7 +45,14 @@ function testHandlesEmptyArray(t, transformType)
 	t.is(tf.transform(new Uint8Array()), "");
 }
 
+function prepareTitle(prefix, title, input)
+{
+	title = title.replace("{0}", input);
+	return `${prefix} ${title}`;
+}
+
 export {
+	prepareTitle,
 	testStringToBytes,
 	testBytesToString,
 	testBytesToBytes,

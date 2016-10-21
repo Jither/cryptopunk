@@ -307,6 +307,7 @@ addPaletteItem(md2.Md2Transform, "MD2", "MD2");
 addPaletteItem(md4.Md4Transform, "MD4", "MD4");
 addPaletteItem(md5.Md5Transform, "MD5", "MD5");
 addPaletteItem(ripemd160.RipeMd160Transform, "RIPEMD-160", "RIPEMD-160");
+addPaletteItem(ripemd160.RipeMd320Transform, "RIPEMD-320", "RIPEMD-320");
 addPaletteItem(sha1.Sha0Transform, "SHA-0", "SHA-0");
 addPaletteItem(sha1.Sha1Transform, "SHA-1", "SHA-1");
 addPaletteItem(sha256.Sha224Transform, "SHA-224", "SHA-224");

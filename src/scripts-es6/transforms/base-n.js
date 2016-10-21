@@ -1,41 +1,63 @@
 import { Transform, TransformError } from "./transforms";
 
-class BaseNToBytesTransform extends Transform
+class BaseNBaseTransform extends Transform
 {
-	constructor(usesPadding)
+	constructor(alphabet)
 	{
 		super();
-		this.usesPadding = usesPadding;
+
+		this.alphabet = alphabet;
+		this.radix = this.alphabet.length;
+		this.bitsPerDigit = Math.log2(this.radix);
+		this.padCharCount = 8;
+		this.padByteCount = this.bitsPerDigit;
+		while (this.padByteCount % 2 === 0)
+		{
+			this.padCharCount >>>= 1;
+			this.padByteCount >>>= 1;
+		}
+		// If bits per digit is an integer, the radix is "bit aligned"
+		this.bitAligned = this.bitsPerDigit % 1 === 0;
+	}
+}
+
+class BaseNToBytesTransform extends BaseNBaseTransform
+{
+	constructor(alphabet, padChar, discardLeadingZeroes)
+	{
+		super(alphabet);
+
+		this.discardLeadingZeroes = discardLeadingZeroes;
 
 		this.addInput("string", "String")
 			.addOutput("bytes", "Bytes");
-		if (this.usesPadding)
+		
+		if (padChar != null)
 		{
+			this.usesPadding = true;
+			this.padChar = padChar;
 			this.addOption("inferPadding", "Infer padding", true);
 		}
 	}
 
-	inferPadding(str)
-	{
-		const missingPadding = this.padCharCount - str.length % this.padCharCount;
-		for (let i = 0; i < missingPadding; i++)
-		{
-			str += this.padChar;
-		}
-		return str;
-	}
-
-	strToNibbles(str)
+	strToDigits(str, options)
 	{
 		let pad = 0;
-		const result = str.split("").map(c =>
+		// Check for padding (e.g. '=' at end of base-64)
+		for (let i = str.length - 1; i >= 0; i--)
 		{
-			if (c === this.padChar)
+			if (str.charAt(i) !== this.padChar)
 			{
-				pad++;
-				return 0;
+				break;
 			}
+			pad++;
+		}
 
+		// Allocate digits array without padding - we'll add it later
+		let result = new Array(str.length - pad);
+		for (let i = 0; i < result.length; i++)
+		{
+			let c = str.charAt(i);
 			if (this.ignoreCase)
 			{
 				c = c.toLowerCase();
@@ -46,8 +68,20 @@ class BaseNToBytesTransform extends Transform
 			{
 				throw new TransformError(`Character '${c}'' is not valid in this base.`);
 			}
-			return index;
-		});
+			result[i] = index;
+		}
+
+		// Padding may be inferred - if so, it will override any user-entered padding
+		if (this.usesPadding && options.inferPadding)
+		{
+			pad = (this.padCharCount - result.length % this.padCharCount) % this.padCharCount;
+		}
+
+		// Add padding digits, if any
+		for (let i = 0; i < pad; i++)
+		{
+			result.push(0);
+		}
 
 		return [result, pad];
 	}
@@ -56,69 +90,77 @@ class BaseNToBytesTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		// For now, no predetermined length, so no TypedArray
-		const result = [];
-
 		if (str === "")
 		{
 			return new Uint8Array();
 		}
 
 		const alphabet = this.alphabet;
-		const base = alphabet.length;
+		const radix = this.radix;
 
-		if (this.usesPadding && options.inferPadding)
-		{
-			str = this.inferPadding(str);
-		}
+		const [digits, pad] = this.strToDigits(str, options);
 
-		const [nibbles, pad] = this.strToNibbles(str);
+		const resultLength = Math.ceil(digits.length * this.bitsPerDigit / 8);
+		let result = new Uint8Array(resultLength);
 
-		let length = nibbles.length;
-		do
+		let digitsRemaining = digits.length;
+		let resultPosition = result.length - 1;
+		while (digitsRemaining > 0)
 		{
 			let value = 0;
 			let position = 0;
-			for (let i = 0; i < length; i++)
+			for (let i = 0; i < digitsRemaining; i++)
 			{
-				value = value * base + nibbles[i];
+				value = value * radix + digits[i];
 				if (value >= 256)
 				{
-					nibbles[position++] = Math.floor(value / 256);
+					digits[position++] = Math.floor(value / 256);
 					value %= 256;
 				}
 				else if (position > 0)
 				{
-					nibbles[position++] = 0;
+					digits[position++] = 0;
 				}
 			}
-			length = position;
-			result.unshift(value);
+			digitsRemaining = position;
+			result[resultPosition--] = value;
 		}
-		while (length > 0);
+
+		let resultStart = 0;
+		let resultEnd = result.length;
+		if (this.discardLeadingZeroes)
+		{
+			while (resultStart < result.length && result[resultStart] === 0)
+			{
+				resultStart++;
+			}
+		}
 
 		if (this.usesPadding)
 		{
-			const padBytes = Math.ceil(pad * this.padByteCount / this.padCharCount);
-			result.splice(result.length - padBytes);
+			const padBytes = Math.ceil(pad * this.bitsPerDigit / 8);
+			resultEnd -= padBytes;
 		}
 
-		// TODO: Conversion for now - get this to work with Uint8Array internally
-		return Uint8Array.from(result);
+		return result.subarray(resultStart, resultEnd);
 	}
 }
 
-class BytesToBaseNTransform extends Transform
+class BytesToBaseNTransform extends BaseNBaseTransform
 {
-	constructor(usesPadding)
+	constructor(alphabet, padChar, discardLeadingZeroes)
 	{
-		super();
-		this.usesPadding = usesPadding;
+		super(alphabet);
+		
+		this.discardLeadingZeroes = discardLeadingZeroes;
+
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String");
 		
-		if (this.usesPadding)
+		if (padChar != null)
 		{
+			this.usesPadding = true;
+			this.padChar = padChar;
 			this.addOption("pad", "Pad", true);
 		}
 	}
@@ -133,6 +175,7 @@ class BytesToBaseNTransform extends Transform
 		}
 
 		let pad = 0;
+		const radix = this.radix;
 		if (this.usesPadding)
 		{
 			pad = (this.padByteCount - (bytes.length % this.padByteCount)) % this.padByteCount;
@@ -143,12 +186,10 @@ class BytesToBaseNTransform extends Transform
 		buffer.set(bytes);
 
 		let result = "";
-		const base = this.alphabet.length;
 		const byteLength = buffer.length;
 
 		let startIndex = 0;
-
-		// FIXME: Handle trailing 0 bytes
+		let bitPosition = 0;
 		while (startIndex < byteLength)
 		{
 			let remainder = 0;
@@ -156,34 +197,39 @@ class BytesToBaseNTransform extends Transform
 			for (let index = startIndex; index < byteLength; index++)
 			{
 				const dividend = buffer[index] + (remainder * 256);
-				const quotient = Math.floor(dividend / base);
-				remainder = dividend % base;
+				const quotient = Math.floor(dividend / radix);
+				remainder = dividend % radix;
 				buffer[index] = quotient;
 			}
 			result = this.alphabet[remainder] + result;
 
-			// In the next iteration, skip all indices that have ended up zero:
-			startIndex = 0;
-			while (startIndex < byteLength && buffer[startIndex] === 0)
+			bitPosition += this.bitsPerDigit;
+			if (bitPosition >= 8)
 			{
+				bitPosition -= 8;
 				startIndex++;
 			}
 		}
 
 		if (this.usesPadding)
 		{
-			// Remove "a" (0) padding
-			const padChars = Math.floor(pad * this.padCharCount / this.padByteCount);
-			result = result.substr(0, result.length - padChars);
+			// Remove "A" (0) padding
+			const padCount = Math.floor(pad * 8 / this.bitsPerDigit);
+			result = result.substr(0, result.length - padCount);
 
 			// Add "=" padding depending on option
 			if (options.pad)
 			{
-				for (let i = 0; i < padChars; i++)
+				for (let i = 0; i < padCount; i++)
 				{
 					result += this.padChar;
 				}
 			}
+		}
+
+		if (this.discardLeadingZeroes)
+		{
+			result = result.replace(/^0+/, "");
 		}
 		return result;
 	}
@@ -196,8 +242,7 @@ class OctalToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(false);
-		this.alphabet = "01234567";
+		super("01234567", null, true);
 	}
 }
 
@@ -205,8 +250,7 @@ class BytesToOctalTransform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(false);
-		this.alphabet = "01234567";
+		super("01234567", null, true);
 	}
 }
 
@@ -214,8 +258,7 @@ class DecimalToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(false);
-		this.alphabet = "0123456789";
+		super("0123456789", null, true);
 	}
 }
 
@@ -223,8 +266,7 @@ class BytesToDecimalTransform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(false);
-		this.alphabet = "0123456789";
+		super("0123456789", null, true);
 	}
 }
 
@@ -232,11 +274,7 @@ class Base32ToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "abcdefghijklmnopqrstuvwxyz234567";
-		this.padChar = "=";
-		this.padCharCount = 8;
-		this.padByteCount = 5;
+		super("abcdefghijklmnopqrstuvwxyz234567", "=");
 		this.ignoreCase = true;
 	}
 }
@@ -245,11 +283,7 @@ class Base32HexToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "0123456789abcdefghijklmnopqrstuv";
-		this.padChar = "=";
-		this.padCharCount = 8;
-		this.padByteCount = 5;
+		super("0123456789abcdefghijklmnopqrstuv", "=");
 		this.ignoreCase = true;
 	}
 }
@@ -258,11 +292,7 @@ class Base64ToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		this.padChar = "=";
-		this.padCharCount = 4;
-		this.padByteCount = 3;
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", "=");
 		this.ignoreCase = false;
 	}
 }
@@ -271,11 +301,7 @@ class Base64UrlToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-		this.padChar = "=";
-		this.padCharCount = 4;
-		this.padByteCount = 3;
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", "=");
 		this.ignoreCase = false;
 	}
 }
@@ -284,11 +310,7 @@ class BytesToBase32Transform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "abcdefghijklmnopqrstuvwxyz234567";
-		this.padChar = "=";
-		this.padCharCount = 8;
-		this.padByteCount = 5;
+		super("abcdefghijklmnopqrstuvwxyz234567", "=");
 		this.ignoreCase = true;
 	}
 }
@@ -297,11 +319,7 @@ class BytesToBase32HexTransform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "0123456789abcdefghijklmnopqrstuv";
-		this.padChar = "=";
-		this.padCharCount = 8;
-		this.padByteCount = 5;
+		super("0123456789abcdefghijklmnopqrstuv", "=");
 		this.ignoreCase = true;
 	}
 }
@@ -310,11 +328,7 @@ class BytesToBase64Transform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-		this.padChar = "=";
-		this.padCharCount = 4;
-		this.padByteCount = 3;
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", "=");
 		this.ignoreCase = false;
 	}
 }
@@ -323,30 +337,10 @@ class BytesToBase64UrlTransform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super(true);
-		this.alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-		this.padChar = "=";
-		this.padCharCount = 4;
-		this.padByteCount = 3;
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", "=");
 		this.ignoreCase = false;
 	}
 }
-
-/*
-class BytesToBaseN
-{
-	constructor()
-	{
-		this.inputs = ["bytes"];
-		this.outputs = ["str"];
-	}
-
-	transform(bytes, options)
-	{
-
-	}
-}
-*/
 
 export {
 	BytesToOctalTransform,
