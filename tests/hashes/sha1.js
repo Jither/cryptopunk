@@ -17,7 +17,7 @@ doTest0("libmd test vector #2" , "0164b8a914cd2a5e74c4f7ff082c4d97f1edf880", "ab
 doTest0("libmd test vector #3" , "c1b0f222d150ebb9aa36a40cafdc8bcbed830b14", "message digest");
 doTest0("libmd test vector #4" , "b40ce07a430cfd3c033039b9fe9afec95dc1bdcd", "abcdefghijklmnopqrstuvwxyz");
 doTest0("libmd test vector #5" , "79e966f7a3a990df33e40e3d7f8f18d2caebadfa", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
-doTest0("libmd test vector #6" , "4aa29d14d171522ece47bee8957e35a41f3e9cff", "12345678901234567890123456789012345678901234567890123456789012345678901234567890");
+doTest0("libmd test vector #6" , "4aa29d14d171522ece47bee8957e35a41f3e9cff", "1234567890".repeat(8));
 
 doTest1("NESSIE test vector #0", "da39a3ee5e6b4b0d3255bfef95601890afd80709", "");
 doTest1("NESSIE test vector #1", "86f7e437faa5a7fce15d1ddcb9eaeaea377667b8", "a");
