@@ -132,45 +132,39 @@ class BytesToBaseNTransform extends Transform
 			return "";
 		}
 
-		const arrPad = new Uint8Array();
-		let pad;
+		let pad = 0;
 		if (this.usesPadding)
 		{
 			pad = (this.padByteCount - (bytes.length % this.padByteCount)) % this.padByteCount;
-			if (pad > 0 && pad < this.padByteCount)
-			{
-				for (let i = 0; i < pad; i++)
-				{
-					arrPad.push(0);
-				}
-			}
 		}
 		// Combined: Add padding, but even if there isn't any, clone the bytes argument - we're mutating it below,
 		// and don't want the parameter of the caller to change
-		bytes = bytes.concat(arrPad);
+		const buffer = new Uint8Array(bytes.length + pad);
+		buffer.set(bytes);
 
 		let result = "";
 		const base = this.alphabet.length;
-		const byteLength = bytes.length;
+		const byteLength = buffer.length;
 
 		let startIndex = 0;
 
+		// FIXME: Handle trailing 0 bytes
 		while (startIndex < byteLength)
 		{
 			let remainder = 0;
 
 			for (let index = startIndex; index < byteLength; index++)
 			{
-				const dividend = bytes[index] + (remainder * 256);
+				const dividend = buffer[index] + (remainder * 256);
 				const quotient = Math.floor(dividend / base);
 				remainder = dividend % base;
-				bytes[index] = quotient;
+				buffer[index] = quotient;
 			}
 			result = this.alphabet[remainder] + result;
 
 			// In the next iteration, skip all indices that have ended up zero:
 			startIndex = 0;
-			while (startIndex < byteLength && bytes[startIndex] === 0)
+			while (startIndex < byteLength && buffer[startIndex] === 0)
 			{
 				startIndex++;
 			}
