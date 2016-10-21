@@ -1,6 +1,31 @@
 import { Transform } from "../transforms";
 import { int32sToBytesLE, int32sToBytesBE } from "../../cryptopunk.utils";
 
+const CONSTANTS = {
+	SQRT2_DIV4:  0x5a827999, // 2^^30 * SQRT(2)
+	SQRT3_DIV4:  0x6ed9eba1, // 2^^30 * SQRT(3)
+	SQRT5_DIV4:  0x8f1bbcdc, // 2^^30 * SQRT(5)
+	SQRT7_DIV4:  0xa953fd4e, // 2^^30 * SQRT(7)
+	SQRT10_DIV4: 0xca62c1d6, // 2^^30 * SQRT(10)
+
+	CBRT2_DIV4:  0x50a28be6, // 2^^30 * CBRT(2)
+	CBRT3_DIV4:  0x5c4dd124, // 2^^30 * CBRT(3)
+	CBRT5_DIV4:  0x6d703ef3, // 2^^30 * CBRT(5)
+	CBRT7_DIV4:  0x7a6d76e9, // 2^^30 * CBRT(7)
+
+	INIT_1_67 :  0x67452301, // Little Endian 01234567
+	INIT_2_EF :  0xefcdab89, // Little Endian 89abcdef
+	INIT_3_98 :  0x98badcfe, // Little Endian fedcba98
+	INIT_4_10 :  0x10325476, // Little Endian 76543210
+	INIT_5_C3 :  0xc3d2e1f0, // cdef 3210 interleaved
+
+	INIT_1_76 :  0x76543210, // Big Endian version of INIT_4
+	INIT_2_FE :  0xfedcba98, // Big Endian version of INIT_3
+	INIT_3_89 :  0x89abcdef, // Big Endian version of INIT_2
+	INIT_4_01 :  0x01234567, // Big Endian version of INIT_1
+	INIT_5_3C :  0x3c2d1e0f  // Nibbles switched version of INIT_5
+};
+
 class MdBaseTransform extends Transform
 {
 	constructor()
@@ -65,5 +90,6 @@ class MdBaseTransform extends Transform
 }
 
 export {
-	MdBaseTransform
+	MdBaseTransform,
+	CONSTANTS
 };

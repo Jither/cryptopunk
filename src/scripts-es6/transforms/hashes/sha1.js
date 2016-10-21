@@ -1,4 +1,4 @@
-import { MdBaseTransform } from "./mdbase";
+import { MdBaseTransform, CONSTANTS } from "./mdbase";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -15,12 +15,11 @@ class Sha1Transform extends MdBaseTransform
 		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
 
-		// Little endian heritage from MD4/5:
-		let a = 0x67452301;
-		let b = 0xefcdab89;
-		let c = 0x98badcfe;
-		let d = 0x10325476;
-		let e = 0xc3d2e1f0;
+		let a = CONSTANTS.INIT_1_67;
+		let b = CONSTANTS.INIT_2_EF;
+		let c = CONSTANTS.INIT_3_98;
+		let d = CONSTANTS.INIT_4_10;
+		let e = CONSTANTS.INIT_5_C3;
 
 		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 16)
 		{
@@ -46,22 +45,22 @@ class Sha1Transform extends MdBaseTransform
 				if (index < 20)
 				{
 					f = (b & c) ^ (~b & d);
-					k = 0x5a827999;
+					k = CONSTANTS.SQRT2_DIV4;
 				}
 				else if (index < 40)
 				{
 					f = b ^ c ^ d;
-					k = 0x6ed9eba1;
+					k = CONSTANTS.SQRT3_DIV4;
 				}
 				else if (index < 60)
 				{
 					f = (b & c) ^ (b & d) ^ (c & d);
-					k = 0x8f1bbcdc;
+					k = CONSTANTS.SQRT5_DIV4;
 				}
 				else if (index < 80)
 				{
 					f = b ^ c ^ d;
-					k = 0xca62c1d6;
+					k = CONSTANTS.SQRT10_DIV4;
 				}
 
 				const temp = add(rol(a, 5), f, e, k, x[index]);

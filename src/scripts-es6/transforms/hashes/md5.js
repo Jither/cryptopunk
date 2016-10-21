@@ -1,4 +1,4 @@
-import { MdBaseTransform } from "./mdbase";
+import { MdBaseTransform, CONSTANTS } from "./mdbase";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -61,10 +61,10 @@ class Md5Transform extends MdBaseTransform
 	{
 		const x = bytesToInt32sLE(this.padMessage(bytes, 32));
 
-		let a = 0x67452301; // Still little endian (of 0x01234567 etc.)
-		let b = 0xefcdab89;
-		let c = 0x98badcfe;
-		let d = 0x10325476;
+		let a = CONSTANTS.INIT_1_67;
+		let b = CONSTANTS.INIT_2_EF;
+		let c = CONSTANTS.INIT_3_98;
+		let d = CONSTANTS.INIT_4_10;
 
 		for (let index = 0; index < x.length; index += 16)
 		{
