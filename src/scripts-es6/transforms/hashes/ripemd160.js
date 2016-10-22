@@ -117,8 +117,8 @@ class RipeMd160Transform extends MdBaseTransform
 		for (let index = 0; index < x.length; index += 16)
 		{
 			// TODO: Use subarray rather than index + 0
-			let [a, b, c, d, e] = [a0, b0, c0, d0, e0];
-			let [aa, bb, cc, dd, ee] = [aa0, bb0, cc0, dd0, ee0];
+			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,  e =  e0,
+				aa = aa0, bb = bb0, cc = cc0, dd = dd0, ee = ee0;
 
 			let f_left, f_right, k_left, k_right;
 			for (let step = 0; step < 80; step++)

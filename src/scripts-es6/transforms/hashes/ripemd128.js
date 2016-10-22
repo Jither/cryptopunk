@@ -5,8 +5,8 @@ import { add, rol } from "../../cryptopunk.bitarith";
 // RIPEMD-160 vs 128: Last constant, left and right are simply left out
 const K_LEFT = [
 	0x00000000,
-	CONSTANTS.SQRT2_DIV4, // 2^^30 * SQRT(2)
-	CONSTANTS.SQRT3_DIV4, // 2^^30 * SQRT(3)
+	CONSTANTS.SQRT2_DIV4,
+	CONSTANTS.SQRT3_DIV4,
 	CONSTANTS.SQRT5_DIV4
 ];
 
@@ -107,8 +107,8 @@ class RipeMd128Transform extends MdBaseTransform
 		for (let index = 0; index < x.length; index += 16)
 		{
 			// TODO: Use subarray rather than index + 0
-			let [a, b, c, d] = [a0, b0, c0, d0];
-			let [aa, bb, cc, dd] = [aa0, bb0, cc0, dd0];
+			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,
+				aa = aa0, bb = bb0, cc = cc0, dd = dd0;
 
 			let f_left, f_right, k_left, k_right;
 
@@ -121,6 +121,7 @@ class RipeMd128Transform extends MdBaseTransform
 				k_left = K_LEFT[round];
 				k_right = K_RIGHT[round];
 
+				// RIPEMD-16 vs 128: No ROL of c/cc when assigning to d/dd
 				let temp = f_left(a, b, c, d, x[index + R_LEFT[step]], S_LEFT[step], k_left);
 				a = d;
 				d = c;

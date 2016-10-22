@@ -49,6 +49,7 @@ class Sha256Transform extends MdBaseTransform
 		{
 			// Copy chunk to new array:
 			const x = padded.slice(chunkindex, chunkindex + 16);
+			
 			// Extend from 16 to 64 (d)words
 			for (let index = 16; index < 64; index++)
 			{
@@ -59,20 +60,13 @@ class Sha256Transform extends MdBaseTransform
 				x[index] = add(x[index - 7], s0, x[index - 16], s1);
 			}
 
-			const aa = a;
-			const bb = b;
-			const cc = c;
-			const dd = d;
-			const ee = e;
-			const ff = f;
-			const gg = g;
-			const hh = h;
+			const aa = a, bb = b, cc = c, dd = d, ee = e, ff = f, gg = g, hh = h;
 
-			for (let index = 0; index < x.length; index++)
+			for (let step = 0; step < x.length; step++)
 			{
 				const S1 = ror(e, 6) ^ ror(e, 11) ^ ror(e, 25);
 				const ch = (e & f) ^ (~e & g);
-				const temp1 = add(h, S1, ch, ROUND_CONSTANTS[index], x[index]);
+				const temp1 = add(h, S1, ch, ROUND_CONSTANTS[step], x[step]);
 				const S0 = ror(a, 2) ^ ror(a, 13) ^ ror(a, 22);
 				const maj = (a & b) ^ (a & c) ^ (b & c);
 				const temp2 = add(S0, maj);

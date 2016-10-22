@@ -25,6 +25,7 @@ class Sha1Transform extends MdBaseTransform
 		{
 			// Copy chunk to new array:
 			const x = padded.slice(chunkindex, chunkindex + 16);
+			
 			// Extend from 16 to 80 (d)words
 			for (let index = 16; index < 80; index++)
 			{
@@ -37,33 +38,33 @@ class Sha1Transform extends MdBaseTransform
 				x[index] = extension;
 			}
 
-			const [aa, bb, cc, dd, ee] = [a, b, c, d, e];
+			const aa = a, bb = b, cc = c, dd = d, ee = e;
 
-			for (let index = 0; index < x.length; index++)
+			for (let step = 0; step < x.length; step++)
 			{
 				let k, f;
-				if (index < 20)
+				if (step < 20)
 				{
 					f = (b & c) ^ (~b & d);
 					k = CONSTANTS.SQRT2_DIV4;
 				}
-				else if (index < 40)
+				else if (step < 40)
 				{
 					f = b ^ c ^ d;
 					k = CONSTANTS.SQRT3_DIV4;
 				}
-				else if (index < 60)
+				else if (step < 60)
 				{
 					f = (b & c) ^ (b & d) ^ (c & d);
 					k = CONSTANTS.SQRT5_DIV4;
 				}
-				else if (index < 80)
+				else if (step < 80)
 				{
 					f = b ^ c ^ d;
 					k = CONSTANTS.SQRT10_DIV4;
 				}
 
-				const temp = add(rol(a, 5), f, e, k, x[index]);
+				const temp = add(rol(a, 5), f, e, k, x[step]);
 				e = d;
 				d = c;
 				c = rol(b, 30);

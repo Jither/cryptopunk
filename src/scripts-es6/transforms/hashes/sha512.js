@@ -70,6 +70,7 @@ class Sha512Transform extends MdBaseTransform
 			{
 				x.push({ hi: padded[index], lo: padded[index + 1] });
 			}
+			
 			// Extend from 16 to 80 (q)words
 			for (let index = 16; index < 80; index++)
 			{
@@ -82,20 +83,13 @@ class Sha512Transform extends MdBaseTransform
 				x[index]  = add64(x7, s0, x16, s1);
 			}
 
-			const aa = a;
-			const bb = b;
-			const cc = c;
-			const dd = d;
-			const ee = e;
-			const ff = f;
-			const gg = g;
-			const hh = h;
+			const aa = a, bb = b, cc = c, dd = d, ee = e, ff = f, gg = g, hh = h;
 
-			for (let index = 0; index < x.length; index++)
+			for (let step = 0; step < x.length; step++)
 			{
 				const S1 = xor64(ror64(e, 14), ror64(e, 18), ror64(e, 41));
 				const ch = xor64(and64(e, f), and64(not64(e), g));
-				const temp1 = add64(h, S1, ch, { hi: ROUND_CONSTANTS[index * 2], lo: ROUND_CONSTANTS[index * 2 + 1] }, x[index]);
+				const temp1 = add64(h, S1, ch, { hi: ROUND_CONSTANTS[step * 2], lo: ROUND_CONSTANTS[step * 2 + 1] }, x[step]);
 				const S0 = xor64(ror64(a, 28), ror64(a, 34), ror64(a, 39));
 				const maj = xor64(and64(a, b), and64(a, c), and64(b, c));
 				const temp2 = add64(S0, maj);
