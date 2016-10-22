@@ -10,7 +10,7 @@ function doTest224(expectedHex, inputHex)
 		Sha3Transform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHA3-224" }
+		{ variant: "SHA3-224" }
 	);
 }
 
@@ -22,7 +22,7 @@ function doTest256(expectedHex, inputHex)
 		Sha3Transform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHA3-256" }
+		{ variant: "SHA3-256" }
 	);
 }
 
@@ -34,7 +34,7 @@ function doTest384(expectedHex, inputHex)
 		Sha3Transform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHA3-384" }
+		{ variant: "SHA3-384" }
 	);
 }
 
@@ -46,7 +46,7 @@ function doTest512(expectedHex, inputHex)
 		Sha3Transform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHA3-512" }
+		{ variant: "SHA3-512" }
 	);
 }
 
@@ -58,7 +58,7 @@ function doTestShake128(expectedHex, inputHex)
 		ShakeTransform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHAKE-128", length: 4096 }
+		{ variant: "SHAKE-128", length: 4096 }
 	);
 }
 
@@ -70,7 +70,7 @@ function doTestShake256(expectedHex, inputHex)
 		ShakeTransform, 
 		expectedHex, 
 		inputHex, 
-		{ instance: "SHAKE-256", length: 4096 }
+		{ variant: "SHAKE-256", length: 4096 }
 	);
 }
 

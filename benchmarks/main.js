@@ -73,12 +73,12 @@
 		runBench("Sha256Transform", "SHA-256");
 		runBench("Sha384Transform", "SHA-384");
 		runBench("Sha512Transform", "SHA-512");
-		runBench("Sha3Transform", "SHA3-224", { instance: "SHA3-224" });
-		runBench("Sha3Transform", "SHA3-256", { instance: "SHA3-256" });
-		runBench("Sha3Transform", "SHA3-384", { instance: "SHA3-384" });
-		runBench("Sha3Transform", "SHA3-512", { instance: "SHA3-512" });
-		runBench("ShakeTransform", "SHAKE-128", { instance: "SHAKE-128" });
-		runBench("ShakeTransform", "SHAKE-256", { instance: "SHAKE-256" });
+		runBench("Sha3Transform", "SHA3-224", { variant: "SHA3-224" });
+		runBench("Sha3Transform", "SHA3-256", { variant: "SHA3-256" });
+		runBench("Sha3Transform", "SHA3-384", { variant: "SHA3-384" });
+		runBench("Sha3Transform", "SHA3-512", { variant: "SHA3-512" });
+		runBench("ShakeTransform", "SHAKE-128", { variant: "SHAKE-128" });
+		runBench("ShakeTransform", "SHAKE-256", { variant: "SHAKE-256" });
 	}
 
 	document.getElementById("start").addEventListener("click", startClickListener);
