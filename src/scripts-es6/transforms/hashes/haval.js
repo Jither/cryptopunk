@@ -4,19 +4,10 @@ import { add } from "../../cryptopunk.bitarith";
 
 const HAVAL_VERSION = 1;
 
-const PASSES_VALUES = {
-	"3": 3,
-	"4": 4,
-	"5": 5
-};
-
-const LENGTH_VALUES = {
-	"128": 128,
-	"160": 160,
-	"192": 192,
-	"224": 224,
-	"256": 256
-};
+const PASSES_NAMES  = ["3", "4", "5"];
+const PASSES_VALUES = [3, 4, 5];
+const LENGTH_NAMES  = ["128", "160", "192", "224", "256"];
+const LENGTH_VALUES = [128, 160, 192, 224, 256];
 
 function f1(x6, x5, x4, x3, x2, x1, x0)
 {
@@ -122,11 +113,11 @@ class HavalTransform extends Transform
 		super();
 		this.addInput("bytes", "Input")
 			.addOutput("bytes", "Hash")
-			.addOption("passes", "Passes", 5, { type: "select", values: PASSES_VALUES })
-			.addOption("length", "Length", 128, { type: "select", values: LENGTH_VALUES });
+			.addOption("passes", "Passes", 5, { type: "select", texts: PASSES_NAMES, values: PASSES_VALUES })
+			.addOption("length", "Length", 128, { type: "select", texts: LENGTH_NAMES, values: LENGTH_VALUES });
 	}
 
-	padMessage(bytes, options)
+	padMessage(bytes, passes, hashLength)
 	{
 		let paddingLength = bytes.length % 128;
 		paddingLength = (paddingLength < 118 ? 118 : 246) - paddingLength;
@@ -139,7 +130,7 @@ class HavalTransform extends Transform
 		// Version number, round count, hash length (last 3 bits) and bit length of message are stored in
 		// the last 10 bytes after the padding:
 		let index = bytes.length + paddingLength;
-		const info = HAVAL_VERSION | (options.passes << 3) | (options.length << 6);
+		const info = HAVAL_VERSION | (passes << 3) | (hashLength << 6);
 		result[index++] = info & 0xff;
 		result[index++] = info >>> 8;
 
@@ -154,8 +145,11 @@ class HavalTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		const passes = options.passes;
+		const hashLength = options.length;
+
 		// TODO: Consider DataView (can't use Uint32Array - non-portable)
-		const x = bytesToInt32sLE(this.padMessage(bytes, options));
+		const x = bytesToInt32sLE(this.padMessage(bytes, passes, hashLength));
 
 		let h0 = 0x243f6a88;
 		let h1 = 0x85a308d3;
@@ -167,7 +161,7 @@ class HavalTransform extends Transform
 		let h7 = 0xec4e6c89;
 
 		let ff1, ff2, ff3, ff4, ff5;
-		switch (options.passes)
+		switch (passes)
 		{
 			case 3:
 				ff1 = ff1_3;
@@ -304,7 +298,7 @@ class HavalTransform extends Transform
 			t1 = ff3(t1, t0, t7, t6, t5, t4, t3, t2, x[ 5], 0xafd6ba33);
 			t0 = ff3(t0, t7, t6, t5, t4, t3, t2, t1, x[ 2], 0x6c24cf5c);
 
-			if (options.passes >= 4)
+			if (passes >= 4)
 			{
 				t7 = ff4(t7, t6, t5, t4, t3, t2, t1, t0, x[24], 0x7a325381);
 				t6 = ff4(t6, t5, t4, t3, t2, t1, t0, t7, x[ 4], 0x28958677);
@@ -343,7 +337,7 @@ class HavalTransform extends Transform
 				t0 = ff4(t0, t7, t6, t5, t4, t3, t2, t1, x[13], 0x137a3be4);
 			}
 
-			if (options.passes >= 5)
+			if (passes >= 5)
 			{
 				t7 = ff5(t7, t6, t5, t4, t3, t2, t1, t0, x[27], 0xba3bf050);
 				t6 = ff5(t6, t5, t4, t3, t2, t1, t0, t7, x[ 3], 0x7efb2a98);
@@ -392,7 +386,7 @@ class HavalTransform extends Transform
 			h7 = add(h7, t7);
 		}
 
-		return this.tailor(h0, h1, h2, h3, h4, h5, h6, h7, options.length);
+		return this.tailor(h0, h1, h2, h3, h4, h5, h6, h7, hashLength);
 	}
 
 	tailor(h0, h1, h2, h3, h4, h5, h6, h7, length)

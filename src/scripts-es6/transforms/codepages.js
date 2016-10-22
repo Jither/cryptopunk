@@ -56,23 +56,31 @@ function createIsoCodePage(charsFrom0xa0)
 	return ASCII_CHARS.concat(ISO_CONTROL_CHARS, arrFrom0xa0);
 }
 
+const CODE_PAGE_NAMES = [
+	"ISO-8859-1",
+	"ISO-8859-2",
+	"ISO-8859-3",
+	"Windows-1252",
+	"Mac OS Roman"
+];
+
 // camelcase is not very readable for these identifiers:
 /* eslint-disable camelcase */
-const SELECT_VALUES = {
-	"ISO-8859-1": "iso_8859_1",
-	"ISO-8859-2": "iso_8859_2",
-	"ISO-8859-3": "iso_8859_3",
-	"Windows-1252": "windows_1252",
-	"Mac OS Roman": "macos_roman"
-};
+const CODE_PAGE_VALUES = [
+	"iso-8859-1",
+	"iso-8859-2",
+	"iso-8859-3",
+	"windows-1252",
+	"macos-roman"
+];
 
 // Space (0x20) indicates non-printable/reserved!!
 const CODE_PAGES = {
-	iso_8859_1: createIsoCodePage("\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
-	iso_8859_2: createIsoCodePage("\xa0Ą˘Ł¤ĽŚ§¨ŠŞŤŹ\xadŽŻ°ą˛ł´ľśˇ¸šşťź˝žżŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢßŕáâăäĺćçčéęëěíîďđńňóôőö÷řůúűüýţ˙"),
-	iso_8859_3: createIsoCodePage("\xa0Ħ˘£¤_Ĥ§¨İŞĞĴ\xad Ż°ħ²³´µĥ·¸ışğĵ½ żÀÁÂ ÄĊĈÇÈÉÊËÌÍÎÏ ÑÒÓÔĠÖ×ĜÙÚÛÜŬŜßàáâ äċĉçèéêëìíîï ñòóôġö÷ĝùúûüŭŝ˙"),
-	windows_1252: createWinMacCodePage("€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž  ‘’“”•–—\u02dc™š›œ žŸ\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
-	macos_roman:  createWinMacCodePage("ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…\xa0ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ") //  = Apple logo - private area
+	"iso-8859-1": createIsoCodePage("\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
+	"iso-8859-2": createIsoCodePage("\xa0Ą˘Ł¤ĽŚ§¨ŠŞŤŹ\xadŽŻ°ą˛ł´ľśˇ¸šşťź˝žżŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢßŕáâăäĺćçčéęëěíîďđńňóôőö÷řůúűüýţ˙"),
+	"iso-8859-3": createIsoCodePage("\xa0Ħ˘£¤_Ĥ§¨İŞĞĴ\xad Ż°ħ²³´µĥ·¸ışğĵ½ żÀÁÂ ÄĊĈÇÈÉÊËÌÍÎÏ ÑÒÓÔĠÖ×ĜÙÚÛÜŬŜßàáâ äċĉçèéêëìíîï ñòóôġö÷ĝùúûüŭŝ˙"),
+	"windows-1252": createWinMacCodePage("€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž  ‘’“”•–—\u02dc™š›œ žŸ\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
+	"macos-roman":  createWinMacCodePage("ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…\xa0ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ") //  = Apple logo - private area
 };
 /* eslint-enable camelcase */
 
@@ -83,7 +91,7 @@ class CodePageToBytesTransform extends Transform
 		super();
 		this.addInput("string", "String")
 			.addOutput("bytes", "Bytes")
-			.addOption("codepage", "Code page", "iso_8859_1", { type: "select", values: SELECT_VALUES });
+			.addOption("codepage", "Code page", "iso-8859-1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES });
 	}
 
 	transform(str, options)
@@ -98,7 +106,7 @@ class CodePageToBytesTransform extends Transform
 			const code = codepage.indexOf(chr);
 			if (code < 0)
 			{
-				throw new TransformError(`Character '${chr}' doesn't exist in ${SELECT_VALUES[options.codepage]}`);
+				throw new TransformError(`Character '${chr}' doesn't exist in ${options.codepage}`);
 			}
 			result[i] = code;
 		}
@@ -113,7 +121,7 @@ class BytesToCodePageTransform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("codepage", "Code page", "iso_8859_1", { type: "select", values: SELECT_VALUES });
+			.addOption("codepage", "Code page", "iso_8859_1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES });
 	}
 
 	transform(bytes, options)

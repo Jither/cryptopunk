@@ -10,7 +10,7 @@ class VigenereEncryptTransform extends SubstitutionTransform
 		this.decrypt = false;
 
 		this
-			.addInput("string", "Key") // Key
+			.addInput("string", "Key")
 			.addOption("alphabet", "Alphabet", "abcdefghijklmnopqrstuvwxyz")
 			.addOption("ignoreCase", "Ignore case", true);
 	}

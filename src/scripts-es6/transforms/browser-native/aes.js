@@ -13,28 +13,24 @@ class NativeAesBaseTransform extends NativeBaseTransform
 			.addOutput("bytes", encrypt ? "Ciphertext" : "Plaintext");
 	}
 
-	constructKey(keyBytes)
+	checkKey(keyBytes)
 	{
-		if (keyBytes.length === 0)
+		const keyLength = keyBytes.byteLength * 8;
+
+		if (keyLength === 0)
 		{
 			throw new TransformError("No key specified");
 		}
-
-		// TODO: Remove when ALL bytes results are Uint8Array
-		const key = Uint8Array.from(keyBytes);
-		const keyLength = key.byteLength * 8;
 
 		if ([128, 192, 256].indexOf(keyLength) < 0)
 		{
 			throw new TransformError(`Key length must be one of 128, 192 or 256 bits. Was ${keyLength} bits`);
 		}
-		return key;
 	}
 
 	constructIV(ivBytes, name)
 	{
-		// TODO: Rewrite when ALL bytes results are Uint8Array
-		const iv = ivBytes.length > 0 ? Uint8Array.from(ivBytes) : new Uint8Array(16);
+		const iv = ivBytes.length > 0 ? ivBytes : new Uint8Array(16);
 		const ivLength = iv.byteLength * 8;
 		if (ivLength !== 128)
 		{
@@ -45,15 +41,12 @@ class NativeAesBaseTransform extends NativeBaseTransform
 
 	_transform(mode, messageBytes, keyBytes, ivBytes, ivName, additional, allowAnyIVLength)
 	{
-		// TODO: Remove when ALL bytes results are Uint8Array
-		const message = Uint8Array.from(messageBytes);
-		const keyBuffer = this.constructKey(keyBytes);
+		this.checkKey(keyBytes);
 
 		let iv;
 		if (allowAnyIVLength)
 		{
-			// TODO: Remove when ALL bytes results are Uint8Array
-			iv = Uint8Array.from(ivBytes);
+			iv = ivBytes;
 		}
 		else
 		{
@@ -66,19 +59,19 @@ class NativeAesBaseTransform extends NativeBaseTransform
 
 		methodParams = Object.assign({}, methodParams, additional);
 
-		return this.importKey(keyBuffer, mode, methodName)
+		return this.importKey(keyBytes, mode, methodName)
 			.catch(error => { throw new TransformError(`Error during key import: ${error.message}`); })
 			.then(key => window.crypto.subtle[methodName](
 				methodParams,
 				key,
-				message
+				messageBytes
 			))
 			.catch(error => 
 			{ 
 				const msg = error.message || `Message is likely not ${methodName}able in ${mode} mode.`;
 				throw new TransformError(`Error during ${methodName}ion. ${msg}`); 
-			})
-			.then(result => Array.from(new Uint8Array(result)));
+			});
+			//.then(result => Array.from(new Uint8Array(result)));
 	}
 }
 
@@ -191,7 +184,7 @@ class NativeAesCfbDecryptTransform extends NativeAesBaseTransform
 	}
 }
 
-const GCM_TAG_LENGTHS = { "32": 32, "64": 64, "96": 96, "104": 104, "112": 112, "120": 120, "128": 128 };
+const GCM_TAG_LENGTHS = ["32", "64", "96", "104", "112", "120", "128" ];
 
 class NativeAesGcmEncryptTransform extends NativeAesBaseTransform
 {
@@ -208,13 +201,12 @@ class NativeAesGcmEncryptTransform extends NativeAesBaseTransform
 		options = Object.assign({}, this.defaults, options);
 
 		const additional = {
-			tagLength: options.tagLength
+			tagLength: parseInt(options.tagLength, 10)
 		};
 
 		if (authBytes.length > 0)
 		{
-			// TODO: Remove when ALL bytes results are Uint8Array
-			additional.additionalData = Uint8Array.from(authBytes);
+			additional.additionalData = authBytes;
 		}
 
 		return this._transform("AES-GCM", bytes, keyBytes, ivBytes, "iv", additional, true);
@@ -241,8 +233,7 @@ class NativeAesGcmDecryptTransform extends NativeAesBaseTransform
 
 		if (authBytes.length > 0)
 		{
-			// TODO: Remove when ALL bytes results are Uint8Array
-			additional.additionalData = Uint8Array.from(authBytes);
+			additional.additionalData = authBytes;
 		}
 
 		return this._transform("AES-GCM", bytes, keyBytes, ivBytes, "iv", additional, true);

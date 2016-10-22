@@ -61,6 +61,7 @@ class Md4Transform extends MdBaseTransform
 			// TODO: Use subarray rather than index + 0
 			const [aa, bb, cc, dd] = [a, b, c, d];
 
+			// TODO: Roll into loop
 			a = f(a, b, c, d, x[index +  0], S11);
 			d = f(d, a, b, c, x[index +  1], S12);
 			c = f(c, d, a, b, x[index +  2], S13);

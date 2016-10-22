@@ -2,12 +2,12 @@ import { TransformError } from "../transforms";
 import { NativeBaseTransform } from "./native-base";
 import { intToByteArray } from "../../cryptopunk.utils";
 
-const RSA_OAEP_HASHES = {
-	"SHA-1": "SHA-1",
-	"SHA-256": "SHA-256",
-	"SHA-384": "SHA-384",
-	"SHA-512": "SHA-512"
-};
+const RSA_OAEP_HASHES = [
+	"SHA-1",
+	"SHA-256",
+	"SHA-384",
+	"SHA-512"
+];
 
 class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 {
@@ -19,15 +19,13 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 			.addInput("bytes", "Label")
 			.addOutput("bytes", "Ciphertext")
 			.addOption("e", "Exponent (e)", 65537)
-			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", values: RSA_OAEP_HASHES });
+			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", texts: RSA_OAEP_HASHES });
 	}
 
 	transformAsync(bytes, keyBytes, labelBytes, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		// TODO: Remove when ALL bytes results are Uint8Array
-		const plaintext = Uint8Array.from(bytes);
 		const eBytes = intToByteArray(options.e);
 
 		if (keyBytes.length === 0)
@@ -41,8 +39,7 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 
 		if (labelBytes.length > 0)
 		{
-			// TODO: Remove when ALL bytes results are Uint8Array
-			methodParams.label = Uint8Array.from(labelBytes);
+			methodParams.label = labelBytes;
 		}
 
 		let keyAlgo;
@@ -78,14 +75,14 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 		.then(publicKey => window.crypto.subtle[methodName](
 			methodParams,
 			publicKey,
-			plaintext
+			bytes
 		))
 		.catch(error => 
 		{ 
 			const msg = error.message || "Unspecified error";
 			throw new TransformError(`Error during ${methodName}ion. ${msg}`); 
-		})
-		.then(ciphertext => Array.from(new Uint8Array(ciphertext)));
+		});
+		//.then(ciphertext => Array.from(new Uint8Array(ciphertext)));
 	}
 }
 
@@ -104,15 +101,13 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 			.addInput("bytes", "Label")
 			.addOutput("bytes", "Plaintext")
 			.addOption("e", "Exponent (e)", 65537)
-			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", values: RSA_OAEP_HASHES });
+			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", texts: RSA_OAEP_HASHES });
 	}
 
 	transformAsync(bytes, privateKeyBytes, publicKeyBytes, labelBytes, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		// TODO: Remove when ALL bytes results are Uint8Array
-		const ciphertext = Uint8Array.from(bytes);
 		const eBytes = intToByteArray(options.e);
 
 		if (privateKeyBytes.length === 0)
@@ -165,9 +160,9 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 		.then(privateKey => window.crypto.subtle.encrypt(
 			methodParams,
 			privateKey,
-			ciphertext
-		))
-		.then(plaintext => Array.from(new Uint8Array(plaintext)));
+			bytes
+		));
+		//.then(plaintext => Array.from(new Uint8Array(plaintext)));
 	}
 }
 

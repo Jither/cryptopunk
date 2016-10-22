@@ -1,23 +1,23 @@
 import { KeccakBaseTransform } from "./keccak";
 
-const SHA3_INSTANCES = {
-	"SHA3-224": "SHA3-224",
-	"SHA3-256": "SHA3-256",
-	"SHA3-384": "SHA3-384",
-	"SHA3-512": "SHA3-512"
-};
+const SHA3_INSTANCE_NAMES = [
+	"SHA3-224",
+	"SHA3-256",
+	"SHA3-384",
+	"SHA3-512"
+];
 
-const SHAKE_INSTANCES = {
-	"SHAKE-128": "SHAKE-128",
-	"SHAKE-256": "SHAKE-256"
-};
+const SHAKE_INSTANCE_NAMES = [
+	"SHAKE-128",
+	"SHAKE-256"
+];
 
 class Sha3Transform extends KeccakBaseTransform
 {
 	constructor()
 	{
 		super();
-		this.addOption("instance", "Instance", "SHA3-256", { type: "select", values: SHA3_INSTANCES });
+		this.addOption("instance", "Instance", "SHA3-256", { type: "select", texts: SHA3_INSTANCE_NAMES });
 	}
 
 	transform(bytes, options)
@@ -53,7 +53,7 @@ class ShakeTransform extends KeccakBaseTransform
 	constructor()
 	{
 		super();
-		this.addOption("instance", "Instance", "SHAKE-128", { type: "select", values: SHAKE_INSTANCES })
+		this.addOption("instance", "Instance", "SHAKE-128", { type: "select", texts: SHAKE_INSTANCE_NAMES })
 			.addOption("length", "Length", 128, { min: 0, step: 8 });
 	}
 

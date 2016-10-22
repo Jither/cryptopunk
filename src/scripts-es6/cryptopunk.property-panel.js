@@ -54,20 +54,21 @@ function getPropertyEditorFor(name, option, value, changedCallback)
 			break;
 		case "select":
 			eleInput = document.createElement("select");
+			const texts = option.options.texts;
 			const values = option.options.values;
-			for (const text in values)
+			for (let i = 0; i < texts.length; i++)
 			{
-				if (!values.hasOwnProperty(text))
-				{
-					continue;
-				}
 				const eleOption = document.createElement("option");
-				eleOption.innerText = text;
-				eleOption.value = values[text];
+				eleOption.innerText = texts[i];
+				eleOption.value = i;
 				eleInput.appendChild(eleOption);
 			}
-			eleInput.addEventListener("change", () => changedCallback(name, eleInput.value));
-			eleInput.value = value;
+			eleInput.addEventListener("change", () => {
+				const index = parseInt(eleInput.value, 10);
+				const selected = values ? values[index] : texts[index];
+				changedCallback(name, selected);
+			});
+			eleInput.value = values ? values.indexOf(value) : texts.indexOf(value);
 			break;
 	}
 	eleInput.id = "prop-" + name;

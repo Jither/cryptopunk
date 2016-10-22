@@ -1,11 +1,17 @@
 import { Transform, TransformError } from "./transforms";
 import { removeWhiteSpace, repeatString } from "../cryptopunk.utils";
 
-const UNITS = {
-	"byte (8 bits)": "byte",
-	"short (16 bits)": "short",
-	"int (32 bits)": "int"
-};
+const UNIT_NAMES = [
+	"byte (8 bits)",
+	"short (16 bits)",
+	"int (32 bits)"
+];
+
+const UNIT_VALUES = [
+	"byte",
+	"short",
+	"int"
+];
 
 class NumbersToBytesTransform extends Transform
 {
@@ -14,7 +20,7 @@ class NumbersToBytesTransform extends Transform
 		super();
 		this.addInput("string", "Numbers")
 			.addOutput("bytes", "Bytes")
-			.addOption("unit", "Unit", "byte", { type: "select", values: UNITS });
+			.addOption("unit", "Unit", "byte", { type: "select", texts: UNIT_NAMES, values: UNIT_VALUES });
 	}
 
 	checkStringAgainstBase(str)
@@ -113,7 +119,7 @@ class BytesToNumbersTransform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "Numbers")
-			.addOption("unit", "Unit", "byte", { type: "select", values: UNITS })
+			.addOption("unit", "Unit", "byte", { type: "select", values: UNIT_NAMES })
 			.addOption("pad", "Pad", true)
 			.addOption("separator", "Separator", " ");
 	}
