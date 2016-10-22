@@ -3,7 +3,7 @@ import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
 // The first 32 bits of the fractional parts of the cube roots of the first 64 prime numbers.
-const ROUND_CONSTANTS = [
+const K = [
 	0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 	0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
 	0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
@@ -66,7 +66,7 @@ class Sha256Transform extends MdBaseTransform
 			{
 				const S1 = ror(e, 6) ^ ror(e, 11) ^ ror(e, 25);
 				const ch = (e & f) ^ (~e & g);
-				const temp1 = add(h, S1, ch, ROUND_CONSTANTS[step], x[step]);
+				const temp1 = add(h, S1, ch, x[step], K[step]);
 				const S0 = ror(a, 2) ^ ror(a, 13) ^ ror(a, 22);
 				const maj = (a & b) ^ (a & c) ^ (b & c);
 				const temp2 = add(S0, maj);

@@ -26,24 +26,24 @@ const S = [
     11, 13, 14, 7, 14, 9, 13, 15, 6, 8, 13, 6, 12, 5, 7, 5
 ];
 
-function op(q, a, x, t, s)
+function op(q, a, x, s, t)
 {
 	return rol(add(a, q, x, t), s);
 }
 
 function f(a, b, c, d, x, s, t)
 {
-	return op((b & c) | ((~b) & d), a, x, t, s);
+	return op((b & c) | ((~b) & d), a, x, s, t);
 }
 
 function g(a, b, c, d, x, s, t)
 {
-	return op((b & c) | (b & d) | (c & d), a, x, t, s);
+	return op((b & c) | (b & d) | (c & d), a, x, s, t);
 }
 
 function h(a, b, c, d, x, s, t)
 {
-	return op(b ^ c ^ d, a, x, t, s);
+	return op(b ^ c ^ d, a, x, s, t);
 }
 
 const OPS = [f, g, h];

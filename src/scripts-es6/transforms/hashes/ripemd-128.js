@@ -47,29 +47,29 @@ const S_RIGHT = [
 ];
 
 // RIPEMD-160 vs 128: Addition of e is simply left out for all operations
-function op(q, a, x, t, s)
+function op(q, a, x, s, t)
 {
 	return rol(add(a, q, x, t), s);
 }
 
 function f(a, b, c, d, x, s, t)
 {
-	return op(b ^ c ^ d, a, x, t, s);
+	return op(b ^ c ^ d, a, x, s, t);
 }
 
 function g(a, b, c, d, x, s, t)
 {
-	return op((b & c) | ((~b) & d), a, x, t, s);
+	return op((b & c) | ((~b) & d), a, x, s, t);
 }
 
 function h(a, b, c, d, x, s, t)
 {
-	return op((b | (~c)) ^ d, a, x, t, s);
+	return op((b | (~c)) ^ d, a, x, s, t);
 }
 
 function i(a, b, c, d, x, s, t)
 {
-	return op((b & d) | (c & (~d)), a, x, t, s);
+	return op((b & d) | (c & (~d)), a, x, s, t);
 }
 
 const OPS_LEFT = [f, g, h, i];
@@ -110,25 +110,25 @@ class RipeMd128Transform extends MdBaseTransform
 			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,
 				aa = aa0, bb = bb0, cc = cc0, dd = dd0;
 
-			let f_left, f_right, k_left, k_right;
+			let op_left, op_right, k_left, k_right;
 
 			// RIPEMD-160 vs 128: 4 rounds (64 steps) instead of 5 (80 steps)
 			for (let step = 0; step < 64; step++)
 			{
 				const round = Math.floor(step / 16);
-				f_left = OPS_LEFT[round];
-				f_right = OPS_RIGHT[round];
+				op_left = OPS_LEFT[round];
+				op_right = OPS_RIGHT[round];
 				k_left = K_LEFT[round];
 				k_right = K_RIGHT[round];
 
 				// RIPEMD-16 vs 128: No ROL of c/cc when assigning to d/dd
-				let temp = f_left(a, b, c, d, x[index + R_LEFT[step]], S_LEFT[step], k_left);
+				let temp = op_left(a, b, c, d, x[index + R_LEFT[step]], S_LEFT[step], k_left);
 				a = d;
 				d = c;
 				c = b;
 				b = temp;
 
-				temp = f_right(aa, bb, cc, dd, x[index + R_RIGHT[step]], S_RIGHT[step], k_right);
+				temp = op_right(aa, bb, cc, dd, x[index + R_RIGHT[step]], S_RIGHT[step], k_right);
 				aa = dd;
 				dd = cc;
 				cc = bb;

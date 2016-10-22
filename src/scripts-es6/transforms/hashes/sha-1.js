@@ -2,6 +2,30 @@ import { MdBaseTransform, CONSTANTS } from "./mdbase";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
+const K = [
+	CONSTANTS.SQRT2_DIV4,
+	CONSTANTS.SQRT3_DIV4,
+	CONSTANTS.SQRT5_DIV4,
+	CONSTANTS.SQRT10_DIV4
+];
+
+function f(a, b, c, d, e, x, t)
+{
+	return add((b & c) ^ (~b & d), rol(a, 5), e, x, t);
+}
+
+function g(a, b, c, d, e, x, t)
+{
+	return add(b ^ c ^ d, rol(a, 5), e, x, t);
+}
+
+function h(a, b, c, d, e, x, t)
+{
+	return add((b & c) ^ (b & d) ^ (c & d), rol(a, 5), e, x, t);
+}
+
+const OPS = [f, g, h, g];
+
 class Sha1Transform extends MdBaseTransform
 {
 	constructor()
@@ -42,29 +66,10 @@ class Sha1Transform extends MdBaseTransform
 
 			for (let step = 0; step < x.length; step++)
 			{
-				let k, f;
-				if (step < 20)
-				{
-					f = (b & c) ^ (~b & d);
-					k = CONSTANTS.SQRT2_DIV4;
-				}
-				else if (step < 40)
-				{
-					f = b ^ c ^ d;
-					k = CONSTANTS.SQRT3_DIV4;
-				}
-				else if (step < 60)
-				{
-					f = (b & c) ^ (b & d) ^ (c & d);
-					k = CONSTANTS.SQRT5_DIV4;
-				}
-				else if (step < 80)
-				{
-					f = b ^ c ^ d;
-					k = CONSTANTS.SQRT10_DIV4;
-				}
+				const round = Math.floor(step / 20);
+				const op = OPS[round];
+				const temp = op(a, b, c, d, e, x[step], K[round]);
 
-				const temp = add(rol(a, 5), f, e, k, x[step]);
 				e = d;
 				d = c;
 				c = rol(b, 30);

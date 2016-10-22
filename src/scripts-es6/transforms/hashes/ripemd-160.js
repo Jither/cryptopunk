@@ -50,34 +50,34 @@ const S_RIGHT = [
 	8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-function op(q, a, x, t, s, e)
+function op(q, a, x, s, t, e)
 {
 	return add(rol(add(a, q, x, t), s), e);
 }
 
 function f(a, b, c, d, e, x, s, t)
 {
-	return op(b ^ c ^ d, a, x, t, s, e);
+	return op(b ^ c ^ d, a, x, s, t, e);
 }
 
 function g(a, b, c, d, e, x, s, t)
 {
-	return op((b & c) | ((~b) & d), a, x, t, s, e);
+	return op((b & c) | ((~b) & d), a, x, s, t, e);
 }
 
 function h(a, b, c, d, e, x, s, t)
 {
-	return op((b | (~c)) ^ d, a, x, t, s, e);
+	return op((b | (~c)) ^ d, a, x, s, t, e);
 }
 
 function i(a, b, c, d, e, x, s, t)
 {
-	return op((b & d) | (c & (~d)), a, x, t, s, e);
+	return op((b & d) | (c & (~d)), a, x, s, t, e);
 }
 
 function j(a, b, c, d, e, x, s, t)
 {
-	return op(b ^ (c | (~d)), a, x, t, s, e);
+	return op(b ^ (c | (~d)), a, x, s, t, e);
 }
 
 const OPS_LEFT = [f, g, h, i, j];
@@ -120,23 +120,23 @@ class RipeMd160Transform extends MdBaseTransform
 			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,  e =  e0,
 				aa = aa0, bb = bb0, cc = cc0, dd = dd0, ee = ee0;
 
-			let f_left, f_right, k_left, k_right;
+			let op_left, op_right, k_left, k_right;
 			for (let step = 0; step < 80; step++)
 			{
 				const round = Math.floor(step / 16);
-				f_left = OPS_LEFT[round];
-				f_right = OPS_RIGHT[round];
+				op_left = OPS_LEFT[round];
+				op_right = OPS_RIGHT[round];
 				k_left = K_LEFT[round];
 				k_right = K_RIGHT[round];
 
-				let temp = f_left(a, b, c, d, e, x[index + R_LEFT[step]], S_LEFT[step], k_left);
+				let temp = op_left(a, b, c, d, e, x[index + R_LEFT[step]], S_LEFT[step], k_left);
 				a = e;
 				e = d;
 				d = rol(c, 10);
 				c = b;
 				b = temp;
 
-				temp = f_right(aa, bb, cc, dd, ee, x[index + R_RIGHT[step]], S_RIGHT[step], k_right);
+				temp = op_right(aa, bb, cc, dd, ee, x[index + R_RIGHT[step]], S_RIGHT[step], k_right);
 				aa = ee;
 				ee = dd;
 				dd = rol(cc, 10);

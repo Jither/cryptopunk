@@ -8,7 +8,7 @@ import { add64, and64, not64, ror64, shr64, xor64 } from "../../cryptopunk.bitar
 // arithmetic for this.
 
 // The first 64 bits of the fractional parts of the cube roots of the first 80 prime numbers.
-const ROUND_CONSTANTS = [
+const K = [
 	0x428a2f98, 0xd728ae22, 0x71374491, 0x23ef65cd, 0xb5c0fbcf, 0xec4d3b2f, 0xe9b5dba5, 0x8189dbbc,
 	0x3956c25b, 0xf348b538, 0x59f111f1, 0xb605d019, 0x923f82a4, 0xaf194f9b, 0xab1c5ed5, 0xda6d8118,
 	0xd807aa98, 0xa3030242, 0x12835b01, 0x45706fbe, 0x243185be, 0x4ee4b28c, 0x550c7dc3, 0xd5ffb4e2,
@@ -89,7 +89,7 @@ class Sha512Transform extends MdBaseTransform
 			{
 				const S1 = xor64(ror64(e, 14), ror64(e, 18), ror64(e, 41));
 				const ch = xor64(and64(e, f), and64(not64(e), g));
-				const temp1 = add64(h, S1, ch, { hi: ROUND_CONSTANTS[step * 2], lo: ROUND_CONSTANTS[step * 2 + 1] }, x[step]);
+				const temp1 = add64(h, S1, ch, x[step], { hi: K[step * 2], lo: K[step * 2 + 1] });
 				const S0 = xor64(ror64(a, 28), ror64(a, 34), ror64(a, 39));
 				const maj = xor64(and64(a, b), and64(a, c), and64(b, c));
 				const temp2 = add64(S0, maj);
