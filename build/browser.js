@@ -7,7 +7,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var babel = require('babelify');
 
-function compile(src, dest, watch)
+function compile(src, dest, name, watch)
 {
   var bundler = browserify(src, { debug: true }).transform(babel);
 
@@ -21,7 +21,7 @@ function compile(src, dest, watch)
     bundler.bundle()
       .on('error', function(err) { console.error(err); this.emit('end'); })
       .pipe(source('build.js'))
-      .pipe(rename('cryptopunk.js'))
+      .pipe(rename(name))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('./'))

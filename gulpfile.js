@@ -23,8 +23,18 @@ gulp.task("lint-scripts", function() {
 		.pipe(eslint.failAfterError());
 });
 
+gulp.task("build-benchmark-libs", function()
+{
+	return gulp.src(["./node_modules/lodash/lodash.min.js", "./node_modules/benchmark/benchmark.js"])
+		.pipe(gulp.dest("./benchmarks/libs/"));
+});
+
+gulp.task("build-benchmarks", ["build-benchmark-libs"], function() {
+	return compile("./benchmarks/scripts-es6/hashes.js", "./benchmarks/scripts/", "hashes.js");
+});
+
 gulp.task("build-scripts", ["lint-scripts"], function() {
-	return compile(src.scripts + "cryptopunk.main.js", dest.scripts);
+	return compile(src.scripts + "cryptopunk.main.js", "cryptopunk.js", dest.scripts);
 });
 
 gulp.task("build-styles", function() {
@@ -34,7 +44,7 @@ gulp.task("build-styles", function() {
 })
 
 gulp.task("watch-scripts", ["lint-scripts"], function() {
-	return compile(src.scripts + "cryptopunk.main.js", dest.scripts, true);
+	return compile(src.scripts + "cryptopunk.main.js", dest.scripts, "cryptopunk.js", true);
 });
 
 gulp.task("watch-styles", function() {

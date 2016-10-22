@@ -193,7 +193,7 @@ class NativeAesGcmEncryptTransform extends NativeAesBaseTransform
 		super(true);
 		this.addInput("bytes", "IV")
 			.addInput("bytes", "Additional authentication data")
-			.addOption("tagLength", "Tag length", 128, { type: "select", values: GCM_TAG_LENGTHS });
+			.addOption("tagLength", "Tag length", 128, { type: "select", texts: GCM_TAG_LENGTHS });
 	}
 
 	transformAsync(bytes, keyBytes, ivBytes, authBytes, options)
@@ -220,7 +220,7 @@ class NativeAesGcmDecryptTransform extends NativeAesBaseTransform
 		super(false);
 		this.addInput("bytes", "IV")
 			.addInput("bytes", "Additional authentication data")
-			.addOption("tagLength", "Tag length", 128, { type: "select", values: GCM_TAG_LENGTHS });
+			.addOption("tagLength", "Tag length", 128, { type: "select", texts: GCM_TAG_LENGTHS });
 	}
 
 	transformAsync(bytes, keyBytes, ivBytes, authBytes, options)
