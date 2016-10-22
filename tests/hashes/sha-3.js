@@ -1,6 +1,6 @@
 import test from "ava";
 import { testBytesHash } from "../_testutils";
-import { Sha3Transform, ShakeTransform } from "transforms/hashes/sha3";
+import { Sha3Transform, ShakeTransform } from "transforms/hashes/sha-3";
 
 function doTest224(expectedHex, inputHex)
 {

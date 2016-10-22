@@ -1,6 +1,6 @@
 import test from "ava";
 import { testAsciiHash } from "../_testutils";
-import { RipeMd160Transform, RipeMd320Transform } from "transforms/hashes/ripemd160";
+import { RipeMd160Transform, RipeMd320Transform } from "transforms/hashes/ripemd-160";
 
 function doTest160(title, expectedHex, input)
 {

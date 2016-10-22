@@ -1,6 +1,6 @@
 import test from "ava";
 import { testAsciiHash } from "../_testutils";
-import { Sha0Transform, Sha1Transform } from "transforms/hashes/sha1";
+import { Sha0Transform, Sha1Transform } from "transforms/hashes/sha-1";
 
 function doTest0(title, expectedHex, input)
 {
