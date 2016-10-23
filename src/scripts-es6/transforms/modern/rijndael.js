@@ -1,4 +1,5 @@
-import { Transform, TransformError } from "../transforms";
+import { TransformError } from "../transforms";
+import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sBE, mod } from "../../cryptopunk.utils";
 
 // Pure implementation of Rijndael (AES) allowing
@@ -105,7 +106,7 @@ function precalculate()
 	}
 }
 
-class RijndaelBaseTransform extends Transform
+class RijndaelBaseTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
 	{
@@ -128,10 +129,15 @@ class RijndaelBaseTransform extends Transform
 			throw new TransformError(`Key size must be one of 128, 160, 192, 224 or 256 bits. Was ${keySize} bits`);
 		}
 
+		const blockSize = options.blockSize;
+		if (BLOCK_SIZES.indexOf(blockSize) < 0)
+		{
+			throw new TransformError(`Block size must be one of 128, 160, 192, 224 or 256 bits. Was ${blockSize} bits`);
+		}
+
 		// Precalculate tables (once, stored for later use)
 		precalculate();
 
-		const blockSize = options.blockSize;
 		const blockSizeBytes = blockSize / 8;
 
 		let roundCount = options.rounds;
@@ -143,46 +149,18 @@ class RijndaelBaseTransform extends Transform
 
 		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount, blockSizeBytes / 4);
 
-		const blockCount = Math.ceil(bytes.length / blockSizeBytes);
-
-		const result = new Uint8Array(blockSizeBytes * blockCount);
-		const blockBuffer = new Uint8Array(blockSizeBytes);
-
-		for (let index = 0; index < result.length; index += blockSizeBytes)
-		{
-			// TODO: Avoid all this cloning
-			const block = bytes.subarray(index, index + blockSizeBytes);
-			blockBuffer.set(block);
-			if (block.length < blockSizeBytes)
-			{
-				// Pad block - pure 0 padding isn't proper padding (non-reversible), but since
-				// we don't know where the output might be used, we can't assume a padding scheme (for now)
-				for (let i = block.length; i < blockSizeBytes; i++)
-				{
-					blockBuffer[i] = 0;
-				}
-			}
-			this.transformBlock(blockBuffer, roundKeys, result, index);
-		}
-
-		return result;
+		return this.transformBlocks(bytes, blockSize, roundKeys);
 	}
 
-	transformBlock(bytes, roundKeys, dest, destIndex)
+	transformBlock(block, dest, destOffset, roundKeys)
 	{
-		const blockSize = bytes.length * 8;
-		if (BLOCK_SIZES.indexOf(blockSize) < 0)
-		{
-			throw new TransformError(`Block size must be one of 128, 160, 192, 224 or 256 bits. Was ${blockSize} bits`);
-		}
-
-		const stateSize = blockSize / 32;
+		const stateSize = block.length / 4;
 		const roundCount = roundKeys.length - 1;
 
 		// Get constants specific to encryption/decryption:
 		const [BO1, BO2, BO3, T1, T2, T3, T4, sBox] = this.getDirectionSpecific(stateSize);
 
-		const text = bytesToInt32sBE(bytes);
+		const text = bytesToInt32sBE(block);
 
 		// Round 1:
 		for (let i = 0; i < stateSize; i++)
@@ -223,10 +201,10 @@ class RijndaelBaseTransform extends Transform
 				sBox[text[mod(index + BO3, stateSize)]        & 0xff] ^
 				key;
 
-			dest[destIndex++] = value >> 24 & 0xff;
-			dest[destIndex++] = value >> 16 & 0xff;
-			dest[destIndex++] = value >>  8 & 0xff;
-			dest[destIndex++] = value & 0xff;
+			dest[destOffset++] = value >> 24 & 0xff;
+			dest[destOffset++] = value >> 16 & 0xff;
+			dest[destOffset++] = value >>  8 & 0xff;
+			dest[destOffset++] = value & 0xff;
 		}
 	}
 
