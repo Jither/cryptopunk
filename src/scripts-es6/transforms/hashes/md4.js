@@ -14,24 +14,24 @@ const S = [
 	3, 9, 11, 15, 3, 9, 11, 15, 3, 9, 11, 15, 3, 9, 11, 15
 ];
 
-function op(q, a, x, s, t)
+function addrol(q, a, x, s, t)
 {
 	return rol(add(a, q, x, t), s);
 }
 
 function f(a, b, c, d, x, s)
 {
-	return op((b & c) | ((~b) & d), a, x, s, 0);
+	return addrol((b & c) | ((~b) & d), a, x, s, 0);
 }
 
 function g(a, b, c, d, x, s)
 {
-	return op((b & c) | (b & d) | (c & d), a, x, s, CONSTANTS.SQRT2_DIV4);
+	return addrol((b & c) | (b & d) | (c & d), a, x, s, CONSTANTS.SQRT2_DIV4);
 }
 
 function h(a, b, c, d, x, s)
 {
-	return op(b ^ c ^ d, a, x, s, CONSTANTS.SQRT3_DIV4);
+	return addrol(b ^ c ^ d, a, x, s, CONSTANTS.SQRT3_DIV4);
 }
 
 const OPS = [f, g, h];

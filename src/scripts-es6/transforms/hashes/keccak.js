@@ -47,7 +47,7 @@ function xorLane(state, x, y, value)
 
 class KeccakBaseTransform extends Transform
 {
-	constructor(capacity, length, suffix)
+	constructor()
 	{
 		super();
 		this.addInput("bytes", "Input")
@@ -56,7 +56,7 @@ class KeccakBaseTransform extends Transform
 
 	lfsr86540(lfsr)
 	{
-		let result = (lfsr[0] & 0x01) !== 0;
+		const result = (lfsr[0] & 0x01) !== 0;
 		if ((lfsr[0] & 0x80) !== 0)
 		{
 			lfsr[0] = (lfsr[0] << 1) ^ 0x71;
@@ -71,7 +71,7 @@ class KeccakBaseTransform extends Transform
 	permute(state)
 	{
 		// Array just to pass it by reference
-		let lfsrState = [ 0x01 ];
+		const lfsrState = [ 0x01 ];
 
 		for (let round = 0; round < 24; round++)
 		{
@@ -95,8 +95,8 @@ class KeccakBaseTransform extends Transform
 			let current = readLane(state, x, y);
 			for (let t = 0; t < 24; t++)
 			{
-				let r = ((t + 1) * (t + 2) / 2) % 64;
-				let Y = (2 * x + 3 * y) % 5;
+				const r = ((t + 1) * (t + 2) / 2) % 64;
+				const Y = (2 * x + 3 * y) % 5;
 				x = y;
 				y = Y;
 				const temp = readLane(state, x, y);
@@ -106,13 +106,13 @@ class KeccakBaseTransform extends Transform
 
 			// Step χ
 			const temp = new Array(5);
-			for (let y = 0; y < 5; y++)
+			for (y = 0; y < 5; y++)
 			{
-				for (let x = 0; x < 5; x++)
+				for (x = 0; x < 5; x++)
 				{
 					temp[x] = readLane(state, x, y);
 				}
-				for (let x = 0; x < 5; x++)
+				for (x = 0; x < 5; x++)
 				{
 					writeLane(state, x, y, xor64(temp[x], and64(not64(temp[(x + 1) % 5]), temp[(x + 2) % 5])));
 				}
@@ -121,7 +121,7 @@ class KeccakBaseTransform extends Transform
 			// Step ι
 			for (let j = 0; j < 7; j++)
 			{
-				let bitPosition = (1 << j) - 1;
+				const bitPosition = (1 << j) - 1;
 				if (this.lfsr86540(lfsrState))
 				{
 					xorLane(state, 0, 0, rol64({ lo: 1, hi: 0 }, bitPosition));
@@ -198,11 +198,11 @@ class KeccakBaseTransform extends Transform
 		let outputPosition = 0;
 		while (remainingOutput > 0)
 		{
-			const blockSize = remainingOutput < rateInBytes ? remainingOutput : rateInBytes;
-			const outputBlock = state.subarray(0, blockSize);
+			const outputBlockSize = remainingOutput < rateInBytes ? remainingOutput : rateInBytes;
+			const outputBlock = state.subarray(0, outputBlockSize);
 			output.set(outputBlock, outputPosition);
-			outputPosition += blockSize;
-			remainingOutput -= blockSize;
+			outputPosition += outputBlockSize;
+			remainingOutput -= outputBlockSize;
 
 			if (remainingOutput > 0)
 			{

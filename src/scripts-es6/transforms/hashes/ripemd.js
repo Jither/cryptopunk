@@ -22,8 +22,8 @@ const R = [
 
 const S = [
 	11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8,
-    7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 7, 11, 13, 12,
-    11, 13, 14, 7, 14, 9, 13, 15, 6, 8, 13, 6, 12, 5, 7, 5
+	7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 7, 11, 13, 12,
+	11, 13, 14, 7, 14, 9, 13, 15, 6, 8, 13, 6, 12, 5, 7, 5
 ];
 
 function op(q, a, x, s, t)
@@ -71,6 +71,7 @@ class RipeMdTransform extends MdBaseTransform
 			let  a = a0,  b = b0,  c = c0,  d = d0,
 				aa = a0, bb = b0, cc = c0, dd = d0;
 
+			/* eslint-disable camelcase */
 			let f_left, f_right, k_left, k_right;
 
 			for (let step = 0; step < 48; step++)
@@ -92,8 +93,9 @@ class RipeMdTransform extends MdBaseTransform
 				cc = bb;
 				bb = temp;
 			}
+			/* eslint-enable camelcase */
 
-			let temp = add(b0, c, dd);
+			const temp = add(b0, c, dd);
 			b0 = add(c0, d, aa);
 			c0 = add(d0, a, bb);
 			d0 = add(a0, b, cc);

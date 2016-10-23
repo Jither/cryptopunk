@@ -36,10 +36,10 @@ const R_RIGHT = [
 
 const S_LEFT = [
 	11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8,
-    7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
-    11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5,
-    11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12,
-    9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6
+	7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
+	11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5,
+	11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12,
+	9, 15, 5, 11, 6, 8, 13, 12, 5, 12, 13, 14, 11, 8, 5, 6
 ];
 
 const S_RIGHT = [
@@ -81,7 +81,7 @@ function j(a, b, c, d, e, x, s, t)
 }
 
 const OPS_LEFT = [f, g, h, i, j];
-const OPS_RIGHT = [j, i, h, g, f]
+const OPS_RIGHT = [j, i, h, g, f];
 
 class RipeMd160Transform extends MdBaseTransform
 {
@@ -120,10 +120,12 @@ class RipeMd160Transform extends MdBaseTransform
 			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,  e =  e0,
 				aa = aa0, bb = bb0, cc = cc0, dd = dd0, ee = ee0;
 
+			/* eslint-disable camelcase */
 			let op_left, op_right, k_left, k_right;
 			for (let step = 0; step < 80; step++)
 			{
 				const round = Math.floor(step / 16);
+				
 				op_left = OPS_LEFT[round];
 				op_right = OPS_RIGHT[round];
 				k_left = K_LEFT[round];
@@ -156,6 +158,7 @@ class RipeMd160Transform extends MdBaseTransform
 					}
 				}
 			}
+			/* eslint-enable camelcase */
 
 			if (this.isRipeMd320)
 			{
@@ -172,7 +175,7 @@ class RipeMd160Transform extends MdBaseTransform
 			}
 			else
 			{
-				let temp = add(b0, c, dd);
+				const temp = add(b0, c, dd);
 				b0 = bb0 = add(c0, d, ee);
 				c0 = cc0 = add(d0, e, aa);
 				d0 = dd0 = add(e0, a, bb);

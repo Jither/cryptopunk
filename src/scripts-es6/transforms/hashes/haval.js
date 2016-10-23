@@ -34,6 +34,8 @@ function f5(x6, x5, x4, x3, x2, x1, x0)
 	return x0 & (x1 & x2 & x3 ^ (~x5)) ^ x1 & x4 ^ x2 & x5 ^ x3 & x6;
 }
 
+// camelcase is not very readable for these function names:
+/* eslint-disable camelcase */
 function ff1_3(x7, x6, x5, x4, x3, x2, x1, x0, w)
 {
 	const t = f1(x1, x0, x3, x5, x6, x2, x4);
@@ -102,9 +104,10 @@ function ff4_5(x7, x6, x5, x4, x3, x2, x1, x0, w, c)
 
 function ff5_5(x7, x6, x5, x4, x3, x2, x1, x0, w, c)
 {
-	let t = f5(x2, x5, x0, x6, x4, x3, x1);
+	const t = f5(x2, x5, x0, x6, x4, x3, x1);
 	return add((t >>> 7 | t << 25) + (x7 >>> 11 | x7 << 21), w, c);
 }
+/* eslint-enable camelcase */
 
 class HavalTransform extends Transform
 {
@@ -161,6 +164,7 @@ class HavalTransform extends Transform
 		let h7 = 0xec4e6c89;
 
 		let ff1, ff2, ff3, ff4, ff5;
+		/* eslint-disable camelcase */
 		switch (passes)
 		{
 			case 3:
@@ -182,6 +186,7 @@ class HavalTransform extends Transform
 				ff5 = ff5_5;
 				break;
 		}
+		/* eslint-enable camelcase */
 
 		for (let index = 0; index < x.length; index += 32)
 		{

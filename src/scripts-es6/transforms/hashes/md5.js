@@ -27,29 +27,29 @@ const K = [
 	0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391, 
 ];
 
-function op(q, a, b, x, s, t)
+function addrol(q, a, b, x, s, t)
 {
 	return add(rol(add(a, q, x, t), s), b);
 }
 
 function f(a, b, c, d, x, s, t)
 {
-	return op((b & c) | ((~b) & d), a, b, x, s, t);
+	return addrol((b & c) | ((~b) & d), a, b, x, s, t);
 }
 
 function g(a, b, c, d, x, s, t)
 {
-	return op((b & d) | (c & (~d)), a, b, x, s, t);
+	return addrol((b & d) | (c & (~d)), a, b, x, s, t);
 }
 
 function h(a, b, c, d, x, s, t)
 {
-	return op(b ^ c ^ d, a, b, x, s, t);
+	return addrol(b ^ c ^ d, a, b, x, s, t);
 }
 
 function i(a, b, c, d, x, s, t)
 {
-	return op(c ^ (b | (~d)), a, b, x, s, t);
+	return addrol(c ^ (b | (~d)), a, b, x, s, t);
 }
 
 const OPS = [f, g, h, i];

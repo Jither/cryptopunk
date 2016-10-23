@@ -73,16 +73,16 @@ class MdBaseTransform extends Transform
 		const bitLengthLo = length << 3;
 		const bitLengthHi = length >>> 29;
 
-		let index = bytes.length + paddingLength;
+		const index = bytes.length + paddingLength;
 		if (this.endianness === "LE")
 		{
 			const bitLength = wordsize === 32 ? [bitLengthLo, bitLengthHi] : [bitLengthLo, bitLengthHi, 0, 0];
-			result.set(int32sToBytesLE(bitLength), index)
+			result.set(int32sToBytesLE(bitLength), index);
 		}
 		else
 		{
 			const bitLength = wordsize === 32 ? [bitLengthHi, bitLengthLo] : [0, 0, bitLengthHi, bitLengthLo];
-			result.set(int32sToBytesBE(bitLength), index)
+			result.set(int32sToBytesBE(bitLength), index);
 		}
 
 		return result;

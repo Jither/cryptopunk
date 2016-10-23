@@ -34,9 +34,9 @@ const R_RIGHT = [
 
 const S_LEFT = [
 	11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8,
-    7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
-    11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5,
-    11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12
+	7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
+	11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5,
+	11, 12, 14, 15, 14, 15, 9, 8, 9, 14, 5, 6, 8, 6, 5, 12
 ];
 
 const S_RIGHT = [
@@ -73,7 +73,7 @@ function i(a, b, c, d, x, s, t)
 }
 
 const OPS_LEFT = [f, g, h, i];
-const OPS_RIGHT = [i, h, g, f]
+const OPS_RIGHT = [i, h, g, f];
 
 class RipeMd128Transform extends MdBaseTransform
 {
@@ -110,6 +110,7 @@ class RipeMd128Transform extends MdBaseTransform
 			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,
 				aa = aa0, bb = bb0, cc = cc0, dd = dd0;
 
+			/* eslint-disable camelcase */
 			let op_left, op_right, k_left, k_right;
 
 			// RIPEMD-160 vs 128: 4 rounds (64 steps) instead of 5 (80 steps)
@@ -147,6 +148,7 @@ class RipeMd128Transform extends MdBaseTransform
 					}
 				}
 			}
+			/* eslint-enable camelcase */
 
 			if (this.isRipeMd256)
 			{
@@ -161,7 +163,7 @@ class RipeMd128Transform extends MdBaseTransform
 			}
 			else
 			{
-				let temp = add(b0, c, dd);
+				const temp = add(b0, c, dd);
 				b0 = bb0 = add(c0, d, aa);
 				c0 = cc0 = add(d0, a, bb);
 				d0 = dd0 = add(a0, b, cc);

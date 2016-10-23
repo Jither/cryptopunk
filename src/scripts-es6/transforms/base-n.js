@@ -54,7 +54,7 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 		}
 
 		// Allocate digits array without padding - we'll add it later
-		let result = new Array(str.length - pad);
+		const result = new Array(str.length - pad);
 		for (let i = 0; i < result.length; i++)
 		{
 			let c = str.charAt(i);
@@ -95,13 +95,12 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 			return new Uint8Array();
 		}
 
-		const alphabet = this.alphabet;
 		const radix = this.radix;
 
 		const [digits, pad] = this.strToDigits(str, options);
 
 		const resultLength = Math.ceil(digits.length * this.bitsPerDigit / 8);
-		let result = new Uint8Array(resultLength);
+		const result = new Uint8Array(resultLength);
 
 		let digitsRemaining = digits.length;
 		let resultPosition = result.length - 1;
