@@ -1,27 +1,10 @@
 import { Transform, TransformError } from "../transforms";
 import { mod } from "../../cryptopunk.utils";
 
-const ROTOR_NAMES = [
-	"None",
-	"I",
-	"II",
-	"III",
-	"IV",
-	"V",
-	"VI",
-	"VII",
-	"VIII",
-	"β",
-	"γ"
-];
+const ROTOR_NAMES = ["None", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "β", "γ"];
+const ROTOR_VALUES = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "beta", "gamma"];
 
-const REFLECTOR_NAMES = [
-	"A",
-	"B",
-	"C",
-	"B Thin",
-	"C Thin"
-];
+const REFLECTOR_NAMES = ["A", "B", "C", "B Thin", "C Thin"];
 
 // Converts letter based wiring definition to numeric left/right shifts for forward and backward "signal".
 // This makes it easier to rotate the wiring inside the rotors to new letter positions (which is what the
@@ -58,8 +41,8 @@ const ROTORS = {
 	"VI"	: { wiring: makeWiring("JPGVOUMFYQBENHZRDKASXLICTW"), notches: "ZM" },
 	"VII"	: { wiring: makeWiring("NZJHGRCXMYSWBOUFAIVLPEKQDT"), notches: "ZM" },
 	"VIII"	: { wiring: makeWiring("FKQHTLXOCBJSPDZRAMEWNIUYGV"), notches: "ZM" },
-	"β"		: { wiring: makeWiring("LEYJVCNIXWPBQMDRTAKZGFUHOS"), notches: "", fixed: true }, // Zusatzwalze - doesn't move - or move anything else
-	"γ"		: { wiring: makeWiring("FSOKANUERHMBTIYCWLQPZXVGJD"), notches: "", fixed: true }
+	"beta"	: { wiring: makeWiring("LEYJVCNIXWPBQMDRTAKZGFUHOS"), notches: "", fixed: true }, // Zusatzwalze - doesn't move - or move anything else
+	"gamma"	: { wiring: makeWiring("FSOKANUERHMBTIYCWLQPZXVGJD"), notches: "", fixed: true }
 };
 
 // Reflector setups.
@@ -401,10 +384,10 @@ class EnigmaTransform extends Transform
 		super();
 		this.addInput("string", "Input")
 			.addOutput("string", "Output")
-			.addOption("rotor0", "Rotor 1", "I", { type: "select", texts: ROTOR_NAMES })
-			.addOption("rotor1", "Rotor 2", "II", { type: "select", texts: ROTOR_NAMES })
-			.addOption("rotor2", "Rotor 3", "III", { type: "select", texts: ROTOR_NAMES })
-			.addOption("rotor3", "Rotor 4", "", { type: "select", texts: ROTOR_NAMES })
+			.addOption("rotor0", "Rotor 1", "I", { type: "select", texts: ROTOR_NAMES, values: ROTOR_VALUES })
+			.addOption("rotor1", "Rotor 2", "II", { type: "select", texts: ROTOR_NAMES, values: ROTOR_VALUES })
+			.addOption("rotor2", "Rotor 3", "III", { type: "select", texts: ROTOR_NAMES, values: ROTOR_VALUES })
+			.addOption("rotor3", "Rotor 4", "", { type: "select", texts: ROTOR_NAMES, values: ROTOR_VALUES })
 			.addOption("reflector", "Reflector", "A", { type: "select", texts: REFLECTOR_NAMES })
 			.addOption("ringSettings", "Ring Settings", "1,1,1", { type: "short-string" })
 			.addOption("rotorPositions", "Rotor Positions", "A,A,A", { type: "short-string"})

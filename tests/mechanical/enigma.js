@@ -82,7 +82,7 @@ test("Decrypts U-264 (Kapitänleutnant Hartwig Looks), 1942", t => {
 	const tf = new EnigmaTransform();
 
 	const options = {
-		rotor0: "β",
+		rotor0: "beta",
 		rotor1: "II",
 		rotor2: "IV",
 		rotor3: "I",
@@ -121,7 +121,7 @@ test("Decrypts Message from Dönitz - 1 May 1945", t => {
 	const tf = new EnigmaTransform();
 
 	const options = {
-		rotor0: "β",
+		rotor0: "beta",
 		rotor1: "V",
 		rotor2: "VI",
 		rotor3: "VIII",
@@ -161,7 +161,7 @@ test("Decrypts H.M.S. Hurricane intercept, 1942", t => {
 	const tf = new EnigmaTransform();
 
 	const options = {
-		rotor0: "β",
+		rotor0: "beta",
 		rotor1: "VI",
 		rotor2: "I",
 		rotor3: "III",
