@@ -67,6 +67,26 @@ function hexToBytes(hex)
 	return bytes;
 }
 
+function int64sToHex(ints)
+{
+	let result = "";
+	if (!ints)
+	{
+		return result;
+	}
+	for (let i = 0; i < ints.length; i++)
+	{
+		if (i > 0)
+		{
+			result += " ";
+		}
+		const int = ints[i];
+		result += ("00000000" + (int.hi >>> 0).toString(16)).substr(-8) + "-";
+		result += ("00000000" + (int.lo >>> 0).toString(16)).substr(-8);
+	}
+	return result;
+}
+
 function bytesToInt32sBE(bytes)
 {
 	// TODO: Uint32Array - but make sure it's big endian
@@ -226,6 +246,7 @@ export {
 	int32sToBytesLE,
 	int32ToBytesBE,
 	int32ToBytesLE,
+	int64sToHex,
 	mod,
 	multiByteStringReverse,
 	removeWhiteSpace,

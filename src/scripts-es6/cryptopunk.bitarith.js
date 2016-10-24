@@ -139,7 +139,14 @@ function ror64(val, count)
 function shr64(val, count)
 {
 	const result = {};
-	if (count < 32)
+	if (count === 0)
+	{
+		// This would cause hi << 32, which Javascript won't do
+		// Besides, this is simpler:
+		result.hi = val.hi;
+		result.lo = val.lo;
+	}
+	else if (count < 32)
 	{
 		result.hi = val.hi >>> count;
 		result.lo = val.lo >>> count | ((val.hi << (32 - count)) & 0xffffffff);

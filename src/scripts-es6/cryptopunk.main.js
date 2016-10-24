@@ -33,6 +33,7 @@ import * as stringManipulation from "./transforms/string-manipulation";
 import * as substitution from "./transforms/classical/substitution";
 import * as unicode from "./transforms/unicode";
 import * as vigenere from "./transforms/classical/vigenere";
+import * as whirlpool from "./transforms/hashes/whirlpool";
 import * as xor from "./transforms/modern/xor";
 import * as propertyPanel from "./cryptopunk.property-panel";
 
@@ -321,6 +322,7 @@ addPaletteItem(sha1.Sha1Transform, "SHA-1", "SHA-1");
 addPaletteItem(sha2.Sha2Transform, "SHA-2", "SHA-2");
 addPaletteItem(sha3.Sha3Transform, "SHA-3");
 addPaletteItem(sha3.ShakeTransform, "SHAKE", "SHAKE");
+addPaletteItem(whirlpool.WhirlpoolTransform, "WHIRLPOOL", "WHIRLPOOL");
 
 addPaletteCategory("String manipulation");
 addPaletteItem(stringManipulation.RemoveCharsTransform, "Remove characters");

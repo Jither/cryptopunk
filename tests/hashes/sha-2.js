@@ -41,7 +41,7 @@ doTest256("NESSIE test vector #5", "248d6a61d20638b8e5c026930c3e6039a33ce45964ff
 doTest256("NESSIE test vector #6", "db4bfcbd4da0cd85a60c3c37d3fbd8805c77f15fc6b1fdfe614ee0a7c8fdb4c0", "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789");
 doTest256("NESSIE test vector #7", "f371bc4a311f2b009eef952dd83ca80e2b60026c8e935592d0f9c308453c813e", "1234567890".repeat(8));
 // Out-commented for resource intensiveness (not much, but still...)
-//doTest256("NESSIE test vector #8", testAsciiHash, Sha256Transform, "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0", "a".repeat(1000000));
+//doTest256("NESSIE test vector #8", "cdc76e5c9914fb9281a1c7e284d73e67f1809a48a497200e046d39ccc7112cd0", "a".repeat(1000000));
 
 doTest384("NESSIE test vector #0", "38b060a751ac96384cd9327eb1b1e36a21fdb71114be07434c0cc7bf63f6e1da274edebfe76f65fbd51ad2f14898b95b", "");
 doTest384("NESSIE test vector #1", "54a59b9f22b0b80880d8427e548b7c23abd873486e1f035dce9cd697e85175033caa88e6d57bc35efae0b5afd3145f31", "a");
