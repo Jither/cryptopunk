@@ -5,6 +5,7 @@ import * as baseN from "./transforms/base-n";
 import * as bifid from "./transforms/classical/bifid";
 import * as binary from "./transforms/binary";
 import * as blowfish from "./transforms/modern/blowfish";
+import * as bsd from "./transforms/checksums/bsd";
 import * as codepages from "./transforms/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
@@ -303,8 +304,9 @@ addPaletteItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 UR
 
 addPaletteCategory("Checksums");
 addPaletteItem(adler32.Adler32Transform, "Adler-32", "Adler-32");
+addPaletteItem(bsd.BsdTransform, "BSD", "BSD checksum");
 addPaletteItem(crc.CrcTransform, "CRC", "CRC");
-addPaletteItem(fletcher.FletcherTransform, "Fletcher checksum", "Fletcher checksum");
+addPaletteItem(fletcher.FletcherTransform, "Fletcher", "Fletcher checksum");
 
 addPaletteCategory("Hashes");
 addPaletteItem(haval.HavalTransform, "HAVAL", "HAVAL");
