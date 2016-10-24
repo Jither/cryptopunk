@@ -79,6 +79,7 @@
 		runBench("Sha3Transform", "SHA3-512", { variant: "SHA3-512" });
 		runBench("ShakeTransform", "SHAKE-128", { variant: "SHAKE-128" });
 		runBench("ShakeTransform", "SHAKE-256", { variant: "SHAKE-256" });
+		runBench("WhirlpoolTransform", "WHIRLPOOL");
 	}
 
 	document.getElementById("start").addEventListener("click", startClickListener);

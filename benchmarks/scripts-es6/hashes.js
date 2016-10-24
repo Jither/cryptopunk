@@ -9,6 +9,7 @@ import * as ripemd128 from "../../src/scripts-es6/transforms/hashes/ripemd-128";
 import * as sha1 from "../../src/scripts-es6/transforms/hashes/sha-1";
 import * as sha256 from "../../src/scripts-es6/transforms/hashes/sha256";
 import * as sha512 from "../../src/scripts-es6/transforms/hashes/sha512";
+import * as whirlpool from "../../src/scripts-es6/transforms/hashes/whirlpool";
 import * as sha3 from "../../src/scripts-es6/transforms/hashes/sha-3";
 import * as utils from "../../src/scripts-es6/cryptopunk.utils";
 
@@ -47,3 +48,4 @@ addTransformsFrom(sha1);
 addTransformsFrom(sha256);
 addTransformsFrom(sha512);
 addTransformsFrom(sha3);
+addTransformsFrom(whirlpool);
