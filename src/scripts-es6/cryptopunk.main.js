@@ -9,6 +9,7 @@ import * as codepages from "./transforms/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
 import * as enigma from "./transforms/mechanical/enigma";
+import * as fletcher from "./transforms/checksums/fletcher";
 import * as haval from "./transforms/hashes/haval";
 import * as keccak from "./transforms/hashes/keccak";
 import * as hex from "./transforms/hex";
@@ -303,6 +304,7 @@ addPaletteItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 UR
 addPaletteCategory("Checksums");
 addPaletteItem(adler32.Adler32Transform, "Adler-32", "Adler-32");
 addPaletteItem(crc.CrcTransform, "CRC", "CRC");
+addPaletteItem(fletcher.FletcherTransform, "Fletcher checksum", "Fletcher checksum");
 
 addPaletteCategory("Hashes");
 addPaletteItem(haval.HavalTransform, "HAVAL", "HAVAL");

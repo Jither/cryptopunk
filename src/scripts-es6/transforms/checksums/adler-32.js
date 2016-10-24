@@ -22,9 +22,9 @@ class Adler32Transform extends Transform
 		}
 		
 		const result = new Uint8Array(4);
-		result[0] = b >>> 8;
+		result[0] = b >> 8;
 		result[1] = b & 0xff;
-		result[2] = a >>> 8;
+		result[2] = a >> 8;
 		result[3] = a & 0xff;
 
 		return result;
