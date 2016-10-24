@@ -1,3 +1,4 @@
+import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
 import * as ascii from "./transforms/ascii";
 import * as baseN from "./transforms/base-n";
@@ -300,6 +301,7 @@ addPaletteItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64");
 addPaletteItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
 
 addPaletteCategory("Checksums");
+addPaletteItem(adler32.Adler32Transform, "Adler-32", "Adler-32");
 addPaletteItem(crc.CrcTransform, "CRC", "CRC");
 
 addPaletteCategory("Hashes");

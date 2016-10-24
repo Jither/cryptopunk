@@ -2,17 +2,22 @@ import test from "ava";
 import { testAsciiHash } from "../_testutils";
 import { CrcTransform } from "transforms/checksums/crc";
 
-test("Does CRC-16 (ARC) correctly"				, testAsciiHash, CrcTransform, "bb3d", "123456789", { variant: "crc-16-arc" });
-test("Does CRC-16 (X-25) correctly"				, testAsciiHash, CrcTransform, "906e", "123456789", { variant: "crc-16-x25" });
-test("Does CRC-16 (KERMIT) correctly"			, testAsciiHash, CrcTransform, "2189", "123456789", { variant: "crc-16-kermit" });
-test("Does CRC-16 (XMODEM) correctly"			, testAsciiHash, CrcTransform, "31c3", "123456789", { variant: "crc-16-xmodem" });
+function doTest(title, expectedHex, inputAscii, variant)
+{
+	test(`Calculates ${title} checksum`, testAsciiHash, CrcTransform, expectedHex, inputAscii, { variant: variant });
+}
 
-test("Does CRC-24 (OpenPGP) correctly"			, testAsciiHash, CrcTransform, "21cf02", "123456789", { variant: "crc-24" });
+doTest("CRC-16 (ARC)"			, "bb3d", "123456789", "crc-16-arc");
+doTest("CRC-16 (X-25)"			, "906e", "123456789", "crc-16-x25");
+doTest("CRC-16 (KERMIT)"		, "2189", "123456789", "crc-16-kermit");
+doTest("CRC-16 (XMODEM)"		, "31c3", "123456789", "crc-16-xmodem");
 
-test("Does CRC-32 correctly"					, testAsciiHash, CrcTransform, "cbf43926", "123456789", { variant: "crc-32" });
-test("Does CRC-32 (bzip2) correctly"			, testAsciiHash, CrcTransform, "fc891918", "123456789", { variant: "crc-32-bzip2" });
-test("Does CRC-32C correctly"					, testAsciiHash, CrcTransform, "e3069283", "123456789", { variant: "crc-32c" });
-test("Does CRC-32D correctly"					, testAsciiHash, CrcTransform, "87315576", "123456789", { variant: "crc-32d" });
-test("Does CRC-32 (MPEG-2) correctly"			, testAsciiHash, CrcTransform, "0376e6e7", "123456789", { variant: "crc-32-mpeg2" });
-test("Does CRC-32 (Posix) correctly"			, testAsciiHash, CrcTransform, "765e7680", "123456789", { variant: "crc-32-posix" });
-test("Does CRC-32Q correctly"					, testAsciiHash, CrcTransform, "3010bf7f", "123456789", { variant: "crc-32q" });
+doTest("CRC-24 (OpenPGP)"		, "21cf02", "123456789", "crc-24");
+
+doTest("CRC-32"					, "cbf43926", "123456789", "crc-32");
+doTest("CRC-32 (bzip2)"			, "fc891918", "123456789", "crc-32-bzip2");
+doTest("CRC-32C"				, "e3069283", "123456789", "crc-32c");
+doTest("CRC-32D"				, "87315576", "123456789", "crc-32d");
+doTest("CRC-32 (MPEG-2)"		, "0376e6e7", "123456789", "crc-32-mpeg2");
+doTest("CRC-32 (Posix)"			, "765e7680", "123456789", "crc-32-posix");
+doTest("CRC-32Q"				, "3010bf7f", "123456789", "crc-32q");
