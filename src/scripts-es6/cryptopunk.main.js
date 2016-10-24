@@ -17,6 +17,7 @@ import * as md5 from "./transforms/hashes/md5";
 import * as nativeAes from "./transforms/browser-native/aes";
 import * as nativeRsa from "./transforms/browser-native/rsa";
 import * as numbers from "./transforms/numbers";
+import * as rc4 from "./transforms/modern/rc4";
 import * as rijndael from "./transforms/modern/rijndael";
 import * as ripemd from "./transforms/hashes/ripemd";
 import * as ripemdN from "./transforms/hashes/ripemd-n";
@@ -344,6 +345,7 @@ addPaletteItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
 
 addPaletteCategory("Modern two-way");
 addPaletteItem(xor.XorTransform, "XOR");
+addPaletteItem(rc4.Rc4Transform, "RC4");
 
 addPaletteCategory("Modern decryption");
 addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");
