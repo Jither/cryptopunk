@@ -22,7 +22,7 @@ class RandomBytesGenerator extends Transform
 	{
 		super();
 		this.addOutput("bytes", "Bytes")
-			.addOption("length", "Length", 16);
+			.addOption("length", "Length", 16, { min: 1 });
 	}
 
 	transform(options)
@@ -41,7 +41,7 @@ class NullBytesGenerator extends Transform
 	{
 		super();
 		this.addOutput("bytes", "Bytes")
-			.addOption("length", "Length", 16);
+			.addOption("length", "Length", 16, { min: 1 });
 	}
 
 	transform(options)
