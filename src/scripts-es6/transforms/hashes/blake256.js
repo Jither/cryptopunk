@@ -140,7 +140,7 @@ class Blake256Transform extends Transform
 			v[14] ^= t[1];
 			v[15] ^= t[1];
 
-			for(let i = 0; i < 14; i++)
+			for(let i = 0; i < 14; i++) // TODO: Maybe implement BLAKE-28/32 - should just be round count 10 instead of 14
 			{
 				// column step
 				g(m, v, i, 0,  4,  8, 12,  0 );

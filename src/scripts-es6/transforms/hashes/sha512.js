@@ -39,7 +39,7 @@ class Sha512Transform extends MdBaseTransform
 		this.endianness = "BE";
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		// The one main difference between SHA-512 and SHA-384 is the initial hash values
 		// For SHA-512: First 64 bits of the fractional parts of the square roots of the first 8 prime numbers
@@ -60,7 +60,7 @@ class Sha512Transform extends MdBaseTransform
 		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 64));
 
-		let [a, b, c, d, e, f, g, h] = this.getInitialHashValues();
+		let [a, b, c, d, e, f, g, h] = this.getIV();
 
 		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 32)
 		{
@@ -147,7 +147,7 @@ class Sha384Transform extends Sha512Transform
 		this.isSha384 = true;
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		// The one main difference between SHA-512 and SHA-384 is the initial hash values
 		// For SHA-384: The first 64 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.

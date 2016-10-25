@@ -83,7 +83,7 @@ class RipeMd128Transform extends MdBaseTransform
 		this.endianness = "LE";
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		return [
 			CONSTANTS.INIT_1_67,
@@ -102,7 +102,7 @@ class RipeMd128Transform extends MdBaseTransform
 	{
 		const x = bytesToInt32sLE(this.padMessage(bytes, 32));
 
-		let [a0, b0, c0, d0, aa0, bb0, cc0, dd0] = this.getInitialHashValues();
+		let [a0, b0, c0, d0, aa0, bb0, cc0, dd0] = this.getIV();
 
 		for (let index = 0; index < x.length; index += 16)
 		{
@@ -190,7 +190,7 @@ class RipeMd256Transform extends RipeMd128Transform
 		this.isRipeMd256 = true;
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		return [
 			CONSTANTS.INIT_1_67,

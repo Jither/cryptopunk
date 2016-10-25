@@ -22,7 +22,7 @@ class Sha256Transform extends MdBaseTransform
 		this.endianness = "BE";
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
 		// For SHA-256: First 32 bits of the fractional parts of the square roots of the first 8 prime numbers
@@ -43,7 +43,7 @@ class Sha256Transform extends MdBaseTransform
 		// TODO: Consider DataView
 		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
 
-		let [a, b, c, d, e, f, g, h] = this.getInitialHashValues();
+		let [a, b, c, d, e, f, g, h] = this.getIV();
 
 		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 16)
 		{
@@ -108,7 +108,7 @@ class Sha224Transform extends Sha256Transform
 		this.isSha224 = true;
 	}
 
-	getInitialHashValues()
+	getIV()
 	{
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
 		// For SHA-224: The first 32 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.
