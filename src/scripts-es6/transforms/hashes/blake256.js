@@ -118,7 +118,7 @@ class Blake256Transform extends Transform
 			}
 
 			t[0] = bitCounter & 0xffffffff;
-			t[1] = bitCounter / 0xffffffff;
+			t[1] = (bitCounter / 0x100000000) | 0;
 
 			const m = bytesToInt32sBE(padded.subarray(blockIndex, blockIndex + 64));
 			const v = new Array(16);
