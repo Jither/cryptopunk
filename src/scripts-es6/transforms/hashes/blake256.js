@@ -102,6 +102,7 @@ class Blake256Transform extends Transform
 
 		const s = [0, 0, 0, 0];
 		const t = [0, 0];
+		const v = new Array(16);
 		const messageBits = bytes.length * 8;
 
 		let bitCounter = 0;
@@ -120,48 +121,8 @@ class Blake256Transform extends Transform
 			t[0] = bitCounter & 0xffffffff;
 			t[1] = (bitCounter / 0x100000000) | 0;
 
-			const m = bytesToInt32sBE(padded.subarray(blockIndex, blockIndex + 64));
-			const v = new Array(16);
-			for (let i = 0; i < 8; i++)
-			{
-				v[i] = h[i];
-			}
-			v[ 8] = s[0] ^ u256[0];
-			v[ 9] = s[1] ^ u256[1];
-			v[10] = s[2] ^ u256[2];
-			v[11] = s[3] ^ u256[3];
-			v[12] = u256[4];
-			v[13] = u256[5];
-			v[14] = u256[6];
-			v[15] = u256[7];
-
-			v[12] ^= t[0];
-			v[13] ^= t[0];
-			v[14] ^= t[1];
-			v[15] ^= t[1];
-
-			for(let i = 0; i < 14; i++) // TODO: Maybe implement BLAKE-28/32 - should just be round count 10 instead of 14
-			{
-				// column step
-				g(m, v, i, 0,  4,  8, 12,  0 );
-				g(m, v, i, 1,  5,  9, 13,  2 );
-				g(m, v, i, 2,  6, 10, 14,  4 );
-				g(m, v, i, 3,  7, 11, 15,  6 );
-				// diagonal step
-				g(m, v, i, 0,  5, 10, 15,  8 );
-				g(m, v, i, 1,  6, 11, 12, 10 );
-				g(m, v, i, 2,  7,  8, 13, 12 );
-				g(m, v, i, 3,  4,  9, 14, 14 );
-			}
-
-			for (let i = 0; i < 16; i++)
-			{
-				h[i % 8] ^= v[i];
-			}
-			for (let i = 0; i < 8; i++)
-			{
-				h[i] ^= s[i % 4];
-			}
+			const block = padded.subarray(blockIndex, blockIndex + 64);
+			this.transformBlock(block, h, t, v, s)
 		}
 		if (this.isBlake224)
 		{
@@ -169,6 +130,51 @@ class Blake256Transform extends Transform
 			h.pop();
 		}
 		return int32sToBytesBE(h);
+	}
+
+	transformBlock(block, h, t, v, s)
+	{
+		const m = bytesToInt32sBE(block);
+		for (let i = 0; i < 8; i++)
+		{
+			v[i] = h[i];
+		}
+		v[ 8] = s[0] ^ u256[0];
+		v[ 9] = s[1] ^ u256[1];
+		v[10] = s[2] ^ u256[2];
+		v[11] = s[3] ^ u256[3];
+		v[12] = u256[4];
+		v[13] = u256[5];
+		v[14] = u256[6];
+		v[15] = u256[7];
+
+		v[12] ^= t[0];
+		v[13] ^= t[0];
+		v[14] ^= t[1];
+		v[15] ^= t[1];
+
+		for(let i = 0; i < 14; i++) // TODO: Maybe implement BLAKE-28/32 - should just be round count 10 instead of 14
+		{
+			// column step
+			g(m, v, i, 0,  4,  8, 12,  0 );
+			g(m, v, i, 1,  5,  9, 13,  2 );
+			g(m, v, i, 2,  6, 10, 14,  4 );
+			g(m, v, i, 3,  7, 11, 15,  6 );
+			// diagonal step
+			g(m, v, i, 0,  5, 10, 15,  8 );
+			g(m, v, i, 1,  6, 11, 12, 10 );
+			g(m, v, i, 2,  7,  8, 13, 12 );
+			g(m, v, i, 3,  4,  9, 14, 14 );
+		}
+
+		for (let i = 0; i < 16; i++)
+		{
+			h[i % 8] ^= v[i];
+		}
+		for (let i = 0; i < 8; i++)
+		{
+			h[i] ^= s[i % 4];
+		}
 	}
 }
 

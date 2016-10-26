@@ -113,7 +113,7 @@ class Blake2sTransform extends Transform
 		// BLAKE-2: Can be keyed - the key is prefixed as an extra block
 		if (isKeyed)
 		{
-			const block = bytesToInt32sLE(this.padMessage(keyBytes));
+			const block = this.padMessage(keyBytes);
 			const lastBlock = emptyMessage;
 			byteCounter += 64;
 			t[0] = byteCounter;
@@ -129,8 +129,7 @@ class Blake2sTransform extends Transform
 			{
 				const lastBlock = (blockIndex === padded.length - 64);
 
-				// BLAKE-2: Byte streams are interpreted as LITTLE endian:
-				const block = bytesToInt32sLE(padded.subarray(blockIndex, blockIndex + 64));
+				const block = padded.subarray(blockIndex, blockIndex + 64);
 				
 				// BLAKE-2: Counter is in bytes rather than bits
 				// and no special rule for blocks with no original content(?)
@@ -151,8 +150,11 @@ class Blake2sTransform extends Transform
 		return int32sToBytesLE(h).subarray(0, hashByteLength);
 	}
 
-	transformBlock(m, h, t, v, lastBlock)
+	transformBlock(block, h, t, v, lastBlock)
 	{
+		// BLAKE-2: Byte streams are interpreted as LITTLE endian:
+		const m = bytesToInt32sLE(block);
+
 		// BLAKE-2: Different initialization of working vector:
 		for (let i = 0; i < 8; i++)
 		{
