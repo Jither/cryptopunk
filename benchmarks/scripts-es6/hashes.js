@@ -1,3 +1,6 @@
+import * as blake256 from "../../src/scripts-es6/transforms/hashes/blake256";
+import * as blake512 from "../../src/scripts-es6/transforms/hashes/blake512";
+import * as blake2s from "../../src/scripts-es6/transforms/hashes/blake2s";
 import * as haval from "../../src/scripts-es6/transforms/hashes/haval";
 import * as keccak from "../../src/scripts-es6/transforms/hashes/keccak";
 import * as md2 from "../../src/scripts-es6/transforms/hashes/md2";
@@ -36,6 +39,9 @@ function addTransformsFrom(imp)
 	}
 }
 
+addTransformsFrom(blake256);
+addTransformsFrom(blake512);
+addTransformsFrom(blake2s);
 addTransformsFrom(haval);
 addTransformsFrom(keccak);
 addTransformsFrom(md2);
