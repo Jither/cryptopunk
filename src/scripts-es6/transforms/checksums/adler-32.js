@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "../transforms";
+import { Transform } from "../transforms";
 
 const MOD_ADLER = 65521;
 

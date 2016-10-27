@@ -11,10 +11,12 @@ import * as bsd from "./transforms/checksums/bsd";
 import * as codepages from "./transforms/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
+import * as des from "./transforms/modern/des";
 import * as enigma from "./transforms/mechanical/enigma";
 import * as fletcher from "./transforms/checksums/fletcher";
 import * as haval from "./transforms/hashes/haval";
 import * as keccak from "./transforms/hashes/keccak";
+import * as lucifer from "./transforms/modern/lucifer";
 import * as hex from "./transforms/hex";
 import * as md2 from "./transforms/hashes/md2";
 import * as md4 from "./transforms/hashes/md4";
@@ -356,8 +358,8 @@ addPaletteCategory("Mechanical");
 addPaletteItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
 
 addPaletteCategory("Modern two-way");
-addPaletteItem(xor.XorTransform, "XOR");
 addPaletteItem(rc4.Rc4Transform, "RC4");
+addPaletteItem(xor.XorTransform, "XOR");
 
 addPaletteCategory("Modern decryption");
 addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");
@@ -365,6 +367,8 @@ addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) D
 addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
 addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt");
 addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
+addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
+addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Decrypt");
 addPaletteItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
 
@@ -374,5 +378,7 @@ addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) E
 addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");
 addPaletteItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt");
 addPaletteItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt");
+addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
+addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt");
 addPaletteItem(rijndael.RijndaelEncryptTransform, "Rijndael", "Rijndael Encrypt");
 addPaletteItem(nativeRsa.NativeRsaOaepEncryptTransform, "RSA (OAEP)", "RSA (OAEP) Encrypt");

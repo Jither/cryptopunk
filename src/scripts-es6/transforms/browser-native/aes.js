@@ -127,10 +127,8 @@ class NativeAesCbcEncryptTransform extends NativeAesBaseTransform
 		this.addInput("bytes", "IV");
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		return this._transform("AES-CBC", bytes, keyBytes, ivBytes, "iv");
 	}
 }
@@ -143,10 +141,8 @@ class NativeAesCbcDecryptTransform extends NativeAesBaseTransform
 		this.addInput("bytes", "IV");
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		return this._transform("AES-CBC", bytes, keyBytes, ivBytes, "iv");
 	}
 }
@@ -160,10 +156,8 @@ class NativeAesCfbEncryptTransform extends NativeAesBaseTransform
 		this.addInput("bytes", "IV");
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		return this._transform("AES-CFB-8", bytes, keyBytes, ivBytes, "iv");
 	}
 }
@@ -176,10 +170,8 @@ class NativeAesCfbDecryptTransform extends NativeAesBaseTransform
 		this.addInput("bytes", "IV");
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		return this._transform("AES-CFB-8", bytes, keyBytes, ivBytes, "iv");
 	}
 }

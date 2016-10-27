@@ -48,7 +48,7 @@ class Utf8ToBytesTransform extends Transform
 			.addOutput("bytes", "Bytes");
 	}
 
-	transform(str, options)
+	transform(str)
 	{
 		// Can't predetermine length, so no TypedArray here
 		const result = [];

@@ -43,7 +43,7 @@ const SIGMA = [
 function g(m, v, i, a, b, c, d, e)
 {
 	const sigmaE = SIGMA[i][e];
-	const sigmaE1 = SIGMA[i][e+1];
+	const sigmaE1 = SIGMA[i][e + 1];
 	v[a] = add64(v[a], xor64(m[sigmaE], u512[sigmaE1]), v[b]);
 	v[d] = ror64(xor64(v[d], v[a]), 32);
 	v[c] = add64(v[c], v[d]);
@@ -78,19 +78,19 @@ class Blake512Transform extends Transform
 		padded.set(bytes);
 		padded[length] = 0x80;
 
-        const index = length + paddingLength; // Go to last 16 bytes of padding
-        if (!this.isBlake384)
-        {
+		const index = length + paddingLength; // Go to last 16 bytes of padding
+		if (!this.isBlake384)
+		{
 			padded[index - 1] |= 0x01; // May be the same byte as the start-of-padding bit
 		}
 
 		// We'll never reach 2^^64 bit length in Javascript
-        const bitLengthLo = length << 3;
-        const bitLengthHi = length >>> 29;
+		const bitLengthLo = length << 3;
+		const bitLengthHi = length >>> 29;
 
-        padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index + 8);
+		padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index + 8);
 
-        return padded;
+		return padded;
 	}
 
 	getIV()
@@ -111,7 +111,7 @@ class Blake512Transform extends Transform
     {
         for (let i = 0; i < arr.length; i++)
         {
-            arr[i] = { hi: 0, lo: 0 };
+			arr[i] = { hi: 0, lo: 0 };
         }
     }
 
@@ -149,7 +149,7 @@ class Blake512Transform extends Transform
 			// t[1] = (bitCounter / 0x100000000) | 0;
 
 			const block = padded.subarray(blockIndex, blockIndex + 128);
-			this.transformBlock(block, h, t, v, s)
+			this.transformBlock(block, h, t, v, s);
 		}
 		if (this.isBlake384)
 		{

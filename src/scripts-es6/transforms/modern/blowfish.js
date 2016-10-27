@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, bytesToHex, mod } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, bytesToHex } from "../../cryptopunk.utils";
 import { add } from "../../cryptopunk.bitarith";
 
 const P = [
@@ -161,11 +161,7 @@ class BlowfishTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
 	{
-		super();
-		this.decrypt = decrypt;
-		this.addInput("bytes", decrypt ? "Ciphertext" : "Plaintext")
-			.addInput("bytes", "Key")
-			.addOutput("bytes", decrypt ? "Plaintext" : "Ciphertext");
+		super(decrypt);
 	}
 
 	createSubKeys(keyBytes)
@@ -193,7 +189,7 @@ class BlowfishTransform extends BlockCipherTransform
 		const p = result.p;
 
 		let keyIndex = 0;
-		let keySizeBytes = keyBytes.length;
+		const keySizeBytes = keyBytes.length;
 		for (let i = 0; i < 18; i++)
 		{
 			const keyWord = keyBytes[(keyIndex++) % keySizeBytes] << 24 |

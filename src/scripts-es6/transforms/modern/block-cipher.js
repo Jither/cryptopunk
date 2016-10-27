@@ -1,10 +1,14 @@
-import { Transform, TransformError } from "../transforms";
+import { Transform } from "../transforms";
 
 class BlockCipherTransform extends Transform
 {
-	constructor()
+	constructor(decrypt)
 	{
 		super();
+		this.decrypt = decrypt;
+		this.addInput("bytes", decrypt ? "Ciphertext" : "Plaintext")
+			.addInput("bytes", "Key")
+			.addOutput("bytes", decrypt ? "Plaintext" : "Ciphertext");
 	}
 
 	transformBlocks(bytes, blockSizeBits, ...rest)
@@ -13,7 +17,6 @@ class BlockCipherTransform extends Transform
 		const blockCount = Math.ceil(bytes.length / blockSizeBytes);
 
 		const result = new Uint8Array(blockSizeBytes * blockCount);
-		const blockBuffer = new Uint8Array(blockSizeBytes);
 
 		for (let offset = 0; offset < result.length; offset += blockSizeBytes)
 		{

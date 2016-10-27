@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "../transforms";
+import { Transform } from "../transforms";
 
 class Rc4Transform extends Transform
 {

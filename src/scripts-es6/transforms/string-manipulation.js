@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "./transforms";
+import { Transform } from "./transforms";
 import { escapeForRegex, multiByteStringReverse } from "../cryptopunk.utils";
 
 class RemoveCharsTransform extends Transform

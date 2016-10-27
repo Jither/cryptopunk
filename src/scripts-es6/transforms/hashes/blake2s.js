@@ -1,4 +1,4 @@
-import { Transform } from "../transforms";
+import { Transform, TransformError } from "../transforms";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -24,7 +24,7 @@ const SIGMA = [
 function g(m, v, i, a, b, c, d, e)
 {
 	const sigmaE = SIGMA[i][e]; // i % 10 really, but i is already less than 10 for BLAKE-2s
-	const sigmaE1 = SIGMA[i][e+1];
+	const sigmaE1 = SIGMA[i][e + 1];
 	v[a] = add(v[a], v[b], m[sigmaE]);
 	v[d] = ror(v[d] ^ v[a], 16);
 	v[c] = add(v[c], v[d]);
@@ -61,7 +61,7 @@ class Blake2sTransform extends Transform
 		const padded = new Uint8Array(bytes.length + paddingLength);
 		padded.set(bytes);
 
-        return padded;
+		return padded;
 	}
 
 	getIV()
@@ -144,7 +144,7 @@ class Blake2sTransform extends Transform
 				t[0] = byteCounter & 0xffffffff;
 				t[1] = (byteCounter / 0x100000000) | 0;
 
-				this.transformBlock(block, h, t, v, lastBlock)
+				this.transformBlock(block, h, t, v, lastBlock);
 			}
 		}
 		return int32sToBytesLE(h).subarray(0, hashByteLength);

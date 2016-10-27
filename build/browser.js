@@ -9,11 +9,12 @@ var babel = require('babelify');
 
 function compile(src, dest, name, watch)
 {
-  var bundler = browserify(src, { debug: true }).transform(babel);
+  var bundler = browserify(src, { debug: true, cache: {}, packageCache: {} }).transform(babel);
 
   if (watch)
   {
-    bundler = watchify(bundler);
+    bundler.plugin(watchify);
+    //bundler = watchify(bundler);
   }
 
   function rebundle()
@@ -34,6 +35,10 @@ function compile(src, dest, name, watch)
     {
       console.log('-> building scripts...');
       rebundle();
+    });
+    bundler.on('time', function(time)
+    {
+      console.log('-> built in ' + time);
     });
   }
 

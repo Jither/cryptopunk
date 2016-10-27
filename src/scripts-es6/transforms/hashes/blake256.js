@@ -31,7 +31,7 @@ const SIGMA = [
 function g(m, v, i, a, b, c, d, e)
 {
 	const sigmaE = SIGMA[i][e];
-	const sigmaE1 = SIGMA[i][e+1];
+	const sigmaE1 = SIGMA[i][e + 1];
 	v[a] = add(v[a], m[sigmaE] ^ u256[sigmaE1], v[b]);
 	v[d] = ror(v[d] ^ v[a], 16);
 	v[c] = add(v[c], v[d]);
@@ -66,18 +66,18 @@ class Blake256Transform extends Transform
 		padded.set(bytes);
 		padded[length] = 0x80;
 
-        const index = length + paddingLength; // Go to last 8 bytes of padding
-        if (!this.isBlake224)
-        {
+		const index = length + paddingLength; // Go to last 8 bytes of padding
+		if (!this.isBlake224)
+		{
 			padded[index - 1] |= 0x01; // May be the same byte as the start-of-padding bit
 		}
 
-        const bitLengthLo = length << 3;
-        const bitLengthHi = length >>> 29;
+		const bitLengthLo = length << 3;
+		const bitLengthHi = length >>> 29;
 
-        padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index);
+		padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index);
 
-        return padded;
+		return padded;
 	}
 
 	getIV()
@@ -122,7 +122,7 @@ class Blake256Transform extends Transform
 			t[1] = (bitCounter / 0x100000000) | 0;
 
 			const block = padded.subarray(blockIndex, blockIndex + 64);
-			this.transformBlock(block, h, t, v, s)
+			this.transformBlock(block, h, t, v, s);
 		}
 		if (this.isBlake224)
 		{
