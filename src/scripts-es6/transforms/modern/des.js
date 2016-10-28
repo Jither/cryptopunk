@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE, hexToBytes } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 
 // The following tables are different from the usual reference tables - all of them count
 // from 0 - i.e. 0 is first bit, 1 is second... A few of them also have other differences, noted below.

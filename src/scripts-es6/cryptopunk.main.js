@@ -15,6 +15,7 @@ import * as des from "./transforms/modern/des";
 import * as enigma from "./transforms/mechanical/enigma";
 import * as fletcher from "./transforms/checksums/fletcher";
 import * as haval from "./transforms/hashes/haval";
+import * as idea from "./transforms/modern/idea";
 import * as keccak from "./transforms/hashes/keccak";
 import * as lucifer from "./transforms/modern/lucifer";
 import * as hex from "./transforms/hex";
@@ -368,6 +369,7 @@ addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) D
 addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt");
 addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
 addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
+addPaletteItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt");
 addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Decrypt");
 addPaletteItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
@@ -379,6 +381,7 @@ addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) E
 addPaletteItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt");
 addPaletteItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt");
 addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
+addPaletteItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt");
 addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt");
 addPaletteItem(rijndael.RijndaelEncryptTransform, "Rijndael", "Rijndael Encrypt");
 addPaletteItem(nativeRsa.NativeRsaOaepEncryptTransform, "RSA (OAEP)", "RSA (OAEP) Encrypt");
