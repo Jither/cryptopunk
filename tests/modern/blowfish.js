@@ -6,8 +6,8 @@ import { hexToBytes, bytesToHex } from "cryptopunk.utils";
 function doTest(title, expectedHex, messageHex, keyHex)
 {
 	const key = hexToBytes(keyHex);
-	test("Encrypts " + title, testBytesToBytes, BlowfishEncryptTransform, expectedHex, messageHex, key);
-	test("Decrypts " + title, testBytesToBytes, BlowfishDecryptTransform, messageHex, expectedHex, key);
+	test("Blowfish encrypts " + title, testBytesToBytes, BlowfishEncryptTransform, expectedHex, messageHex, key);
+	test("Blowfish decrypts " + title, testBytesToBytes, BlowfishDecryptTransform, messageHex, expectedHex, key);
 }
 
 doTest("Eric Young ECB test data #1" , "4ef997456198dd78", "0000000000000000", "0000000000000000");

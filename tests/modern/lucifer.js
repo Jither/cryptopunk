@@ -7,7 +7,7 @@ function doTest(title, expectedHex, messageHex, keyHex, blockSize)
 {
 	const key = hexToBytes(keyHex);
 	test("LUCIFER Encrypts " + title, testBytesToBytes, LuciferEncryptTransform, expectedHex, messageHex, key);
-	test("LUCIFER Decrypts " + title, testBytesToBytes, LufcierDecryptTransform, messageHex, expectedHex, key);
+	test("LUCIFER Decrypts " + title, testBytesToBytes, LuciferDecryptTransform, messageHex, expectedHex, key);
 }
 
 doTest("Richard Outerbridge test vector #1", "a201fc18d62c85ef5965a58295bbf609", "00000000000000000000000000000000", "0123456789abcdeffedcba9876543210");

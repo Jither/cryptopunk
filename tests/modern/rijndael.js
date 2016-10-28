@@ -7,8 +7,8 @@ function doTest(title, expectedHex, messageHex, keyHex, blockSize)
 {
 	const key = hexToBytes(keyHex);
 	const options = { blockSize: blockSize || 128 };
-	test("Encrypts " + title, testBytesToBytes, RijndaelEncryptTransform, expectedHex, messageHex, key, options);
-	test("Decrypts " + title, testBytesToBytes, RijndaelDecryptTransform, messageHex, expectedHex, key, options);
+	test("Rijndael encrypts " + title, testBytesToBytes, RijndaelEncryptTransform, expectedHex, messageHex, key, options);
+	test("Rijndael decrypts " + title, testBytesToBytes, RijndaelDecryptTransform, messageHex, expectedHex, key, options);
 }
 
 doTest("FIPS-197 128-bit vector", "69c4e0d86a7b0430d8cdb78070b4c55a", "00112233445566778899aabbccddeeff", "000102030405060708090a0b0c0d0e0f");

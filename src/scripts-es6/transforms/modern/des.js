@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE, hexToBytes } from "../../cryptopunk.utils";
 
 // The following tables are different from the usual reference tables - all of them count
 // from 0 - i.e. 0 is first bit, 1 is second... A few of them also have other differences, noted below.
@@ -83,6 +83,7 @@ const SUBKEY_SHIFTS = [
 
 // S-boxes are remapped to simple substitution of the values 0-63,
 // rather than bits 0,5 indicating row and bits 1...4 indicating column.
+// Used for non-linear substitution of 6 bits to 4 bits in F() function.
 const SBOXES = [
 	[
 		14, 0, 4, 15, 13, 7, 1, 4, 2, 14, 15, 2, 11, 13, 8, 1,
@@ -202,7 +203,6 @@ class DesTransform extends BlockCipherTransform
 			default:
 				throw new TransformError(`Key must be either 56 bits or 64 bits with parity. Was ${keyBytes.length * 8} bits.`);
 		}
-
 		const subKeys = this.createSubKeys(keyBytes);
 
 		return this.transformBlocks(bytes, 64, subKeys);
@@ -220,7 +220,7 @@ class DesTransform extends BlockCipherTransform
 			// Only difference between encryption and decryption: Reversed order of sub keys
 			const subKey = this.decrypt ? subKeys[15 - i] : subKeys[i];
 			// R1 = L0 XOR F(R0, K1)
-			// L1 = R1
+			// L1 = R0
 			const temp = right;
 			right = left ^ f(right, subKey);
 			left = temp;
@@ -242,8 +242,7 @@ class DesTransform extends BlockCipherTransform
 		{
 			// Remove lsb's of each byte and combine with msb's of next byte
 			// aaaaaaaa bbbbbbbb cccccccc ... -> aaaaaaab bbbbbbcc cccccddd ...
-			// ... making 7 bytes out of 8
-			//const mask = 256 - (1 << i);
+			// ... making 7 bytes out of 8.
 			result[i] = ((keyBytes[i] & 0xfe) << i) | (keyBytes[i + 1] >> (7 - i));
 		}
 		return result;
@@ -288,7 +287,6 @@ class DesTransform extends BlockCipherTransform
 				right |= bit;
 			}
 		}
-
 		for (let i = 0; i < 16; i++)
 		{
 			// Rotate the 2*28 bits of subkey pair by 1-2 bits (depending on round)
@@ -303,7 +301,7 @@ class DesTransform extends BlockCipherTransform
 			for (let j = 0; j < 48; j++)
 			{
 				const subKeyIndex = (j / 6) | 0;
-				const source = COMPRESSION_PERMUTATION[i];
+				const source = COMPRESSION_PERMUTATION[j];
 				const mask = 0x08000000 >> (source % 28);
 				const bit = (source < 28 ? left : right ) & mask ? 1 : 0;
 				subKey[subKeyIndex] <<= 1;

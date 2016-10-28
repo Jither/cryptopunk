@@ -21,6 +21,7 @@ Supported
 ### Modern Ciphers
 
 * Blowfish
+* DES (64 bit with parity or 56 bit without)
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * RC4 (with discard parameter)
 * Simple XOR against key
@@ -73,7 +74,7 @@ TODO
 * ARIA
 * Camellia
 * CAST-128
-* DES, 3DES
+* 3DES
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
 * IDEA
 * RC2, RC5, RC6

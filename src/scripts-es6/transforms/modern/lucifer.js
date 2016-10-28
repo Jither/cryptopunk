@@ -36,8 +36,8 @@ function precompute()
 		P_INDEX[i] = Math.floor(P[i] / 8);
 		P_MASK[i] = 0x01 << (P[i] % 8);
 	}
-	console.log("P-index", P_INDEX);
-	console.log("P-mask", P_MASK);
+	//console.log("P-index", P_INDEX);
+	//console.log("P-mask", P_MASK);
 }
 
 precompute();
@@ -68,8 +68,8 @@ class LuciferTransform extends BlockCipherTransform
 
 		for (let r = 0; r < ROUNDS; r++)
 		{
-			console.log("left", left);
-			console.log("right", right);
+			//console.log("left", left);
+			//console.log("right", right);
 			const subKeyIndex = r * 7 % 16;
 			// UNCERTAINTY: first or last byte is swap indicator?
 			const swap = keyBytes[subKeyIndex];
