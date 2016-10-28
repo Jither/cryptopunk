@@ -87,7 +87,7 @@ function precalculate()
 		const x2 = a2[x];
 		const x4 = a2[x2];
 		const x8 = a2[x4];
-		 // s, s, s*3, s*2:
+		// s, s, s*3, s*2:
 		let tEnc = a2[s] * 0x00000101 ^ s * 0x01010100;
 		// si*9, si*13, si*11, si*14:
 		let tDec = x8 * 0x01010101 ^ x4 * 0x00010001 ^ x2 * 0x00000101 ^ x * 0x01010100;

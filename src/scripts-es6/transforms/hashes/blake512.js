@@ -109,10 +109,10 @@ class Blake512Transform extends Transform
 
     fill(arr)
     {
-        for (let i = 0; i < arr.length; i++)
-        {
+		for (let i = 0; i < arr.length; i++)
+		{
 			arr[i] = { hi: 0, lo: 0 };
-        }
+		}
     }
 
 	transform(bytes)

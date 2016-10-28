@@ -230,11 +230,11 @@ class WhirlpoolTransform extends Transform
 					(padded[j    ] << 24) |
 					(padded[j + 1] << 16) |
 					(padded[j + 2] <<  8) |
-					 padded[j + 3];
+					padded[j + 3];
 				block[blockIndex].lo = (padded[j + 4] << 24) |
 					(padded[j + 5] << 16) |
 					(padded[j + 6] <<  8) |
-					 padded[j + 7];
+					padded[j + 7];
 				j += 8;
 			}
 

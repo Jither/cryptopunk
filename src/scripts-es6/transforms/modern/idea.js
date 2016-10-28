@@ -13,7 +13,7 @@ function mulInv(x)
 	let t0 = 1;
 	let t1 = 0;
 
-	while (true)
+	for (;;)
 	{
 		t1 += Math.floor(y / x) * t0;
 		y %= x;
@@ -42,7 +42,7 @@ function addInv(x)
 
 function mul(a, b)
 {
-	let r = a * b;
+	const r = a * b;
 	if (r === 0)
 	{
 		return (1 - a - b) & 0xffff;

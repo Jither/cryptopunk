@@ -34,7 +34,7 @@ gulp.task("build-benchmarks", ["build-benchmark-libs"], function() {
 });
 
 gulp.task("build-scripts", ["lint-scripts"], function() {
-	return compile(src.scripts + "cryptopunk.main.js", "cryptopunk.js", dest.scripts);
+	return compile(src.scripts + "cryptopunk.main.js", dest.scripts, "cryptopunk.js");
 });
 
 gulp.task("build-styles", function() {
