@@ -119,11 +119,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		const keySize = keyBytes.length * 8;
-		if (KEY_SIZES.indexOf(keySize) < 0)
-		{
-			throw new TransformError(`Key size must be one of 128, 160, 192, 224 or 256 bits. Was ${keySize} bits`);
-		}
+		this.checkKeySize(keyBytes, KEY_SIZES);
 
 		const blockSize = options.blockSize;
 		if (BLOCK_SIZES.indexOf(blockSize) < 0)
@@ -134,6 +130,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		// Precalculate tables (once, stored for later use)
 		precalculate();
 
+		const keySize = keyBytes.length * 8;
 		const blockSizeBytes = blockSize / 8;
 
 		let roundCount = options.rounds;

@@ -51,10 +51,8 @@ class LuciferTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		if (keyBytes.length !== 16)
-		{
-			throw new TransformError(`Key size must be 128 bits. Was ${keyBytes.length * 8} bits.`);
-		}
+		this.checkKeySize(keyBytes, 128);
+
 		return this.transformBlocks(bytes, 128, keyBytes);
 	}
 

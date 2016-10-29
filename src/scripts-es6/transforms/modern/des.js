@@ -189,20 +189,17 @@ class DesTransform extends BlockCipherTransform
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		switch (keyBytes.length)
+		this.checkKeySize(keyBytes, [56, 64]);
+
+		if (keyBytes.length === 8)
 		{
-			case 7:
-				break;
-			case 8:
-				if (options.checkParity)
-				{
-					this.checkParity(keyBytes);
-				}
-				keyBytes = this.stripParity(keyBytes);
-				break;
-			default:
-				throw new TransformError(`Key must be either 56 bits or 64 bits with parity. Was ${keyBytes.length * 8} bits.`);
+			if (options.checkParity)
+			{
+				this.checkParity(keyBytes);
+			}
+			keyBytes = this.stripParity(keyBytes);
 		}
+		
 		const subKeys = this.createSubKeys(keyBytes);
 
 		return this.transformBlocks(bytes, 64, subKeys);

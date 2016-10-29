@@ -1,5 +1,5 @@
-/*
 import test from "ava";
+/*
 import { LuciferEncryptTransform, LuciferDecryptTransform } from "transforms/modern/lucifer";
 import { testBytesToBytes } from "../_testutils";
 import { hexToBytes } from "cryptopunk.utils";

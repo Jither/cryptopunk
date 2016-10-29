@@ -224,10 +224,8 @@ class BlowfishTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		if (keyBytes.length < 1 || keyBytes.length > 56)
-		{
-			throw new TransformError(`Key size must be between 8 and 448 bits. Was ${keyBytes.length * 8} bits`);
-		}
+		this.checkKeySize(keyBytes, { min: 8, max: 448 });
+
 		const subKeys = this.createSubKeys(keyBytes);
 		return this.transformBlocks(bytes, 64, subKeys);
 	}
