@@ -1,4 +1,3 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 
 const ROUNDS = 8;
@@ -59,7 +58,7 @@ class IdeaTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 128)
+		this.checkKeySize(keyBytes, 128);
 
 		let subKeys = this.generateSubKeys(keyBytes);
 
