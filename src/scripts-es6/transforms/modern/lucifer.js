@@ -178,7 +178,12 @@ class LuciferDecryptTransform extends LuciferTransform
 function test()
 {
 	let tf = new LuciferEncryptTransform();
-	const result = tf.transform(hexToBytes("00000000000000000000000000000000"), hexToBytes("0123456789abcdeffedcba9876543210"));
+	const plain = hexToBytes("00112233445566778899aabbccddeeff");
+	const key   = hexToBytes("0123fedc4567ba987654cdef321089ba")
+	let result = tf.transform(plain, key);
+	console.log(bytesToHex(result));
+	tf = new LuciferDecryptTransform();
+	result = tf.transform(result, key);
 	console.log(bytesToHex(result));
 }
 

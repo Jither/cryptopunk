@@ -14,8 +14,8 @@ c     input is in hex digits. 128 bits = 32 hex digits = 16 bytes
       character*32 kstr
       character*32 mstr
 
-      kstr='0123456789abcdeffedcba9876543210'
-      mstr='00000000000000000000000000000000'
+      kstr='0123fedc4567ba987654cdef321089ba'
+      mstr='00112233445566778899aabbccddeeff'
       read(kstr,1004) (kb(i),i=0,31)
       read(mstr,1006) (mb(i),i=0,31)
 
@@ -34,9 +34,18 @@ c     encipher
       d=0
       call lucifer_debug(d,k,m)
 
+      call compress(message,mb,32)
+      call compress(key,kb,32)
+      write(6,1003)
+      write(6,1007) (kb(i),i=0,31)
+      write(6,1005)
+      write(6,1007) (mb(i),i=0,31)
+
+      write(*,*) ''
+      write(*,*) 'DECIPHER'
 c     decipher
-c     d=1
-c     call lucifer_debug(d,k,m)
+      d=1
+      call lucifer_debug(d,k,m)
 
       write(6,1002) (message(i), i=0,127)
 

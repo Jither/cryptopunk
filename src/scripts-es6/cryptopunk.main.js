@@ -371,7 +371,7 @@ addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) D
 addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
 addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
 addPaletteItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt");
-addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Decrypt");
+addPaletteItem(lucifer.LuciferDecryptTransform, "LUCIFER", "LUCIFER Decrypt");
 addPaletteItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt");
 addPaletteItem(skipjack.SkipjackDecryptTransform, "Skipjack", "Skipjack Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
