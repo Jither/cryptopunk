@@ -3,3 +3,6 @@ src/styles/main.css
 benchmarks/libs/
 benchmarks/scripts/
 specs/
+references/lucifer/obj/
+*.depend
+*.layout

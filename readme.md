@@ -22,8 +22,11 @@ Supported
 
 * Blowfish
 * DES (64 bit with parity or 56 bit without)
-* Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
+* IDEA
+* LUCIFER (Sorkin implementation)
 * RC4 (with discard parameter)
+* Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
+* Skipjack
 * Simple XOR against key
 * Browser-native AES, RSA (crypto.subtle)
 
@@ -71,20 +74,34 @@ TODO
 ----
 ### Modern Ciphers
 
-* ARIA
 * Camellia
 * CAST-128
 * 3DES
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
-* IDEA
 * RC2, RC5, RC6
-* SEED
 * Serpent
-* Skipjack
 * TEA, XTEA
 * Twofish
 * Threefish
 * Browser-native RSA decryption
+
+#### Second priority
+* Anubis
+* ARIA
+* CS-Cipher
+* Grand Cru
+* Hierocrypt
+* KASUMI
+* KHAZAD
+* MISTY1
+* Nimbus
+* NOEKON
+* NUSH
+* Q
+* SAFER/SAFER+/SAFER++
+* SC2000
+* SEED
+* Shacal
 
 ### Hashes
 
