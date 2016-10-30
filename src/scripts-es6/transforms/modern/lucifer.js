@@ -6,14 +6,6 @@ import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
 
 const ROUNDS = 16;
 
-const O = [
-	7, 6, 2, 1, 5, 0, 3, 4
-];
-
-const PR = [
-	2, 5, 4, 0, 3, 1, 7, 6
-];
-
 // Original
 const SBOX_0 = [
 	12, 15, 7, 10, 14, 13, 11, 0,
@@ -23,6 +15,17 @@ const SBOX_0 = [
 const SBOX_1 = [
 	7, 2, 14, 9, 3, 11, 0, 4,
 	12, 13, 1, 10, 6, 15, 8, 5
+];
+
+// Bit level permutation - indicates which bit in key and substituted message byte will be XOR'ed with
+// the h0 byte
+const PR = [
+	2, 5, 4, 0, 3, 1, 7, 6
+];
+
+// Byte level permutation - indicates which byte of h0 will be XOR'ed with the key and substituted message bits
+const O = [
+	7, 6, 2, 1, 5, 0, 3, 4
 ];
 
 // Remapped for big endian bit order
@@ -97,9 +100,29 @@ class LuciferTransform extends BlockCipherTransform
 		let h0 = Uint8Array.from(block.subarray(0, 8));
 		let h1 = Uint8Array.from(block.subarray(8));
 
+		// For encryption, kc (starting byte position for the key bytes used for a roun) will
+		// follow the order: 0 7 14 5 12 3 10 1 8 15 6 13 4 11 2 9.
+		// Starting from 0, and adding 1 for each key byte used, except the last.
+		// In other words, 7 has been added by the end of each round.
+		// Round 1:           0
+		// Round 2:  0 + 7 =  7 (mod 16)
+		// Round 3:  7 + 7 = 14 (mod 16)
+		// Round 4: 14 + 7 =  5 (mod 16)
+		// Etc.
+		//
+		// Decryption is reversed order, by starting from 8, and adding:
+		// - 1 at the beginning of each round (making the starting point 9 for the first round) and
+		// - 1 for each key byte used, *including* the last.
+		// In other words, 9 in total has been added by the end of each round.
+		// Round 1:               9
+		// Round 2:  9 + 8 + 1 =  2 (mod 16)
+		// Round 3:  2 + 8 + 1 = 11 (mod 16)
+		// Round 4: 11 + 8 + 1 =  4 (mod 16)
+		// Etc.
 		let kc = 0;
 		if (this.decrypt)
 		{
+			// ""
 			kc = 8;
 		}
 
@@ -119,32 +142,38 @@ class LuciferTransform extends BlockCipherTransform
 				let l = 0;
 				let h = 0;
 
-				//l = h1[jj] & 0x0f;
+				// l and h are ordered least significant bit first - l = 0123 h = 4567
 				for (let kk = 0; kk <= 3; kk++)
 				{
 					l = (l << 1) | ((h1[jj] >> kk) & 1);
 				}
-
-				//h = h1[jj] >> 4;
 
 				for (let kk = 4; kk <= 7; kk++)
 				{
 					h = (h << 1) | ((h1[jj] >> kk) & 1);
 				}
 
-				let v = (SBOX_0[l] | (SBOX_1[h] << 4)) * (1 - ((keyBytes[ks] >> (7 - jj)) & 1)) |
-						(SBOX_0[h] | (SBOX_1[l] << 4)) * ((keyBytes[ks] >> (7 - jj)) & 1);
+				// key is read MOST significant bit first - 76543210
+				const icb = (keyBytes[ks] >> (7 - jj)) & 1;
 
-                log(jj, l, h, v, (keyBytes[ks] >> (7 - jj)) & 1, SBOX_0[l], SBOX_0[h], SBOX_1[l], SBOX_1[h]);
+				const v = icb ?
+					(SBOX_0[h] | (SBOX_1[l] << 4)) :
+					(SBOX_0[l] | (SBOX_1[h] << 4));
+
+                log(jj, l, h, v, icb, SBOX_0[l], SBOX_0[h], SBOX_1[l], SBOX_1[h]);
 
 				for (let kk = 0; kk <= 7; kk++)
 				{
-					let byteIndex = (O[kk] + jj) % 8;
-					let keyBit = (keyBytes[kc] >> (7 - PR[kk])) & 1;
-					let vBit = (v >> PR[kk]) & 1;
+					const byteIndex = (O[kk] + jj) % 8;
+					const keyBit = (keyBytes[kc] >> (7 - PR[kk])) & 1;
+					const vBit = (v >> PR[kk]) & 1;
+					// XOR v bit and key bit and shift the result to the destination position
+					// for XOR'ing with the h0 byte:
 					h0[byteIndex] ^= (vBit ^ keyBit) << (7 - kk);
 				}
 
+				// "During encryption, the key rotates one step after each key byte is used,
+				// except at the end of each round, when it does not advance"
 				if (jj < 7 || this.decrypt)
 				{
 					kc = (kc + 1) % 16;

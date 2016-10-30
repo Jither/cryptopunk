@@ -14,8 +14,10 @@ c     input is in hex digits. 128 bits = 32 hex digits = 16 bytes
       character*32 kstr
       character*32 mstr
 
-      kstr='0123fedc4567ba987654cdef321089ba'
-      mstr='00112233445566778899aabbccddeeff'
+c     kstr='0123fedc4567ba987654cdef321089ba'
+c     mstr='00112233445566778899aabbccddeeff'
+      kstr='0123456789abcdeffedcba9876543210'
+      mstr='00000000000000000000000000000000'
       read(kstr,1004) (kb(i),i=0,31)
       read(mstr,1006) (mb(i),i=0,31)
 
