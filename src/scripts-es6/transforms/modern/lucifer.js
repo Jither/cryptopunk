@@ -2,11 +2,10 @@ import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
 
-// UNFINISHED!!! Still a lot of confusion around what LUCIFER does and what it doesn't do
-
 const ROUNDS = 16;
 
-// Original
+// S-boxes
+// Substitute an input nibble (4 bits) to an output nibble.
 const SBOX_0 = [
 	12, 15, 7, 10, 14, 13, 11, 0,
 	2, 6, 3, 1, 9, 4, 5, 8
@@ -17,90 +16,72 @@ const SBOX_1 = [
 	12, 13, 1, 10, 6, 15, 8, 5
 ];
 
-// Bit level permutation - indicates which bit in key and substituted message byte will be XOR'ed with
-// the h0 byte
+// Bit level permutation - permutes the "key interrupted" byte
+// (XOR'ed key byte and "confused" message byte)
+// Each item maps an input bit position to an output bit position: PR[input] = output
+// Bit numbering is in LSB 0 order - that is, 76543210.
+// In other words, bit 0 (the least significant bit) is permuted to bit 2, bit 1 to 5, etc.
 const PR = [
 	2, 5, 4, 0, 3, 1, 7, 6
 ];
 
-// Byte level permutation - indicates which byte of h0 will be XOR'ed with the key and substituted message bits
+// Byte level permutation - indicates which bytes of h0 will be XOR'ed with
+// each bit of the key interrupted byte (AFTER it's been permuted). Bytes are 
+// in big endian order.
+// That is:
+// - bit 0 (the least significant bit) will be XOR'ed with bit 0 of byte 7
+// - bit 1 with bit 1 of byte 6
+// - bit 2 with bit 2 of byte 2
+// - bit 3 with bit 3 of byte 1
+// - etc.
 const O = [
 	7, 6, 2, 1, 5, 0, 3, 4
 ];
 
-// Remapped for big endian bit order
-
-// Remapped order
-/*
-const SBOX_0 = [
-	12, 2, 14, 9, 7, 3, 11, 5,
-	15, 6, 13, 4, 10, 1, 0, 8
-];
-
-const SBOX_1 = [
-	7, 12, 3, 6, 14, 1, 0, 8,
-	2, 13, 11, 15, 9, 10, 4, 5
-];
-*/
-/*
-// Remapped order and numbers
-const SBOX_0 = [
-	3, 4, 7, 9, 14, 12, 13, 10,
-	15, 6, 11, 2, 5, 8, 0, 1
-];
-
-const SBOX_1 = [
-	14, 3, 12, 6, 7, 8, 0, 1,
-	4, 11, 13, 15, 9, 5, 2, 10
-];
-*/
-
-/*
-*/
-/*
-// Remapped numbers
-const SBOX_0 = [
-	3, 15, 14, 5, 7, 11, 13, 0,
-	4, 6, 12, 8, 9, 2, 10, 1
-];
-const SBOX_1 = [
-	14, 4, 7, 9, 12, 13, 0, 2,
-	3, 11, 8, 5, 6, 15, 1, 10
-];
-*/
-/*
-*/
-
-function log(...rest)
+function mirror(value, bits)
 {
-	let result = "";
-	for (let i = 0; i < rest.length; i++)
+	var result = 0;
+	for (let i = 0; i < bits; i++)
 	{
-		result += ("    " + rest[i]).substr(-4);
+		result <<= 1;
+		result |= (value >>> i) & 1;
 	}
-	console.log(result);
+	return result;
 }
+
+const VARIANT_NAMES = [
+	"Original (LSB 0)",
+	"Sorkin (MSB 0)"
+];
+
+const VARIANT_VALUES = [
+	"lsb0",
+	"msb0"
+];
 
 class LuciferTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
 	{
 		super(decrypt);
+		this.addOption("variant", "Variant", "lsb0", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
-	transform(bytes, keyBytes)
+	transform(bytes, keyBytes, options)
 	{
+		options = Object.assign({}, this.defaults, options);
+
 		this.checkKeySize(keyBytes, 128);
 
-		return this.transformBlocks(bytes, 128, keyBytes);
+		return this.transformBlocks(bytes, 128, keyBytes, options.variant);
 	}
 
-	transformBlock(block, dest, destOffset, keyBytes)
+	transformBlock(block, dest, destOffset, keyBytes, variant)
 	{
 		let h0 = Uint8Array.from(block.subarray(0, 8));
 		let h1 = Uint8Array.from(block.subarray(8));
 
-		// For encryption, kc (starting byte position for the key bytes used for a roun) will
+		// For encryption, kc (starting byte position for the key bytes used for a round) will
 		// follow the order: 0 7 14 5 12 3 10 1 8 15 6 13 4 11 2 9.
 		// Starting from 0, and adding 1 for each key byte used, except the last.
 		// In other words, 7 has been added by the end of each round.
@@ -119,66 +100,82 @@ class LuciferTransform extends BlockCipherTransform
 		// Round 3:  2 + 8 + 1 = 11 (mod 16)
 		// Round 4: 11 + 8 + 1 =  4 (mod 16)
 		// Etc.
-		let kc = 0;
+		let keyPosition = 0;
 		if (this.decrypt)
 		{
 			// ""
-			kc = 8;
+			keyPosition = 8;
 		}
 
-		for (let ii = 1; ii <= ROUNDS; ii++)
+		for (let round = 1; round <= ROUNDS; round++)
 		{
 			if (this.decrypt)
 			{
-				kc = (kc + 1) % 16;
+				keyPosition = (keyPosition + 1) % 16;
 			}
 
-			let ks = kc;
+			// First byte of the (rotated) key is the transform control byte (tcb).
+			let tcbPosition = keyPosition;
 
-			console.log("Round", ii, "kc =", kc);
-
-			for (let jj = 0; jj <= 7; jj++)
+			// Iterate through the current 8 key/message bytes
+			for (let i = 0; i < 8; i++)
 			{
-				let l = 0;
-				let h = 0;
+				// Split byte (of RIGHT message part) into two halves
+				let l = h1[i] & 0x0f;
+				let h = h1[i] >> 4;
 
-				// l and h are ordered least significant bit first - l = 0123 h = 4567
-				for (let kk = 0; kk <= 3; kk++)
+				if (variant === "msb0")
 				{
-					l = (l << 1) | ((h1[jj] >> kk) & 1);
+					// Original Sorkin mirrors the message bits when reading
+					l = mirror(l, 4);
+					h = mirror(h, 4);
 				}
 
-				for (let kk = 4; kk <= 7; kk++)
+				// Read interchange control bit (icb) from the tcb.
+				// MOST significant bit first - 76543210
+				const icb = (keyBytes[tcbPosition] >> (7 - i)) & 1;
+
+				// Swap nibbles if icb is set (1), don't if it's not.
+				if (icb)
 				{
-					h = (h << 1) | ((h1[jj] >> kk) & 1);
+					[l, h] = [h, l];
+				}
+				// In either case, substitute using the S-boxes, and recombine
+				// the two 4-bit halves into a byte (v).
+				let v;
+				if (variant === "lsb0")
+				{
+					v = ((SBOX_0[h] << 4) | SBOX_1[l]);
+				}
+				else
+				{
+					// Original Sorkin uses S-box 1 for high half and S-box 0 for low half.
+					v = ((SBOX_1[h] << 4) | SBOX_0[l]);
+					// ... and also stores the resulting bits reversed
+					v = mirror(v, 8);
 				}
 
-				// key is read MOST significant bit first - 76543210
-				const icb = (keyBytes[ks] >> (7 - jj)) & 1;
+                // "Key interruption" (note that the transform control byte is "reused")
+                const kiByte = v ^ keyBytes[keyPosition];
 
-				const v = icb ?
-					(SBOX_0[h] | (SBOX_1[l] << 4)) :
-					(SBOX_0[l] | (SBOX_1[h] << 4));
-
-                log(jj, l, h, v, icb, SBOX_0[l], SBOX_0[h], SBOX_1[l], SBOX_1[h]);
-
-				for (let kk = 0; kk <= 7; kk++)
+                // Permute the key interrupted byte and XOR ("add modulo 2")
+                // each bit to the appropriate byte (decided by O) in the LEFT message half.
+				for (let j = 0; j < 8; j++)
 				{
-					const byteIndex = (O[kk] + jj) % 8;
-					const keyBit = (keyBytes[kc] >> (7 - PR[kk])) & 1;
-					const vBit = (v >> PR[kk]) & 1;
-					// XOR v bit and key bit and shift the result to the destination position
-					// for XOR'ing with the h0 byte:
-					h0[byteIndex] ^= (vBit ^ keyBit) << (7 - kk);
+					const kiBit = (kiByte >> (7 - PR[j])) & 1;
+
+					const destByte = (O[j] + i) % 8;
+					h0[destByte] ^= kiBit << (7 - j);
 				}
 
 				// "During encryption, the key rotates one step after each key byte is used,
 				// except at the end of each round, when it does not advance"
-				if (jj < 7 || this.decrypt)
+				if (i < 7 || this.decrypt)
 				{
-					kc = (kc + 1) % 16;
+					keyPosition = (keyPosition + 1) % 16;
 				}
 			}
+			// Swap message halves
 			let temp = h0;
 			h0 = h1;
 			h1 = temp;
@@ -203,20 +200,6 @@ class LuciferDecryptTransform extends LuciferTransform
 		super(true);
 	}
 }
-
-function test()
-{
-	let tf = new LuciferEncryptTransform();
-	const plain = hexToBytes("00112233445566778899aabbccddeeff");
-	const key   = hexToBytes("0123fedc4567ba987654cdef321089ba")
-	let result = tf.transform(plain, key);
-	console.log(bytesToHex(result));
-	tf = new LuciferDecryptTransform();
-	result = tf.transform(result, key);
-	console.log(bytesToHex(result));
-}
-
-test();
 
 export {
 	LuciferEncryptTransform,
