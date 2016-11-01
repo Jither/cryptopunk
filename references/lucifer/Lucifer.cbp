@@ -46,7 +46,7 @@
 		<Unit filename="lucifer_original.f">
 			<Option weight="0" />
 		</Unit>
-		<Unit filename="main_debug.f">
+		<Unit filename="main_testvectors.f">
 			<Option weight="0" />
 		</Unit>
 		<Extensions>

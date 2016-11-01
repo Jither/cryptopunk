@@ -12,6 +12,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c99" />
 					<Add option="-g" />
 				</Compiler>
 			</Target>
@@ -30,7 +31,15 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c99" />
 		</Compiler>
+		<Linker>
+			<Add option="-static" />
+		</Linker>
+		<Unit filename="lucifer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="lucifer.h" />
 		<Unit filename="main.c">
 			<Option compilerVar="CC" />
 		</Unit>
