@@ -6,3 +6,5 @@ specs/
 references/lucifer/obj/
 *.depend
 *.layout
+references/lucifer-outerbridge/bin/
+references/lucifer-outerbridge/obj/
