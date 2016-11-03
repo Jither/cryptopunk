@@ -20,6 +20,7 @@ class BlockCipherTransform extends Transform
 		{
 			throw new TransformError(`Key size must be ${requirement} bits. Was: ${size} bits.`);
 		}
+		return size;
 	}
 
 	transformBlocks(bytes, blockSizeBits, ...rest)

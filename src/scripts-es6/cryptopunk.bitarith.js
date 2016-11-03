@@ -1,3 +1,6 @@
+const ONE_64 = { hi: 0, lo: 1 };
+const ZERO_64 = { hi: 0, lo: 0 };
+
 function add(...terms)
 {
 	const len = terms.length;
@@ -11,7 +14,7 @@ function add(...terms)
 	for (let i = 0; i < len; i++)
 	{
 		const term = terms[i];
-		lo += (term & 0xffff);
+		lo += term & 0xffff;
 		hi += (term >> 16) + (lo >> 16);
 		lo = lo & 0xffff;
 		hi = hi & 0xffff;
@@ -37,24 +40,33 @@ function add64(...terms)
 		throw new Error("Cannot add64() a single term");
 	}
 
-	let lo = 0, hi = 0, rlo = 0, rhi = 0;
+	let r00 = 0, r16 = 0, r32 = 0, r48 = 0;
 
 	for (let i = 0; i < len; i++)
 	{
 		const termlo = terms[i].lo;
 		const termhi = terms[i].hi;
 
-		lo += termlo & 0xffff;
-		hi +=  (termlo >>> 16)   + ( lo >>> 16);
-		rlo += (termhi & 0xffff) + ( hi >>> 16);
-		rhi += (termhi >>> 16)   + (rlo >>> 16);
+		r00 +=  termlo & 0xffff;
+		r16 += (termlo   >>> 16) + (r00 >>> 16);
+		r32 += (termhi & 0xffff) + (r16 >>> 16);
+		r48 += (termhi   >>> 16) + (r32 >>> 16);
 
-		lo = lo & 0xffff;
-		hi = hi & 0xffff;
-		rlo = rlo & 0xffff;
-		rhi = rhi & 0xffff;
+		r00 &= 0xffff;
+		r16 &= 0xffff;
+		r32 &= 0xffff;
+		r48 &= 0xffff;
 	}
-	return { hi: (rhi << 16) | rlo, lo: (hi << 16) | lo };
+	return { hi: (r48 << 16) | r32, lo: (r16 << 16) | r00 };
+}
+
+function sub64(a, b)
+{
+	if (b.lo !== 0x0 && b.hi !== 0x80000000)
+	{
+		b = not64(b);
+	}
+	return add64(a, ONE_64, b);
 }
 
 function and64(...terms)
@@ -97,13 +109,13 @@ function rol64(val, count)
 	}
 	else if (count < 32)
 	{
-		result.hi = (val.hi << count) | ((val.lo >>> (32 - count)) & 0xffffffff);
-		result.lo = (val.lo << count) | ((val.hi >>> (32 - count)) & 0xffffffff);
+		result.hi = (val.hi << count) | (val.lo >>> (32 - count));
+		result.lo = (val.lo << count) | (val.hi >>> (32 - count));
 	}
 	else
 	{
-		result.hi = (val.lo << (count - 32)) | ((val.hi >>> (64 - count)) & 0xffffffff);
-		result.lo = (val.hi << (count - 32)) | ((val.lo >>> (64 - count)) & 0xffffffff);
+		result.hi = (val.lo << (count - 32)) | (val.hi >>> (64 - count));
+		result.lo = (val.hi << (count - 32)) | (val.lo >>> (64 - count));
 	}
 	return result;
 }
@@ -125,13 +137,53 @@ function ror64(val, count)
 	}
 	else if (count < 32)
 	{
-		result.hi = (val.hi >>> count) | ((val.lo << (32 - count)) & 0xffffffff);
-		result.lo = (val.lo >>> count) | ((val.hi << (32 - count)) & 0xffffffff);
+		result.hi = (val.hi >>> count) | (val.lo << (32 - count));
+		result.lo = (val.lo >>> count) | (val.hi << (32 - count));
 	}
 	else
 	{
-		result.hi = (val.lo >>> (count - 32)) | ((val.hi << (64 - count)) & 0xffffffff);
-		result.lo = (val.hi >>> (count - 32)) | ((val.lo << (64 - count)) & 0xffffffff);
+		result.hi = (val.lo >>> (count - 32)) | (val.hi << (64 - count));
+		result.lo = (val.hi >>> (count - 32)) | (val.lo << (64 - count));
+	}
+	return result;
+}
+
+function rol48(val, count)
+{
+	const result = {};
+	if (count === 0)
+	{
+		result.hi = val.hi;
+		result.lo = val.lo;
+	}
+	else if (count <= 16)
+	{
+		result.hi = ((val.hi << count) | (val.lo >>> (32 - count))) & 0xffff;
+		result.lo = (val.lo << count) | (val.hi >>> (16 - count));
+	}
+	else
+	{
+		throw Error("rol48 only supports up to 16 bit rotation for now.");
+	}
+	return result;
+}
+
+function ror48(val, count)
+{
+	const result = {};
+	if (count === 0)
+	{
+		result.hi = val.hi;
+		result.lo = val.lo;
+	}
+	else if (count <= 16)
+	{
+		result.hi = ((val.hi >>> count) | (val.lo << (16 - count))) & 0xffff;
+		result.lo = (val.lo >>> count) | (val.hi << (32 - count));
+	}
+	else
+	{
+		throw Error("ror48 only supports up to 16 bit rotation for now.");
 	}
 	return result;
 }
@@ -149,7 +201,7 @@ function shr64(val, count)
 	else if (count < 32)
 	{
 		result.hi = val.hi >>> count;
-		result.lo = val.lo >>> count | ((val.hi << (32 - count)) & 0xffffffff);
+		result.lo = val.lo >>> count | (val.hi << (32 - count));
 	}
 	else
 	{
@@ -187,5 +239,10 @@ export {
 	rol64,
 	ror64,
 	xor64,
-	shr64
+	shr64,
+	sub64,
+	ONE_64,
+	ZERO_64,
+	rol48,
+	ror48
 };

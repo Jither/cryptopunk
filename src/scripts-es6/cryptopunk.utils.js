@@ -58,6 +58,7 @@ function asciiToBytes(ascii)
 
 function hexToBytes(hex)
 {
+	hex = hex.replace(/ /g, "");
 	const bytes = new Uint8Array(Math.ceil(hex.length / 2));
 	let destIndex = 0;
 	for (let c = 0; c < hex.length; c += 2)
@@ -65,6 +66,31 @@ function hexToBytes(hex)
 		bytes[destIndex++] = parseInt(hex.substr(c, 2), 16);
 	}
 	return bytes;
+}
+
+function int32ToHex(int)
+{
+	return ("00000000" + (int >>> 0).toString(16)).substr(-8);
+}
+
+function int32sToHex(ints)
+{
+	let result = "";
+	for (let i = 0; i < ints.length; i++)
+	{
+		if (i > 0)
+		{
+			result += " ";
+		}
+		const int = ints[i];
+		result += int32ToHex(int);
+	}
+	return result;
+}
+
+function int64ToHex(int)
+{
+	return int32ToHex(int.hi) + "-" + int32ToHex(int.lo);
 }
 
 function int64sToHex(ints)
@@ -81,8 +107,7 @@ function int64sToHex(ints)
 			result += " ";
 		}
 		const int = ints[i];
-		result += ("00000000" + (int.hi >>> 0).toString(16)).substr(-8) + "-";
-		result += ("00000000" + (int.lo >>> 0).toString(16)).substr(-8);
+		result += int64ToHex(int);
 	}
 	return result;
 }
@@ -362,6 +387,9 @@ export {
 	int32ToBytesBE,
 	int32ToBytesLE,
 	int64sToBytesBE,
+	int32ToHex,
+	int32sToHex,
+	int64ToHex,
 	int64sToHex,
 	mod,
 	multiByteStringReverse,

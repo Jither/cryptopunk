@@ -8,3 +8,5 @@ references/lucifer/obj/
 *.layout
 references/lucifer-outerbridge/bin/
 references/lucifer-outerbridge/obj/
+*.pyc
+references/speckpy/
