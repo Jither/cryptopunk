@@ -40,7 +40,7 @@ const ENC_T1 = [], ENC_T2 = [], ENC_T3 = [], ENC_T4 = [];
 const DEC_T5 = [], DEC_T6 = [], DEC_T7 = [], DEC_T8 = [];
 
 // Precalculates s-boxes and transformation tables
-function precalculate()
+function precompute()
 {
 	if (S_BOX.length > 0)
 	{
@@ -128,7 +128,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		}
 
 		// Precalculate tables (once, stored for later use)
-		precalculate();
+		precompute();
 
 		const keySize = keyBytes.length * 8;
 		const blockSizeBytes = blockSize / 8;

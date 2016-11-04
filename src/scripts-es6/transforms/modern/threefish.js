@@ -7,7 +7,7 @@ import { add64, rol64, ror64, sub64, xor64 } from "../../cryptopunk.bitarith";
 
 // Pre-tweak constant (2^^64 / 3)
 const KEY_SCHEDULE_CONST_OLD = { hi: 0x55555555, lo: 0x55555555 };
-// 1.3 constant (found using AES)
+// 1.3 tweaked constant (found using AES)
 const KEY_SCHEDULE_CONST = { hi: 0x1bd11bda, lo: 0xa9fc1a22 };
 
 const BLOCK_SIZES = [
@@ -46,7 +46,7 @@ const R_OLD_16 = [
 	12, 57, 54, 34, 41, 15, 56, 56
 ];
 
-// 1.3 rotation constants
+// 1.2 tweaked rotation constants
 const R_4 = [
 	14, 52, 23,  5, 25, 46, 58, 32,
 	16, 57, 40, 37, 33, 12, 22, 32	

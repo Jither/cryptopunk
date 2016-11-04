@@ -27,9 +27,10 @@ Supported
 * RC4 (with discard parameter)
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack
-* Simple XOR against key
+* Simple XOR
 * Speck (32, 48, 64, 96, 128)
 * Threefish
+* Twofish
 * Browser-native AES, RSA (crypto.subtle)
 
 ### Hashes
@@ -74,6 +75,29 @@ Supported
 
 TODO
 ----
+
+### Classical Ciphers
+* ADFGVX
+* Alberti?
+* Autokey ciphers (e.g. Vigenère)
+* Bacon
+* Beaufort (= Vigènere + Atbash)
+* Chaocipher
+* DRYAD
+* Dvorak encoding?
+* Four-square
+* Great Cipher?
+* Hill Cipher
+* Keyword Cipher (based on caesar)
+* Null
+* Playfair
+* Polybius
+* Rail Fence
+* Tap Code
+* Trifid
+* Two-square
+* VIC
+
 ### Modern Ciphers
 
 * Camellia
@@ -83,10 +107,10 @@ TODO
 * RC2, RC5, RC6
 * Serpent
 * TEA, XTEA
-* Twofish
 * Browser-native RSA decryption
 
 #### Second priority
+
 * Anubis
 * ARIA
 * CS-Cipher

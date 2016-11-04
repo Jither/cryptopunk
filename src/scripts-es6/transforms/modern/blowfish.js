@@ -1,4 +1,3 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sBE, bytesToHex } from "../../cryptopunk.utils";
 import { add } from "../../cryptopunk.bitarith";

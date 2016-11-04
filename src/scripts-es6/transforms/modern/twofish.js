@@ -1,8 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sLE, int32sToBytesLE , int32ToBytesLE, int32ToBytesBE, int32sToHex, bytesToHex, hexToBytes } from "../../cryptopunk.utils";
+import { bytesToInt32sLE, int32sToBytesLE , int32ToBytesLE, int32ToBytesBE, int32sToHex, bytesToHex, hexToBytes, int32ToHex } from "../../cryptopunk.utils";
 import { add, rol, ror } from "../../cryptopunk.bitarith";
-
-// UNFINISHED
 
 const MAX_ROUNDS = 16;
 const ROUNDS = 16;
@@ -88,7 +86,7 @@ const P8x8 = [
 ];
 
 const P_00 = 1, P_01 = 0, P_02 = 0, P_03 = 1, P_04 = 1;
-const P_10 = 0, P_11 = 0, P_12 = 1, P_13 = 0, P_14 = 0;
+const P_10 = 0, P_11 = 0, P_12 = 1, P_13 = 1, P_14 = 0;
 const P_20 = 1, P_21 = 1, P_22 = 0, P_23 = 0, P_24 = 0;
 const P_30 = 0, P_31 = 1, P_32 = 1, P_33 = 0, P_34 = 1;
 
@@ -134,21 +132,21 @@ function precompute()
 		mY[1] = m1[1] ^ LFSR1(m1[1]) ^ LFSR2(m1[1]);
 
 		MDS[0][i] = (m1[P_00]      ) |
-					(mY[P_00] <<  8) |
-					(mX[P_00] << 16) |
-					(mX[P_00] << 24);
+					(mX[P_00] <<  8) |
+					(mY[P_00] << 16) |
+					(mY[P_00] << 24);
 
-		MDS[1][i] = (mX[P_10]      ) |
+		MDS[1][i] = (mY[P_10]      ) |
 					(mY[P_10] <<  8) |
-					(mY[P_10] << 16) |
+					(mX[P_10] << 16) |
 					(m1[P_10] << 24);
 
-		MDS[2][i] = (mY[P_20]      ) |
-					(mX[P_20] <<  8) |
+		MDS[2][i] = (mX[P_20]      ) |
+					(mY[P_20] <<  8) |
 					(m1[P_20] << 16) |
 					(mY[P_20] << 24);
 
-		MDS[3][i] = (mY[P_30]      ) |
+		MDS[3][i] = (mX[P_30]      ) |
 					(m1[P_30] <<  8) |
 					(mY[P_30] << 16) |
 					(mX[P_30] << 24);
@@ -158,12 +156,10 @@ function precompute()
 
 function f32(x, subKeys, keySize)
 {
-	// TODO: Should subkeys be byte array?
-	// b0-3 is "extract byte x from dword"
-	// 
-	// Seems we swap the bytes again here?! Nah, let's try without first...
+	// TODO: Should subkeys be byte array? We're constantly unpacking and repacking them as int32
 	const b = int32ToBytesLE(x);
 	let subKey;
+
 	switch (keySize)
 	{
 		case 256:
@@ -197,23 +193,6 @@ function f32(x, subKeys, keySize)
 
 	// Matrix multiplication via table lookup
 	return MDS[0][b[0]] ^ MDS[1][b[1]] ^ MDS[2][b[2]] ^ MDS[3][b[3]];
-
-/*
-		case 128:
-			// Fall through!
-			b[0] = p8( 0)[p8( 1)[p8( 2)[b[0]] ^ b0(subKeys[1])] ^ b0(subKeys[0])];
-			b[1] = p8(10)[p8(11)[p8(12)[b[1]] ^ b1(subKeys[1])] ^ b1(subKeys[0])];
-			b[2] = p8(20)[p8(21)[p8(22)[b[2]] ^ b2(subKeys[1])] ^ b2(subKeys[0])];
-			b[3] = p8(30)[p8(31)[p8(32)[b[3]] ^ b3(subKeys[1])] ^ b3(subKeys[0])];
-			break;
-
-*/
-	/*
-	return	((M00(b[0]) ^ M01(b[1]) ^ M02(b[2]) ^ M03(b[3]))      ) ^
-			((M10(b[0]) ^ M11(b[1]) ^ M12(b[2]) ^ M13(b[3])) <<  8) ^
-			((M20(b[0]) ^ M21(b[1]) ^ M22(b[2]) ^ M23(b[3])) << 16) ^
-			((M30(b[0]) ^ M31(b[1]) ^ M32(b[2]) ^ M33(b[3])) << 24);
-	*/
 }
 
 function reedSolomonMDSEncode(k0, k1)
@@ -243,20 +222,22 @@ class TwofishTransform extends BlockCipherTransform
 	generateSubKeys(keyBytes, keySize)
 	{
 		// Only necessary if we accept non 128/192/256 keys:
-		//var k64Count = Math.floor((keyBytes.length + 63) / 64);
-		const keyWordCount64 = keyBytes.length / 8;
-		const subKeys = new Array(TOTAL_SUBKEYS);
-		const subKeyCount = ROUND_SUBKEYS + 2 * ROUNDS;
-		const sboxKeys = new Array(4);
+		//var keyWordCount64 = Math.floor((keyBytes.length + 63) / 64);
 		const keyWords = bytesToInt32sLE(keyBytes);
+		const keyWordCount64 = keyBytes.length / 8;
+		const subKeyCount = ROUND_SUBKEYS + 2 * ROUNDS;
+		const subKeys = new Array(TOTAL_SUBKEYS);
+		const sboxKeys = new Array(4);
 		const keyWordsEven = new Array(4);
 		const keyWordsOdd = new Array(4);
+
 		for (let i = 0; i < keyWordCount64; i++)
 		{
 			keyWordsEven[i] = keyWords[i * 2];
 			keyWordsOdd[i] = keyWords[i * 2 + 1];
 			sboxKeys[keyWordCount64 - i - 1] = reedSolomonMDSEncode(keyWordsEven[i], keyWordsOdd[i]);
 		}
+
 		for (let i = 0; i < subKeyCount / 2; i++)
 		{
 			const a = f32(i * SK_STEP, keyWordsEven, keySize);
@@ -266,7 +247,6 @@ class TwofishTransform extends BlockCipherTransform
 			subKeys[i * 2 + 1] = rol(add(a, b * 2), SK_ROT);
 		}
 
-		console.log(int32sToHex(sboxKeys), int32sToHex(subKeys));
 		return [sboxKeys, subKeys];
 	}
 
@@ -281,6 +261,8 @@ class TwofishTransform extends BlockCipherTransform
 	transformBlock(block, dest, destOffset, subKeys, sboxKeys, keySize)
 	{
 		const x = bytesToInt32sLE(block);
+
+		// Whiten
 		for (let i = 0; i < x.length; i++)
 		{
 			x[i] ^= subKeys[i];
@@ -288,31 +270,43 @@ class TwofishTransform extends BlockCipherTransform
 
 		for (let r = 0; r < ROUNDS; r++)
 		{
-			const rot = Math.floor(r / 2);
-			// We use the Feistel version - more clear what's going on.
-			const rorCount = rot + 2;
-			const t0 = f32(ror(x[0], rorCount), sboxKeys, keySize);
-			const t1 = f32(ror(x[1], rorCount + 8), sboxKeys, keySize);
+			const t0 = f32(x[0], sboxKeys, keySize);
+			const t1 = f32(rol(x[1], 8), sboxKeys, keySize);
 
+			x[3]  = rol(x[3], 1);
+			x[2] ^= add(t0, t1, subKeys[ROUND_SUBKEYS + 2 * r]);
+			x[3] ^= add(t0, t1 * 2, subKeys[ROUND_SUBKEYS + 2 * r + 1]);
+			x[2]  = ror(x[2], 1);
+
+			/* Feistel version
+			const rot = Math.floor(r / 2);
+			const tRot = Math.floor((r + 1) / 2);
+			const t0 = f32(ror(x[0], tRot), sboxKeys, keySize);
+			const t1 = f32(rol(x[1], tRot + 8), sboxKeys, keySize);
 			x[2] ^= rol(add(t0, t1     , subKeys[ROUND_SUBKEYS + 2 * r    ]), rot);
-			x[3] ^= rol(add(t0, t1 << 1, subKeys[ROUND_SUBKEYS + 2 * r + 1]), rot + 4);
+			x[3] ^= ror(add(t0, t1 << 1, subKeys[ROUND_SUBKEYS + 2 * r + 1]), rot + 1);
+			*/
 
 			if (r < ROUNDS - 1)
 			{
 				// Swap
-				let temp = x[0];
-				x[0] = x[2];
-				x[2] = temp;
-				temp = x[1];
-				x[1] = x[3];
-				x[3] = temp;
+				let temp = x[0]; x[0] = x[2]; x[2] = temp;
+				temp = x[1]; x[1] = x[3]; x[3] = temp;
 			}
 		}
 
+		/* Feistel version
 		x[0] = ror(x[0], 8);
 		x[1] = rol(x[1], 8);
 		x[2] = ror(x[2], 8);
 		x[3] = rol(x[3], 8);
+		*/
+
+		// Whiten
+		for (let i = 0; i < x.length; i++)
+		{
+			x[i] ^= subKeys[OUTPUT_WHITEN + i];
+		}
 
 		dest.set(int32sToBytesLE(x), destOffset);
 	}
@@ -332,16 +326,47 @@ class TwofishDecryptTransform extends TwofishTransform
 	{
 		super(true);
 	}
-}
 
-function test()
-{
-	const tf = new TwofishEncryptTransform();
-	const result = tf.transform(hexToBytes("00000000000000000000000000000000"), hexToBytes("00000000000000000000000000000000"));
-	console.log(bytesToHex(result));
-}
+	transformBlock(block, dest, destOffset, subKeys, sboxKeys, keySize)
+	{
+		const x = bytesToInt32sLE(block);
 
-test();
+		// Whiten
+		for (let i = 0; i < x.length; i++)
+		{
+			// Decrypt: Output whiteners instead of input
+			x[i] ^= subKeys[i + OUTPUT_WHITEN];
+		}
+
+		// Decrypt: Reverse rounds
+		for (let r = ROUNDS - 1; r >= 0; r--)
+		{
+			const t0 = f32(x[0], sboxKeys, keySize);
+			const t1 = f32(rol(x[1], 8), sboxKeys, keySize);
+
+			// Decrypt: Only need to swap (x[2] <-> x[3]) and reverse (rol <-> ror) the two rotations here
+			x[2]  = rol(x[2], 1);
+			x[2] ^= add(t0, t1, subKeys[ROUND_SUBKEYS + 2 * r]);
+			x[3] ^= add(t0, t1 * 2, subKeys[ROUND_SUBKEYS + 2 * r + 1]);
+			x[3]  = ror(x[3], 1);
+
+			if (r > 0)
+			{
+				// Swap
+				let temp = x[0]; x[0] = x[2]; x[2] = temp;
+				temp = x[1]; x[1] = x[3]; x[3] = temp;
+			}
+		}
+
+		// Decrypt: Use input whiteners instead of output
+		for (let i = 0; i < x.length; i++)
+		{
+			x[i] ^= subKeys[i];
+		}
+
+		dest.set(int32sToBytesLE(x), destOffset);
+	}
+}
 
 export {
 	TwofishEncryptTransform,
