@@ -28,6 +28,8 @@ Supported
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack
 * Simple XOR against key
+* Speck (32, 48, 64, 96, 128)
+* Threefish
 * Browser-native AES, RSA (crypto.subtle)
 
 ### Hashes
@@ -82,7 +84,6 @@ TODO
 * Serpent
 * TEA, XTEA
 * Twofish
-* Threefish
 * Browser-native RSA decryption
 
 #### Second priority

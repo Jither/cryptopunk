@@ -59,7 +59,7 @@ function readWord(bytes, index, length)
 			lo <<= 8;
 			lo |= bytes[index++];
 		}
-		return { hi: hi, lo: lo };
+		return { hi, lo };
 	}
 }
 
@@ -81,7 +81,7 @@ function writeWord(bytes, index, word, length)
 		let lo = word.lo;
 		let hi = word.hi;
 		let i = index + length - 1;
-		let loIndex = index + length - 4;
+		const loIndex = index + length - 4;
 		while (i >= loIndex)
 		{
 			bytes[i--] = lo & 0xff;
@@ -201,22 +201,21 @@ class SpeckTransform extends BlockCipherTransform
 		const l = new Array(wordCount);
 		for (let i = 0; i < wordCount - 1; i++)
 		{
-			const pos = i * wordLength;
 			l[i] = readWord(keyBytes, (wordCount - i - 2) * wordLength, wordLength);
 		}
 
-		const rotA = wordSize === 16 ? 7 : 8;
-		const rotB = wordSize === 16 ? 2 : 3;
-
 		// Choose R implementation based on word size (>32 = 64 bit version)
-		let Rfunc, invRfunc;
+		let Rfunc;
 		switch (wordSize)
 		{
-			case 48: Rfunc = R48; invRfunc = invR48; break;
-			case 64: Rfunc = R64; invRfunc = invR64; break;
-			default: Rfunc = R; invRfunc = invR; break;
+			case 48: Rfunc = R48; break;
+			case 64: Rfunc = R64; break;
+			default: Rfunc = R; break;
 		}
 
+		// Special case: 16 bit word size uses different rotations:
+		const rotA = wordSize === 16 ? 7 : 8;
+		const rotB = wordSize === 16 ? 2 : 3;
 
 		for (let r = 0; r < rounds - 1; r++)
 		{
@@ -242,10 +241,8 @@ class SpeckTransform extends BlockCipherTransform
 		let y = readWord(block, wordLength, wordLength);
 
 		const wordSize = wordLength * 8;
-		// Special case: 16 bit word size uses different rotations:
-		const rotA = wordSize === 16 ? 7 : 8;
-		const rotB = wordSize === 16 ? 2 : 3;
 
+		// Choose R implementation based on word size (>32 = 64 bit version)
 		let Rfunc, invRfunc;
 		switch (wordSize)
 		{
@@ -253,6 +250,10 @@ class SpeckTransform extends BlockCipherTransform
 			case 64: Rfunc = R64; invRfunc = invR64; break;
 			default: Rfunc = R; invRfunc = invR; break;
 		}
+
+		// Special case: 16 bit word size uses different rotations:
+		const rotA = wordSize === 16 ? 7 : 8;
+		const rotB = wordSize === 16 ? 2 : 3;
 
 		if (this.decrypt)
 		{

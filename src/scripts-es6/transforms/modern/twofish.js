@@ -1,4 +1,3 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sLE, int32sToBytesLE , int32ToBytesLE, int32ToBytesBE, int32sToHex, bytesToHex, hexToBytes } from "../../cryptopunk.utils";
 import { add, rol, ror } from "../../cryptopunk.bitarith";
@@ -295,7 +294,6 @@ class TwofishTransform extends BlockCipherTransform
 			const t0 = f32(ror(x[0], rorCount), sboxKeys, keySize);
 			const t1 = f32(ror(x[1], rorCount + 8), sboxKeys, keySize);
 
-			const rolCount = Math.floor(r / 2);
 			x[2] ^= rol(add(t0, t1     , subKeys[ROUND_SUBKEYS + 2 * r    ]), rot);
 			x[3] ^= rol(add(t0, t1 << 1, subKeys[ROUND_SUBKEYS + 2 * r + 1]), rot + 4);
 

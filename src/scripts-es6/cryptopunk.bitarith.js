@@ -62,11 +62,7 @@ function add64(...terms)
 
 function sub64(a, b)
 {
-	if (b.lo !== 0x0 && b.hi !== 0x80000000)
-	{
-		b = not64(b);
-	}
-	return add64(a, ONE_64, b);
+	return add64(a, ONE_64, not64(b));
 }
 
 function and64(...terms)

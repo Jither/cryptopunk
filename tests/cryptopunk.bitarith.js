@@ -1,5 +1,5 @@
 import test from "ava";
-import { add64, and64, not64, rol64, ror64, shr64, xor64 } from "cryptopunk.bitarith";
+import { add64, and64, not64, rol64, ror64, shr64, sub64, xor64 } from "cryptopunk.bitarith";
 
 function assert64(t, action, expectedHex, ... termsHex)
 {
@@ -35,6 +35,12 @@ test("add64 adds correctly - 2 terms #2"       , assert64, add64, "00000001fffff
 test("add64 adds correctly - 2 terms #3"       , assert64, add64, "0001999999999998", "0000cccccccccccc", "0000cccccccccccc");
 test("add64 adds correctly - multiple terms"   , assert64, add64, "0000000133333332", "0000000055555555", "0000000066666666", "0000000077777777");
 test("add64 adds correctly - overflow"         , assert64, add64, "dddddddddddddddc", "eeeeeeeeeeeeeeee", "eeeeeeeeeeeeeeee");
+test("add64 adds correctly - overflow 1"       , assert64, add64, "0000000000000000", "ffffffffffffffff", "0000000000000001");
+
+test("sub64 subtracts correctly"               , assert64, sub64, "0000000001111111", "0000000003333333", "0000000002222222");
+test("sub64 subtracts correctly - zero"        , assert64, sub64, "abcdef0123456789", "abcdef0123456789", "0000000000000000");
+test("sub64 subtracts correctly - overflow"    , assert64, sub64, "eeeeeeeeeeeeeeee", "dddddddddddddddc", "eeeeeeeeeeeeeeee");
+test("sub64 subtracts correctly - overflow 1"  , assert64, sub64, "ffffffffffffffff", "0000000000000000", "0000000000000001");
 
 test("and64 ANDs correctly - 2 terms #1"       , assert64, and64, "1111111111111111", "1111111111111111", "1111111111111111");
 test("and64 ANDs correctly - 2 terms #2"       , assert64, and64, "1010101010101010", "1010101010101010", "1111111111111111");

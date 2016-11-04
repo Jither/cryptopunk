@@ -1,6 +1,4 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
 
 const ROUNDS = 16;
 
@@ -40,7 +38,7 @@ const O = [
 
 function mirror(value, bits)
 {
-	var result = 0;
+	let result = 0;
 	for (let i = 0; i < bits; i++)
 	{
 		result <<= 1;
@@ -115,7 +113,7 @@ class LuciferTransform extends BlockCipherTransform
 			}
 
 			// First byte of the (rotated) key is the transform control byte (tcb).
-			let tcbPosition = keyPosition;
+			const tcbPosition = keyPosition;
 
 			// Iterate through the current 8 key/message bytes
 			for (let i = 0; i < 8; i++)
@@ -155,11 +153,11 @@ class LuciferTransform extends BlockCipherTransform
 					v = mirror(v, 8);
 				}
 
-                // "Key interruption" (note that the transform control byte is "reused")
-                const kiByte = v ^ keyBytes[keyPosition];
+				// "Key interruption" (note that the transform control byte is "reused")
+				const kiByte = v ^ keyBytes[keyPosition];
 
-                // Permute the key interrupted byte and XOR ("add modulo 2")
-                // each bit to the appropriate byte (decided by O) in the LEFT message half.
+				// Permute the key interrupted byte and XOR ("add modulo 2")
+				// each bit to the appropriate byte (decided by O) in the LEFT message half.
 				for (let j = 0; j < 8; j++)
 				{
 					const kiBit = (kiByte >> (7 - PR[j])) & 1;
@@ -176,7 +174,7 @@ class LuciferTransform extends BlockCipherTransform
 				}
 			}
 			// Swap message halves
-			let temp = h0;
+			const temp = h0;
 			h0 = h1;
 			h1 = temp;
 		}

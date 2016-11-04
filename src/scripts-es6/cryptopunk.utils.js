@@ -196,6 +196,25 @@ function bytesToInt64sBE(bytes)
 	return result;
 }
 
+function bytesToInt64sLE(bytes)
+{
+	const result = [];
+	for (let i = 0; i < bytes.length; i += 8)
+	{
+		result.push({
+			lo:	(bytes[i]          ) |
+				(bytes[i + 1] <<  8) |
+				(bytes[i + 2] << 16) |
+				(bytes[i + 3] << 24),
+			hi:	(bytes[i + 4]      ) |
+				(bytes[i + 5] <<  8) |
+				(bytes[i + 6] << 16) |
+				(bytes[i + 7] << 24)
+		});
+	}
+	return result;
+}
+
 function int16sToBytesBE(ints)
 {
 	const result = new Uint8Array(ints.length * 2);
@@ -257,6 +276,26 @@ function int64sToBytesBE(ints)
 		result[index++] = (value.lo >> 16) & 0xff;
 		result[index++] = (value.lo >>  8) & 0xff;
 		result[index++] = (value.lo) & 0xff;
+	}
+	return result;
+}
+
+function int64sToBytesLE(ints)
+{
+	const result = new Uint8Array(ints.length * 8);
+	let index = 0;
+	for (let i = 0; i < ints.length; i++)
+	{
+		// TODO: Access with DataView?
+		const value = ints[i];
+		result[index++] = (value.lo) & 0xff;
+		result[index++] = (value.lo >>  8) & 0xff;
+		result[index++] = (value.lo >> 16) & 0xff;
+		result[index++] = (value.lo >> 24) & 0xff;
+		result[index++] = (value.hi) & 0xff;
+		result[index++] = (value.hi >>  8) & 0xff;
+		result[index++] = (value.hi >> 16) & 0xff;
+		result[index++] = (value.hi >> 24) & 0xff;
 	}
 	return result;
 }
@@ -374,6 +413,7 @@ export {
 	bytesToInt32sBE,
 	bytesToInt32sLE,
 	bytesToInt64sBE,
+	bytesToInt64sLE,
 	checkSize,
 	coprime,
 	escapeForRegex,
@@ -387,6 +427,7 @@ export {
 	int32ToBytesBE,
 	int32ToBytesLE,
 	int64sToBytesBE,
+	int64sToBytesLE,
 	int32ToHex,
 	int32sToHex,
 	int64ToHex,
