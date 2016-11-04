@@ -54,6 +54,14 @@ class SkipjackTransform extends BlockCipherTransform
 		this.checkKeySize(keyBytes, 80);
 		return this.transformBlocks(bytes, 64, keyBytes);
 	}
+}
+
+class SkipjackEncryptTransform extends SkipjackTransform
+{
+	constructor()
+	{
+		super(false);
+	}
 
 	transformBlock(block, dest, destIndex, key)
 	{
@@ -91,14 +99,6 @@ class SkipjackTransform extends BlockCipherTransform
 		}
 
 		dest.set(int16sToBytesBE([w1, w2, w3, w4]), destIndex);
-	}
-}
-
-class SkipjackEncryptTransform extends SkipjackTransform
-{
-	constructor()
-	{
-		super(false);
 	}
 }
 

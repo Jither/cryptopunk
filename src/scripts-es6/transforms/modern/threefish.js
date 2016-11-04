@@ -124,6 +124,43 @@ class ThreefishTransform extends BlockCipherTransform
 		return this.transformBlocks(bytes, options.blockSize, subKeys, rounds);
 	}
 
+	createRoundKeys(keyBytes, tweakBytes, rounds)
+	{
+		const subKeyCount = rounds / 4 + 1;
+		
+		const keys = bytesToInt64sLE(keyBytes);
+		const keyCount = keys.length;
+		keys.push(xor64(KEY_SCHEDULE_CONST, ...keys)); // Add kNw
+
+		const t = bytesToInt64sLE(tweakBytes);
+		t.push(xor64(t[0], t[1])); // Add t2
+
+		const k = new Array(subKeyCount);
+		for (let s = 0; s < subKeyCount; s++)
+		{
+			const subKey = new Array(keyCount);
+			for (let i = 0; i < keyCount; i++)
+			{
+				const key = keys[(s + i) % (keyCount + 1)];
+				subKey[i] = { hi: key.hi, lo: key.lo };
+			}
+			subKey[keyCount - 3] = add64(subKey[keyCount - 3], t[s % 3]);
+			subKey[keyCount - 2] = add64(subKey[keyCount - 2], t[(s + 1) % 3]);
+			subKey[keyCount - 1] = add64(subKey[keyCount - 1], { hi: 0, lo: s });
+			k[s] = subKey;
+		}
+
+		return k;
+	}
+}
+
+class ThreefishEncryptTransform extends ThreefishTransform
+{
+	constructor()
+	{
+		super(false);
+	}
+
 	transformBlock(block, dest, destOffset, subKeys, rounds)
 	{
 		const v = bytesToInt64sLE(block);
@@ -168,43 +205,6 @@ class ThreefishTransform extends BlockCipherTransform
 		}
 
 		dest.set(int64sToBytesLE(v), destOffset);
-	}
-
-	createRoundKeys(keyBytes, tweakBytes, rounds)
-	{
-		const subKeyCount = rounds / 4 + 1;
-		
-		const keys = bytesToInt64sLE(keyBytes);
-		const keyCount = keys.length;
-		keys.push(xor64(KEY_SCHEDULE_CONST, ...keys)); // Add kNw
-
-		const t = bytesToInt64sLE(tweakBytes);
-		t.push(xor64(t[0], t[1])); // Add t2
-
-		const k = new Array(subKeyCount);
-		for (let s = 0; s < subKeyCount; s++)
-		{
-			const subKey = new Array(keyCount);
-			for (let i = 0; i < keyCount; i++)
-			{
-				const key = keys[(s + i) % (keyCount + 1)];
-				subKey[i] = { hi: key.hi, lo: key.lo };
-			}
-			subKey[keyCount - 3] = add64(subKey[keyCount - 3], t[s % 3]);
-			subKey[keyCount - 2] = add64(subKey[keyCount - 2], t[(s + 1) % 3]);
-			subKey[keyCount - 1] = add64(subKey[keyCount - 1], { hi: 0, lo: s });
-			k[s] = subKey;
-		}
-
-		return k;
-	}
-}
-
-class ThreefishEncryptTransform extends ThreefishTransform
-{
-	constructor()
-	{
-		super(false);
 	}
 }
 

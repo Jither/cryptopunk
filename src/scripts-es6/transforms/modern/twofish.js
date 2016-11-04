@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sLE, int32sToBytesLE , int32ToBytesLE, int32ToBytesBE, int32sToHex, bytesToHex, hexToBytes, int32ToHex } from "../../cryptopunk.utils";
+import { bytesToInt32sLE, int32sToBytesLE , int32ToBytesLE } from "../../cryptopunk.utils";
 import { add, rol, ror } from "../../cryptopunk.bitarith";
 
 const MAX_ROUNDS = 16;
@@ -257,6 +257,14 @@ class TwofishTransform extends BlockCipherTransform
 		const [sboxKeys, subKeys] = this.generateSubKeys(keyBytes, keySize);
 		return this.transformBlocks(bytes, 128, subKeys, sboxKeys, keySize);
 	}
+}
+
+class TwofishEncryptTransform extends TwofishTransform
+{
+	constructor()
+	{
+		super(false);
+	}
 
 	transformBlock(block, dest, destOffset, subKeys, sboxKeys, keySize)
 	{
@@ -309,14 +317,6 @@ class TwofishTransform extends BlockCipherTransform
 		}
 
 		dest.set(int32sToBytesLE(x), destOffset);
-	}
-}
-
-class TwofishEncryptTransform extends TwofishTransform
-{
-	constructor()
-	{
-		super(false);
 	}
 }
 
