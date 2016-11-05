@@ -385,7 +385,6 @@ addPaletteItem(tea.TeaDecryptTransform, "TEA", "TEA Decrypt");
 addPaletteItem(threefish.ThreefishDecryptTransform, "Threefish", "Threefish Decrypt");
 addPaletteItem(twofish.TwofishDecryptTransform, "Twofish", "Twofish Decrypt");
 addPaletteItem(xtea.XTeaDecryptTransform, "XTEA", "XTEA Decrypt");
-addPaletteItem(xxtea.BlockTeaDecryptTransform, "Block TEA", "Block TEA Decrypt");
 addPaletteItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
 
@@ -405,6 +404,5 @@ addPaletteItem(tea.TeaEncryptTransform, "TEA", "TEA Encrypt");
 addPaletteItem(threefish.ThreefishEncryptTransform, "Threefish", "Threefish Encrypt");
 addPaletteItem(twofish.TwofishEncryptTransform, "Twofish", "Twofish Encrypt");
 addPaletteItem(xtea.XTeaEncryptTransform, "XTEA", "XTEA Encrypt");
-addPaletteItem(xxtea.BlockTeaEncryptTransform, "Block TEA", "Block TEA Encrypt");
 addPaletteItem(xxtea.XXTeaEncryptTransform, "XXTEA", "XXTEA Encrypt");
 addPaletteItem(nativeRsa.NativeRsaOaepEncryptTransform, "RSA (OAEP)", "RSA (OAEP) Encrypt");
