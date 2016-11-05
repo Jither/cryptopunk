@@ -26,9 +26,10 @@ Supported
 * LUCIFER (Sorkin implementation)
 * RC4 (with discard parameter)
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
-* Skipjack
+* Skipjack (including NESSIE variant)
 * Simple XOR
 * Speck (32, 48, 64, 96, 128)
+* TEA, XTEA
 * Threefish
 * Twofish
 * Browser-native AES, RSA (crypto.subtle)
@@ -98,6 +99,11 @@ TODO
 * Two-square
 * VIC
 
+### Mechanical Ciphers
+* Japanese (PURPLE etc.)
+* US
+* Lorentz
+
 ### Modern Ciphers
 
 * Camellia
@@ -106,7 +112,7 @@ TODO
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
 * RC2, RC5, RC6
 * Serpent
-* TEA, XTEA
+* Block TEA, XXTEA
 * Browser-native RSA decryption
 
 #### Second priority
@@ -127,6 +133,7 @@ TODO
 * SC2000
 * SEED
 * Shacal
+* Unicorn-A, Unicorn-E
 
 ### Hashes
 

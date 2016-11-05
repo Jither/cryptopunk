@@ -1,6 +1,16 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { int16sToBytesBE, bytesToInt16sBE } from "../../cryptopunk.utils";
 
+const VARIANT_NAMES = [
+	"Original",
+	"NESSIE"
+];
+
+const VARIANT_VALUES = [
+	"original",
+	"nessie"
+];
+
 const F = [
 	0xa3, 0xd7, 0x09, 0x83, 0xf8, 0x48, 0xf6, 0xf4, 0xb3, 0x21, 0x15, 0x78, 0x99, 0xb1, 0xaf, 0xf9,
 	0xe7, 0x2d, 0x4d, 0x8a, 0xce, 0x4c, 0xca, 0x2e, 0x52, 0x95, 0xd9, 0x1e, 0x4e, 0x38, 0x44, 0x28,
@@ -47,12 +57,14 @@ class SkipjackTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
+		this.addOption("variant", "Variant", "original", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
-	transform(bytes, keyBytes)
+	transform(bytes, keyBytes, options)
 	{
+		options = Object.assign({}, this.defaults, options);
 		this.checkKeySize(keyBytes, 80);
-		return this.transformBlocks(bytes, 64, keyBytes);
+		return this.transformBlocks(bytes, 64, keyBytes, options.variant);
 	}
 }
 
@@ -63,7 +75,7 @@ class SkipjackEncryptTransform extends SkipjackTransform
 		super(false);
 	}
 
-	transformBlock(block, dest, destIndex, key)
+	transformBlock(block, dest, destIndex, key, variant)
 	{
 		let [w1, w2, w3, w4] = bytesToInt16sBE(block);
 
@@ -74,11 +86,12 @@ class SkipjackEncryptTransform extends SkipjackTransform
 			// Stepping rule A
 			for (let j = 0; j < 8; j++)
 			{
-				const prevW3 = w3;
+				const c = variant === "nessie" ? counter << 8 : counter;
+				const t = w4;
+				w4 = w3;
 				w3 = w2;
 				w2 = g(key, w1, k);
-				w1 = w2 ^ w4 ^ counter;
-				w4 = prevW3;
+				w1 = t ^ w2 ^ c;
 
 				k += 4;
 				counter++;
@@ -87,11 +100,12 @@ class SkipjackEncryptTransform extends SkipjackTransform
 			// Stepping rule B
 			for (let j = 0; j < 8; j++)
 			{
-				const prevW3 = w3;
-				w3 = w1 ^ w2 ^ counter;
-				w2 = g(key, w1, k);
+				const c = variant === "nessie" ? counter << 8 : counter;
+				const t = w1;
 				w1 = w4;
-				w4 = prevW3;
+				w4 = w3;
+				w3 = t ^ w2 ^ c;
+				w2 = g(key, t, k);
 				
 				k += 4;
 				counter++;
@@ -109,7 +123,7 @@ class SkipjackDecryptTransform extends SkipjackTransform
 		super(true);
 	}
 
-	transformBlock(block, dest, destIndex, key)
+	transformBlock(block, dest, destIndex, key, variant)
 	{
 		let [w1, w2, w3, w4] = bytesToInt16sBE(block);
 
@@ -121,11 +135,12 @@ class SkipjackDecryptTransform extends SkipjackTransform
 			for (let j = 0; j < 8; j++)
 			{
 				k -= 4;
-				const prevW4 = w4;
+				const c = variant === "nessie" ? counter << 8 : counter;
+				const t = w3;
+				w3 = w4;
 				w4 = w1;
 				w1 = gInv(key, w2, k);
-				w2 = w1 ^ w3 ^ counter;
-				w3 = prevW4;
+				w2 = t ^ w1 ^ c;
 				
 				counter--;
 			}
@@ -134,11 +149,12 @@ class SkipjackDecryptTransform extends SkipjackTransform
 			for (let j = 0; j < 8; j++)
 			{
 				k -= 4;
-				const prevW4 = w4;
-				w4 = w1 ^ w2 ^ counter;
+				const c = variant === "nessie" ? counter << 8 : counter;
+				const t = w1 ^ w2;
 				w1 = gInv(key, w2, k);
 				w2 = w3;
-				w3 = prevW4;
+				w3 = w4;
+				w4 = t ^ c;
 
 				counter--;
 			}
