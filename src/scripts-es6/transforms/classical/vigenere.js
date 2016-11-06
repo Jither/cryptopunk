@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { SubstitutionTransform } from "./substitution";
-import { mod } from "../../cryptopunk.utils";
+import { mod } from "../../cryptopunk.math";
 
 class VigenereEncryptTransform extends SubstitutionTransform
 {

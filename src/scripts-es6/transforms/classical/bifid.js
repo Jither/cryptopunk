@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { SubstitutionTransform } from "./substitution";
-import { mod, isPerfectSquare } from "../../cryptopunk.utils";
+import { mod, isPerfectSquare } from "../../cryptopunk.math";
 import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 class BifidEncryptTransform extends SubstitutionTransform

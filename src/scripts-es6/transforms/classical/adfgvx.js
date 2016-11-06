@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "../transforms";
-import { columnarTransposition, inverseColumnarTransposition, getLetterSortPermutation, polybius } from "./cryptopunk.classical-utils";
+import { columnarTransposition, inverseColumnarTransposition, getLetterSortPermutation, polybius, depolybius } from "./cryptopunk.classical-utils";
 import { hasDuplicateCharacters, removeWhiteSpace } from "../../cryptopunk.strings";
 
 class AdfgvxTransform extends Transform
@@ -42,7 +42,7 @@ class AdfgvxTransform extends Transform
 			throw new TransformError(`Key with duplicate characters would not be predictably decipherable.`);
 		}
 
-		return _transform(message, alphabet, key, headers);
+		return this._transform(message, alphabet, key, headers);
 	}
 }
 
@@ -50,6 +50,8 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 {
 	_transform(plaintext, alphabet, key, headers)
 	{
+		// TODO: Handle plaintext characters not in alphabet (likely throw)
+
 		// Fractionate message (i.e. turn it into a combination of row/column headers)
 		const coords = polybius(plaintext, alphabet, headers);
 		let fractionated = "";
@@ -65,7 +67,7 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 	}
 }
 
-class AdfgvxDecryptTransform extends Transform
+class AdfgvxDecryptTransform extends AdfgvxTransform
 {
 	_transform(ciphertext, alphabet, key, headers)
 	{

@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { SubstitutionTransform } from "./substitution";
-import { coprime, mod } from "../../cryptopunk.utils";
+import { coprime, mod } from "../../cryptopunk.math";
 
 class AffineEncryptTransform extends SubstitutionTransform
 {

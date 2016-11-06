@@ -1,6 +1,7 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, mod } from "../../cryptopunk.utils";
+import { bytesToInt32sBE } from "../../cryptopunk.utils";
+import { mod } from "../../cryptopunk.math";
 
 // Pure implementation of Rijndael (AES) allowing
 // experimentation without modes of operation etc.

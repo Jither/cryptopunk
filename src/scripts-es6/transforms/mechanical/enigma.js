@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "../transforms";
-import { mod } from "../../cryptopunk.utils";
+import { mod } from "../../cryptopunk.math";
 
 const ROTOR_NAMES = ["None", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "β", "γ"];
 const ROTOR_VALUES = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "beta", "gamma"];

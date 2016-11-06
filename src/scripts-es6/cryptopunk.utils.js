@@ -1,31 +1,3 @@
-function escapeForRegex(str)
-{
-	return str.replace(/[.*+?^${}()|[\]\\\/-]/g, "\\$&");
-}
-
-// Finds greatest common divisor of two numbers
-function gcd(a, b)
-{
-	// a should be largest
-	if (a < b)
-	{
-		[a, b] = [b, a];
-	}
-	
-	while (b !== 0)
-	{
-		const t = b;
-		b = a % b;
-		a = t;
-	}
-	return a;
-}
-
-function coprime(a, b)
-{
-	return gcd(a,b) === 1;
-}
-
 function bytesToHex(bytes)
 {
 	let result = "";
@@ -300,23 +272,6 @@ function int64sToBytesLE(ints)
 	return result;
 }
 
-function isPerfectSquare(n)
-{
-	if (n < 0)
-	{
-		return false;
-	}
-
-	const rt = Math.floor(Math.sqrt(n) + 0.5);
-	return rt * rt === n;
-}
-
-// True modulo - works for negative numbers too
-function mod(n, m)
-{
-	return ((n % m) + m) % m;
-}
-
 function intToByteArray(num)
 {
 	const result = new Uint8Array();
@@ -330,9 +285,6 @@ function intToByteArray(num)
 
 	return result;
 }
-
-const rxSymbolWithCombiningMarks = /([\0-\u02FF\u0370-\u1AAF\u1B00-\u1DBF\u1E00-\u20CF\u2100-\uD7FF\uE000-\uFE1F\uFE30-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])([\u0300-\u036F\u1AB0-\u1AFF\u1DC0-\u1DFF\u20D0-\u20FF\uFE20-\uFE2F]+)/g;
-const rxSurrogatePair = /([\uD800-\uDBFF])([\uDC00-\uDFFF])/g;
 
 function checkSize(size, requiredSize)
 {
@@ -389,11 +341,7 @@ export {
 	bytesToInt64sBE,
 	bytesToInt64sLE,
 	checkSize,
-	coprime,
-	escapeForRegex,
-	gcd,
 	hexToBytes,
-	isPerfectSquare,
 	intToByteArray,
 	int16sToBytesBE,
 	int32sToBytesBE,
@@ -405,6 +353,5 @@ export {
 	int32ToHex,
 	int32sToHex,
 	int64ToHex,
-	int64sToHex,
-	mod
+	int64sToHex
 };

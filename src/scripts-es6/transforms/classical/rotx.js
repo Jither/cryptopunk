@@ -1,5 +1,5 @@
 import { SubstitutionTransform } from "./substitution";
-import { mod } from "../../cryptopunk.utils";
+import { mod } from "../../cryptopunk.math";
 
 class RotXTransform extends SubstitutionTransform
 {
