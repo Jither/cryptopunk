@@ -1,4 +1,5 @@
 import { Transform } from "../transforms";
+import { columnarTransposition, inverseColumnarTransposition } from "./cryptopunk.classical-utils";
 import { removeWhiteSpace } from "../../cryptopunk.utils";
 
 class ColumnarTranspositionEncryptTransform extends Transform
@@ -17,42 +18,31 @@ class ColumnarTranspositionEncryptTransform extends Transform
 
 		const columnOrder = removeWhiteSpace(options.key).split(",").map(key => parseInt(key.trim(), 10));
 
-		const columns = [];
+		return columnarTransposition(str, columnOrder);
+	}
+}
 
-		// Init columns
-		for (let i = 0; i < columnOrder.length; i++)
-		{
-			columns.push([]);
-		}
+class ColumnarTranspositionDecryptTransform extends Transform
+{
+	constructor()
+	{
+		super();
+		this.addInput("string", "Plaintext")
+			.addOutput("string", "Ciphertext")
+			.addOption("key", "Key", "3,1,4,2,0");
+	}
 
-		let columnIndex = 0;
-		for (let i = 0; i < str.length; i++)
-		{
-			const index = columnOrder[columnIndex];
-			const column = columns[index];
-			const c = str.charAt(i);
-			column.push(c);
+	transform(str, options)
+	{
+		options = Object.assign({}, this.defaults, options);
 
-			columnIndex++;
-			if (columnIndex >= columnOrder.length)
-			{
-				columnIndex = 0;
-			}
-		}
+		const columnOrder = removeWhiteSpace(options.key).split(",").map(key => parseInt(key.trim(), 10));
 
-		let result = "";
-
-		for (let i = 0; i < columnOrder.length; i++)
-		{
-			const column = columns[i];
-
-			result += column.join("");
-		}
-
-		return result;
+		return inverseColumnarTransposition(str, columnOrder);
 	}
 }
 
 export {
-	ColumnarTranspositionEncryptTransform
+	ColumnarTranspositionEncryptTransform,
+	ColumnarTranspositionDecryptTransform
 };

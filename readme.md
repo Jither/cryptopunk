@@ -6,6 +6,7 @@ Supported
 
 ### Classical Ciphers
 
+* ADFGVX / ADFGX (with support for custom headers)
 * Affine
 * Bifid
 * Column transposition
@@ -29,7 +30,7 @@ Supported
 * Skipjack (including NESSIE variant)
 * Simple XOR
 * Speck (32, 48, 64, 96, 128)
-* TEA, XTEA
+* TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
 * Twofish
 * Browser-native AES, RSA (crypto.subtle)
@@ -78,7 +79,6 @@ TODO
 ----
 
 ### Classical Ciphers
-* ADFGVX
 * Alberti?
 * Autokey ciphers (e.g. Vigenère)
 * Bacon
@@ -112,7 +112,6 @@ TODO
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
 * RC2, RC5, RC6
 * Serpent
-* Block TEA, XXTEA
 * Browser-native RSA decryption
 
 #### Second priority

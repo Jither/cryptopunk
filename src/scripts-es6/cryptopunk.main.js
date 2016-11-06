@@ -1,6 +1,7 @@
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
 import * as ascii from "./transforms/ascii";
+import * as adfgvx from "./transforms/classical/adfgvx";
 import * as baseN from "./transforms/base-n";
 import * as bifid from "./transforms/classical/bifid";
 import * as binary from "./transforms/binary";
@@ -349,12 +350,15 @@ addPaletteItem(rotx.Rot18Transform, "ROT-18");
 addPaletteItem(rotx.Rot47Transform, "ROT-47");
 
 addPaletteCategory("Classical decryption");
+addPaletteItem(adfgvx.AdfgvxDecryptTransform, "ADFGVX", "ADFGVX Decrypt");
 addPaletteItem(affine.AffineDecryptTransform, "Affine", "Affine Decrypt");
 addPaletteItem(bifid.BifidDecryptTransform, "Bifid", "Bifid Decrypt");
+addPaletteItem(columns.ColumnarTranspositionDecryptTransform, "Columnar Transposition", "Columnar Transposition Decrypt");
 addPaletteItem(skip.SkipDecryptTransform, "Skip", "Skip Cipher Decrypt");
 addPaletteItem(vigenere.VigenereDecryptTransform, "Vigènere", "Vigènere Decrypt");
 
 addPaletteCategory("Classical encryption");
+addPaletteItem(adfgvx.AdfgvxEncryptTransform, "ADFGVX", "ADFGVX Encrypt");
 addPaletteItem(affine.AffineEncryptTransform, "Affine", "Affine Encrypt");
 addPaletteItem(bifid.BifidEncryptTransform, "Bifid", "Bifid Encrypt");
 addPaletteItem(columns.ColumnarTranspositionEncryptTransform, "Columnar Transposition", "Columnar Transposition Encrypt");
