@@ -10,6 +10,7 @@ Supported
 * Affine
 * Bifid
 * Column transposition
+* Polybius square
 * ROT-X / Caesar (with specific support for ROT-5, ROT-18, ROT-47)
 * Skip
 * Simple substitution
@@ -92,7 +93,6 @@ TODO
 * Keyword Cipher (based on caesar)
 * Null
 * Playfair
-* Polybius
 * Rail Fence
 * Tap Code
 * Trifid

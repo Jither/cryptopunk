@@ -13,6 +13,7 @@ const src =
 const dest =
 {
 	scripts: "./src/scripts/",
+	vectors: "./vectors/",
 	styles: "./src/styles/"
 }
 
@@ -35,6 +36,10 @@ gulp.task("build-benchmarks", ["build-benchmark-libs"], function() {
 
 gulp.task("build-scripts", ["lint-scripts"], function() {
 	return compile(src.scripts + "cryptopunk.main.js", dest.scripts, "cryptopunk.js");
+});
+
+gulp.task("build-transforms-for-test-vectors", function() {
+	return compile(src.scripts + "cryptopunk.testvector-transforms.js", dest.vectors, "transforms.js");
 });
 
 gulp.task("build-styles", function() {

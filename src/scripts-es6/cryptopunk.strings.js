@@ -62,8 +62,18 @@ function splitLength(str, length)
 	return result;
 }
 
+function groupCharacters(str, groupLength)
+{
+	if (groupLength === 0)
+	{
+		return str;
+	}
+	return splitLength(str, groupLength).join(" ");
+}
+
 export {
 	escapeForRegex,
+	groupCharacters,
 	hasDuplicateCharacters,
 	multiByteStringReverse,
 	removeWhiteSpace,

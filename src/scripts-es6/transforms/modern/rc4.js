@@ -8,7 +8,7 @@ class Rc4Transform extends Transform
 		this.addInput("bytes", "Input")
 			.addInput("bytes", "Key")
 			.addOutput("bytes", "Output")
-			.addOption("discardKeyBytes", "Discard key bytes", 0, { min: 0 });
+			.addOption("discard", "Discard key bytes", 0, { min: 0 });
 	}
 
 	generateSbox(keyBytes)
@@ -52,7 +52,7 @@ class Rc4Transform extends Transform
 
 		const sbox = this.generateSbox(keyBytes);
 
-		let [i, j] = this.discardKeyBytes(sbox, options.discardKeyBytes);
+		let [i, j] = this.discardKeyBytes(sbox, options.discard);
 
 		const result = new Uint8Array(bytes.length);
 		for (let index = 0; index < bytes.length; index++)

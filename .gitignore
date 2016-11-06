@@ -11,3 +11,5 @@ references/lucifer-outerbridge/obj/
 *.pyc
 references/speckpy/
 references/Skein/
+vectors/transforms.js.map
+vectors/transforms.js

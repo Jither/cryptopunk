@@ -1,16 +1,16 @@
 import { Transform, TransformError } from "../transforms";
 import { columnarTransposition, inverseColumnarTransposition, getLetterSortPermutation, polybius, depolybius } from "./cryptopunk.classical-utils";
-import { hasDuplicateCharacters, removeWhiteSpace } from "../../cryptopunk.strings";
+import { groupCharacters, hasDuplicateCharacters, removeWhiteSpace } from "../../cryptopunk.strings";
 
 class AdfgvxTransform extends Transform
 {
-	constructor()
+	constructor(decrypt)
 	{
 		super();
-		this.addInput("string", "Plaintext")
+		this.addInput("string", decrypt ? "Ciphertext" : "Plaintext")
 			.addInput("string", "Mixed alphabet")
 			.addInput("string", "Transposition Key")
-			.addOutput("string", "Ciphertext")
+			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
 			.addOption("headers", "Table headers", "ADFGVX");
 	}
 
@@ -37,18 +37,25 @@ class AdfgvxTransform extends Transform
 
 		// Since we do columnar transposition by sorting the key characters, duplicate characters would cause
 		// an unpredictable column order.
+		// TODO: Use common practice instead - recurring letters are replaced by the next available succeeding letter.
+		// I.e. POTATO would become POTAUQ
 		if (hasDuplicateCharacters(key.toUpperCase()))
 		{
 			throw new TransformError(`Key with duplicate characters would not be predictably decipherable.`);
 		}
 
-		return this._transform(message, alphabet, key, headers);
+		return this._transform(message, alphabet, key, headers, options);
 	}
 }
 
 class AdfgvxEncryptTransform extends AdfgvxTransform
 {
-	_transform(plaintext, alphabet, key, headers)
+	constructor()
+	{
+		super(false);
+		this.addOption("grouping", "Group characters", 4, { min: 0 });
+	}
+	_transform(plaintext, alphabet, key, headers, options)
 	{
 		// TODO: Handle plaintext characters not in alphabet (likely throw)
 
@@ -63,13 +70,18 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 		// Columnar transposition
 		const columnOrder = getLetterSortPermutation(key);
 		const transposed = columnarTransposition(fractionated, columnOrder);
-		return transposed;
+		return groupCharacters(transposed, options.grouping);
 	}
 }
 
 class AdfgvxDecryptTransform extends AdfgvxTransform
 {
-	_transform(ciphertext, alphabet, key, headers)
+	constructor()
+	{
+		super(true);
+	}
+
+	_transform(ciphertext, alphabet, key, headers, options)
 	{
 		if (ciphertext.length % 2 !== 0)
 		{
