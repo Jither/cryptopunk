@@ -110,7 +110,7 @@ function getLetterSortPermutation(word, alphabet)
 // If a string of indices are supplied (e.g. "ABCDE"), an array of strings (e.g. "BC") will be returned instead.
 function polybius(message, alphabet, indices)
 {
-	const width = indices.length || Math.ceil(Math.sqrt(alphabet.length));
+	const width = indices ? indices.length : Math.ceil(Math.sqrt(alphabet.length));
 
 	const result = new Array(message.length);
 	for (let i = 0; i < message.length; i++)
@@ -131,20 +131,38 @@ function polybius(message, alphabet, indices)
 	return result;
 }
 
+// Returns string based on array of coordinates [y,x] / [row, column] into Polybius square using alphabet.
+// Alternatively based on string of coordinates where a character, c, maps to row/column at indices.indexOf(c))
 function depolybius(message, alphabet, indices)
 {
-	const width = indices.length || Math.ceil(Math.sqrt(alphabet.length));
+	const width = indices ? indices.length : Math.ceil(Math.sqrt(alphabet.length));
 
 	let result = "";
-	for (let i = 0; i < message.length; i += 2)
-	{
-		const rowChar = message.charAt(i);
-		const colChar = message.charAt(i + 1);
-		const row = indices.indexOf(rowChar);
-		const column = indices.indexOf(colChar);
-		const index = row * width + column;
 
-		result += alphabet.charAt(index);
+	if (Array.isArray(message))
+	{
+		for (let i = 0; i < message.length; i++)
+		{
+			const coord = message[i];
+			const row = coord[0];
+			const column = coord[1];
+			const index = row * width + column;
+
+			result += alphabet.charAt(index);
+		}
+	}
+	else
+	{
+		for (let i = 0; i < message.length; i += 2)
+		{
+			const rowChar = message.charAt(i);
+			const colChar = message.charAt(i + 1);
+			const row = indices.indexOf(rowChar);
+			const column = indices.indexOf(colChar);
+			const index = row * width + column;
+
+			result += alphabet.charAt(index);
+		}
 	}
 	return result;
 }
