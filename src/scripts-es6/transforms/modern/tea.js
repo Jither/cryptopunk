@@ -46,7 +46,7 @@ class TeaEncryptTransform extends TeaTransform
 		super(false);
 	}
 
-	transformBlock(block, dest, destOffset, k, endianess)
+	transformBlock(block, dest, destOffset, k)
 	{
 		let [v0, v1] = this.bytesToInt32s(block);
 		let sum = 0;

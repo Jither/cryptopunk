@@ -106,8 +106,53 @@ function getLetterSortPermutation(word, alphabet)
 	return invertPermutation(perm);
 }
 
+// Returns an array of coordinates [y,x] / [row, column] of message placed into Polybius square using alphabet.
+// If a string of indices are supplied (e.g. "ABCDE"), an array of strings (e.g. "BC") will be returned instead.
+function polybius(message, alphabet, indices)
+{
+	const width = indices.length || Math.ceil(Math.sqrt(alphabet.length));
+
+	const result = new Array(message.length);
+	for (let i = 0; i < message.length; i++)
+	{
+		const c = message.charAt(i);
+		const index = alphabet.indexOf(c);
+		const row = Math.floor(index / width);
+		const column = index % width;
+		if (indices)
+		{
+			result[i] = indices.charAt(row) + indices.charAt(column);
+		}
+		else
+		{
+			result[i] = [row, column];
+		}
+	}
+	return result;
+}
+
+function depolybius(message, alphabet, indices)
+{
+	const width = indices.length || Math.ceil(Math.sqrt(alphabet.length));
+
+	let result = "";
+	for (let i = 0; i < message.length; i += 2)
+	{
+		const rowChar = message.charAt(i);
+		const colChar = message.charAt(i + 1);
+		const row = indices.indexOf(rowChar);
+		const column = indices.indexOf(colChar);
+		const index = row * width + column;
+
+		result += alphabet.charAt(index);
+	}
+	return result;
+}
+
 export {
 	columnarTransposition,
+	depolybius,
 	getLetterSortPermutation,
-	inverseColumnarTransposition
+	inverseColumnarTransposition,
+	polybius
 };

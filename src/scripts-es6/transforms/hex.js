@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "./transforms";
-import { removeWhiteSpace } from "../cryptopunk.utils";
+import { removeWhiteSpace } from "../cryptopunk.strings";
 
 class HexToBytesTransform extends Transform
 {

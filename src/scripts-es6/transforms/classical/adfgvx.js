@@ -1,10 +1,8 @@
-import { Transform, TransformError } from '../transforms';
-import { columnarTransposition, inverseColumnarTransposition, getLetterSortPermutation } from './cryptopunk.classical-utils';
-import { removeWhiteSpace } from "../../cryptopunk.utils";
+import { Transform, TransformError } from "../transforms";
+import { columnarTransposition, inverseColumnarTransposition, getLetterSortPermutation, polybius } from "./cryptopunk.classical-utils";
+import { hasDuplicateCharacters, removeWhiteSpace } from "../../cryptopunk.strings";
 
-// TODO: Combine common functionality
-
-class AdfgvxEncryptTransform extends Transform
+class AdfgvxTransform extends Transform
 {
 	constructor()
 	{
@@ -16,7 +14,7 @@ class AdfgvxEncryptTransform extends Transform
 			.addOption("headers", "Table headers", "ADFGVX");
 	}
 
-	transform(plaintext, alphabet, key, options)
+	transform(message, alphabet, key, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
@@ -24,6 +22,7 @@ class AdfgvxEncryptTransform extends Transform
 		const headersCount = headers.length;
 		const maxAlphabetLength = headersCount * headersCount;
 
+		message = removeWhiteSpace(message).toUpperCase();
 		alphabet = removeWhiteSpace(alphabet).toUpperCase();
 
 		if (alphabet.length < 1 || alphabet.length > maxAlphabetLength)
@@ -33,81 +32,54 @@ class AdfgvxEncryptTransform extends Transform
 
 		if (key.length < 1)
 		{
-			throw new TransformError(`Key must be at least 1 letter.`)
+			throw new TransformError(`Key must be at least 1 letter.`);
 		}
 
-		// TODO: Ensure key doesn't have duplicate letters
-
-		// Fractionate message (i.e. turn it into a combination of row/column headers)
-		let fractionated = "";
-		for (let i = 0; i < plaintext.length; i++)
+		// Since we do columnar transposition by sorting the key characters, duplicate characters would cause
+		// an unpredictable column order.
+		if (hasDuplicateCharacters(key.toUpperCase()))
 		{
-			const c = plaintext.charAt(i).toUpperCase();
-			const index = alphabet.indexOf(c);
-			const row = Math.floor(index / headersCount);
-			const column = index % headersCount;
+			throw new TransformError(`Key with duplicate characters would not be predictably decipherable.`);
+		}
 
-			fractionated += headers.charAt(row) + headers.charAt(column);
+		return _transform(message, alphabet, key, headers);
+	}
+}
+
+class AdfgvxEncryptTransform extends AdfgvxTransform
+{
+	_transform(plaintext, alphabet, key, headers)
+	{
+		// Fractionate message (i.e. turn it into a combination of row/column headers)
+		const coords = polybius(plaintext, alphabet, headers);
+		let fractionated = "";
+		for (let i = 0; i < coords.length; i++)
+		{
+			fractionated += coords[i];
 		}
 
 		// Columnar transposition
 		const columnOrder = getLetterSortPermutation(key);
 		const transposed = columnarTransposition(fractionated, columnOrder);
-		return transposed
+		return transposed;
 	}
 }
 
 class AdfgvxDecryptTransform extends Transform
 {
-	constructor()
+	_transform(ciphertext, alphabet, key, headers)
 	{
-		super();
-		this.addInput("string", "Ciphertext")
-			.addInput("string", "Mixed alphabet")
-			.addInput("string", "Transposition Key")
-			.addOutput("string", "Plaintext")
-			.addOption("headers", "Table headers", "ADFGVX");
-	}
-
-	transform(ciphertext, alphabet, key, options)
-	{
-		options = Object.assign({}, this.defaults, options);
-
-		const headers = options.headers.toUpperCase();
-		const headersCount = headers.length;
-		const maxAlphabetLength = headersCount * headersCount;
-
-		alphabet = removeWhiteSpace(alphabet).toUpperCase();
-
-		if (alphabet.length < 1 || alphabet.length > maxAlphabetLength)
+		if (ciphertext.length % 2 !== 0)
 		{
-			throw new TransformError(`Alphabet must be between 1 and ${maxAlphabetLength} characters. Was: ${alphabet.length} characters.`);
+			throw new TransformError(`Ciphertext length must be a multiple of 2. Was: ${ciphertext.length}.`);
 		}
-
-		if (key.length < 1)
-		{
-			throw new TransformError(`Key must be at least 1 letter.`)
-		}
-
-		// TODO: Ensure key doesn't have duplicate letters
-		// TODO: Ensure ciphertext has length % 2 = 0
 
 		// Columnar transposition
 		const columnOrder = getLetterSortPermutation(key);
 		const transposed = inverseColumnarTransposition(ciphertext, columnOrder);
 
 		// De-fractionate message (i.e. turn it into letters from row/column headers)
-		let defractionated = "";
-		for (let i = 0; i < transposed.length; i += 2)
-		{
-			const rowChar = transposed.charAt(i).toUpperCase();
-			const colChar = transposed.charAt(i + 1).toUpperCase();
-			const row = headers.indexOf(rowChar);
-			const column = headers.indexOf(colChar);
-			const index = row * headersCount + column;
-
-			defractionated += alphabet.charAt(index);
-		}
+		const defractionated = depolybius(transposed, alphabet, headers);
 
 		return defractionated;
 	}

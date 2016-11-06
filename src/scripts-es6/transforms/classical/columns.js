@@ -1,6 +1,6 @@
 import { Transform } from "../transforms";
 import { columnarTransposition, inverseColumnarTransposition } from "./cryptopunk.classical-utils";
-import { removeWhiteSpace } from "../../cryptopunk.utils";
+import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 class ColumnarTranspositionEncryptTransform extends Transform
 {

@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "./transforms";
-import { removeWhiteSpace, repeatString } from "../cryptopunk.utils";
+import { removeWhiteSpace } from "../cryptopunk.strings";
 
 const UNIT_NAMES = [
 	"byte (8 bits)",
@@ -227,9 +227,9 @@ class BytesToBinaryNumbersTransform extends BytesToNumbersTransform
 		super();
 		this.base = 2;
 		this.padding = {
-			byte: repeatString("0", 8),
-			short: repeatString("0", 16),
-			int: repeatString("0", 32)
+			byte: "0".repeat(8),
+			short: "0".repeat(16),
+			int: "0".repeat(32)
 		};
 	}
 }
@@ -241,9 +241,9 @@ class BytesToOctalNumbersTransform extends BytesToNumbersTransform
 		super();
 		this.base = 8;
 		this.padding = {
-			byte: repeatString("0", 3),
-			short: repeatString("0", 6),
-			int: repeatString("0", 11)
+			byte: "0".repeat(3),
+			short: "0".repeat(6),
+			int: "0".repeat(11)
 		};
 	}
 }
@@ -255,9 +255,9 @@ class BytesToDecimalNumbersTransform extends BytesToNumbersTransform
 		super();
 		this.base = 10;
 		this.padding = {
-			byte: repeatString("0", 3),
-			short: repeatString("0", 5),
-			int: repeatString("0", 10)
+			byte: "0".repeat(3),
+			short: "0".repeat(5),
+			int: "0".repeat(10)
 		};
 	}
 }
@@ -269,9 +269,9 @@ class BytesToHexNumbersTransform extends BytesToNumbersTransform
 		super();
 		this.base = 16;
 		this.padding = {
-			byte: repeatString("0", 2),
-			short: repeatString("0", 4),
-			int: repeatString("0", 8)
+			byte: "0".repeat(2),
+			short: "0".repeat(4),
+			int: "0".repeat(8)
 		};
 	}
 }

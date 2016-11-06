@@ -1,9 +1,9 @@
+import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { int32sToBytesBE, bytesToInt32sBE, int32sToBytesLE, bytesToInt32sLE, bytesToHex, hexToBytes } from "../../cryptopunk.utils";
+import { int32sToBytesBE, bytesToInt32sBE, int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add } from "../../cryptopunk.bitarith";
 
 const DELTA = 0x9e3779b9;
-const ROUNDS = 32;
 
 const ENDIAN_NAMES = [
 	"Big Endian",
@@ -35,7 +35,7 @@ class XXTeaTransform extends BlockCipherTransform
 		this.addOption("endianness", "Endianess", "BE", { type: "select", texts: ENDIAN_NAMES, values: ENDIAN_VALUES });
 	}
 
-	MX_BlockTEA(z, y, k, sum)
+	mxBlockTea(z, y, k, sum)
 	{
 		return add(
 			(z << 4) ^ (z >>> 5),
@@ -44,7 +44,7 @@ class XXTeaTransform extends BlockCipherTransform
 		);
 	}
 
-	MX_XXTEA(z, y, k, sum)
+	mxXXTea(z, y, k, sum)
 	{
 		return add(
 			(z >>> 5) ^ (y << 2), 
@@ -71,14 +71,14 @@ class XXTeaTransform extends BlockCipherTransform
 		this.bytesToInt32s = options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
 		this.int32sToBytes = options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;
 
-		let MX;
+		let mx;
 		switch (options.variant)
 		{
 			case "xxtea":
-				MX = this.MX_XXTEA;
+				mx = this.mxXXTea;
 				break;
 			case "blocktea":
-				MX = this.MX_BlockTEA;
+				mx = this.mxBlockTea;
 				break;
 			default:
 				throw new TransformError(`Unknown variant: '${options.variant}'.`);
@@ -86,7 +86,7 @@ class XXTeaTransform extends BlockCipherTransform
 
 		const key = this.bytesToInt32s(keyBytes);
 
-		return this.transformBlocks(bytes, options.blockSize, key, MX);
+		return this.transformBlocks(bytes, options.blockSize, key, mx);
 	}
 }
 
@@ -97,13 +97,13 @@ class XXTeaEncryptTransform extends XXTeaTransform
 		super(false);
 	}
 
-	transformBlock(block, dest, destOffset, k, MX)
+	transformBlock(block, dest, destOffset, k, mx)
 	{
-		let v = this.bytesToInt32s(block);
+		const v = this.bytesToInt32s(block);
 		const blockLength = v.length;
 
 		let sum = 0;
-		let rounds = 6 + ((52 / blockLength) | 0);
+		const rounds = 6 + ((52 / blockLength) | 0);
 		for (let r = 0; r < rounds; r++)
 		{
 			sum = add(sum, DELTA);
@@ -112,7 +112,7 @@ class XXTeaEncryptTransform extends XXTeaTransform
 			for (let p = 0; p < blockLength; p++)
 			{
 				const y = p < blockLength - 1 ? v[p + 1] : v[0];
-				v[p] = add(v[p], MX(z, y, k[(p & 3) ^ e], sum));
+				v[p] = add(v[p], mx(z, y, k[(p & 3) ^ e], sum));
 				z = v[p];
 			}
 		}
@@ -127,21 +127,12 @@ class XXTeaDecryptTransform extends XXTeaTransform
 		super(true);
 	}
 
-	MX(z, y, k, sum)
+	transformBlock(block, dest, destOffset, k, mx)
 	{
-		return add(
-			(z << 4) ^ (z >>> 5),
-			z ^ k,
-			sum
-		);
-	}
-
-	transformBlock(block, dest, destOffset, k, MX)
-	{
-		let v = this.bytesToInt32s(block);
+		const v = this.bytesToInt32s(block);
 		const blockLength = v.length;
 
-		let rounds = 6 + ((52 / blockLength) | 0);
+		const rounds = 6 + ((52 / blockLength) | 0);
 		let sum = (rounds * DELTA) & 0xffffffff;
 		for (let r = 0; r < rounds; r++)
 		{
@@ -152,7 +143,7 @@ class XXTeaDecryptTransform extends XXTeaTransform
 			for (let p = blockLength - 1; p >= 0; p--)
 			{
 				z = p > 0 ? v[p - 1] : v[blockLength - 1];
-				v[p] = add(v[p], -MX(z, y, k[(p & 3) ^ e], sum));
+				v[p] = add(v[p], -mx(z, y, k[(p & 3) ^ e], sum));
 				y = v[p];
 			}
 			sum = add(sum, -DELTA);
