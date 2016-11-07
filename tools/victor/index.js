@@ -106,9 +106,10 @@ function loadTransforms(transformsPath)
 commander
 	.arguments("<folder>")
 	.option("-t, --transforms <path>", "Javascript exposing transforms")
+	.option("-v, --verbose", "Verbose output")
 	.action((folder, options) => {
 		const transformClasses = loadTransforms(options.transforms);
-		const reporter = new Reporter();
+		const reporter = new Reporter(options.verbose);
 		testFolder(folder, reporter, transformClasses).then(() => {
 			reporter.outputSummary();
 		});

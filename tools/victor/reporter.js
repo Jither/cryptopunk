@@ -100,6 +100,12 @@ class Reporter
 						return executer.args.k.length * 8;
 					}
 					break;
+				case "msgbits":
+					if (executer.args.m)
+					{
+						return executer.args.m.length * 8;
+					}
+					break;
 				case "plaintext":
 					if (executer.args.p)
 					{

@@ -22,6 +22,7 @@ import * as ripemd160 from "./transforms/hashes/ripemd-160";
 import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha256 from "./transforms/hashes/sha256";
 import * as sha512 from "./transforms/hashes/sha512";
+import * as sha3 from "./transforms/hashes/sha-3";
 import * as whirlpool from "./transforms/hashes/whirlpool";
 
 const TRANSFORMS = {}
@@ -72,6 +73,7 @@ addTransformsFrom(ripemd160);
 addTransformsFrom(sha1);
 addTransformsFrom(sha256);
 addTransformsFrom(sha512);
+addTransformsFrom(sha3);
 addTransformsFrom(whirlpool);
 
 // For now, we use globals
