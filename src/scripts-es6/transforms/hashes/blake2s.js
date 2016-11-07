@@ -82,6 +82,8 @@ class Blake2sTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
+		const keyLength = keyBytes ? keyBytes.length : 0;
+
 		if (options.length < 8 || options.length > 256)
 		{
 			throw new TransformError(`Length must be between 8 and 256 bits. Was ${options.length} bits.`);
@@ -91,19 +93,18 @@ class Blake2sTransform extends Transform
 			throw new TransformError(`Length must be a multiple of 8 bits. Was ${options.length} bits.`);
 		}
 
-		if (keyBytes.length > 32)
+		if (keyLength > 32)
 		{
 			throw new TransformError(`Key must be between 0 and 256 bits. Was ${keyBytes.length * 8} bits.`);
 		}
 
 		const hashByteLength = options.length / 8;
-		const isKeyed = keyBytes.length > 0;
 		const emptyMessage = bytes.length === 0;
 
 		const h = this.getIV();
 
 		// BLAKE-2: Parameter block: 0x0101kkbb
-		h[0] = h[0] ^ 0x01010000 ^ (keyBytes.length << 8) ^ hashByteLength;
+		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashByteLength;
 
 		const t = [0, 0];
 		const v = new Array(16);
@@ -111,7 +112,7 @@ class Blake2sTransform extends Transform
 		let byteCounter = 0;
 
 		// BLAKE-2: Can be keyed - the key is prefixed as an extra block
-		if (isKeyed)
+		if (keyLength > 0)
 		{
 			const block = this.padMessage(keyBytes);
 			const lastBlock = emptyMessage;
@@ -121,10 +122,10 @@ class Blake2sTransform extends Transform
 		}
 
 		// Keyed empty message should result in H(K), not H(K|M)
-		if (!isKeyed || !emptyMessage)
+		if (keyLength === 0 || !emptyMessage)
 		{
 			const padded = this.padMessage(bytes);
-			const messageLength = isKeyed ? 64 + bytes.length : bytes.length;
+			const messageLength = keyLength > 0 ? 64 + bytes.length : bytes.length;
 			for (let blockIndex = 0; blockIndex < padded.length; blockIndex += 64)
 			{
 				const lastBlock = (blockIndex === padded.length - 64);

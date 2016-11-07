@@ -13,10 +13,13 @@ const COLORS = {
 	detail: chalk.white
 };
 
+const VERBOSE_TYPES = ["pass"];
+
 class Reporter
 {
-	constructor()
+	constructor(verbose)
 	{
+		this.verbose = verbose;
 		this.testCount = 0;
 		this.failCount = 0;
 		this.passCount = 0;
@@ -25,7 +28,20 @@ class Reporter
 
 	log(type, message)
 	{
-		console.log(" " + COLORS[type](message));
+		if (this.previousWasVerbose)
+		{
+			process.stdout.clearLine();
+			process.stdout.cursorTo(0);
+		}
+		process.stdout.write(" " + COLORS[type](message));
+
+		const isVerboseType = VERBOSE_TYPES.indexOf(type) >= 0;
+		this.previousWasVerbose = isVerboseType;
+
+		if (this.verbose || !isVerboseType)
+		{
+			process.stdout.write("\n");
+		}
 	}
 
 	report(executer, test)

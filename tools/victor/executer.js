@@ -70,22 +70,25 @@ class Test
 
 class TestMode
 {
-	makeArguments(knownArgDefinitions, argDefinitions, argValues, options)
+	makeArguments(knownArgDefinitions, customArgDefinitions, argValues, options)
 	{
 		const args = [];
 
+		// First we add the fixed arguments for the mode
 		for (let i = 0; i < knownArgDefinitions.length; i++)
 		{
 			const argName = knownArgDefinitions[i];
 			args.push(argValues[argName]);
 		}
 
-		for (let i = 0; i < argDefinitions.length; i++)
+		// Then any custom arguments defined by the test vectors file
+		for (let i = 0; i < customArgDefinitions.length; i++)
 		{
-			const argName = argDefinitions[i];
+			const argName = customArgDefinitions[i];
 			args.push(argValues[argName]);
 		}
 
+		// And then options
 		if (options)
 		{
 			args.push(options);
@@ -97,23 +100,23 @@ class TestMode
 
 class EncryptDecryptMode extends TestMode
 {
-	get argFormats()
+	get args()
 	{
 		return {
-			k: "bytes",
-			p: "bytes",
-			c: "bytes"
+			k: VictorExecuter.FORMAT_BYTES,
+			p: VictorExecuter.FORMAT_BYTES,
+			c: VictorExecuter.FORMAT_BYTES
 		};
 	}
 
-	execute(transforms, argDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options)
 	{
 		const result = new Test();
 
 		const enc = transforms.encrypt;
 		try
 		{
-			const args = this.makeArguments(["p", "k"], argDefinitions, argValues, options);
+			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
 			const encResult = enc.transform.apply(enc, args);
 			result.assertBytesEqual(encResult, argValues.c);
 		}
@@ -125,7 +128,7 @@ class EncryptDecryptMode extends TestMode
 		const dec = transforms.decrypt;
 		try
 		{
-			const args = this.makeArguments(["c", "k"], argDefinitions, argValues, options);
+			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
 			const decResult = dec.transform.apply(dec, args);
 			result.assertBytesEqual(decResult, argValues.p);
 		}
@@ -140,23 +143,23 @@ class EncryptDecryptMode extends TestMode
 
 class DecryptEncryptMode extends TestMode
 {
-	get argFormats()
+	get args()
 	{
 		return {
-			k: "bytes",
-			p: "bytes",
-			c: "bytes"
+			k: VictorExecuter.FORMAT_BYTES,
+			p: VictorExecuter.FORMAT_BYTES,
+			c: VictorExecuter.FORMAT_BYTES
 		};
 	}
 
-	execute(transforms, argDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options)
 	{
 		const result = new Test();
 
 		const dec = transforms.decrypt;
 		try
 		{
-			const args = this.makeArguments(["c", "k"], argDefinitions, argValues, options);
+			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
 			const decResult = dec.transform.apply(dec, args);
 			result.assertBytesEqual(decResult, argValues.p);
 		}
@@ -168,7 +171,7 @@ class DecryptEncryptMode extends TestMode
 		const enc = transforms.encrypt;
 		try
 		{
-			const args = this.makeArguments(["p", "k"], argDefinitions, argValues, options);
+			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
 			const encResult = enc.transform.apply(enc, args);
 			result.assertBytesEqual(encResult, argValues.c);
 		}
@@ -183,22 +186,22 @@ class DecryptEncryptMode extends TestMode
 
 class HashMode extends TestMode
 {
-	get argFormats()
+	get args()
 	{
 		return {
-			m: "bytes",
-			h: "bytes"
+			m: VictorExecuter.FORMAT_BYTES,
+			h: VictorExecuter.FORMAT_BYTES
 		};
 	}
 
-	execute(transforms, argDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options)
 	{
 		const result = new Test();
 
 		const hash = transforms.hash;
 		try
 		{
-			const args = this.makeArguments(["m"], argDefinitions, argValues, options);
+			const args = this.makeArguments(["m"], customArgDefinitions, argValues, options);
 			const hashResult = hash.transform.apply(hash, args);
 			result.assertBytesEqual(hashResult, argValues.h);
 		}
@@ -226,11 +229,12 @@ class VictorExecuter
 		this.transformClasses = transformClasses;
 		this.title = "Test vector";
 		this.transforms = {};
-		this.formats = {};
-		this.destFormats = {};
 		this.options = {};
 
 		this.argDefinitions = [];
+		this.customArgDefinitions = [];
+		this.argInputFormats = {};
+		this.argCallFormats = {};
 		this.args = {};
 
 		this.vectorIndex = 0;
@@ -245,64 +249,59 @@ class VictorExecuter
 		}
 		switch (line.prefix)
 		{
-			// Transforms
+			// Assign transforms
 			case "encrypt":
 			case "decrypt":
 			case "hash":
 				this.transforms[line.prefix] = line.value;
 				break;
 
+			// Set title (template)
 			case "title":
 				this.title = `${this.fileName} » ${line.value}`;
 				this.vectorIndex = 0;
 				break;
 
+			// Set test mode
 			case "mode":
 				this.setMode(line.value);
 				break;
 
-			case "c-format": // ciphertext
-			case "k-format": // key
-			case "p-format": // plaintext
-			case "m-format": // message
-			case "h-format": // hash
-				this.formats[line.prefix.charAt(0)] = line.value;
-				break;
-
-			case "c": // ciphertext
-			case "k": // key
-			case "p": // plaintext
-			case "m": // message
-			case "h": // hash
-				this.assignArgument(line);
-				break;
-
+			// Define custom argument
 			case "arg":
-				this.addArgument(line.value);
+				this.addCustomArgument(line.value);
 				break;
 
+			// Assign option
 			case "option":
 				this.addOption(line.value);
 				break;
 
+			// Clear custom arguments
 			case "no-args":
-				this.argDefinitions = [];
+				this.customArgDefinitions = [];
 				break;
 
+			// Clear options
 			case "no-options":
 				this.options = {};
 				break;
 
 			default:
-				// Custom arguments
+				// Assign argument
 				if (this.argDefinitions.indexOf(line.prefix) >= 0)
 				{
 					this.assignArgument(line);
 				}
-				// Custom argument formats
+				// Set argument input format
 				else if (/[a-z]-format/.test(line.prefix))
 				{
-					this.formats[line.prefix.charAt(0)] = line.value;
+					this.argInputFormats[line.prefix.charAt(0)] = line.value;
+				}
+				// Assign custom argument
+				else if (this.customArgDefinitions.indexOf(line.prefix) >= 0)
+				{
+					this.assignArgument(line);
 				}
 				else
 				{
@@ -320,7 +319,21 @@ class VictorExecuter
 			throw new Error(`Unknown test mode: ${value}`);
 		}
 		this.mode = new modeClass();
-		this.destFormats = this.mode.argFormats;
+
+		const argDefinitions = this.argDefinitions = [];
+		const argCallFormats = this.argCallFormats = {};
+
+		const args = this.mode.args;
+
+		for (const arg in args)
+		{
+			if (!args.hasOwnProperty(arg))
+			{
+				continue;
+			}
+			argDefinitions.push(arg);
+			argCallFormats[arg] = args[arg];
+		}
 	}
 
 	parseHexValue(value)
@@ -339,20 +352,20 @@ class VictorExecuter
 	assignArgument(line)
 	{
 		let value;
-		const format = this.formats[line.prefix];
-		const destFormat = this.destFormats ? this.destFormats[line.prefix] : null;
-		switch (format)
+		const inputFormat = this.argInputFormats[line.prefix];
+		const callFormat = this.argCallFormats ? this.argCallFormats[line.prefix] : null;
+		switch (inputFormat)
 		{
 			case VictorExecuter.FORMAT_ASCII:
 				value = line.value;
-				if (destFormat === "bytes")
+				if (callFormat === VictorExecuter.FORMAT_BYTES)
 				{
 					value = utils.asciiToBytes(value);
 				}
 				break;
 			case VictorExecuter.FORMAT_UTF8:
 				value = line.value;
-				if (destFormat === "bytes")
+				if (callFormat === VictorExecuter.FORMAT_BYTES)
 				{
 					throw new Error("UTF-8 not yet supported for bytes arguments");
 				}
@@ -361,17 +374,20 @@ class VictorExecuter
 				value = this.parseHexValue(line.value);
 				break;
 			default:
-				console.log(line);
 				throw new Error(`Argument '${line.prefix}' has no format defined.`);
 		}
 
 		this.args[line.prefix] = value;
 	}
 
-	addArgument(arg)
+	addCustomArgument(arg)
 	{
 		const name = arg.charAt(0);
-		this.argDefinitions.push(name);
+		if (this.argDefinitions.indexOf(name) >= 0)
+		{
+			throw new Error(`Argument name '${name}' is a fixed argument for the current mode.`);
+		}
+		this.customArgDefinitions.push(name);
 	}
 
 	addOption(option)
@@ -422,7 +438,7 @@ class VictorExecuter
 
 		const passedOptions = Object.keys(this.options).length === 0 ? undefined : this.options;
 
-		const result = this.mode.execute(transforms, this.argDefinitions, this.args, passedOptions);
+		const result = this.mode.execute(transforms, this.customArgDefinitions, this.args, passedOptions);
 		this.reporter.report(this, result);
 
 		this.vectorIndex++;
@@ -434,6 +450,7 @@ VictorExecuter.EMPTY_LINE = "empty";
 VictorExecuter.MODE_NONE = "none";
 VictorExecuter.MODE_ENCRYPT_DECRYPT = "encrypt-decrypt";
 VictorExecuter.MODE_HASH = "hash";
+VictorExecuter.FORMAT_BYTES = "bytes";
 VictorExecuter.FORMAT_HEX = "hex";
 VictorExecuter.FORMAT_ASCII = "ascii";
 VictorExecuter.FORMAT_UTF8 = "utf-8";

@@ -153,8 +153,8 @@ class Blake512Transform extends Transform
 		}
 		if (this.isBlake384)
 		{
-			// Truncate last 32 bits/4 bytes
-			h.pop();
+			// Truncate last 128 bits/16 bytes
+			h.splice(-2);
 		}
 		return int64sToBytesBE(h);
 	}

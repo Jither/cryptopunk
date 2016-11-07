@@ -1,0 +1,60 @@
+mode    : hash
+hash    : Sha0Transform
+m-format: ascii
+h-format: hex
+
+#####################################
+title   : SHA-0 libmd test vector
+
+m:
+h: f96cea198ad1dd5617ac084a3d92c6107708c0ef
+
+m: abc
+h: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
+
+m: message digest
+h: c1b0f222d150ebb9aa36a40cafdc8bcbed830b14
+
+m: abcdefghijklmnopqrstuvwxyz
+h: b40ce07a430cfd3c033039b9fe9afec95dc1bdcd
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+h: 79e966f7a3a990df33e40e3d7f8f18d2caebadfa
+
+m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+h: 4aa29d14d171522ece47bee8957e35a41f3e9cff
+
+#####################################
+title   : SHA-1 NESSIE test vector
+
+hash    : Sha1Transform
+
+m:
+h: da39a3ee5e6b4b0d3255bfef95601890afd80709
+
+m: a
+h: 86f7e437faa5a7fce15d1ddcb9eaeaea377667b8
+
+m: abc
+h: a9993e364706816aba3e25717850c26c9cd0d89d
+
+m: message digest
+h: c12252ceda8be8994d5fa0290a47231c1d16aae3
+
+m: abcdefghijklmnopqrstuvwxyz
+h: 32d10c7b8cf96570ca04ce37f2a19d84240d3a89
+
+m: abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+h: 84983e441c3bd26ebaae4aa1f95129e5e54670f1
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+h: 761c457bf73b14d27e9e9265c46f4b4dda11f940
+
+m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+h: 50abf5706a150990a08b2c5ea40fa0e585554732
+
+m-format: hex
+
+# 1 million 'a's (ASCII 0x61)
+m: repeat 61 x 1000000
+h: 34aa973cd4c4daa4f61eeb2bdbad27316534016f
