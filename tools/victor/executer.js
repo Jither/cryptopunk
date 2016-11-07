@@ -27,7 +27,7 @@ class Test
 
 	get messages()
 	{
-		return this.fails.map(fail => `Expected: ${fail.expected} - Actual: ${fail.actual}`)
+		return this.fails.map(fail => `Expected: ${fail.expected} ::: Actual: ${fail.actual}`)
 			.concat(this.errors.map(error => `Error: ${error}`));
 	}
 
@@ -68,67 +68,153 @@ class Test
 
 }
 
-function testEncryptDecrypt(transforms, args, options)
+class TestMode
 {
-	const result = new Test();
+	makeArguments(knownArgDefinitions, argDefinitions, argValues, options)
+	{
+		const args = [];
 
-	const enc = transforms.encrypt;
-	try
-	{
-		const encResult = enc.transform(args.p, args.k, options);
-		result.assertBytesEqual(encResult, args.c);
-	}
-	catch (e)
-	{
-		result.addError(e);
-	}
+		for (let i = 0; i < knownArgDefinitions.length; i++)
+		{
+			const argName = knownArgDefinitions[i];
+			args.push(argValues[argName]);
+		}
 
-	const dec = transforms.decrypt;
-	try
-	{
-		const decResult = dec.transform(args.c, args.k, options);
-		result.assertBytesEqual(decResult, args.p);
-	}
-	catch (e)
-	{
-		result.addError(e);
-	}
+		for (let i = 0; i < argDefinitions.length; i++)
+		{
+			const argName = argDefinitions[i];
+			args.push(argValues[argName]);
+		}
 
-	return result;
+		if (options)
+		{
+			args.push(options);
+		}
+
+		return args;
+	}
 }
 
-function testDecryptEncrypt(transforms, args, options)
+class EncryptDecryptMode extends TestMode
 {
-	const result = new Test();
-
-	const dec = transforms.decrypt;
-	try
+	get argFormats()
 	{
-		const decResult = dec.transform(args.c, args.k, options);
-		result.assertBytesEqual(decResult, args.p);
-	}
-	catch (e)
-	{
-		result.addError(e);
+		return {
+			k: "bytes",
+			p: "bytes",
+			c: "bytes"
+		};
 	}
 
-	const enc = transforms.encrypt;
-	try
+	execute(transforms, argDefinitions, argValues, options)
 	{
-		const encResult = enc.transform(args.p, args.k, options);
-		result.assertBytesEqual(encResult, args.c);
-	}
-	catch (e)
-	{
-		result.addError(e);
-	}
+		const result = new Test();
 
-	return result;
+		const enc = transforms.encrypt;
+		try
+		{
+			const args = this.makeArguments(["p", "k"], argDefinitions, argValues, options);
+			const encResult = enc.transform.apply(enc, args);
+			result.assertBytesEqual(encResult, argValues.c);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		const dec = transforms.decrypt;
+		try
+		{
+			const args = this.makeArguments(["c", "k"], argDefinitions, argValues, options);
+			const decResult = dec.transform.apply(dec, args);
+			result.assertBytesEqual(decResult, argValues.p);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
 }
 
-const TEST_METHODS = {
-	"encrypt-decrypt": testEncryptDecrypt,
-	"decrypt-encrypt": testDecryptEncrypt
+class DecryptEncryptMode extends TestMode
+{
+	get argFormats()
+	{
+		return {
+			k: "bytes",
+			p: "bytes",
+			c: "bytes"
+		};
+	}
+
+	execute(transforms, argDefinitions, argValues, options)
+	{
+		const result = new Test();
+
+		const dec = transforms.decrypt;
+		try
+		{
+			const args = this.makeArguments(["c", "k"], argDefinitions, argValues, options);
+			const decResult = dec.transform.apply(dec, args);
+			result.assertBytesEqual(decResult, argValues.p);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		const enc = transforms.encrypt;
+		try
+		{
+			const args = this.makeArguments(["p", "k"], argDefinitions, argValues, options);
+			const encResult = enc.transform.apply(enc, args);
+			result.assertBytesEqual(encResult, argValues.c);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
+}
+
+class HashMode extends TestMode
+{
+	get argFormats()
+	{
+		return {
+			m: "bytes",
+			h: "bytes"
+		};
+	}
+
+	execute(transforms, argDefinitions, argValues, options)
+	{
+		const result = new Test();
+
+		const hash = transforms.hash;
+		try
+		{
+			const args = this.makeArguments(["m"], argDefinitions, argValues, options);
+			const hashResult = hash.transform.apply(hash, args);
+			result.assertBytesEqual(hashResult, argValues.h);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
+}
+
+const TEST_MODES = {
+	"encrypt-decrypt": EncryptDecryptMode,
+	"decrypt-encrypt": DecryptEncryptMode,
+	"hash": HashMode
 };
 
 class VictorExecuter
@@ -138,12 +224,15 @@ class VictorExecuter
 		this.fileName = fileName;
 		this.reporter = reporter;
 		this.transformClasses = transformClasses;
-		this.mode = VictorExecuter.MODE_NONE;
 		this.title = "Test vector";
 		this.transforms = {};
 		this.formats = {};
+		this.destFormats = {};
 		this.options = {};
+
+		this.argDefinitions = [];
 		this.args = {};
+
 		this.vectorIndex = 0;
 	}
 
@@ -159,6 +248,7 @@ class VictorExecuter
 			// Transforms
 			case "encrypt":
 			case "decrypt":
+			case "hash":
 				this.transforms[line.prefix] = line.value;
 				break;
 
@@ -166,51 +256,122 @@ class VictorExecuter
 				this.title = `${this.fileName} » ${line.value}`;
 				this.vectorIndex = 0;
 				break;
+
 			case "mode":
-				this.mode = line.value;
+				this.setMode(line.value);
 				break;
+
 			case "c-format": // ciphertext
 			case "k-format": // key
 			case "p-format": // plaintext
 			case "m-format": // message
+			case "h-format": // hash
 				this.formats[line.prefix.charAt(0)] = line.value;
 				break;
+
 			case "c": // ciphertext
 			case "k": // key
 			case "p": // plaintext
 			case "m": // message
+			case "h": // hash
 				this.assignArgument(line);
 				break;
+
+			case "arg":
+				this.addArgument(line.value);
+				break;
+
 			case "option":
 				this.addOption(line.value);
 				break;
+
+			case "no-args":
+				this.argDefinitions = [];
+				break;
+
 			case "no-options":
 				this.options = {};
 				break;
+
 			default:
-				throw new Error("Unexpected line prefix: ${line.prefix}");
+				// Custom arguments
+				if (this.argDefinitions.indexOf(line.prefix) >= 0)
+				{
+					this.assignArgument(line);
+				}
+				// Custom argument formats
+				else if (/[a-z]-format/.test(line.prefix))
+				{
+					this.formats[line.prefix.charAt(0)] = line.value;
+				}
+				else
+				{
+					throw new Error(`Unexpected line prefix: ${line.prefix}`);
+				}
 				break;
 		}
+	}
+
+	setMode(value)
+	{
+		const modeClass = TEST_MODES[value];
+		if (!modeClass)
+		{
+			throw new Error(`Unknown test mode: ${value}`);
+		}
+		this.mode = new modeClass();
+		this.destFormats = this.mode.argFormats;
+	}
+
+	parseHexValue(value)
+	{
+		// repeat AF x 32
+		const repeat = /^repeat\s+([a-z0-f ]+)\s*x\s*(\d+)$/i.exec(value);
+		if (repeat)
+		{
+			const hex = repeat[1];
+			const count = parseInt(repeat[2], 10);
+			value = hex.repeat(count);
+		}
+		return utils.hexToBytes(value);
 	}
 
 	assignArgument(line)
 	{
 		let value;
-		switch (this.formats[line.prefix])
+		const format = this.formats[line.prefix];
+		const destFormat = this.destFormats ? this.destFormats[line.prefix] : null;
+		switch (format)
 		{
 			case VictorExecuter.FORMAT_ASCII:
 				value = line.value;
+				if (destFormat === "bytes")
+				{
+					value = utils.asciiToBytes(value);
+				}
 				break;
 			case VictorExecuter.FORMAT_UTF8:
 				value = line.value;
+				if (destFormat === "bytes")
+				{
+					throw new Error("UTF-8 not yet supported for bytes arguments");
+				}
+				break;
+			case VictorExecuter.FORMAT_HEX:
+				value = this.parseHexValue(line.value);
 				break;
 			default:
-			case VictorExecuter.FORMAT_HEX:
-				value = utils.hexToBytes(line.value);
-				break;
+				console.log(line);
+				throw new Error(`Argument '${line.prefix}' has no format defined.`);
 		}
 
 		this.args[line.prefix] = value;
+	}
+
+	addArgument(arg)
+	{
+		const name = arg.charAt(0);
+		this.argDefinitions.push(name);
 	}
 
 	addOption(option)
@@ -238,10 +399,9 @@ class VictorExecuter
 			return;
 		}
 
-		const testMethod = TEST_METHODS[this.mode];
-		if (!testMethod)
+		if (!this.mode)
 		{
-			throw new Error(`Unknown test mode: ${this.mode}`);
+			throw new Error(`No test mode set.`);
 		}
 
 		const transforms = {};
@@ -262,7 +422,7 @@ class VictorExecuter
 
 		const passedOptions = Object.keys(this.options).length === 0 ? undefined : this.options;
 
-		const result = testMethod(transforms, this.args, passedOptions);
+		const result = this.mode.execute(transforms, this.argDefinitions, this.args, passedOptions);
 		this.reporter.report(this, result);
 
 		this.vectorIndex++;

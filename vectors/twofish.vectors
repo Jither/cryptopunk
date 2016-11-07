@@ -1,0 +1,20 @@
+mode    : encrypt-decrypt
+encrypt : TwofishEncryptTransform
+decrypt : TwofishDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+title   : ecb_ival.txt KEYSIZE={keybits}
+
+k: 00000000000000000000000000000000
+p: 00000000000000000000000000000000
+c: 9f589f5cf6122c32b6bfec2f2ae8c35a
+
+k: 0123456789abcdeffedcba98765432100011223344556677
+p: 00000000000000000000000000000000
+c: cfd1d2e5a9be9cdf501f13b892bd2248
+
+k: 0123456789abcdeffedcba987654321000112233445566778899aabbccddeeff
+p: 00000000000000000000000000000000
+c: 37527be0052334b89f0cfccae87cfa20

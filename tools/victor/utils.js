@@ -1,13 +1,11 @@
 "use strict";
 
-function hexToBytes(hex)
+function asciiToBytes(ascii)
 {
-	hex = hex.replace(/ /g, "");
-	const bytes = new Uint8Array(Math.ceil(hex.length / 2));
-	let destIndex = 0;
-	for (let c = 0; c < hex.length; c += 2)
+	const bytes = new Uint8Array(ascii.length);
+	for (let c = 0; c < ascii.length; c++)
 	{
-		bytes[destIndex++] = parseInt(hex.substr(c, 2), 16);
+		bytes[c] = ascii.charCodeAt(c);
 	}
 	return bytes;
 }
@@ -32,7 +30,20 @@ function bytesToHex(bytes)
 	return result;
 }
 
+function hexToBytes(hex)
+{
+	hex = hex.replace(/ /g, "");
+	const bytes = new Uint8Array(Math.ceil(hex.length / 2));
+	let destIndex = 0;
+	for (let c = 0; c < hex.length; c += 2)
+	{
+		bytes[destIndex++] = parseInt(hex.substr(c, 2), 16);
+	}
+	return bytes;
+}
+
 module.exports = {
-	hexToBytes,
-	bytesToHex
+	asciiToBytes,
+	bytesToHex,
+	hexToBytes
 };

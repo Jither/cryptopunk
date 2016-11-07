@@ -3,17 +3,6 @@ import { TwofishEncryptTransform, TwofishDecryptTransform } from "transforms/mod
 import { testBytesToBytes } from "../_testutils";
 import { hexToBytes, bytesToHex } from "cryptopunk.utils";
 
-function doTest(title, expectedHex, messageHex, keyHex)
-{
-	const key = hexToBytes(keyHex);
-	test("Twofish encrypts " + title, testBytesToBytes, TwofishEncryptTransform, expectedHex, messageHex, key);
-	test("Twofish decrypts " + title, testBytesToBytes, TwofishDecryptTransform, messageHex, expectedHex, key);
-}
-
-doTest("ecb_ival.txt KEYSIZE=128", "9f589f5cf6122c32b6bfec2f2ae8c35a", "00000000000000000000000000000000", "00000000000000000000000000000000");
-doTest("ecb_ival.txt KEYSIZE=192", "cfd1d2e5a9be9cdf501f13b892bd2248", "00000000000000000000000000000000", "0123456789abcdeffedcba98765432100011223344556677");
-doTest("ecb_ival.txt KEYSIZE=256", "37527be0052334b89f0cfccae87cfa20", "00000000000000000000000000000000", "0123456789abcdeffedcba987654321000112233445566778899aabbccddeeff");
-
 function exerciseEncrypt(keyLength)
 {
 	const tf = new TwofishEncryptTransform();

@@ -6,6 +6,13 @@ import * as rc4 from "./transforms/modern/rc4";
 import * as rijndael from "./transforms/modern/rijndael";
 import * as skipjack from "./transforms/modern/skipjack";
 import * as speck from "./transforms/modern/speck";
+import * as threefish from "./transforms/modern/threefish";
+import * as twofish from "./transforms/modern/twofish";
+
+import * as haval from "./transforms/hashes/haval";
+import * as md2 from "./transforms/hashes/md2";
+import * as md4 from "./transforms/hashes/md4";
+import * as md5 from "./transforms/hashes/md5";
 
 const TRANSFORMS = {}
 
@@ -39,6 +46,13 @@ addTransformsFrom(rc4);
 addTransformsFrom(rijndael);
 addTransformsFrom(skipjack);
 addTransformsFrom(speck);
+addTransformsFrom(threefish);
+addTransformsFrom(twofish);
+
+addTransformsFrom(haval);
+addTransformsFrom(md2);
+addTransformsFrom(md4);
+addTransformsFrom(md5);
 
 // For now, we use globals
 global.TRANSFORMS = TRANSFORMS;
