@@ -5,7 +5,7 @@ import { TransformError } from "transforms/transforms";
 test("Does ADFGVX encryption (default)", t => {
 	const tf = new AdfgvxEncryptTransform();
 
-	t.is(tf.transform("ATTACKAT1200AM", "na1c3h8tb2ome5wrpd4f6g7i9j0klqsuvxyz", "privacy"), "DGDDDAGDDGAFADDFDADVDVFAADVX");
+	t.is(tf.transform("ATTACKAT1200AM", "na1c3h8tb2ome5wrpd4f6g7i9j0klqsuvxyz", "privacy"), "DGDD DAGD DGAF ADDF DADV DVFA ADVX");
 });
 
 test("Does ADFGVX decryption (default)", t => {
@@ -17,7 +17,7 @@ test("Does ADFGVX decryption (default)", t => {
 test("Encryption handles whitespace", t => {
 	const tf = new AdfgvxEncryptTransform();
 
-	t.is(tf.transform("Attack at 1200 am", "na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz", "privacy"), "DGDDDAGDDGAFADDFDADVDVFAADVX");
+	t.is(tf.transform("Attack at 1200 am", "na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz", "privacy"), "DGDD DAGD DGAF ADDF DADV DVFA ADVX");
 });
 
 test("Decryption handles whitespace", t => {
@@ -29,7 +29,7 @@ test("Decryption handles whitespace", t => {
 test("Does ADFGX encryption", t => {
 	const tf = new AdfgvxEncryptTransform();
 	const options = { headers: "ADFGX" };
-	t.is(tf.transform("attackatonce", "btalpdhozkqfvsngjcuxmrewy", "cargo", options), "FAXDFADDDGDGFFFAFAXAFAFX");
+	t.is(tf.transform("attackatonce", "btalpdhozkqfvsngjcuxmrewy", "cargo", options), "FAXD FADD DGDG FFFA FAXA FAFX");
 });
 
 test("Does ADFGX decryption", t => {

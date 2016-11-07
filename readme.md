@@ -9,7 +9,7 @@ Supported
 * ADFGVX / ADFGX (with support for custom headers)
 * Affine
 * Bifid
-* Column transposition
+* Columnar transposition
 * Polybius square
 * ROT-X / Caesar (with specific support for ROT-5, ROT-18, ROT-47)
 * Skip

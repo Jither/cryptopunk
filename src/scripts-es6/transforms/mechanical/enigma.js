@@ -1,6 +1,5 @@
 import { Transform, TransformError } from "../transforms";
 import { mod } from "../../cryptopunk.math";
-import { groupCharacters } from "../../cryptopunk.strings";
 
 const ROTOR_NAMES = ["None", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "β", "γ"];
 const ROTOR_VALUES = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "beta", "gamma"];
@@ -392,8 +391,7 @@ class EnigmaTransform extends Transform
 			.addOption("reflector", "Reflector", "A", { type: "select", texts: REFLECTOR_NAMES })
 			.addOption("ringSettings", "Ring Settings", "1,1,1", { type: "short-string" })
 			.addOption("rotorPositions", "Rotor Positions", "A,A,A", { type: "short-string"})
-			.addOption("plugPairs", "Plug Pairs", "", { type: "short-string" })
-			.addOption("grouping", "Group characters", 5, { min: 0 });
+			.addOption("plugPairs", "Plug Pairs", "", { type: "short-string" });
 
 	}
 
@@ -495,7 +493,7 @@ class EnigmaTransform extends Transform
 			// Add a transformed letter to the result string:
 			result += machine.transform(c);
 		}
-		return groupCharacters(result, options.grouping);
+		return result;
 	}
 }
 
