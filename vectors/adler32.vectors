@@ -1,0 +1,27 @@
+mode    : hash
+hash    : Adler32Transform
+m-format: ascii
+h-format: hex
+
+title: Standard test vector
+
+m:
+h: 00000001
+
+m: a
+h: 00620062
+
+m: abc
+h: 024d0127
+
+m: message digest
+h: 29750586
+
+m: abcdefghijklmnopqrstuvwxyz
+h: 90860b20
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+h: 8adb150c
+
+m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+h: 97b61069

@@ -30,6 +30,7 @@ Supported
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack (including NESSIE variant)
 * Simple XOR
+* Serpent
 * Speck (32, 48, 64, 96, 128)
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
@@ -102,32 +103,38 @@ TODO
 ### Mechanical Ciphers
 * Japanese (PURPLE etc.)
 * US
-* Lorentz
+* Lorenz
 
 ### Modern Ciphers
 
 * Camellia
-* CAST-128
+* CAST-128, CAST-256
 * 3DES
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
 * RC2, RC5, RC6
-* Serpent
+* Serpent-0, tnepreS
 * Browser-native RSA decryption
 
 #### Second priority
 
+* 3-Way, BaseKing
+* A5/1, A5/2
 * Anubis
 * ARIA
 * CS-Cipher
 * Grand Cru
 * Hierocrypt
 * KASUMI
+* Khafre
 * KHAZAD
+* Khufu
 * MISTY1
 * Nimbus
 * NOEKON
 * NUSH
+* PRESENT
 * Q
+* S-1
 * SAFER/SAFER+/SAFER++
 * SC2000
 * SEED
@@ -136,7 +143,7 @@ TODO
 
 ### Hashes
 
-* BLAKE2b
+* BLAKE2b, BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
 * CubeHash
 * FSB

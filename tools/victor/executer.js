@@ -78,14 +78,22 @@ class TestMode
 		for (let i = 0; i < knownArgDefinitions.length; i++)
 		{
 			const argName = knownArgDefinitions[i];
-			args.push(argValues[argName]);
+			const argValue = argValues[argName];
+			if (typeof argValue !== "undefined")
+			{
+				args.push(argValues[argName]);
+			}
 		}
 
 		// Then any custom arguments defined by the test vectors file
 		for (let i = 0; i < customArgDefinitions.length; i++)
 		{
 			const argName = customArgDefinitions[i];
-			args.push(argValues[argName]);
+			const argValue = argValues[argName];
+			if (typeof argValue !== "undefined")
+			{
+				args.push(argValues[argName]);
+			}
 		}
 
 		// And then options

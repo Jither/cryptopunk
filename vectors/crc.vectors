@@ -1,0 +1,54 @@
+mode    : hash
+hash    : CrcTransform
+m-format: ascii
+h-format: hex
+
+title   : {variant} test vector
+
+option: variant = crc-16-arc
+m: 123456789
+h: bb3d
+
+option: variant = crc-16-x25
+m: 123456789
+h: 906e
+
+option: variant = crc-16-kermit
+m: 123456789
+h: 2189
+
+option: variant = crc-16-xmodem
+m: 123456789
+h: 31c3
+
+option: variant = crc-24
+m: 123456789
+h: 21cf02
+
+option: variant = crc-32
+m: 123456789
+h: cbf43926
+
+option: variant = crc-32-bzip2
+m: 123456789
+h: fc891918
+
+option: variant = crc-32c
+m: 123456789
+h: e3069283
+
+option: variant = crc-32d
+m: 123456789
+h: 87315576
+
+option: variant = crc-32-mpeg2
+m: 123456789
+h: 0376e6e7
+
+option: variant = crc-32-posix
+m: 123456789
+h: 765e7680
+
+option: variant = crc-32q
+m: 123456789
+h: 3010bf7f

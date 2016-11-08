@@ -4,6 +4,7 @@ import * as idea from "./transforms/modern/idea";
 import * as lucifer from "./transforms/modern/lucifer";
 import * as rc4 from "./transforms/modern/rc4";
 import * as rijndael from "./transforms/modern/rijndael";
+import * as serpent from "./transforms/modern/serpent";
 import * as skipjack from "./transforms/modern/skipjack";
 import * as speck from "./transforms/modern/speck";
 import * as threefish from "./transforms/modern/threefish";
@@ -24,6 +25,9 @@ import * as sha256 from "./transforms/hashes/sha256";
 import * as sha512 from "./transforms/hashes/sha512";
 import * as sha3 from "./transforms/hashes/sha-3";
 import * as whirlpool from "./transforms/hashes/whirlpool";
+
+import * as adler32 from "./transforms/checksums/adler-32";
+import * as crc from "./transforms/checksums/crc";
 
 const TRANSFORMS = {}
 
@@ -55,6 +59,7 @@ addTransformsFrom(idea);
 addTransformsFrom(lucifer);
 addTransformsFrom(rc4);
 addTransformsFrom(rijndael);
+addTransformsFrom(serpent);
 addTransformsFrom(skipjack);
 addTransformsFrom(speck);
 addTransformsFrom(threefish);
@@ -75,6 +80,9 @@ addTransformsFrom(sha256);
 addTransformsFrom(sha512);
 addTransformsFrom(sha3);
 addTransformsFrom(whirlpool);
+
+addTransformsFrom(adler32);
+addTransformsFrom(crc);
 
 // For now, we use globals
 global.TRANSFORMS = TRANSFORMS;

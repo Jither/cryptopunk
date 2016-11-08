@@ -104,14 +104,26 @@ function loadTransforms(transformsPath)
 }
 
 commander
-	.arguments("<folder>")
+	.arguments("<folder or file>")
 	.option("-t, --transforms <path>", "Javascript exposing transforms")
 	.option("-v, --verbose", "Verbose output")
-	.action((folder, options) => {
+	.action((path, options) => {
 		const transformClasses = loadTransforms(options.transforms);
 		const reporter = new Reporter(options.verbose);
-		testFolder(folder, reporter, transformClasses).then(() => {
-			reporter.outputSummary();
-		});
+
+		const stats = fs.statSync(path);
+
+		if (stats.isDirectory())
+		{
+			testFolder(path, reporter, transformClasses).then(() => {
+				reporter.outputSummary();
+			});
+		}
+		else
+		{
+			testFile(path, reporter, transformClasses).then(() => {
+				reporter.outputSummary();
+			});
+		}
 	})
 	.parse(process.argv);
