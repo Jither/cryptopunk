@@ -10,6 +10,7 @@ Supported
 * Affine
 * Bifid
 * Columnar transposition
+* Playfair
 * Polybius square
 * ROT-X / Caesar (with specific support for ROT-5, ROT-18, ROT-47)
 * Skip
@@ -25,13 +26,13 @@ Supported
 * Blowfish
 * DES (64 bit with parity or 56 bit without)
 * IDEA
-* LUCIFER (Sorkin implementation)
+* LUCIFER (Sorkin and Outerbridge variants)
 * RC4 (with discard parameter)
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack (including NESSIE variant)
 * Simple XOR
 * Serpent
-* Speck (32, 48, 64, 96, 128)
+* Speck
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
 * Twofish
@@ -93,7 +94,6 @@ TODO
 * Hill Cipher
 * Keyword Cipher (based on caesar)
 * Null
-* Playfair
 * Rail Fence
 * Tap Code
 * Trifid
@@ -153,6 +153,7 @@ TODO
 * MD6
 * PANAMA
 * RadioGatún
+* SHA-2 512/224, 512/256 - maybe other truncations
 * Skein
 * Snefru
 * Spectral Hash

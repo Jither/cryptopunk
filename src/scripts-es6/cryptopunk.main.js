@@ -26,6 +26,7 @@ import * as md5 from "./transforms/hashes/md5";
 import * as nativeAes from "./transforms/browser-native/aes";
 import * as nativeRsa from "./transforms/browser-native/rsa";
 import * as numbers from "./transforms/numbers";
+import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as rc4 from "./transforms/modern/rc4";
 import * as rijndael from "./transforms/modern/rijndael";
@@ -271,6 +272,7 @@ function addPaletteItem(transform, menuCaption, caption)
 
 addPaletteCategory("Generators");
 addPaletteItem(generators.KeyboardInputGenerator, "Keyboard Input");
+addPaletteItem(generators.KeyedAlphabetGenerator, "Keyed Alphabet");
 addPaletteItem(generators.NullBytesGenerator, "Null Bytes");
 addPaletteItem(generators.RandomBytesGenerator, "Random Bytes");
 
@@ -356,6 +358,7 @@ addPaletteItem(adfgvx.AdfgvxDecryptTransform, "ADFGVX", "ADFGVX Decrypt");
 addPaletteItem(affine.AffineDecryptTransform, "Affine", "Affine Decrypt");
 addPaletteItem(bifid.BifidDecryptTransform, "Bifid", "Bifid Decrypt");
 addPaletteItem(columns.ColumnarTranspositionDecryptTransform, "Columnar Transposition", "Columnar Transposition Decrypt");
+addPaletteItem(playfair.PlayfairDecryptTransform, "Playfair", "Playfair Decrypt");
 addPaletteItem(polybius.PolybiusDecryptTransform, "Polybius", "Polybius Decrypt");
 addPaletteItem(skip.SkipDecryptTransform, "Skip", "Skip Cipher Decrypt");
 addPaletteItem(vigenere.VigenereDecryptTransform, "Vigènere", "Vigènere Decrypt");
@@ -365,6 +368,7 @@ addPaletteItem(adfgvx.AdfgvxEncryptTransform, "ADFGVX", "ADFGVX Encrypt");
 addPaletteItem(affine.AffineEncryptTransform, "Affine", "Affine Encrypt");
 addPaletteItem(bifid.BifidEncryptTransform, "Bifid", "Bifid Encrypt");
 addPaletteItem(columns.ColumnarTranspositionEncryptTransform, "Columnar Transposition", "Columnar Transposition Encrypt");
+addPaletteItem(playfair.PlayfairEncryptTransform, "Playfair", "Playfair Encrypt");
 addPaletteItem(polybius.PolybiusEncryptTransform, "Polybius", "Polybius Encrypt");
 addPaletteItem(substitution.SimpleSubstitutionTransform, "Simple Substitution");
 addPaletteItem(skip.SkipEncryptTransform, "Skip", "Skip Cipher Encrypt");

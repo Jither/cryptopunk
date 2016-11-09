@@ -35,6 +35,13 @@ function getPropertyEditorFor(name, option, value, changedCallback)
 			applyFromOptions(eleInput, option, "step");
 			eleInput.addEventListener("input", () => changedCallback(name, parseInt(eleInput.value, 10)));
 			break;
+		case "char":
+			eleInput = document.createElement("input");
+			eleInput.type = "text";
+			eleInput.value = value;
+			eleInput.setAttribute("maxlength", 1);
+			eleInput.addEventListener("input", () => changedCallback(name, eleInput.value));
+			break;
 		case "short-string":
 			eleInput = document.createElement("input");
 			eleInput.type = "text";
