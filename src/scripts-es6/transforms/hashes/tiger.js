@@ -1,8 +1,6 @@
-import { Transform } from "../transforms";
-import { bytesToInt32sLE, int32sToBytesLE, bytesToInt64sLE, int64sToBytesLE, int64sToHex } from "../../cryptopunk.utils";
+import { HashTransform } from "./hash";
+import { bytesToInt64sLE, int64sToBytesLE } from "../../cryptopunk.utils";
 import { add64, not64, shl64, shr64, sub64, xor64, mul64 } from "../../cryptopunk.bitarith";
-
-// TODO: UNFINISHED
 
 const VARIANT_NAMES = [
 	"Tiger",
@@ -332,112 +330,66 @@ function keySchedule(x)
 	x[0] = x0; x[1] = x1; x[2] = x2; x[3] = x3; x[4] = x4; x[5] = x5; x[6] = x6; x[7] = x7;
 }
 
-class TigerTransform extends Transform
+class TigerTransform extends HashTransform
 {
 	constructor()
 	{
-		super();
+		super(512);
 		this.addInput("bytes", "Input")
 			.addOutput("bytes", "Hash")
 			.addOption("variant", "Variant", "tiger", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
-	}
-
-	// TODO: Combine with MD-like padding in a general function
-	// Only difference here is the padding 1 bit for Tiger1 - 
-	// otherwise it works like 32-bit(!) MD padding
-	padMessage(bytes, variant)
-	{
-		const length = bytes.length;
-		// "The message is "padded" (extended) so that its length (in bits) is
-		// congruent to 448/896, modulo 512/1024"
-		let paddingLength = 56 - (length % 64);
-
-		// "Padding is always performed, even if the length of the message is
-		// already congruent to 448/896, modulo 512/1024."
-		// That is, if the calculated padding length is <= 0, we need to add 512/1024 bits to it
-		if (paddingLength <= 0)
-		{
-			paddingLength += 64;
-		}
-
-		// Reserve space for message, padding, and length extension (depends on word size)
-		const result = new Uint8Array(bytes.length + paddingLength + 8);
-		result.set(bytes);
-
-		// "Padding is performed as follows: a single "1" bit is appended to the
-		// message, and then "0" bits are appended so that the length in bits of
-		// the padded message becomes congruent to 448, modulo 512.
-		// In all, at least one bit and at most 512 bits are appended."
-		result[bytes.length] = (variant === "tiger2") ? 0x80 : 0x01; // "1" bit
-
-		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
-		// (very theoretical) maximum message length we would be able to handle.
-		// That means the low word will store the low 29 bits of the byte length - shifted
-		// left by 3 because MD/SHA actually stores *bit* length. And the high word will
-		// just store the 3 bits shifted out. For 64 bit hashes, the rest of the appended
-		// message length bits are way out of reach and will just be set to 0.
-		const bitLengthLo = length << 3;
-		const bitLengthHi = length >>> 29;
-
-		const index = bytes.length + paddingLength;
-		const bitLength = [bitLengthLo, bitLengthHi];
-		result.set(int32sToBytesLE(bitLength), index);
-
-		return result;
 	}
 
 	transform(bytes, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		// TODO: Consider DataView
-		const padded = bytesToInt64sLE(this.padMessage(bytes, options.variant));
-		const h = [
+		this.paddingStartBit = options.variant === "tiger2" ? 0x80 : 0x01;
+
+		const state = [
 			{ hi: 0x01234567, lo: 0x89abcdef },
 			{ hi: 0xfedcba98, lo: 0x76543210 },
 			{ hi: 0xf096a5b4, lo: 0xc3b2e187 }
 		];
 
+		this.transformBlocks(bytes, state, options);
+
+		return int64sToBytesLE(state);
+	}
+
+	transformBlock(block, state, options)
+	{
+		const x = bytesToInt64sLE(block);
+
 		const v = new Array(3);
 
-		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 8)
+		for (let i = 0; i < 3; i++)
 		{
-			const x = [];
-			for (let index = chunkindex; index < chunkindex + 8; index ++)
-			{
-				x.push({ hi: padded[index].hi, lo: padded[index].lo });
-			}
-
-			for (let i = 0; i < 3; i++)
-			{
-				v[i] = { hi: h[i].hi, lo: h[i].lo };
-			}
-
-			for (let step = 0; step < 8; step++)
-			{
-				round(v, x[step], MUL_5);
-			}
-
-			keySchedule(x);
-
-			for (let step = 0; step < 8; step++)
-			{
-				round(v, x[step], MUL_7);
-			}
-
-			keySchedule(x);
-
-			for (let step = 0; step < 8; step++)
-			{
-				round(v, x[step], MUL_9);
-			}
-
-			h[0] = xor64(v[0], h[0]);
-			h[1] = sub64(v[1], h[1]);
-			h[2] = add64(v[2], h[2]);
+			v[i] = { hi: state[i].hi, lo: state[i].lo };
 		}
 
-		return int64sToBytesLE(h);
+		for (let step = 0; step < 8; step++)
+		{
+			round(v, x[step], MUL_5);
+		}
+
+		keySchedule(x);
+
+		for (let step = 0; step < 8; step++)
+		{
+			round(v, x[step], MUL_7);
+		}
+
+		keySchedule(x);
+
+		for (let step = 0; step < 8; step++)
+		{
+			round(v, x[step], MUL_9);
+		}
+
+		state[0] = xor64(v[0], state[0]);
+		state[1] = sub64(v[1], state[1]);
+		state[2] = add64(v[2], state[2]);
 	}
 }
 

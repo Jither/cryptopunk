@@ -37,6 +37,7 @@ class HashTransform extends Transform
 			throw new TransformError("No block size specified in HashTransform constructor");
 		}
 		this.padBlock = this.padBlockMerkle;
+		this.paddingStartBit = 0x80;
 		this.blockSize = blockSize;
 		this.endianness = "LE";
 		this.suffixLength = 8;
@@ -96,7 +97,7 @@ class HashTransform extends Transform
 		// Copy message bytes to padded block:
 		result.set(block);
 		// Add "1-bit":
-		result[length] = 0x80;
+		result[length] = this.paddingStartBit;
 
 		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
 		// (very theoretical) maximum message length we would be able to handle.
