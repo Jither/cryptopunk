@@ -1,5 +1,5 @@
-import { Transform } from "../transforms";
-import { int32sToBytesBE } from "../../cryptopunk.utils";
+import { HashTransform } from "./hash";
+import { int64sToBytesBE, bytesToInt64sBE } from "../../cryptopunk.utils";
 import { ror64, shr64, xor64 } from "../../cryptopunk.bitarith";
 
 // TODO: This is INSANELY inefficient and wasteful in terms of the 64-bit math
@@ -154,42 +154,15 @@ function precompute(variant)
 	return result;
 }
 
-class WhirlpoolTransform extends Transform
+class WhirlpoolTransform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash")
-			.addOption("variant", "Variant", "whirlpool", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
-	}
+		super(512);
+		this.endianness = "BE";
+		this.suffixLength = 32;
 
-	padMessage(bytes)
-	{
-		const length = bytes.length;
-		let paddingLength = 32 - length % 64;
-		if (paddingLength <= 0)
-		{
-			paddingLength += 64;
-		}
-		const result = new Uint8Array(length + paddingLength + 32); // 32 bytes for length
-		result.set(bytes);
-		result[length] = 0x80;
-
-		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
-		// (very theoretical) maximum message length we would be able to handle.
-		// That means the low word will store the low 29 bits of the byte length - shifted
-		// left by 3 because we actually store *bit* length. And the high word will
-		// just store the 3 bits shifted out. WHIRLPOOL uses 256 bits for the length - the rest of
-		// the message length bits are way out of reach and will just be set to 0.
-		const bitLengthLo = length << 3;
-		const bitLengthHi = length >>> 29;
-
-		const index = length + paddingLength + 24; // Go to last 8 bytes of padding
-
-		result.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index);
-
-		return result;
+		this.addOption("variant", "Variant", "whirlpool", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
 	fill(arr)
@@ -204,106 +177,84 @@ class WhirlpoolTransform extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		// TODO: Only precompute once (for each variant)
 		const [C, RC] = precompute(options.variant);
 
-		const padded = this.padMessage(bytes);
+		const context = {
+			hash: new Array(8),
+			K: new Array(8),
+			L: new Array(8),
+			state: new Array(8),
+			C, RC
+		};
 
-		// TODO: Reuse
-		const hash = new Array(8);
-		const K = new Array(8);
-		const L = new Array(8);
-		const block = new Array(8);
-		const state = new Array(8);
+		this.fill(context.hash);
+		this.fill(context.K);
+		this.fill(context.L);
 
-		this.fill(hash);
-		this.fill(K);
-		this.fill(L);
-		this.fill(block);
+		this.transformBlocks(bytes, context);
 
-		for (let bytesIndex = 0; bytesIndex < padded.length; bytesIndex += 64)
+		return int64sToBytesBE(context.hash);
+	}
+
+	transformBlock(blockBytes, context)
+	{
+		const { hash, K, L, state, C, RC } = context;
+		const block = bytesToInt64sBE(blockBytes);
+
+		for (let i = 0; i < 8; i++)
 		{
-			let j = bytesIndex;
-			for (let blockIndex = 0; blockIndex < 8; blockIndex++)
-			{
-				block[blockIndex].hi =
-					(padded[j    ] << 24) |
-					(padded[j + 1] << 16) |
-					(padded[j + 2] <<  8) |
-					padded[j + 3];
-				block[blockIndex].lo = (padded[j + 4] << 24) |
-					(padded[j + 5] << 16) |
-					(padded[j + 6] <<  8) |
-					padded[j + 7];
-				j += 8;
-			}
+			K[i].hi = hash[i].hi;
+			K[i].lo = hash[i].lo;
+			state[i] = xor64(block[i], K[i]);
+		}
 
+		for (let r = 1; r <= ROUNDS; r++)
+		{
 			for (let i = 0; i < 8; i++)
 			{
-				K[i].hi = hash[i].hi;
-				K[i].lo = hash[i].lo;
-				state[i] = xor64(block[i], K[i]);
-			}
-
-			for (let r = 1; r <= ROUNDS; r++)
-			{
-				for (let i = 0; i < 8; i++)
+				L[i].hi = 0;
+				L[i].lo = 0;
+				let s = 56;
+				for (let t = 0; t < 8; t++)
 				{
-					L[i].hi = 0;
-					L[i].lo = 0;
-					let s = 56;
-					for (let t = 0; t < 8; t++)
-					{
-						const k = shr64(K[(i - t) & 7], s).lo & 0xff;
-						L[i] = xor64(L[i], C[t][k]);
-						s -= 8;
-					}
-				}
-
-				for (let i = 0; i < 8; i++)
-				{
-					K[i].hi = L[i].hi;
-					K[i].lo = L[i].lo;
-				}
-
-				K[0] = xor64(K[0], RC[r]);
-
-				for (let i = 0; i < 8; i++)
-				{
-					L[i].hi = K[i].hi;
-					L[i].lo = K[i].lo;
-					let s = 56;
-					for (let t = 0; t < 8; t++)
-					{
-						const si = shr64(state[(i - t) & 7], s).lo & 0xff;
-						L[i] = xor64(L[i], C[t][si]);
-						s -= 8;
-					}
-				}
-
-				for (let i = 0; i < 8; i++)
-				{
-					state[i].hi = L[i].hi;
-					state[i].lo = L[i].lo;
+					const k = shr64(K[(i - t) & 7], s).lo & 0xff;
+					L[i] = xor64(L[i], C[t][k]);
+					s -= 8;
 				}
 			}
 
 			for (let i = 0; i < 8; i++)
 			{
-				hash[i] = xor64(hash[i], state[i], block[i]);
+				K[i].hi = L[i].hi;
+				K[i].lo = L[i].lo;
+			}
+
+			K[0] = xor64(K[0], RC[r]);
+
+			for (let i = 0; i < 8; i++)
+			{
+				L[i].hi = K[i].hi;
+				L[i].lo = K[i].lo;
+				let s = 56;
+				for (let t = 0; t < 8; t++)
+				{
+					const si = shr64(state[(i - t) & 7], s).lo & 0xff;
+					L[i] = xor64(L[i], C[t][si]);
+					s -= 8;
+				}
+			}
+
+			for (let i = 0; i < 8; i++)
+			{
+				state[i].hi = L[i].hi;
+				state[i].lo = L[i].lo;
 			}
 		}
 
-		return int32sToBytesBE([
-			hash[0].hi, hash[0].lo,
-			hash[1].hi, hash[1].lo,
-			hash[2].hi, hash[2].lo,
-			hash[3].hi, hash[3].lo,
-			hash[4].hi, hash[4].lo,
-			hash[5].hi, hash[5].lo,
-			hash[6].hi, hash[6].lo,
-			hash[7].hi, hash[7].lo
-		]);
+		for (let i = 0; i < 8; i++)
+		{
+			hash[i] = xor64(hash[i], state[i], block[i]);
+		}
 	}
 
 }
