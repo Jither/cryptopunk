@@ -148,16 +148,16 @@ class KeccakBaseTransform extends Transform
 			throw new TransformError(`Capacity must be a multiple of 8. Was: ${capacity}`);
 		}
 
-		if (options.length % 8 !== 0)
+		if (options.size % 8 !== 0)
 		{
-			throw new TransformError(`Length must be a multiple of 8. Was: ${options.length}`);
+			throw new TransformError(`Size must be a multiple of 8. Was: ${options.size}`);
 		}
 
 		const rate = 1600 - capacity;
 		const rateInBytes = rate / 8;
 		const suffix = options.suffix;
 
-		let remainingOutput = options.length / 8;
+		let remainingOutput = options.size / 8;
 
 		const state = new Uint8Array(200);
 
@@ -221,7 +221,7 @@ class KeccakTransform extends KeccakBaseTransform
 		super(1024, 512, 0x01);
 		this
 			.addOption("capacity", "Capacity", 1024, { min: 8, max: 1592, step: 8 })
-			.addOption("length", "Length", 512, { min: 0, step: 8 })
+			.addOption("size", "Size", 512, { min: 0, step: 8 })
 			.addOption("suffix", "Suffix", 0x01, { min: 0, max: 255 });
 	}
 }
