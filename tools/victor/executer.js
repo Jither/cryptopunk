@@ -354,6 +354,18 @@ class VictorExecuter
 			const count = parseInt(repeat[2], 10);
 			value = hex.repeat(count);
 		}
+		// runlength x 32 => 000102030405060708090a0b0c0d0e0f1011121314...
+		const runlength = /^runlength\s+x\s*(\d+)$/i.exec(value);
+		if (runlength)
+		{
+			const count = parseInt(runlength[1], 10);
+			const result = new Uint8Array(count);
+			for (let i = 0; i < result.length; i++)
+			{
+				result[i] = i & 0xff;
+			}
+			return result;
+		}
 		return utils.hexToBytes(value);
 	}
 

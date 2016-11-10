@@ -24,6 +24,7 @@ import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha256 from "./transforms/hashes/sha256";
 import * as sha512 from "./transforms/hashes/sha512";
 import * as sha3 from "./transforms/hashes/sha-3";
+import * as tiger from "./transforms/hashes/tiger";
 import * as whirlpool from "./transforms/hashes/whirlpool";
 
 import * as adler32 from "./transforms/checksums/adler-32";
@@ -79,6 +80,7 @@ addTransformsFrom(sha1);
 addTransformsFrom(sha256);
 addTransformsFrom(sha512);
 addTransformsFrom(sha3);
+addTransformsFrom(tiger);
 addTransformsFrom(whirlpool);
 
 addTransformsFrom(adler32);

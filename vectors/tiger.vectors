@@ -1,0 +1,99 @@
+mode    : hash
+hash    : TigerTransform
+m-format: ascii
+h-format: hex
+
+title   : Tiger test vectors (adapted to byte stream order, not including vectors also in NESSIE sets)
+
+m: Tiger
+h: dd00230799f5009f ec6debc838bb6a27 df2b9d6f110c7937
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-
+h: f71c8583902afb87 9edfe610f82c0d47 86a3a534504486b5
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZ=abcdefghijklmnopqrstuvwxyz+0123456789
+h: 48ceeb6308b87d46 e95d656112cdf18d 97915f9765658957
+
+m: Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham
+h: 8a866829040a410c 729ad23f5ada7116 03b3cdd357e4c15e
+
+m: Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham, proceedings of Fast Software Encryption 3, Cambridge.
+h: ce55a6afd591f5eb ac547ff84f89227f 9331dab0b611c889
+
+m: Tiger - A Fast New Hash Function, by Ross Anderson and Eli Biham, proceedings of Fast Software Encryption 3, Cambridge, 1996.
+h: 631abdd103eb9a3d 245b6dfd4d77b257 fc7439501d1568dd
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-
+h: c54034e5b43eb800 5848a7e0ae6aac76 e4ff590ae715fd25
+
+m-format: hex
+m: runlength x 65536
+h: fdf4f5b35139f48e 710e421be5af411d e1a8aac333f26204
+
+title   : NESSIE Tiger test vector, Set 1 vector
+m-format: ascii
+
+m:
+h: 3293ac630c13f0245f92bbb1766e16167a4e58492dde73f3
+
+m: a
+h: 77befbef2e7ef8ab2ec8f93bf587a7fc613e247f5f247809
+
+m: abc
+h: 2aab1484e8c158f2bfb8c5ff41b57a525129131c957b5f93
+
+m: message digest
+h: d981f8cb78201a950dcf3048751e441c517fca1aa55a29f6
+
+m: abcdefghijklmnopqrstuvwxyz
+h: 1714a472eee57d30040412bfcc55032a0b11602ff37beee9
+
+m: abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+h: 0f7bf9a19b9c58f2b7610df7e84f0ac3a71c631e7b53f78e
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+h: 8dcea680a17583ee502ba38a3c368651890ffbccdc49a8cc
+
+m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+h: 1c14795529fd9f207a958f84c52f11e887fa0cabdfd91bfd
+
+# 1 million 'a's (ASCII 0x61)
+m-format: hex
+m: repeat 61 x 1000000
+h: 6db0e2729cbead93d715c6a7d36302e9b3cee0d2bc314b41
+
+##############################################################################################
+# Tiger2
+
+title   : NESSIE Tiger2 test vector, Set 1 vector
+option  : variant = tiger2
+m-format: ascii
+
+m:
+h: 4441be75f6018773c206c22745374b924aa8313fef919f41
+
+m: a
+h: 67e6ae8e9e968999f70a23e72aeaa9251cbc7c78a7916636
+
+m: abc
+h: f68d7bc5af4b43a06e048d7829560d4a9415658bb0b1f3bf
+
+m: message digest
+h: e29419a1b5fa259de8005e7de75078ea81a542ef2552462d
+
+m: abcdefghijklmnopqrstuvwxyz
+h: f5b6b6a78c405c8547e91cd8624cb8be83fc804a474488fd
+
+m: abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq
+h: a6737f3997e8fbb63d20d2df88f86376b5fe2d5ce36646a9
+
+m: ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
+h: ea9ab6228cee7b51b77544fca6066c8cbb5bbae6319505cd
+
+m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
+h: d85278115329ebaa0eec85ecdc5396fda8aa3a5820942fff
+
+# 1 million 'a's (ASCII 0x61)
+m-format: hex
+m: repeat 61 x 1000000
+h: e068281f060f551628cc5715b9d0226796914d45f7717cf4
