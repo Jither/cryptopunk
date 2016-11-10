@@ -1,4 +1,4 @@
-import { MdBaseTransform, CONSTANTS } from "./mdbase";
+import { HashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -36,46 +36,48 @@ function h(a, b, c, d, x, s)
 
 const OPS = [f, g, h];
 
-class Md4Transform extends MdBaseTransform
+class Md4Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.endianness = "LE";
+		super(512);
+		this.padBlock = this.padBlockMerkle;
 	}
 
 	transform(bytes)
 	{
-		const x = bytesToInt32sLE(this.padMessage(bytes, 32));
+		const state = [
+			CONSTANTS.INIT_1_67,
+			CONSTANTS.INIT_2_EF,
+			CONSTANTS.INIT_3_98,
+			CONSTANTS.INIT_4_10
+		];
 
-		let a = CONSTANTS.INIT_1_67;
-		let b = CONSTANTS.INIT_2_EF;
-		let c = CONSTANTS.INIT_3_98;
-		let d = CONSTANTS.INIT_4_10;
+		this.transformBlocks(bytes, state);
 
-		for (let index = 0; index < x.length; index += 16)
+		return int32sToBytesLE(state);
+	}
+
+	transformBlock(block, state)
+	{
+		const x = bytesToInt32sLE(block);
+		let [a, b, c, d] = state;
+
+		for (let step = 0; step < 48; step++)
 		{
-			// TODO: Use subarray rather than index + 0
-			const aa = a, bb = b, cc = c, dd = d;
-
-			for (let step = 0; step < 48; step++)
-			{
-				const round = Math.floor(step / 16);
-				const op = OPS[round];
-				const temp = op(a, b, c, d, x[index + R[step]], S[step]);
-				a = d;
-				d = c;
-				c = b;
-				b = temp;
-			}
-
-			a = add(a, aa);
-			b = add(b, bb);
-			c = add(c, cc);
-			d = add(d, dd);
+			const round = Math.floor(step / 16);
+			const op = OPS[round];
+			const temp = op(a, b, c, d, x[R[step]], S[step]);
+			a = d;
+			d = c;
+			c = b;
+			b = temp;
 		}
 
-		return int32sToBytesLE([a, b, c, d]);
+		state[0] = add(state[0], a);
+		state[1] = add(state[1], b);
+		state[2] = add(state[2], c);
+		state[3] = add(state[3], d);
 	}
 }
 

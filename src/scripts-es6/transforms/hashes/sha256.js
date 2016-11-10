@@ -1,4 +1,4 @@
-import { MdBaseTransform } from "./mdbase";
+import { HashTransform } from "./hash";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -14,11 +14,12 @@ const K = [
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
 
-class Sha256Transform extends MdBaseTransform
+class Sha256Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
+		super(512);
+		this.padBlock = this.padBlockMerkle;
 		this.endianness = "BE";
 	}
 
@@ -40,63 +41,61 @@ class Sha256Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
-		// TODO: Consider DataView
-		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
+		const state = this.getIV();
 
-		let [a, b, c, d, e, f, g, h] = this.getIV();
-
-		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 16)
-		{
-			// Copy chunk to new array:
-			const x = padded.slice(chunkindex, chunkindex + 16);
-			
-			// Extend from 16 to 64 (d)words
-			for (let index = 16; index < 64; index++)
-			{
-				const x15 = x[index - 15];
-				const x2  = x[index - 2];
-				const s0 = ror(x15,  7) ^ ror(x15, 18) ^ (x15 >>> 3);
-				const s1 = ror(x2, 17) ^ ror(x2, 19) ^ (x2 >>> 10);
-				x[index] = add(x[index - 7], s0, x[index - 16], s1);
-			}
-
-			const aa = a, bb = b, cc = c, dd = d, ee = e, ff = f, gg = g, hh = h;
-
-			for (let step = 0; step < x.length; step++)
-			{
-				const S1 = ror(e, 6) ^ ror(e, 11) ^ ror(e, 25);
-				const ch = (e & f) ^ (~e & g);
-				const temp1 = add(h, S1, ch, x[step], K[step]);
-				const S0 = ror(a, 2) ^ ror(a, 13) ^ ror(a, 22);
-				const maj = (a & b) ^ (a & c) ^ (b & c);
-				const temp2 = add(S0, maj);
-				h = g;
-				g = f;
-				f = e;
-				e = add(d, temp1);
-				d = c;
-				c = b;
-				b = a;
-				a = add(temp1, temp2);
-			}
-
-			a = add(a, aa);
-			b = add(b, bb);
-			c = add(c, cc);
-			d = add(d, dd);
-			e = add(e, ee);
-			f = add(f, ff);
-			g = add(g, gg);
-			h = add(h, hh);
-		}
+		this.transformBlocks(bytes, state);
 
 		if (this.isSha224)
 		{
 			// Leaves out h
-			return int32sToBytesBE([a, b, c, d, e, f, g]);
+			state.pop();
 		}
 
-		return int32sToBytesBE([a, b, c, d, e, f, g, h]);
+		return int32sToBytesBE(state);
+	}
+
+	transformBlock(block, state)
+	{
+		const x = bytesToInt32sBE(block);
+		
+		// Extend from 16 to 64 (d)words
+		for (let index = 16; index < 64; index++)
+		{
+			const x15 = x[index - 15];
+			const x2  = x[index - 2];
+			const s0 = ror(x15,  7) ^ ror(x15, 18) ^ (x15 >>> 3);
+			const s1 = ror(x2, 17) ^ ror(x2, 19) ^ (x2 >>> 10);
+			x[index] = add(x[index - 7], s0, x[index - 16], s1);
+		}
+
+		let [a, b, c, d, e, f, g, h] = state;
+
+		for (let step = 0; step < x.length; step++)
+		{
+			const S1 = ror(e, 6) ^ ror(e, 11) ^ ror(e, 25);
+			const ch = (e & f) ^ (~e & g);
+			const temp1 = add(h, S1, ch, x[step], K[step]);
+			const S0 = ror(a, 2) ^ ror(a, 13) ^ ror(a, 22);
+			const maj = (a & b) ^ (a & c) ^ (b & c);
+			const temp2 = add(S0, maj);
+			h = g;
+			g = f;
+			f = e;
+			e = add(d, temp1);
+			d = c;
+			c = b;
+			b = a;
+			a = add(temp1, temp2);
+		}
+
+		state[0] = add(state[0], a);
+		state[1] = add(state[1], b);
+		state[2] = add(state[2], c);
+		state[3] = add(state[3], d);
+		state[4] = add(state[4], e);
+		state[5] = add(state[5], f);
+		state[6] = add(state[6], g);
+		state[7] = add(state[7], h);
 	}
 }
 

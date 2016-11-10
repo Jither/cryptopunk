@@ -1,5 +1,5 @@
-import { MdBaseTransform } from "./mdbase";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { HashTransform } from "./hash";
+import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
 import { add64, and64, not64, ror64, shr64, xor64 } from "../../cryptopunk.bitarith";
 
 // SHA-512 (and 384) have an identical structure to SHA-256 (and 224), except they use 64-bit words
@@ -31,12 +31,14 @@ const K = [
 	0x4cc5d4be, 0xcb3e42b6, 0x597f299c, 0xfc657e2a, 0x5fcb6fab, 0x3ad6faec, 0x6c44198c, 0x4a475817
 ];
 
-class Sha512Transform extends MdBaseTransform
+class Sha512Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
+		super(1024);
+		this.padBlock = this.padBlockMerkle;
 		this.endianness = "BE";
+		this.suffixLength = 16;
 	}
 
 	getIV()
@@ -57,85 +59,64 @@ class Sha512Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
-		// TODO: Consider DataView
-		const padded = bytesToInt32sBE(this.padMessage(bytes, 64));
+		const state = this.getIV();
 
-		let [a, b, c, d, e, f, g, h] = this.getIV();
-
-		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 32)
-		{
-			// Copy chunk to work array:
-			const x = [];
-			for (let index = chunkindex; index < chunkindex + 32; index += 2)
-			{
-				x.push({ hi: padded[index], lo: padded[index + 1] });
-			}
-			
-			// Extend from 16 to 80 (q)words
-			for (let index = 16; index < 80; index++)
-			{
-				const x15 = x[index - 15];
-				const x2  = x[index - 2];
-				const s0  = xor64(ror64(x15,  1), ror64(x15,  8), shr64(x15, 7));
-				const s1  = xor64(ror64( x2, 19), ror64( x2, 61), shr64( x2, 6));
-				const x7  = x[index - 7];
-				const x16 = x[index - 16];
-				x[index]  = add64(x7, s0, x16, s1);
-			}
-
-			const aa = a, bb = b, cc = c, dd = d, ee = e, ff = f, gg = g, hh = h;
-
-			for (let step = 0; step < x.length; step++)
-			{
-				const S1 = xor64(ror64(e, 14), ror64(e, 18), ror64(e, 41));
-				const ch = xor64(and64(e, f), and64(not64(e), g));
-				const temp1 = add64(h, S1, ch, x[step], { hi: K[step * 2], lo: K[step * 2 + 1] });
-				const S0 = xor64(ror64(a, 28), ror64(a, 34), ror64(a, 39));
-				const maj = xor64(and64(a, b), and64(a, c), and64(b, c));
-				const temp2 = add64(S0, maj);
-				h = g;
-				g = f;
-				f = e;
-				e = add64(d, temp1);
-				d = c;
-				c = b;
-				b = a;
-				a = add64(temp1, temp2);
-			}
-
-			a = add64(a, aa);
-			b = add64(b, bb);
-			c = add64(c, cc);
-			d = add64(d, dd);
-			e = add64(e, ee);
-			f = add64(f, ff);
-			g = add64(g, gg);
-			h = add64(h, hh);
-		}
+		this.transformBlocks(bytes, state);
 
 		if (this.isSha384)
 		{
 			// Leaves out g and h
-			return int32sToBytesBE([
-				a.hi, a.lo,
-				b.hi, b.lo,
-				c.hi, c.lo,
-				d.hi, d.lo,
-				e.hi, e.lo,
-				f.hi, f.lo
-			]);
+			state.splice(-2);
 		}
 
-		return int32sToBytesBE([
-			a.hi, a.lo, 
-			b.hi, b.lo, 
-			c.hi, c.lo, 
-			d.hi, d.lo,
-			e.hi, e.lo,
-			f.hi, f.lo,
-			g.hi, g.lo,
-			h.hi, h.lo
-		]);
+		return int64sToBytesBE(state);
+	}
+
+	transformBlock(block, state)
+	{
+		let [a, b, c, d, e, f, g, h] = state;
+
+		// Copy chunk to work array:
+		const x = bytesToInt64sBE(block);
+		
+		// Extend from 16 to 80 (q)words
+		for (let index = 16; index < 80; index++)
+		{
+			const x15 = x[index - 15];
+			const x2  = x[index - 2];
+			const s0  = xor64(ror64(x15,  1), ror64(x15,  8), shr64(x15, 7));
+			const s1  = xor64(ror64( x2, 19), ror64( x2, 61), shr64( x2, 6));
+			const x7  = x[index - 7];
+			const x16 = x[index - 16];
+			x[index]  = add64(x7, s0, x16, s1);
+		}
+
+		for (let step = 0; step < x.length; step++)
+		{
+			const S1 = xor64(ror64(e, 14), ror64(e, 18), ror64(e, 41));
+			const ch = xor64(and64(e, f), and64(not64(e), g));
+			const temp1 = add64(h, S1, ch, x[step], { hi: K[step * 2], lo: K[step * 2 + 1] });
+			const S0 = xor64(ror64(a, 28), ror64(a, 34), ror64(a, 39));
+			const maj = xor64(and64(a, b), and64(a, c), and64(b, c));
+			const temp2 = add64(S0, maj);
+			h = g;
+			g = f;
+			f = e;
+			e = add64(d, temp1);
+			d = c;
+			c = b;
+			b = a;
+			a = add64(temp1, temp2);
+		}
+
+		state[0] = add64(state[0], a);
+		state[1] = add64(state[1], b);
+		state[2] = add64(state[2], c);
+		state[3] = add64(state[3], d);
+		state[4] = add64(state[4], e);
+		state[5] = add64(state[5], f);
+		state[6] = add64(state[6], g);
+		state[7] = add64(state[7], h);
 	}
 }
 

@@ -1,4 +1,4 @@
-import { MdBaseTransform, CONSTANTS } from "./mdbase";
+import { HashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -26,65 +26,66 @@ function h(a, b, c, d, e, x, t)
 
 const OPS = [f, g, h, g];
 
-class Sha1Transform extends MdBaseTransform
+class Sha1Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
+		super(512);
+		this.padBlock = this.padBlockMerkle;
 		this.endianness = "BE";
 	}
 
 	transform(bytes)
 	{
-		// TODO: Consider DataView
-		const padded = bytesToInt32sBE(this.padMessage(bytes, 32));
+		const state = [
+			CONSTANTS.INIT_1_67,
+			CONSTANTS.INIT_2_EF,
+			CONSTANTS.INIT_3_98,
+			CONSTANTS.INIT_4_10,
+			CONSTANTS.INIT_5_C3
+		];
 
-		let a = CONSTANTS.INIT_1_67;
-		let b = CONSTANTS.INIT_2_EF;
-		let c = CONSTANTS.INIT_3_98;
-		let d = CONSTANTS.INIT_4_10;
-		let e = CONSTANTS.INIT_5_C3;
+		this.transformBlocks(bytes, state);
 
-		for (let chunkindex = 0; chunkindex < padded.length; chunkindex += 16)
+		return int32sToBytesBE(state);
+	}
+
+	transformBlock(block, state)
+	{
+		const x = bytesToInt32sBE(block);
+		
+		// Extend from 16 to 80 (d)words
+		for (let index = 16; index < 80; index++)
 		{
-			// Copy chunk to new array:
-			const x = padded.slice(chunkindex, chunkindex + 16);
-			
-			// Extend from 16 to 80 (d)words
-			for (let index = 16; index < 80; index++)
+			let extension = x[index - 3] ^ x[index - 8] ^ x[index - 14] ^ x[index - 16];
+			if (!this.sha0)
 			{
-				let extension = x[index - 3] ^ x[index - 8] ^ x[index - 14] ^ x[index - 16];
-				if (!this.sha0)
-				{
-					// The one difference between the withdrawn "SHA-0" and SHA-1:
-					extension = rol(extension, 1);
-				}
-				x[index] = extension;
+				// The one difference between the withdrawn "SHA-0" and SHA-1:
+				extension = rol(extension, 1);
 			}
-
-			const aa = a, bb = b, cc = c, dd = d, ee = e;
-
-			for (let step = 0; step < x.length; step++)
-			{
-				const round = Math.floor(step / 20);
-				const op = OPS[round];
-				const temp = op(a, b, c, d, e, x[step], K[round]);
-
-				e = d;
-				d = c;
-				c = rol(b, 30);
-				b = a;
-				a = temp;
-			}
-
-			a = add(a, aa);
-			b = add(b, bb);
-			c = add(c, cc);
-			d = add(d, dd);
-			e = add(e, ee);
+			x[index] = extension;
 		}
 
-		return int32sToBytesBE([a, b, c, d, e]);
+		let [a, b, c, d, e] = state;
+
+		for (let step = 0; step < x.length; step++)
+		{
+			const round = Math.floor(step / 20);
+			const op = OPS[round];
+			const temp = op(a, b, c, d, e, x[step], K[round]);
+
+			e = d;
+			d = c;
+			c = rol(b, 30);
+			b = a;
+			a = temp;
+		}
+
+		state[0] = add(state[0], a);
+		state[1] = add(state[1], b);
+		state[2] = add(state[2], c);
+		state[3] = add(state[3], d);
+		state[4] = add(state[4], e);
 	}
 }
 

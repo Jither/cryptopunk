@@ -54,6 +54,7 @@ Supported
 * SHA-2 (128, 192, 256, 512)
 * SHA-3 (128, 192, 256, 512)
 * SHAKE (128, 256)
+* Tiger / Tiger2
 * WHIRLPOOL (0, T, final)
 
 ### Checksums
@@ -160,4 +161,3 @@ TODO
 * Snefru
 * Spectral Hash
 * SWIFFT
-* Tiger / Tiger2
