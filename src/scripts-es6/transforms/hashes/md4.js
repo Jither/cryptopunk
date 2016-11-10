@@ -41,7 +41,6 @@ class Md4Transform extends HashTransform
 	constructor()
 	{
 		super(512);
-		this.padBlock = this.padBlockMerkle;
 	}
 
 	transform(bytes)

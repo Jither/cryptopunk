@@ -31,7 +31,6 @@ class Sha1Transform extends HashTransform
 	constructor()
 	{
 		super(512);
-		this.padBlock = this.padBlockMerkle;
 		this.endianness = "BE";
 	}
 

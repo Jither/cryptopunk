@@ -1,4 +1,4 @@
-import { MdBaseTransform, CONSTANTS } from "./mdbase";
+import { HashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -48,61 +48,63 @@ function h(a, b, c, d, x, s, t)
 
 const OPS = [f, g, h];
 
-class RipeMdTransform extends MdBaseTransform
+class RipeMdTransform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.endianness = "LE";
+		super(512);
 	}
 
 	transform(bytes)
 	{
-		const x = bytesToInt32sLE(this.padMessage(bytes, 32));
+		const state = [
+			CONSTANTS.INIT_1_67,
+			CONSTANTS.INIT_2_EF,
+			CONSTANTS.INIT_3_98,
+			CONSTANTS.INIT_4_10
+		];
 
-		let a0 = CONSTANTS.INIT_1_67,
-			b0 = CONSTANTS.INIT_2_EF,
-			c0 = CONSTANTS.INIT_3_98,
-			d0 = CONSTANTS.INIT_4_10;
+		this.transformBlocks(bytes, state);
 
-		for (let index = 0; index < x.length; index += 16)
+		return int32sToBytesLE(state);
+	}
+
+	transformBlock(block, state)
+	{
+		const x = bytesToInt32sLE(block);
+
+		let [a, b, c, d] = state;
+		let aa = a, bb = b, cc = c, dd = d;
+
+		/* eslint-disable camelcase */
+		let f_left, f_right, k_left, k_right;
+
+		for (let step = 0; step < 48; step++)
 		{
-			// TODO: Use subarray rather than index + 0
-			let  a = a0,  b = b0,  c = c0,  d = d0,
-				aa = a0, bb = b0, cc = c0, dd = d0;
+			const round = Math.floor(step / 16);
+			f_left = f_right = OPS[round];
+			k_left = K_LEFT[round];
+			k_right = K_RIGHT[round];
 
-			/* eslint-disable camelcase */
-			let f_left, f_right, k_left, k_right;
+			let temp = f_left(a, b, c, d, x[R[step]], S[step], k_left);
+			a = d;
+			d = c;
+			c = b;
+			b = temp;
 
-			for (let step = 0; step < 48; step++)
-			{
-				const round = Math.floor(step / 16);
-				f_left = f_right = OPS[round];
-				k_left = K_LEFT[round];
-				k_right = K_RIGHT[round];
-
-				let temp = f_left(a, b, c, d, x[index + R[step]], S[step], k_left);
-				a = d;
-				d = c;
-				c = b;
-				b = temp;
-
-				temp = f_right(aa, bb, cc, dd, x[index + R[step]], S[step], k_right);
-				aa = dd;
-				dd = cc;
-				cc = bb;
-				bb = temp;
-			}
-			/* eslint-enable camelcase */
-
-			const temp = add(b0, c, dd);
-			b0 = add(c0, d, aa);
-			c0 = add(d0, a, bb);
-			d0 = add(a0, b, cc);
-			a0 = temp;
+			temp = f_right(aa, bb, cc, dd, x[R[step]], S[step], k_right);
+			aa = dd;
+			dd = cc;
+			cc = bb;
+			bb = temp;
 		}
+		/* eslint-enable camelcase */
 
-		return int32sToBytesLE([a0, b0, c0, d0]);
+		const temp = add(state[1], c, dd);
+		state[1] = add(state[2], d, aa);
+		state[2] = add(state[3], a, bb);
+		state[3] = add(state[0], b, cc);
+		state[0] = temp;
 	}
 }
 

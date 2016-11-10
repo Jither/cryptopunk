@@ -1,4 +1,4 @@
-import { MdBaseTransform, CONSTANTS } from "./mdbase";
+import { HashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -75,12 +75,11 @@ function i(a, b, c, d, x, s, t)
 const OPS_LEFT = [f, g, h, i];
 const OPS_RIGHT = [i, h, g, f];
 
-class RipeMd128Transform extends MdBaseTransform
+class RipeMd128Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.endianness = "LE";
+		super(512);
 	}
 
 	getIV()
@@ -100,84 +99,81 @@ class RipeMd128Transform extends MdBaseTransform
 
 	transform(bytes)
 	{
-		const x = bytesToInt32sLE(this.padMessage(bytes, 32));
+		const state = this.getIV();
 
-		let [a0, b0, c0, d0, aa0, bb0, cc0, dd0] = this.getIV();
+		this.transformBlocks(bytes, state);
 
-		for (let index = 0; index < x.length; index += 16)
+		if (!this.isRipeMd256)
 		{
-			// TODO: Use subarray rather than index + 0
-			let  a =  a0,  b =  b0,  c =  c0,  d =  d0,
-				aa = aa0, bb = bb0, cc = cc0, dd = dd0;
+			// RIPEMD-128 doesn't include aa, bb, cc, dd
+			state.splice(-4);
+		}
+		return int32sToBytesLE(state);
+	}
 
-			/* eslint-disable camelcase */
-			let op_left, op_right, k_left, k_right;
+	transformBlock(block, state)
+	{
+		const x = bytesToInt32sLE(block);
+		let [a, b, c, d, aa, bb, cc, dd] = state;
 
-			// RIPEMD-160 vs 128: 4 rounds (64 steps) instead of 5 (80 steps)
-			for (let step = 0; step < 64; step++)
-			{
-				const round = Math.floor(step / 16);
-				op_left = OPS_LEFT[round];
-				op_right = OPS_RIGHT[round];
-				k_left = K_LEFT[round];
-				k_right = K_RIGHT[round];
+		/* eslint-disable camelcase */
+		let op_left, op_right, k_left, k_right;
 
-				// RIPEMD-16 vs 128: No ROL of c/cc when assigning to d/dd
-				let temp = op_left(a, b, c, d, x[index + R_LEFT[step]], S_LEFT[step], k_left);
-				a = d;
-				d = c;
-				c = b;
-				b = temp;
+		// RIPEMD-160 vs 128: 4 rounds (64 steps) instead of 5 (80 steps)
+		for (let step = 0; step < 64; step++)
+		{
+			const round = Math.floor(step / 16);
+			op_left = OPS_LEFT[round];
+			op_right = OPS_RIGHT[round];
+			k_left = K_LEFT[round];
+			k_right = K_RIGHT[round];
 
-				temp = op_right(aa, bb, cc, dd, x[index + R_RIGHT[step]], S_RIGHT[step], k_right);
-				aa = dd;
-				dd = cc;
-				cc = bb;
-				bb = temp;
+			// RIPEMD-160 vs 128: No ROL of c/cc when assigning to d/dd
+			let temp = op_left(a, b, c, d, x[R_LEFT[step]], S_LEFT[step], k_left);
+			a = d;
+			d = c;
+			c = b;
+			b = temp;
 
-				if (this.isRipeMd256)
-				{
-					// Exchange chaining value after each round
-					// RIPEMD-160 vs 128: Different order of chaining values
-					switch (step)
-					{
-						case 15: [a, aa] = [aa, a]; break;
-						case 31: [b, bb] = [bb, b]; break;
-						case 47: [c, cc] = [cc, c]; break;
-						case 63: [d, dd] = [dd, d]; break;
-					}
-				}
-			}
-			/* eslint-enable camelcase */
+			temp = op_right(aa, bb, cc, dd, x[R_RIGHT[step]], S_RIGHT[step], k_right);
+			aa = dd;
+			dd = cc;
+			cc = bb;
+			bb = temp;
 
 			if (this.isRipeMd256)
 			{
-				a0 = add(a0, a);
-				b0 = add(b0, b);
-				c0 = add(c0, c);
-				d0 = add(d0, d);
-				aa0 = add(aa0, aa);
-				bb0 = add(bb0, bb);
-				cc0 = add(cc0, cc);
-				dd0 = add(dd0, dd);
-			}
-			else
-			{
-				const temp = add(b0, c, dd);
-				b0 = bb0 = add(c0, d, aa);
-				c0 = cc0 = add(d0, a, bb);
-				d0 = dd0 = add(a0, b, cc);
-				a0 = aa0 = temp;
+				// Exchange chaining value after each round
+				// RIPEMD-160 vs 128: Different order of chaining values
+				switch (step)
+				{
+					case 15: [a, aa] = [aa, a]; break;
+					case 31: [b, bb] = [bb, b]; break;
+					case 47: [c, cc] = [cc, c]; break;
+					case 63: [d, dd] = [dd, d]; break;
+				}
 			}
 		}
+		/* eslint-enable camelcase */
 
 		if (this.isRipeMd256)
 		{
-			return int32sToBytesLE([a0, b0, c0, d0, aa0, bb0, cc0, dd0]);
+			state[0] = add(state[0], a);
+			state[1] = add(state[1], b);
+			state[2] = add(state[2], c);
+			state[3] = add(state[3], d);
+			state[4] = add(state[4], aa);
+			state[5] = add(state[5], bb);
+			state[6] = add(state[6], cc);
+			state[7] = add(state[7], dd);
 		}
 		else
 		{
-			return int32sToBytesLE([a0, b0, c0, d0]);
+			state[4] = add(state[1], c, dd);
+			state[1] = state[5] = add(state[2], d, aa);
+			state[2] = state[6] = add(state[3], a, bb);
+			state[3] = state[7] = add(state[0], b, cc);
+			state[0] = state[4];
 		}
 	}
 }

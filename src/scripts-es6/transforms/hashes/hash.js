@@ -31,10 +31,16 @@ class HashTransform extends Transform
 	constructor(blockSize)
 	{
 		super();
+
+		if (!blockSize)
+		{
+			throw new TransformError("No block size specified in HashTransform constructor");
+		}
+		this.padBlock = this.padBlockMerkle;
 		this.blockSize = blockSize;
 		this.endianness = "LE";
 		this.suffixLength = 8;
-		
+
 		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash");
 	}
@@ -56,7 +62,7 @@ class HashTransform extends Transform
 			if (blockIndex === blockCount - 1)
 			{
 				// Last block - pad it
-				let paddedBlock = block = this.padBlock(block, bytes.length);
+				let paddedBlock = block = this.padBlock(block, bytes.length, ...rest);
 				// Padding may turn the block into two (if there is not enough
 				// space for padding). In that case, we need to transform both.
 				// Contract: Returned padded block length will always be a multiple

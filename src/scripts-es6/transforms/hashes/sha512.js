@@ -36,7 +36,6 @@ class Sha512Transform extends HashTransform
 	constructor()
 	{
 		super(1024);
-		this.padBlock = this.padBlockMerkle;
 		this.endianness = "BE";
 		this.suffixLength = 16;
 	}
