@@ -44,6 +44,7 @@ import * as stringManipulation from "./transforms/string-manipulation";
 import * as substitution from "./transforms/classical/substitution";
 import * as tea from "./transforms/modern/tea";
 import * as threefish from "./transforms/modern/threefish";
+import * as tiger from "./transforms/hashes/tiger";
 import * as twofish from "./transforms/modern/twofish";
 import * as unicode from "./transforms/unicode";
 import * as vigenere from "./transforms/classical/vigenere";
@@ -341,6 +342,7 @@ addPaletteItem(sha1.Sha1Transform, "SHA-1", "SHA-1");
 addPaletteItem(sha2.Sha2Transform, "SHA-2", "SHA-2");
 addPaletteItem(sha3.Sha3Transform, "SHA-3");
 addPaletteItem(sha3.ShakeTransform, "SHAKE", "SHAKE");
+addPaletteItem(tiger.TigerTransform, "Tiger", "Tiger");
 addPaletteItem(whirlpool.WhirlpoolTransform, "WHIRLPOOL", "WHIRLPOOL");
 
 addPaletteCategory("String manipulation");

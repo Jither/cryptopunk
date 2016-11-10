@@ -34,7 +34,7 @@ class PlayfairEncryptTransform extends PlayfairTransform
 {
 	constructor()
 	{
-		super(false)
+		super(false);
 		this.addOption("padding", "Padding character", "X", { type: "char" })
 			.addOption("grouping", "Group characters", 5, { min: 0 });
 	}
@@ -45,7 +45,7 @@ class PlayfairEncryptTransform extends PlayfairTransform
 		let result = "";
 		while (i < str.length)
 		{
-			let digramA = str.charAt(i);
+			const digramA = str.charAt(i);
 			let digramB = str.charAt(i + 1);
 
 			// 1. If letters are the same, or only one was left, use padding character for second character:
@@ -101,7 +101,7 @@ class PlayfairDecryptTransform extends PlayfairTransform
 {
 	constructor()
 	{
-		super(true)
+		super(true);
 	}
 
 	_transform(str, alphabet, options, width)
@@ -117,8 +117,8 @@ class PlayfairDecryptTransform extends PlayfairTransform
 
 		while (i < str.length)
 		{
-			let digramA = str.charAt(i);
-			let digramB = str.charAt(i + 1);
+			const digramA = str.charAt(i);
+			const digramB = str.charAt(i + 1);
 
 			const indexA = alphabet.indexOf(digramA.toUpperCase());
 			const indexB = alphabet.indexOf(digramB.toUpperCase());

@@ -60,7 +60,7 @@ class PolybiusEncryptTransform extends PolybiusTransform
 				result += options.separator;
 			}
 			// Polybius indices are 1-based
-			result += (coords[i][0] + 1) + "" + (coords[i][1] + 1);
+			result += String(coords[i][0] + 1) + (coords[i][1] + 1);
 		}
 
 		return result;
@@ -69,7 +69,7 @@ class PolybiusEncryptTransform extends PolybiusTransform
 
 class PolybiusDecryptTransform extends PolybiusTransform
 {
-	_transform(ciphertext, alphabet, options)
+	_transform(ciphertext, alphabet)
 	{
 		// Skip everything that isn't numeric digits:
 		let strCoords = "";

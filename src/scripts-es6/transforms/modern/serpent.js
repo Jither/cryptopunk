@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { int32sToBytesLE, bytesToInt32sLE, int32sToHex } from "../../cryptopunk.utils";
+import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { rol, ror } from "../../cryptopunk.bitarith";
 
 // Fractional part of (SQRT(5) + 1)/2
@@ -33,48 +33,48 @@ function sbox0(v)
 {
 	const [a, b, c, d] = v;
 
-    const
-    	t1  = a ^ d,
-    	t2  = a & d,
-    	t3  = c ^ t1,
-    	t6  = b & t1,
-    	t4  = b ^ t3,
-    	t10 = ~t3,
-    	h   = t2 ^ t4,
-    	t7  = a ^ t6,
-    	t14 = ~t7,
-    	t8  = c | t7,
-    	t11 = t3 ^ t7,
-    	g   = t4 ^ t8,
-    	t12 = h & t11,
-    	f   = t10 ^ t12,
-    	e   = t12 ^ t14;
+	const
+		t1  = a ^ d,
+		t2  = a & d,
+		t3  = c ^ t1,
+		t6  = b & t1,
+		t4  = b ^ t3,
+		t10 = ~t3,
+		h   = t2 ^ t4,
+		t7  = a ^ t6,
+		t14 = ~t7,
+		t8  = c | t7,
+		t11 = t3 ^ t7,
+		g   = t4 ^ t8,
+		t12 = h & t11,
+		f   = t10 ^ t12,
+		e   = t12 ^ t14;
 
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox0(v)
 {
 	const [a, b, c, d] = v;
 
-    const
-    	t1  = ~a,
-    	t2  = a ^ b,
-    	t3  = t1 | t2,
-    	t4  = d ^ t3,
-    	t7  = d & t2,
-    	t5  = c ^ t4,
-    	t8  = t1 ^ t7,
-    	g   = t2 ^ t5,
-    	t11 = a & t4,
-    	t9  = g & t8,
-	    t14 = t5 ^ t8,
-    	f   = t4 ^ t9,
-    	t12 = t5 | f,
-    	h   = t11 ^ t12,
-	    e   = h ^ t14;
+	const
+		t1  = ~a,
+		t2  = a ^ b,
+		t3  = t1 | t2,
+		t4  = d ^ t3,
+		t7  = d & t2,
+		t5  = c ^ t4,
+		t8  = t1 ^ t7,
+		g   = t2 ^ t5,
+		t11 = a & t4,
+		t9  = g & t8,
+		t14 = t5 ^ t8,
+		f   = t4 ^ t9,
+		t12 = t5 | f,
+		h   = t11 ^ t12,
+		e   = h ^ t14;
 
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox1(v)
@@ -82,22 +82,22 @@ function sbox1(v)
 	const [a, b, c, d] = v;
 
 	const
-	    t1  = ~a,
-	    t2  = b ^ t1,
-	    t3  = a | t2,
-	    t4  = d | t2,
-	    t5  = c ^ t3,
-	    g   = d ^ t5,
-	    t7  = b ^ t4,
-	    t8  = t2 ^ g,
-	    t9  = t5 & t7,
-	    h   = t8 ^ t9,
-	    t11 = t5 ^ t7,
-	    f   = h ^ t11,
-	    t13 = t8 & t11,
-	    e   = t5 ^ t13;
+		t1  = ~a,
+		t2  = b ^ t1,
+		t3  = a | t2,
+		t4  = d | t2,
+		t5  = c ^ t3,
+		g   = d ^ t5,
+		t7  = b ^ t4,
+		t8  = t2 ^ g,
+		t9  = t5 & t7,
+		h   = t8 ^ t9,
+		t11 = t5 ^ t7,
+		f   = h ^ t11,
+		t13 = t8 & t11,
+		e   = t5 ^ t13;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox1(v)
@@ -123,7 +123,7 @@ function isbox1(v)
 		t16 = c ^ t13,
 		e   = t15 ^ t16;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox2(v)
@@ -148,7 +148,7 @@ function sbox2(v)
 		t15 = g ^ t13,
 		f   = t14 ^ t15;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox2(v)
@@ -173,33 +173,7 @@ function isbox2(v)
 		t15 = t3 ^ t12,
 		g   = t14 ^ t15;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
-}
-
-function sbox3(v)
-{
-	const [a, b, c, d] = v;
-
-	const
-		t1  = a ^ c,
-		t2  = d ^ t1,
-		t3  = a & t2,
-		t4  = d ^ t3,
-		t5  = b & t4,
-		g   = t2 ^ t5,
-		t7  = a | g,
-		t8  = b | d,
-		t11 = a | d,
-		t9  = t4 & t7,
-		f   = t8 ^ t9,
-		t12 = b ^ t11,
-		t13 = g ^ t9,
-		t15 = t3 ^ t8,
-		h   = t12 ^ t13,
-		t16 = c & t15,
-		e   = t12 ^ t16;
-	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox3(v)
@@ -224,7 +198,7 @@ function sbox3(v)
 		t15 = t4 ^ t12,
 		h   = t14 ^ t15;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox3(v)
@@ -250,7 +224,7 @@ function isbox3(v)
 		t16 = e & t15,
 		h   = t4 ^ t16;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox4(v)
@@ -274,7 +248,7 @@ function sbox4(v)
 		t14 = t10 & g,
 		f   = t13 ^ t14;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox4(v)
@@ -300,7 +274,7 @@ function isbox4(v)
 		t16 = h | t10,
 		g   = t15 ^ t16;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox5(v)
@@ -325,7 +299,7 @@ function sbox5(v)
 		t15 = f & t12,
 		h   = t14 ^ t15;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox5(v)
@@ -350,7 +324,7 @@ function isbox5(v)
 		t15 = t4 | t13,
 		g   = t14 ^ t15;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox6(v)
@@ -374,7 +348,7 @@ function sbox6(v)
 		t14 = t3 & t11,
 		h   = t13 ^ t14;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox6(v)
@@ -398,7 +372,7 @@ function isbox6(v)
 		t14 = t3 ^ t11,
 		g   = t13 ^ t14;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function sbox7(v)
@@ -424,7 +398,7 @@ function sbox7(v)
 		t16 = t12 ^ g,
 		e   = t15 ^ t16;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function isbox7(v)
@@ -450,43 +424,43 @@ function isbox7(v)
 		t16 = e ^ t14,
 		g   = t15 ^ t16;
 	
-    v[0] = e; v[1] = f; v[2] = g; v[3] = h;
+	v[0] = e; v[1] = f; v[2] = g; v[3] = h;
 }
 
 function rot(v)
 {
 	let [a, b, c, d] = v;
 
-    a  = rol(a, 13);
-    c  = rol(c, 3);
-    d ^= c ^ (a << 3);
-    b ^= a ^ c;
-    d  = rol(d, 7);
-    b  = rol(b, 1);
-    a ^= b ^ d;
-    c ^= d ^ (b << 7);
-    a  = rol(a, 5);
-    c  = rol(c, 22);
+	a  = rol(a, 13);
+	c  = rol(c, 3);
+	d ^= c ^ (a << 3);
+	b ^= a ^ c;
+	d  = rol(d, 7);
+	b  = rol(b, 1);
+	a ^= b ^ d;
+	c ^= d ^ (b << 7);
+	a  = rol(a, 5);
+	c  = rol(c, 22);
 
-    v[0] = a; v[1] = b; v[2] = c; v[3] = d;
+	v[0] = a; v[1] = b; v[2] = c; v[3] = d;
 }
 
 function irot(v)
 {
 	let [a, b, c, d] = v;
 
-    c  = ror(c, 22);
-    a  = ror(a, 5);
-    c ^= d ^ (b << 7);
-    a ^= b ^ d;
-    d  = ror(d, 7);
-    b  = ror(b, 1);
-    d ^= c ^ (a << 3);
-    b ^= a ^ c;
-    c  = ror(c, 3);
-    a  = ror(a, 13);
+	c  = ror(c, 22);
+	a  = ror(a, 5);
+	c ^= d ^ (b << 7);
+	a ^= b ^ d;
+	d  = ror(d, 7);
+	b  = ror(b, 1);
+	d ^= c ^ (a << 3);
+	b ^= a ^ c;
+	c  = ror(c, 3);
+	a  = ror(a, 13);
 
-    v[0] = a; v[1] = b; v[2] = c; v[3] = d;
+	v[0] = a; v[1] = b; v[2] = c; v[3] = d;
 }
 
 const SBOXES = [sbox0, sbox1, sbox2, sbox3, sbox4, sbox5, sbox6, sbox7];
@@ -505,7 +479,7 @@ class SerpentTransform extends BlockCipherTransform
 		let lIndex = Math.floor(keyLength / 4);
 		const wholeKeyWordBytes = lIndex * 4;
 
-		let lKey = bytesToInt32sLE(keyBytes.subarray(0, wholeKeyWordBytes)).concat(new Array(140 - lIndex));
+		const lKey = bytesToInt32sLE(keyBytes.subarray(0, wholeKeyWordBytes)).concat(new Array(140 - lIndex));
 
 		let word = 0;
 		for (let i = wholeKeyWordBytes; i < keyLength; i++)
@@ -536,7 +510,7 @@ class SerpentTransform extends BlockCipherTransform
 		for (let i = 8; i < 140; i += 4)
 		{
 			// TODO: Make all the key extension work on 128-bit arrays
-			let k = [
+			const k = [
 				lKey[i], 
 				lKey[i + 1],  
 				lKey[i + 2], 

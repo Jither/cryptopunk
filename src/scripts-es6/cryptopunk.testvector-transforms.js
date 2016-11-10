@@ -29,11 +29,11 @@ import * as whirlpool from "./transforms/hashes/whirlpool";
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as crc from "./transforms/checksums/crc";
 
-const TRANSFORMS = {}
+const TRANSFORMS = {};
 
 function addTransformsFrom(imp)
 {
-	for (let name in imp)
+	for (const name in imp)
 	{
 		if (!imp.hasOwnProperty(name))
 		{
@@ -85,4 +85,5 @@ addTransformsFrom(adler32);
 addTransformsFrom(crc);
 
 // For now, we use globals
+/* globals global */
 global.TRANSFORMS = TRANSFORMS;

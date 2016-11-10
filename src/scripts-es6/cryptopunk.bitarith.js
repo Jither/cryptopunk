@@ -83,6 +83,48 @@ function and64(...terms)
 	return result;
 }
 
+function mul64(a, b)
+{
+	const
+		a48 = a.hi >>> 16,
+		a32 = a.hi & 0xffff,
+		a16 = a.lo >>> 16,
+		a00 = a.lo & 0xffff,
+
+		b48 = b.hi >>> 16,
+		b32 = b.hi & 0xffff,
+		b16 = b.lo >>> 16,
+		b00 = b.lo & 0xffff;
+
+	let r00, r16, r32, r48;
+
+	r00  = a00 * b00;
+	r16  = r00 >>> 16;
+	r00 &= 0xffff;
+	r16 += a16 * b00;
+	r32  = r16 >>> 16;
+	r16 &= 0xffff;
+	r16 += a00 * b16;
+	r32 += r16 >>> 16;
+	r16 &= 0xffff;
+	r32 += a32 * b00;
+	r48  = r32 >>> 16;
+	r32 &= 0xffff;
+	r32 += a16 * b16;
+	r48 += r32 >>> 16;
+	r32 &= 0xffff;
+	r32 += a00 * b32;
+	r48 += r32 >>> 16;
+	r32 &= 0xffff;
+	r48 += a48 * b00 + a32 * b16 + a16 * b32 + a00 * b48;
+	r48 &= 0xffff;
+
+	return {
+		hi: (r48 << 16) | r32,
+		lo: (r16 << 16) | r00
+	};
+}
+
 function not64(term)
 {
 	return { hi: ~term.hi, lo: ~term.lo };
@@ -184,6 +226,29 @@ function ror48(val, count)
 	return result;
 }
 
+function shl64(val, count)
+{
+	const result = {};
+	if (count === 0)
+	{
+		// This would cause hi << 32, which Javascript won't do
+		// Besides, this is simpler:
+		result.hi = val.hi;
+		result.lo = val.lo;
+	}
+	else if (count < 32)
+	{
+		result.hi = val.hi << count | (val.lo >>> (32 - count));
+		result.lo = val.lo << count;
+	}
+	else
+	{
+		result.lo = 0;
+		result.hi = val.lo << (count - 32);
+	}
+	return result;
+}
+
 function shr64(val, count)
 {
 	const result = {};
@@ -231,10 +296,12 @@ export {
 	ror,
 	add64,
 	and64,
+	mul64,
 	not64,
 	rol64,
 	ror64,
 	xor64,
+	shl64,
 	shr64,
 	sub64,
 	ONE_64,

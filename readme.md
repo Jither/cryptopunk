@@ -93,8 +93,10 @@ TODO
 * Great Cipher?
 * Hill Cipher
 * Keyword Cipher (based on caesar)
+* Myszkowski
 * Null
 * Rail Fence
+* Straddling Checkerboard
 * Tap Code
 * Trifid
 * Two-square

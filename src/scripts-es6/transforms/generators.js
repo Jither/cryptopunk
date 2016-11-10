@@ -1,5 +1,5 @@
 import { Transform } from "./transforms";
-import { escapeForRegex, removeWhiteSpace } from "../cryptopunk.strings";
+import { removeWhiteSpace } from "../cryptopunk.strings";
 
 class KeyboardInputGenerator extends Transform
 {
@@ -70,7 +70,7 @@ class KeyedAlphabetGenerator extends Transform
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		let combined = removeWhiteSpace(options.keyword + options.baseAlphabet);
+		const combined = removeWhiteSpace(options.keyword + options.baseAlphabet);
 
 		let result = "", resultCompare = "";
 		let remove = options.remove.toUpperCase();

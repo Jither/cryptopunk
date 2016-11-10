@@ -81,7 +81,7 @@ class AdfgvxDecryptTransform extends AdfgvxTransform
 		super(true);
 	}
 
-	_transform(ciphertext, alphabet, key, headers, options)
+	_transform(ciphertext, alphabet, key, headers)
 	{
 		if (ciphertext.length % 2 !== 0)
 		{
