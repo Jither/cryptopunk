@@ -1,4 +1,5 @@
-import { Transform, TransformError } from "../transforms";
+import { HashTransform } from "./hash";
+import { TransformError } from "../transforms";
 import { and64, not64, rol64, xor64 } from "../../cryptopunk.bitarith";
 
 function readLane(state, x, y)
@@ -45,7 +46,7 @@ function xorLane(state, x, y, value)
 	state[position + 7] ^= (value.hi >>> 24) & 0xff;
 }
 
-class KeccakBaseTransform extends Transform
+class KeccakBaseTransform extends HashTransform
 {
 	constructor()
 	{
@@ -157,8 +158,6 @@ class KeccakBaseTransform extends Transform
 		const rateInBytes = rate / 8;
 		const suffix = options.suffix;
 
-		let remainingOutput = options.size / 8;
-
 		const state = new Uint8Array(200);
 
 		// Absorb input into state
@@ -194,6 +193,7 @@ class KeccakBaseTransform extends Transform
 		this.permute(state);
 
 		// Squeeze state out into output
+		let remainingOutput = options.size / 8;
 		const output = new Uint8Array(remainingOutput);
 		let outputPosition = 0;
 		while (remainingOutput > 0)

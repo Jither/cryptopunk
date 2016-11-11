@@ -1,4 +1,4 @@
-import { HashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -26,12 +26,11 @@ function h(a, b, c, d, e, x, t)
 
 const OPS = [f, g, h, g];
 
-class Sha1Transform extends HashTransform
+class Sha1Transform extends MdHashTransform
 {
 	constructor()
 	{
-		super(512);
-		this.endianness = "BE";
+		super(512, "BE");
 	}
 
 	transform(bytes)

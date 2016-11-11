@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { MdHashTransform } from "./hash";
 import { int64sToBytesBE, bytesToInt64sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add64, ror64, xor64 } from "../../cryptopunk.bitarith";
 
@@ -54,13 +54,11 @@ function g(m, v, i, a, b, c, d, e)
 	v[b] = ror64(xor64(v[b], v[c]), 11);
 }
 
-class Blake512Transform extends HashTransform
+class Blake512Transform extends MdHashTransform
 {
 	constructor()
 	{
-		super(1024);
-		this.endianness = "BE";
-		this.suffixLength = 16;
+		super(1024, "BE", 16);
 		this.paddingEndBit = 0x01;
 	}
 

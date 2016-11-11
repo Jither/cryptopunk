@@ -28,22 +28,29 @@ const CONSTANTS = {
 
 class HashTransform extends Transform
 {
-	constructor(blockSize)
+	constructor()
+	{
+		super();
+		this.addInput("bytes", "Message")
+			.addOutput("bytes", "Hash");
+	}
+}
+
+class MdHashTransform extends HashTransform
+{
+	constructor(blockSize, endianness, suffixLength)
 	{
 		super();
 
 		if (!blockSize)
 		{
-			throw new TransformError("No block size specified in HashTransform constructor");
+			throw new TransformError("No block size specified in MdHashTransform constructor");
 		}
-		this.padBlock = this.padBlockMerkle;
-		this.paddingStartBit = 0x80;
 		this.blockSize = blockSize;
-		this.endianness = "LE";
-		this.suffixLength = 8;
+		this.endianness = endianness || "LE";
+		this.suffixLength = suffixLength || 8;
 
-		this.addInput("bytes", "Message")
-			.addOutput("bytes", "Hash");
+		this.paddingStartBit = 0x80;
 	}
 
 	get blockLength()
@@ -82,7 +89,7 @@ class HashTransform extends Transform
 		}
 	}
 
-	padBlockMerkle(block, messageLength)
+	padBlock(block, messageLength, ...rest)
 	{
 		const blockLength = this.blockLength;
 
@@ -107,6 +114,13 @@ class HashTransform extends Transform
 			result[length + paddingLength - 1] |= this.paddingEndBit;
 		}
 
+		this.writeSuffix(result, length + paddingLength, messageLength, ...rest);
+
+		return result;
+	}
+
+	writeSuffix(block, offset, messageLength)
+	{
 		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
 		// (very theoretical) maximum message length we would be able to handle.
 		// That means the low word will store the low 29 bits of the byte length - shifted
@@ -116,16 +130,15 @@ class HashTransform extends Transform
 		let messageSizeLo = messageLength << 3;
 		let messageSizeHi = messageLength >>> 29;
 
-		let sizeIndex = length + paddingLength;
 		if (this.endianness === "BE")
 		{
 			// Skip to the least significant 64 bits (the higher bits will be 0)
-			sizeIndex += this.suffixLength - 8;
+			offset += this.suffixLength - 8;
 
 			for (let i = 3; i >= 0; i--)
 			{
-				result[sizeIndex + i] = messageSizeHi;
-				result[sizeIndex + i + 4] = messageSizeLo;
+				block[offset + i] = messageSizeHi;
+				block[offset + i + 4] = messageSizeLo;
 				messageSizeHi >>>= 8;
 				messageSizeLo >>>= 8;
 			}
@@ -134,18 +147,17 @@ class HashTransform extends Transform
 		{
 			for (let i = 0; i < 4; i++)
 			{
-				result[sizeIndex + i] = messageSizeLo;
-				result[sizeIndex + i + 4] = messageSizeHi;
+				block[offset + i] = messageSizeLo;
+				block[offset + i + 4] = messageSizeHi;
 				messageSizeHi >>>= 8;
 				messageSizeLo >>>= 8;
 			}
 		}
-
-		return result;
 	}
 }
 
 export {
+	MdHashTransform,
 	HashTransform,
 	CONSTANTS
 };

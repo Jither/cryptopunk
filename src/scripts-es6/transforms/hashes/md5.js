@@ -1,4 +1,4 @@
-import { HashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -54,7 +54,7 @@ function i(a, b, c, d, x, s, t)
 
 const OPS = [f, g, h, i];
 
-class Md5Transform extends HashTransform
+class Md5Transform extends MdHashTransform
 {
 	constructor()
 	{

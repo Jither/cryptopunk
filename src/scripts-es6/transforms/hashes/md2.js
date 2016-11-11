@@ -1,4 +1,4 @@
-import { Transform } from "../transforms";
+import { MdHashTransform } from "./hash";
 
 // S-box derived from fractional part of PI
 const S_BOX = [
@@ -20,74 +20,80 @@ const S_BOX = [
 	0x31, 0x44, 0x50, 0xb4, 0x8f, 0xed, 0x1f, 0x1a, 0xdb, 0x99, 0x8d, 0x33, 0x9f, 0x11, 0x83, 0x14	
 ];
 
-class Md2Transform extends Transform
+const BLOCK_LENGTH = 16;
+
+class Md2Transform extends MdHashTransform
 {
 	constructor()
 	{
-		super();
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash");
+		super(BLOCK_LENGTH * 8);
 	}
 
-	clearArray(arr, value)
+	padBlock(block)
 	{
-		value = value || 0;
-		for (let i = 0; i < arr.length; i++)
-		{
-			arr[i] = value;
-		}
+		// Pad to multiple of block length. If already a multiple, still add a block of padding:
+		const paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
+
+		const result = new Uint8Array(block.length + paddingLength);
+		result.set(block);
+
+		let index = block.length;
+		// Use the padding length as pad byte
+		result.fill(paddingLength, index, index + paddingLength);
+
+		return result;
 	}
 
 	transform(bytes)
 	{
-		// Pad to multiple of 16 bytes. If already a multiple, still add 16 bytes:
-		const paddingLength = 16 - bytes.length % 16;
+		const state = new Uint8Array(48);
 
-		const paddedMessageLength = bytes.length + paddingLength;
+		const checksum = {
+			last: 0,
+			block: new Uint8Array(BLOCK_LENGTH)
+		};
 
-		// 16 additional bytes for checksum:
-		const padded = new Uint8Array(paddedMessageLength + 16);
-		padded.set(bytes);
+		this.transformBlocks(bytes, state, checksum);
 
-		let index = bytes.length;
-		// Use the padding length as pad byte
-		padded.fill(paddingLength, index, index + paddingLength);
-		index += paddingLength;
+		// Mix checksum into state:
+		this.transformBlock(checksum.block, state);
 
-		let l = 0;
-		for (let i = 0; i < paddedMessageLength / 16; i++)
+		return state.subarray(0, 16);
+	}
+
+	transformBlock(block, state, checksum)
+	{
+		if (checksum)
 		{
-			for (let j = 0; j < 16; j++)
+			let l = checksum.last;
+			const checksumBlock = checksum.block;
+			for (let i = 0; i < BLOCK_LENGTH; i++)
 			{
-				const c = padded[i * 16 + j];
-				l = padded[index + j] ^= S_BOX[c ^ l]; 
+				const c = block[i];
+				l = checksumBlock[i] ^= S_BOX[c ^ l];
 			}
+			// Store last value for next block
+			checksum.last = l;
 		}
 
-		const bufferX = new Uint8Array(48);
-
-		for (let i = 0; i < padded.length / 16; i++)
+		for (let i = 0; i < BLOCK_LENGTH; i++)
 		{
-			for (let j = 0; j < 16; j++)
-			{
-				const m = bufferX[j + 16] = padded[i * 16 + j];
-				bufferX[j + 32] = m ^ bufferX[j];
-			}
-
-			let t = 0;
-
-			// 18 rounds
-			for (let j = 0; j < 18; j++)
-			{
-				for (let k = 0; k < 48; k++)
-				{
-					t = bufferX[k] ^= S_BOX[t];
-				}
-
-				t = (t + j) & 0xff;
-			}
+			const m = state[i + 16] = block[i];
+			state[i + 32] = m ^ state[i];
 		}
-		return bufferX.subarray(0, 16);
+
+		let t = 0;
+
+		// 18 rounds
+		for (let i = 0; i < 18; i++)
+		{
+			for (let j = 0; j < 48; j++)
+			{
+				t = state[j] ^= S_BOX[t];
+			}
+
+			t = (t + i) & 0xff;
+		}
 	}
 }
 

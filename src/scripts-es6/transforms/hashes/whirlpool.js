@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { MdHashTransform } from "./hash";
 import { int64sToBytesBE, bytesToInt64sBE } from "../../cryptopunk.utils";
 import { ror64, shr64, xor64 } from "../../cryptopunk.bitarith";
 
@@ -154,13 +154,11 @@ function precompute(variant)
 	return result;
 }
 
-class WhirlpoolTransform extends HashTransform
+class WhirlpoolTransform extends MdHashTransform
 {
 	constructor()
 	{
-		super(512);
-		this.endianness = "BE";
-		this.suffixLength = 32;
+		super(512, "BE", 32);
 
 		this.addOption("variant", "Variant", "whirlpool", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}

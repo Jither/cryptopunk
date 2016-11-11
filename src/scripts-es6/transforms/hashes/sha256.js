@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { MdHashTransform } from "./hash";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -14,12 +14,11 @@ const K = [
 	0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
 ];
 
-class Sha256Transform extends HashTransform
+class Sha256Transform extends MdHashTransform
 {
 	constructor()
 	{
-		super(512);
-		this.endianness = "BE";
+		super(512, "BE");
 	}
 
 	getIV()

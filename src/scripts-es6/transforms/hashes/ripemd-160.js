@@ -1,4 +1,4 @@
-import { HashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -83,7 +83,7 @@ function j(a, b, c, d, e, x, s, t)
 const OPS_LEFT = [f, g, h, i, j];
 const OPS_RIGHT = [j, i, h, g, f];
 
-class RipeMd160Transform extends HashTransform
+class RipeMd160Transform extends MdHashTransform
 {
 	constructor()
 	{

@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { MdHashTransform } from "./hash";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add } from "../../cryptopunk.bitarith";
 
@@ -107,49 +107,27 @@ function ff5_5(x7, x6, x5, x4, x3, x2, x1, x0, w, c)
 }
 /* eslint-enable camelcase */
 
-class HavalTransform extends HashTransform
+class HavalTransform extends MdHashTransform
 {
 	constructor()
 	{
-		super(1024);
-		this.padBlock = this.padBlockHaval;
-		this.suffixLength = 10;
+		super(1024, "LE", 10);
+		this.paddingStartBit = 0x01;
 
 		this.addOption("passes", "Passes", 5, { type: "select", texts: PASSES_NAMES })
 			.addOption("size", "Size", 128, { type: "select", texts: SIZE_NAMES });
 	}
 
-	padBlockHaval(block, messageLength, state, options)
+	writeSuffix(block, offset, messageLength, state, options)
 	{
-		const blockLength = this.blockLength;
-
-		const length = block.length;
-		let paddingLength = (blockLength - this.suffixLength) - (length % blockLength);
-		if (paddingLength <= 0)
-		{
-			paddingLength += blockLength;
-		}
-		const result = new Uint8Array(length + paddingLength + this.suffixLength);
-
-		// Copy message bytes to padded block:
-		result.set(block);
-		// Difference from standard Merkle: 0x01 instead of 0x80 (like Tiger1)
-		// Add "1-bit":
-		result[length] = 0x01;
-
 		// Difference from standard Merkle:
-		// Version number, round count, hash length (last 3 bits) and bit length of message are stored in
-		// the last 10 bytes after the padding:
-		let index = length + paddingLength;
+		// Version number, round count, hash length (last 3 bits) and bit length of message
+		// are stored in the last 10 bytes after the padding:
 		const info = HAVAL_VERSION | (options.passes << 3) | (options.size << 6);
-		result[index++] = info & 0xff;
-		result[index++] = info >>> 8;
+		block[offset++] = info & 0xff;
+		block[offset++] = info >>> 8;
 
-		// Like standard Merkle, we only store the size up to 2^32 bits. Little endian
-		const bitLengthLo = messageLength << 3;
-		const bitLengthHi = messageLength >>> 29;
-		result.set(int32sToBytesLE([bitLengthLo, bitLengthHi]), index);
-		return result;
+		super.writeSuffix(block, offset, messageLength);
 	}
 
 	transform(bytes, options)

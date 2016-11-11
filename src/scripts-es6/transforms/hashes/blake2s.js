@@ -1,4 +1,5 @@
-import { Transform, TransformError } from "../transforms";
+import { HashTransform } from "./hash";
+import { TransformError } from "../transforms";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -35,14 +36,12 @@ function g(m, v, i, a, b, c, d, e)
 	v[b] = ror(v[b] ^ v[c], 7);
 }
 
-class Blake2sTransform extends Transform
+class Blake2sTransform extends HashTransform
 {
 	constructor()
 	{
 		super();
-		this.addInput("bytes", "Input")
-			.addInput("bytes", "Key (optional)")
-			.addOutput("bytes", "Hash")
+		this.addInput("bytes", "Key (optional)")
 			.addOption("size", "Size", 256, { min: 8, max: 256, step: 8 });
 	}
 

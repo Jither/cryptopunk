@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { MdHashTransform } from "./hash";
 import { bytesToInt64sLE, int64sToBytesLE } from "../../cryptopunk.utils";
 import { add64, not64, shl64, shr64, sub64, xor64, mul64 } from "../../cryptopunk.bitarith";
 
@@ -330,7 +330,7 @@ function keySchedule(x)
 	x[0] = x0; x[1] = x1; x[2] = x2; x[3] = x3; x[4] = x4; x[5] = x5; x[6] = x6; x[7] = x7;
 }
 
-class TigerTransform extends HashTransform
+class TigerTransform extends MdHashTransform
 {
 	constructor()
 	{
