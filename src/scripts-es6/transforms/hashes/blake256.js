@@ -1,4 +1,4 @@
-import { Transform } from "../transforms";
+import { HashTransform } from "./hash";
 import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -42,42 +42,13 @@ function g(m, v, i, a, b, c, d, e)
 	v[b] = ror(v[b] ^ v[c], 7);
 }
 
-class Blake256Transform extends Transform
+class Blake256Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash");		
-	}
-
-	padMessage(bytes)
-	{
-		const length = bytes.length;
-		
-		// BLAKE spec says 447 % 512 - but that's excluding the end-of-padding bit, so for bytes we can
-		// do the usual 448 % 512
-		let paddingLength = 56 - length % 64;
-		if (paddingLength <= 0)
-		{
-			paddingLength += 64;
-		}
-		const padded = new Uint8Array(length + paddingLength + 8);
-		padded.set(bytes);
-		padded[length] = 0x80;
-
-		const index = length + paddingLength; // Go to last 8 bytes of padding
-		if (!this.isBlake224)
-		{
-			padded[index - 1] |= 0x01; // May be the same byte as the start-of-padding bit
-		}
-
-		const bitLengthLo = length << 3;
-		const bitLengthHi = length >>> 29;
-
-		padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index);
-
-		return padded;
+		super(512);
+		this.endianness = "BE";
+		this.paddingEndBit = 0x01;
 	}
 
 	getIV()
@@ -96,49 +67,58 @@ class Blake256Transform extends Transform
 
 	transform(bytes)
 	{
-		const padded = this.padMessage(bytes);
+		const context = {
+			h: this.getIV(),
+			s: [0, 0, 0, 0],
+			v: new Array(16),
+			bitCounter: 0,
+			messageSize: bytes.length * 8
+		};
 
-		const h = this.getIV();
+		this.transformBlocks(bytes, context);
 
-		const s = [0, 0, 0, 0];
-		const t = [0, 0];
-		const v = new Array(16);
-		const messageBits = bytes.length * 8;
-
-		let bitCounter = 0;
-		for (let blockIndex = 0; blockIndex < padded.length; blockIndex += 64)
-		{
-			bitCounter += 512;
-			if (bitCounter > messageBits + 512)
-			{
-				bitCounter = 0;
-			}
-			else if (bitCounter > messageBits)
-			{
-				bitCounter = messageBits;
-			}
-
-			t[0] = bitCounter & 0xffffffff;
-			t[1] = (bitCounter / 0x100000000) | 0;
-
-			const block = padded.subarray(blockIndex, blockIndex + 64);
-			this.transformBlock(block, h, t, v, s);
-		}
 		if (this.isBlake224)
 		{
 			// Truncate last 32 bits/4 bytes
-			h.pop();
+			context.h.pop();
 		}
-		return int32sToBytesBE(h);
+		return int32sToBytesBE(context.h);
 	}
 
-	transformBlock(block, h, t, v, s)
+	countBits(context)
 	{
-		const m = bytesToInt32sBE(block);
+		let bitCounter = context.bitCounter;
+		const messageSize = context.messageSize;
+		bitCounter += 512;
+		if (bitCounter > messageSize + 512)
+		{
+			// No message bits in this block - it's pure padding
+			bitCounter = 0;
+		}
+		else if (bitCounter > messageSize)
+		{
+			// Last block - don't include the padding in the counter
+			bitCounter = messageSize;
+		}
+		context.bitCounter = bitCounter;
+
+		return [bitCounter & 0xffffffff, (bitCounter / 0x100000000) | 0];
+	}
+
+	transformBlock(block, context)
+	{
+		const
+			h = context.h,
+			s = context.s,
+			v = context.v,
+			t = this.countBits(context),
+			m = bytesToInt32sBE(block);
+
 		for (let i = 0; i < 8; i++)
 		{
 			v[i] = h[i];
 		}
+		
 		v[ 8] = s[0] ^ u256[0];
 		v[ 9] = s[1] ^ u256[1];
 		v[10] = s[2] ^ u256[2];
@@ -184,6 +164,7 @@ class Blake224Transform extends Blake256Transform
 	{
 		super();
 		this.isBlake224 = true;
+		this.paddingEndBit = null;
 	}
 
 	getIV()

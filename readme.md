@@ -132,6 +132,7 @@ TODO
 * KHAZAD
 * Khufu
 * MISTY1
+* NewDES / NewDES-96
 * Nimbus
 * NOEKON
 * NUSH

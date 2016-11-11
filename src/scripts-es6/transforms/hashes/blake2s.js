@@ -43,7 +43,7 @@ class Blake2sTransform extends Transform
 		this.addInput("bytes", "Input")
 			.addInput("bytes", "Key (optional)")
 			.addOutput("bytes", "Hash")
-			.addOption("length", "Length", 256, { min: 8, max: 256, step: 8 });
+			.addOption("size", "Size", 256, { min: 8, max: 256, step: 8 });
 	}
 
 	padMessage(bytes)
@@ -84,13 +84,13 @@ class Blake2sTransform extends Transform
 
 		const keyLength = keyBytes ? keyBytes.length : 0;
 
-		if (options.length < 8 || options.length > 256)
+		if (options.size < 8 || options.size > 256)
 		{
-			throw new TransformError(`Length must be between 8 and 256 bits. Was ${options.length} bits.`);
+			throw new TransformError(`Size must be between 8 and 256 bits. Was ${options.size} bits.`);
 		}
-		if (options.length % 8 !== 0)
+		if (options.size % 8 !== 0)
 		{
-			throw new TransformError(`Length must be a multiple of 8 bits. Was ${options.length} bits.`);
+			throw new TransformError(`Size must be a multiple of 8 bits. Was ${options.size} bits.`);
 		}
 
 		if (keyLength > 32)
@@ -98,13 +98,13 @@ class Blake2sTransform extends Transform
 			throw new TransformError(`Key must be between 0 and 256 bits. Was ${keyBytes.length * 8} bits.`);
 		}
 
-		const hashByteLength = options.length / 8;
+		const hashLength = options.size / 8;
 		const emptyMessage = bytes.length === 0;
 
 		const h = this.getIV();
 
 		// BLAKE-2: Parameter block: 0x0101kkbb
-		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashByteLength;
+		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashLength;
 
 		const t = [0, 0];
 		const v = new Array(16);
@@ -148,7 +148,7 @@ class Blake2sTransform extends Transform
 				this.transformBlock(block, h, t, v, lastBlock);
 			}
 		}
-		return int32sToBytesLE(h).subarray(0, hashByteLength);
+		return int32sToBytesLE(h).subarray(0, hashLength);
 	}
 
 	transformBlock(block, h, t, v, lastBlock)

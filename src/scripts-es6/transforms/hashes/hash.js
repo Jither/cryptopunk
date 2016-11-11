@@ -99,6 +99,14 @@ class HashTransform extends Transform
 		// Add "1-bit":
 		result[length] = this.paddingStartBit;
 
+		// For e.g. BLAKE
+		if (this.paddingEndBit)
+		{
+			// We use OR here, because the end bit may actually be the same byte as
+			// the start bit
+			result[length + paddingLength - 1] |= this.paddingEndBit;
+		}
+
 		// NOTE: The maximum javascript array size is 2^32-1 bytes. That's also the
 		// (very theoretical) maximum message length we would be able to handle.
 		// That means the low word will store the low 29 bits of the byte length - shifted

@@ -1,4 +1,4 @@
-import { Transform } from "../transforms";
+import { HashTransform } from "./hash";
 import { int64sToBytesBE, bytesToInt64sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add64, ror64, xor64 } from "../../cryptopunk.bitarith";
 
@@ -54,43 +54,14 @@ function g(m, v, i, a, b, c, d, e)
 	v[b] = ror64(xor64(v[b], v[c]), 11);
 }
 
-class Blake512Transform extends Transform
+class Blake512Transform extends HashTransform
 {
 	constructor()
 	{
-		super();
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash");		
-	}
-
-	padMessage(bytes)
-	{
-		const length = bytes.length;
-		
-		// BLAKE spec says 895 % 1024 - but that's excluding the end-of-padding bit, so for bytes we can
-		// do the usual 896 % 1024
-		let paddingLength = 112 - length % 128;
-		if (paddingLength <= 0)
-		{
-			paddingLength += 128;
-		}
-		const padded = new Uint8Array(length + paddingLength + 16);
-		padded.set(bytes);
-		padded[length] = 0x80;
-
-		const index = length + paddingLength; // Go to last 16 bytes of padding
-		if (!this.isBlake384)
-		{
-			padded[index - 1] |= 0x01; // May be the same byte as the start-of-padding bit
-		}
-
-		// We'll never reach 2^^64 bit length in Javascript
-		const bitLengthLo = length << 3;
-		const bitLengthHi = length >>> 29;
-
-		padded.set(int32sToBytesBE([bitLengthHi, bitLengthLo]), index + 8);
-
-		return padded;
+		super(1024);
+		this.endianness = "BE";
+		this.suffixLength = 16;
+		this.paddingEndBit = 0x01;
 	}
 
 	getIV()
@@ -117,51 +88,57 @@ class Blake512Transform extends Transform
 
 	transform(bytes)
 	{
-		const padded = this.padMessage(bytes);
-
-		const h = this.getIV();
-
-		const s = new Array(4);
-		const t = new Array(2);
-		const v = new Array(16);
-		this.fill(s);
-		this.fill(t);
-		this.fill(v);
-
-		const messageBits = bytes.length * 8;
-
-		let bitCounter = 0;
-		for (let blockIndex = 0; blockIndex < padded.length; blockIndex += 128)
-		{
-			bitCounter += 1024;
-			if (bitCounter > messageBits + 1024)
-			{
-				bitCounter = 0;
-			}
-			else if (bitCounter > messageBits)
-			{
-				bitCounter = messageBits;
-			}
-
-			t[0].lo = bitCounter & 0xffffffff;
-			t[0].hi = (bitCounter / 0x100000000) | 0;
-			// A Javascript implementation will never reach above 2^^64 bit input
-			// t[1] = (bitCounter / 0x100000000) | 0;
-
-			const block = padded.subarray(blockIndex, blockIndex + 128);
-			this.transformBlock(block, h, t, v, s);
+		const context = {
+			h: this.getIV(),
+			s: new Array(4),
+			v: new Array(16),
+			bitCounter: 0,
+			messageSize: bytes.length * 8
 		}
+
+		this.fill(context.s);
+		this.fill(context.v);
+
+		this.transformBlocks(bytes, context)
+
 		if (this.isBlake384)
 		{
 			// Truncate last 128 bits/16 bytes
-			h.splice(-2);
+			context.h.splice(-2);
 		}
-		return int64sToBytesBE(h);
+		return int64sToBytesBE(context.h);
 	}
 
-	transformBlock(block, h, t, v, s)
+	countBits(context)
 	{
-		const m = bytesToInt64sBE(block);
+		const messageSize = context.messageSize;
+		let bitCounter = context.bitCounter;
+		bitCounter += 1024;
+		if (bitCounter > messageSize + 1024)
+		{
+			bitCounter = 0;
+		}
+		else if (bitCounter > messageSize)
+		{
+			bitCounter = messageSize;
+		}
+		context.bitCounter = bitCounter;
+
+		return [
+			{ hi: (bitCounter / 0x100000000) | 0, lo: bitCounter & 0xffffffff },
+			{ hi: 0, lo: 0 }
+		];
+	}
+
+	transformBlock(block, context)
+	{
+		const
+			h = context.h,
+			s = context.s,
+			v = context.v, 
+			t = this.countBits(context),
+			m = bytesToInt64sBE(block);
+
 		for (let i = 0; i < 8; i++)
 		{
 			v[i].hi = h[i].hi;
@@ -212,6 +189,7 @@ class Blake384Transform extends Blake512Transform
 	{
 		super();
 		this.isBlake384 = true;
+		this.paddingEndBit = null;
 	}
 
 	getIV()
