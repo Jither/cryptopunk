@@ -58,6 +58,7 @@
 		runBench("Blake384Transform", "BLAKE-384");
 		runBench("Blake512Transform", "BLAKE-512");
 		runBench("Blake2sTransform", "BLAKE2s", emptyKey);
+		runBench("Blake2bTransform", "BLAKE2b", emptyKey);
 		runBench("HavalTransform", "HAVAL-128 (3 pass)", { passes: 3, length: 128 });
 		runBench("HavalTransform", "HAVAL-128 (4 pass)", { passes: 4, length: 128 });
 		runBench("HavalTransform", "HAVAL-128 (5 pass)", { passes: 5, length: 128 });
@@ -87,6 +88,7 @@
 		runBench("Sha3Transform", "SHA3-512", { variant: "SHA3-512" });
 		runBench("ShakeTransform", "SHAKE-128", { variant: "SHAKE-128" });
 		runBench("ShakeTransform", "SHAKE-256", { variant: "SHAKE-256" });
+		runBench("TigerTransform", "Tiger");
 		runBench("WhirlpoolTransform", "WHIRLPOOL");
 	}
 
