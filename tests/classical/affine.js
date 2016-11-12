@@ -18,11 +18,11 @@ test("Encryption throws for bad a", t => {
 	const tf = new AffineEncryptTransform();
 
 	// 13 is not coprime with 26 (gcd 13)
-	let error = t.throws(() => tf.transform("Anything goes", { a: 13 }));
+	let error = t.throws(() => tf.transform("Anything goes", null, { a: 13 }));
 	t.true(error instanceof TransformError);
 
 	// 4 is not coprime with 26 (gcd 2)
-	error = t.throws(() => tf.transform("Anything goes", { a: 4 }));
+	error = t.throws(() => tf.transform("Anything goes", null, { a: 4 }));
 	t.true(error instanceof TransformError);
 })
 
@@ -30,11 +30,11 @@ test("Decryption throws for bad a", t => {
 	const tf = new AffineDecryptTransform();
 
 	// 13 is not coprime with 26 (gcd 13)
-	let error = t.throws(() => tf.transform("Anything goes", { a: 13 }));
+	let error = t.throws(() => tf.transform("Anything goes", null, { a: 13 }));
 	t.true(error instanceof TransformError);
 
 	// 4 is not coprime with 26 (gcd 2)
-	error = t.throws(() => tf.transform("Anything goes", { a: 4 }));
+	error = t.throws(() => tf.transform("Anything goes", null, { a: 4 }));
 	t.true(error instanceof TransformError);
 })
 

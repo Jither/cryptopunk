@@ -1,24 +1,26 @@
-import { TransformError } from "../transforms";
-import { SubstitutionTransform } from "./substitution";
+import { Transform, TransformError } from "../transforms";
 import { coprime, mod } from "../../cryptopunk.math";
+import { restoreFormatting } from "./cryptopunk.classical-utils";
 
-class AffineEncryptTransform extends SubstitutionTransform
+class AffineEncryptTransform extends Transform
 {
 	constructor()
 	{
 		super();
-		this.addOption("a", "a", 5)
+		this.addInput("string", "Plaintext")
+			.addInput("string", "Alphabet")
+			.addOutput("string", "Ciphertext")
+			.addOption("a", "a", 5)
 			.addOption("b", "b", 7)
-			.addOption("alphabet", "Alphabet", "abcdefghijklmnopqrstuvwxyz")
+			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, options)
+	transform(str, alphabet, options)
 	{
 		options = Object.assign({}, this.defaults, options);
-		const alphabet = options.alphabet;
+		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
-		const ignoreCase = options.ignoreCase;
 		const a = options.a;
 		const b = options.b;
 
@@ -28,30 +30,47 @@ class AffineEncryptTransform extends SubstitutionTransform
 			throw new TransformError(`a (${a}) must be coprime with alphabet length (${alphabetLength}) for message to be decryptable`);
 		}
 
+		const original = str;
+
+		if (options.ignoreCase)
+		{
+			str = str.toUpperCase();
+			alphabet = alphabet.toUpperCase();
+		}
+
 		let result = "";
 
 		for (let i = 0; i < str.length; i++)
 		{
 			const c = str.charAt(i);
-			result += this.substitute(
-				c,
-				alphabet,
-				ignoreCase,
-				index => alphabet.charAt(mod(a * index + b, alphabetLength))
-			);
+			const index = alphabet.indexOf(c);
+			if (index < 0)
+			{
+				continue;
+			}
+
+			result += alphabet.charAt(mod(a * index + b, alphabetLength));
+		}
+
+		if (options.formatted)
+		{
+			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
 		}
 		return result;
 	}
 }
 
-class AffineDecryptTransform extends SubstitutionTransform
+class AffineDecryptTransform extends Transform
 {
 	constructor()
 	{
 		super();
-		this.addOption("a", "a", 5)
+		this.addInput("string", "Ciphertext")
+			.addInput("string", "Alphabet")
+			.addOutput("string", "Plaintext")
+			.addOption("a", "a", 5)
 			.addOption("b", "b", 7)
-			.addOption("alphabet", "Alphabet", "abcdefghijklmnopqrstuvwxyz")
+			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
@@ -67,12 +86,11 @@ class AffineDecryptTransform extends SubstitutionTransform
 		return null;
 	}
 
-	transform(str, options)
+	transform(str, alphabet, options)
 	{
 		options = Object.assign({}, this.defaults, options);
-		const alphabet = options.alphabet;
+		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
-		const ignoreCase = options.ignoreCase;
 		const a = options.a;
 		const b = options.b;
 
@@ -82,17 +100,30 @@ class AffineDecryptTransform extends SubstitutionTransform
 			throw new TransformError(`Could not find multiplicative inverse for a = ${a}, m = ${alphabetLength}.`);
 		}
 
-		let result = "";
+		let original = str;
 
+		if (options.ignoreCase)
+		{
+			str = str.toUpperCase();
+			alphabet = alphabet.toUpperCase();
+		}
+
+		let result = "";
 		for (let i = 0; i < str.length; i++)
 		{
 			const c = str.charAt(i);
-			result += this.substitute(
-				c,
-				alphabet,
-				ignoreCase,
-				index => alphabet.charAt(mod(x * (index - b), alphabetLength))
-			);
+			const index = alphabet.indexOf(c);
+			if (index < 0)
+			{
+				continue;
+			}
+
+			result += alphabet.charAt(mod(x * (index - b), alphabetLength));
+		}
+
+		if (options.formatted)
+		{
+			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
 		}
 		return result;
 	}
