@@ -6,7 +6,7 @@ import * as baseN from "./transforms/base-n";
 import * as bifid from "./transforms/classical/bifid";
 import * as binary from "./transforms/binary";
 import * as blake from "./transforms/hashes/blake";
-import * as blake2s from "./transforms/hashes/blake2s";
+import * as blake2 from "./transforms/hashes/blake2";
 import * as blowfish from "./transforms/modern/blowfish";
 import * as bsd from "./transforms/checksums/bsd";
 import * as codepages from "./transforms/codepages";
@@ -329,7 +329,7 @@ addPaletteItem(fletcher.FletcherTransform, "Fletcher", "Fletcher checksum");
 
 addPaletteCategory("Hashes");
 addPaletteItem(blake.BlakeTransform, "BLAKE", "BLAKE");
-addPaletteItem(blake2s.Blake2sTransform, "BLAKE2s", "BLAKE2s");
+addPaletteItem(blake2.Blake2Transform, "BLAKE2", "BLAKE2");
 addPaletteItem(haval.HavalTransform, "HAVAL", "HAVAL");
 addPaletteItem(keccak.KeccakTransform, "Keccak", "Keccak");
 addPaletteItem(md2.Md2Transform, "MD2", "MD2");

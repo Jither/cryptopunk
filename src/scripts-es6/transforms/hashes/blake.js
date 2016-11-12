@@ -21,7 +21,7 @@ class BlakeTransform extends Transform
 	constructor()
 	{
 		super();
-		this.addInput("bytes", "Input")
+		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash")
 			.addOption("variant", "Variant", "BLAKE-256", { type: "select", texts: VARIANT_NAMES });
 	}

@@ -41,7 +41,7 @@ Supported
 ### Hashes
 
 * BLAKE (224, 256, 384, 512)
-* BLAKE2 (BLAKE2s)
+* BLAKE2 (BLAKE2s, BLAKE2b)
 * HAVAL (128, 160, 192, 224, 256, 3-5 passes)
 * Keccak (variable capacity, hash length, suffix)
 * MD2
@@ -147,7 +147,7 @@ TODO
 
 ### Hashes
 
-* BLAKE2b, BLAKE2X, BLAKE2sp, BLAKE2bp
+* BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
 * CubeHash
 * FSB

@@ -1,7 +1,16 @@
 import { HashTransform, CONSTANTS } from "./hash";
 import { TransformError } from "../transforms";
-import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
-import { add, ror } from "../../cryptopunk.bitarith";
+import { int64sToBytesLE, bytesToInt64sLE } from "../../cryptopunk.utils";
+import { add64, not64, ror64, xor64 } from "../../cryptopunk.bitarith";
+
+// BLAKE2b only differs from BLAKE2s in:
+// - word size
+// - key size
+// - block size
+// - IV (SHA-512 IV instead of SHA-256)
+// - number of rounds (12 instead of 10)
+// - rotation constants in G
+// ... but since Javascript doesn't have native 64-bit integers, this is a different implementation.
 
 const SIGMA = [
   [ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15 ],
@@ -24,28 +33,31 @@ const SIGMA = [
 
 function g(m, v, i, a, b, c, d, e)
 {
-	const sigmaE = SIGMA[i][e]; // i % 10 really, but i is already less than 10 for BLAKE-2s
-	const sigmaE1 = SIGMA[i][e + 1];
-	v[a] = add(v[a], v[b], m[sigmaE]);
-	v[d] = ror(v[d] ^ v[a], 16);
-	v[c] = add(v[c], v[d]);
-	v[b] = ror(v[b] ^ v[c], 12);
-	v[a] = add(v[a], v[b], m[sigmaE1]);
-	v[d] = ror(v[d] ^ v[a], 8);
-	v[c] = add(v[c], v[d]);
-	v[b] = ror(v[b] ^ v[c], 7);
+	// BLAKE2b SIGMA[10..11] = SIGMA[0..1]
+	const sigmaE = SIGMA[i % 10][e];
+	const sigmaE1 = SIGMA[i % 10][e + 1];
+
+	// BLAKE2b vs BLAKE2s: Different rotation constants
+	v[a] = add64(v[a], v[b], m[sigmaE]);
+	v[d] = ror64(xor64(v[d], v[a]), 32);
+	v[c] = add64(v[c], v[d]);
+	v[b] = ror64(xor64(v[b], v[c]), 24);
+	v[a] = add64(v[a], v[b], m[sigmaE1]);
+	v[d] = ror64(xor64(v[d], v[a]), 16);
+	v[c] = add64(v[c], v[d]);
+	v[b] = ror64(xor64(v[b], v[c]), 63);
 }
 
-const BLOCK_LENGTH = 64;
-const ROUNDS = 10;
+const BLOCK_LENGTH = 128;
+const ROUNDS = 12;
 
-class Blake2sTransform extends HashTransform
+class Blake2bTransform extends HashTransform
 {
 	constructor()
 	{
 		super();
 		this.addInput("bytes", "Key (optional)")
-			.addOption("size", "Size", 256, { min: 8, max: 256, step: 8 });
+			.addOption("size", "Size", 512, { min: 8, max: 512, step: 8 });
 	}
 
 	padBlock(block)
@@ -54,7 +66,6 @@ class Blake2sTransform extends HashTransform
 		{
 			return block;
 		}
-		// BLAKE-2: Simple zero padding
 		let paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
 
 		const result = new Uint8Array(block.length + paddingLength);
@@ -65,16 +76,16 @@ class Blake2sTransform extends HashTransform
 
 	getIV()
 	{
-		// Same constants as SHA-256
+		// Same constants as SHA-512
 		return [
-			CONSTANTS.SQRT2, 
-			CONSTANTS.SQRT3, 
-			CONSTANTS.SQRT5, 
-			CONSTANTS.SQRT7, 
-			CONSTANTS.SQRT11, 
-			CONSTANTS.SQRT13, 
-			CONSTANTS.SQRT17, 
-			CONSTANTS.SQRT19
+			{ hi: 0x6a09e667, lo: 0xf3bcc908 },
+			{ hi: 0xbb67ae85, lo: 0x84caa73b },
+			{ hi: 0x3c6ef372, lo: 0xfe94f82b }, 
+			{ hi: 0xa54ff53a, lo: 0x5f1d36f1 }, 
+			{ hi: 0x510e527f, lo: 0xade682d1 }, 
+			{ hi: 0x9b05688c, lo: 0x2b3e6c1f }, 
+			{ hi: 0x1f83d9ab, lo: 0xfb41bd6b }, 
+			{ hi: 0x5be0cd19, lo: 0x137e2179 }
 		];
 	}
 
@@ -85,24 +96,24 @@ class Blake2sTransform extends HashTransform
 		const keyLength = keyBytes ? keyBytes.length : 0;
 		const hashLength = options.size / 8;
 
-		if (options.size < 8 || options.size > 256)
+		if (options.size < 8 || options.size > 512)
 		{
-			throw new TransformError(`Size must be between 8 and 256 bits. Was ${options.size} bits.`);
+			throw new TransformError(`Size must be between 8 and 512 bits. Was ${options.size} bits.`);
 		}
 		if (options.size % 8 !== 0)
 		{
 			throw new TransformError(`Size must be a multiple of 8 bits. Was ${options.size} bits.`);
 		}
 
-		if (keyLength > 32)
+		if (keyLength > 64)
 		{
-			throw new TransformError(`Key must be between 0 and 256 bits. Was ${keyBytes.length * 8} bits.`);
+			throw new TransformError(`Key must be between 0 and 512 bits. Was ${keyBytes.length * 8} bits.`);
 		}
 
 		const h = this.getIV();
 
 		// BLAKE-2: Parameter block: 0x0101kkbb
-		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashLength;
+		h[0].lo = h[0].lo ^ 0x01010000 ^ (keyLength << 8) ^ hashLength;
 
 		const context = {
 			h,
@@ -116,7 +127,7 @@ class Blake2sTransform extends HashTransform
 		// 1 byte, key => 2 blocks
 		let blocksRemaining = Math.ceil(bytes.length / BLOCK_LENGTH);
 
-		// BLAKE-2: Can be keyed - the key is prefixed as an extra block
+		// Mix in key (if any)
 		if (keyLength > 0)
 		{
 			const block = this.padBlock(keyBytes);
@@ -126,8 +137,6 @@ class Blake2sTransform extends HashTransform
 		}
 		else if (blocksRemaining === 0)
 		{
-			// Keyed empty message should result in H(K), not H(K|M)),
-			// but unkeyed empty message should still result in H(M)
 			blocksRemaining = 1;
 		}
 
@@ -138,8 +147,6 @@ class Blake2sTransform extends HashTransform
 			let block = bytes.subarray(offset, offset + BLOCK_LENGTH);
 			const isLastBlock = blocksRemaining === 1;
 
-			// BLAKE-2: Counter is in bytes rather than bits
-			// and no special rule for blocks with no original message content
 			context.byteCounter += block.length;
 
 			if (isLastBlock)
@@ -153,23 +160,21 @@ class Blake2sTransform extends HashTransform
 			blocksRemaining--;
 		}
 
-		return int32sToBytesLE(context.h).subarray(0, hashLength);
+		return int64sToBytesLE(context.h).subarray(0, hashLength);
 	}
 
 	transformBlock(block, context, isLastBlock)
 	{
-		// BLAKE-2: Byte streams are interpreted as LITTLE endian:
-		const m = bytesToInt32sLE(block);
+		const m = bytesToInt64sLE(block);
 		
 		const
 			h = context.h,
 			v = context.v,
 			byteCounter = context.byteCounter;
 		
-		// BLAKE-2: Different initialization of working vector:
 		for (let i = 0; i < 8; i++)
 		{
-			v[i] = h[i];
+			v[i] = { hi: h[i].hi, lo: h[i].lo };
 		}
 
 		const iv = this.getIV();
@@ -178,15 +183,15 @@ class Blake2sTransform extends HashTransform
 			v[i + 8] = iv[i];
 		}
 
-		v[12] ^= byteCounter & 0xffffffff;
-		v[13] ^= (byteCounter / 0x100000000) | 0;
+		v[12] = xor64(v[12], { hi: (byteCounter / 0x100000000) | 0 , lo: byteCounter & 0xffffffff });
+		// v[13] would always be XOR'ed with 0 - we'll never reach 2^64 byte message length in Javascript
 
 		if (isLastBlock)
 		{
-			v[14] ^= 0xffffffff;
+			// NOT64 is more efficient than XOR64(, fffff...) and just as readable
+			v[14] = not64(v[14]);
 		}
 
-		// BLAKE-2: 10 rounds instead of 14
 		for(let i = 0; i < ROUNDS; i++)
 		{
 			// column step
@@ -203,11 +208,11 @@ class Blake2sTransform extends HashTransform
 
 		for (let i = 0; i < 8; i++)
 		{
-			h[i] ^= v[i] ^ v[i + 8];
+			h[i] = xor64(h[i], v[i], v[i + 8]);
 		}
 	}
 }
 
 export {
-	Blake2sTransform
+	Blake2bTransform
 };
