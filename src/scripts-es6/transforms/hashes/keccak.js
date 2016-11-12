@@ -46,13 +46,25 @@ function xorLane(state, x, y, value)
 	state[position + 7] ^= (value.hi >>> 24) & 0xff;
 }
 
+function append1bit(byte)
+{
+	let i = 0;
+	while (i < 8)
+	{
+		if ((byte >>> i) === 0)
+		{
+			break;
+		}
+		i++;
+	}
+	return byte | (1 << i);
+}
+
 class KeccakBaseTransform extends HashTransform
 {
 	constructor()
 	{
 		super();
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash");
 	}
 
 	lfsr86540(lfsr)
@@ -156,7 +168,12 @@ class KeccakBaseTransform extends HashTransform
 
 		const rate = 1600 - capacity;
 		const rateInBytes = rate / 8;
-		const suffix = options.suffix;
+		// Combine suffix and padding start bit.
+		// Reading lsb to msb (as in the spec):
+		// - SHA-3's      01 (0x02) becomes   011 (0x06)
+		// - SHAKE's    1111 (0x0f) becomes 11111 (0x1f)
+		// - Original Keccak (0x00) becomes     1 (0x01)
+		const suffixAndPaddingStart = append1bit(options.suffix);
 
 		const state = new Uint8Array(200);
 
@@ -182,13 +199,22 @@ class KeccakBaseTransform extends HashTransform
 			}
 		}
 
-		// Add suffix bits
-		state[blockSize] ^= suffix;
+		// Padding.
+		// Keccak's padding scheme consists of a suffix followed by a 1-bit (already combined here),
+		// followed by 0-padding and then a 1-bit at the end. Since most of it is 0-bits
+		// there's no point in creating a padded block and XOR'ing it into state. We've already absorbed
+		// the remainder of the message above. So we'll just XOR the start and end padding bytes into
+		// the state at the correct positions.
+		state[blockSize] ^= suffixAndPaddingStart;
 
-		if (((suffix & 0x80) !== 0) && (blockSize === rateInBytes - 1))
+		// If the suffix + starting 1-bit end up filling the block, we need another block of
+		// 0 bits before the ending 1-bit. Once again, no point in creating and XOR'ing a block of 0 bits,
+		// but we do need to permute the state.
+		if (((suffixAndPaddingStart & 0x80) !== 0) && (blockSize === rateInBytes - 1))
 		{
 			this.permute(state);
 		}
+		// Padding end bit at last byte position of block.
 		state[rateInBytes - 1] ^= 0x80;
 		this.permute(state);
 
@@ -222,7 +248,7 @@ class KeccakTransform extends KeccakBaseTransform
 		this
 			.addOption("capacity", "Capacity", 1024, { min: 8, max: 1592, step: 8 })
 			.addOption("size", "Size", 512, { min: 0, step: 8 })
-			.addOption("suffix", "Suffix", 0x01, { min: 0, max: 255 });
+			.addOption("suffix", "Suffix", 0x00, { min: 0, max: 255 });
 	}
 }
 
