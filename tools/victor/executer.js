@@ -84,7 +84,7 @@ class VictorExecuter
 						break;
 				}
 				break;
-				
+
 			default:
 				// Assign argument
 				if (this.argDefinitions.indexOf(line.prefix) >= 0)
@@ -232,7 +232,14 @@ class VictorExecuter
 		const valueAsInt = Number(value); // Not parseInt - we want the *entire* string to be a number - 1,15,7 is a string
 		if (isNaN(valueAsInt))
 		{
-			this.options[name] = value;
+			if (value === "true" || value === "false")
+			{
+				this.options[name] = (value === "true");
+			}
+			else
+			{
+				this.options[name] = value;
+			}
 		}
 		else
 		{

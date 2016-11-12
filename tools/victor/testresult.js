@@ -1,5 +1,7 @@
 "use strict";
 
+const utils = require("./utils");
+
 class TestResult
 {
 	constructor()

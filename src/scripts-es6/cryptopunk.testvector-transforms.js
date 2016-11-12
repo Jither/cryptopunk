@@ -12,6 +12,7 @@ import * as threefish from "./transforms/block-ciphers/threefish";
 import * as twofish from "./transforms/block-ciphers/twofish";
 
 import * as rc4 from "./transforms/stream-ciphers/rc4";
+import * as xor from "./transforms/stream-ciphers/xor";
 
 import * as blake256 from "./transforms/hashes/blake256";
 import * as blake512 from "./transforms/hashes/blake512";
@@ -64,13 +65,15 @@ addTransformsFrom(blowfish);
 addTransformsFrom(des);
 addTransformsFrom(idea);
 addTransformsFrom(lucifer);
-addTransformsFrom(rc4);
 addTransformsFrom(rijndael);
 addTransformsFrom(serpent);
 addTransformsFrom(skipjack);
 addTransformsFrom(speck);
 addTransformsFrom(threefish);
 addTransformsFrom(twofish);
+
+addTransformsFrom(rc4);
+addTransformsFrom(xor);
 
 addTransformsFrom(blake256);
 addTransformsFrom(blake512);

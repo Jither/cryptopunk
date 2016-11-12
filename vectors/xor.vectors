@@ -1,0 +1,48 @@
+mode    : encrypt-decrypt
+encrypt : XorTransform
+decrypt : XorTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+title   : XOR without key, repeating
+option  : repeatKey = true
+
+k:
+p: 0123456789abcdef
+c: 0123456789abcdef
+
+title   : XOR without key, non-repeating
+option  : repeatKey = false
+
+k:
+p: 0123456789abcdef
+c: 0123456789abcdef
+
+title   : XOR with short key, repeating
+option  : repeatKey = true
+
+k: aa
+p: 0123456789abcdef
+c: ab89efcd23016745
+
+title   : XOR with short key, non-repeating
+option  : repeatKey = false
+
+k: aa
+p: 0123456789abcdef
+c: ab23456789abcdef
+
+title   : XOR with long key, repeating
+option 	: repeatKey = true
+
+k: aabbccddeeff0011223344
+p: 0123456789abcdef
+c: ab9889ba6754cdfe
+
+title   : XOR with long key, non-repeating
+option  : repeatKey = false
+
+k: aabbccddeeff0011223344
+p: 0123456789abcdef
+c: ab9889ba6754cdfe
