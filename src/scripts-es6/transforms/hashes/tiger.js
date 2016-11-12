@@ -335,9 +335,7 @@ class TigerTransform extends MdHashTransform
 	constructor()
 	{
 		super(512);
-		this.addInput("bytes", "Input")
-			.addOutput("bytes", "Hash")
-			.addOption("variant", "Variant", "tiger", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
+		this.addOption("variant", "Variant", "tiger", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
 	transform(bytes, options)

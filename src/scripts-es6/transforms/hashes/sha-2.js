@@ -21,7 +21,7 @@ class Sha2Transform extends Transform
 	constructor()
 	{
 		super();
-		this.addInput("bytes", "Input")
+		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash")
 			.addOption("variant", "Variant", "SHA-256", { type: "select", texts: SHA2_VARIANT_NAMES });
 	}

@@ -101,7 +101,25 @@ class Blake2sTransform extends HashTransform
 
 		const h = this.getIV();
 
-		// BLAKE-2: Parameter block: 0x0101kkbb
+		// BLAKE-2s: Parameter block:
+		// 00: bb kk ff dd
+		// 04: ll ll ll ll
+		// 08: oo oo oo oo
+		// 12: oo oo nn ii
+		// 16: ss ss ss ss
+		// 20: ss ss ss ss
+		// 24: pp pp pp pp
+		// 28: pp pp pp pp
+		// dd = depth (1 in sequential mode)
+		// ff = fanout (1 in sequential mode)
+		// kk = key length in bytes
+		// bb = digest length in bytes
+		// ll = leaf length (0 in sequential mode)
+		// oo = node offset (0 in sequential mode)
+		// nn = node depth (0 in sequential mode)
+		// ii = inner length (0 in sequential mode)
+		// ss = salt
+		// pp = personalization
 		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashLength;
 
 		const context = {

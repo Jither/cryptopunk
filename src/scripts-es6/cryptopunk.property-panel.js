@@ -1,11 +1,14 @@
 import { bytesToHex } from "./cryptopunk.utils";
 
 const eleProperties = document.getElementById("properties");
-const elePropContainer = document.getElementById("property-list");
+const eleOptionsContainer = document.getElementById("option-list");
 const eleOutputsContainer = document.getElementById("output-list");
 const eleOutputs = [];
 
 let currentNode;
+
+const eleNodeTitle = document.getElementById("node-title");
+eleNodeTitle.addEventListener("input", titleChangedListener)
 
 function applyFromOptions(ele, option, attrName)
 {
@@ -93,19 +96,25 @@ function showProperties(node)
 
 	eleOutputs.length = 0;
 
-	elePropContainer.innerHTML = "";
+	eleOptionsContainer.innerHTML = "";
 	eleOutputsContainer.innerHTML = "";
 
 	const headers = eleProperties.querySelectorAll("h1");
+	const divs = eleProperties.querySelectorAll(":scope > div");
 	const eleNode = headers[0].querySelector("span");
+	divs.forEach(div => { div.style.display = node ? "block" : "none"; });
 	headers.forEach(header => { header.style.display = node ? "block" : "none"; });
 
 	currentNode = node;
+
+	eleNodeTitle.innerHTML = "";
 
 	if (!node)
 	{
 		return;
 	}
+
+	eleNodeTitle.value = node.title;
 
 	eleNode.innerText = node.name;
 
@@ -129,7 +138,7 @@ function showProperties(node)
 			{
 				continue;
 			}
-			elePropContainer.appendChild(getPropertyEditorFor(name, optionDefinitions[name], controller.options[name], changedCallback));
+			eleOptionsContainer.appendChild(getPropertyEditorFor(name, optionDefinitions[name], controller.options[name], changedCallback));
 		}
 	}
 
@@ -148,6 +157,14 @@ function showProperties(node)
 	}
 
 	updateOutputs(currentNode);
+}
+
+function titleChangedListener()
+{
+	if (currentNode)
+	{
+		currentNode.title = eleNodeTitle.value;
+	}
 }
 
 function nodeRemovedListener(node)

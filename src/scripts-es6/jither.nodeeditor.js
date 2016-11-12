@@ -334,7 +334,6 @@ class Node
 		this.element.classList.add("node");
 
 		this.eleHeader = document.createElement("h2");
-		this.eleHeader.innerText = name;
 		this.element.appendChild(this.eleHeader);
 
 		this.eleInputs = document.createElement("ul");
@@ -368,6 +367,19 @@ class Node
 
 		this.dragMoveListener = this.mouseMoveListener.bind(this);
 		this.dragUpListener = this.mouseUpListener.bind(this);
+
+		this.update();
+	}
+
+	get title()
+	{
+		return this._title || "";
+	}
+
+	set title(value)
+	{
+		this._title = value;
+		this.update();
 	}
 
 	get value()
@@ -569,6 +581,11 @@ class Node
 	copyOutput()
 	{
 
+	}
+
+	update()
+	{
+		this.eleHeader.innerText = this._title || this.name;
 	}
 }
 

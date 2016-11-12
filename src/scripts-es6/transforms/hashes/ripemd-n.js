@@ -21,7 +21,7 @@ class RipeMdNTransform extends Transform
 	constructor()
 	{
 		super();
-		this.addInput("bytes", "Input")
+		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash")
 			.addOption("variant", "Variant", "RIPEMD-160", { type: "select", texts: VARIANT_NAMES });
 	}
