@@ -1,4 +1,4 @@
-import { MdHashTransform } from "./hash";
+import { MdHashTransform, CONSTANTS } from "./hash";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 
@@ -26,14 +26,14 @@ class Sha256Transform extends MdHashTransform
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
 		// For SHA-256: First 32 bits of the fractional parts of the square roots of the first 8 prime numbers
 		return [
-			0x6a09e667, 
-			0xbb67ae85, 
-			0x3c6ef372, 
-			0xa54ff53a, 
-			0x510e527f, 
-			0x9b05688c, 
-			0x1f83d9ab, 
-			0x5be0cd19
+			CONSTANTS.SQRT2, 
+			CONSTANTS.SQRT3, 
+			CONSTANTS.SQRT5, 
+			CONSTANTS.SQRT7, 
+			CONSTANTS.SQRT11, 
+			CONSTANTS.SQRT13, 
+			CONSTANTS.SQRT17, 
+			CONSTANTS.SQRT19
 		];
 	}
 
@@ -110,14 +110,14 @@ class Sha224Transform extends Sha256Transform
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
 		// For SHA-224: The first 32 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.
 		return [
-			0xc1059ed8, 
-			0x367cd507, 
-			0x3070dd17, 
-			0xf70e5939, 
-			0xffc00b31, 
-			0x68581511, 
-			0x64f98fa7, 
-			0xbefa4fa4
+			CONSTANTS.SQRT23,
+			CONSTANTS.SQRT29,
+			CONSTANTS.SQRT31,
+			CONSTANTS.SQRT37,
+			CONSTANTS.SQRT41,
+			CONSTANTS.SQRT43,
+			CONSTANTS.SQRT47,
+			CONSTANTS.SQRT53
 		];
 	}
 }

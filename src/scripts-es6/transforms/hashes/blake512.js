@@ -65,6 +65,7 @@ class Blake512Transform extends MdHashTransform
 	getIV()
 	{
 		return [
+			// Same constants as SHA-512
 			{ hi: 0x6a09e667, lo: 0xf3bcc908 },
 			{ hi: 0xbb67ae85, lo: 0x84caa73b },
 			{ hi: 0x3c6ef372, lo: 0xfe94f82b }, 
@@ -193,6 +194,7 @@ class Blake384Transform extends Blake512Transform
 	getIV()
 	{
 		return [
+			// Same constants as SHA-384
 			{ hi: 0xcbbb9d5d, lo: 0xc1059ed8 },
 			{ hi: 0x629a292a, lo: 0x367cd507 },
 			{ hi: 0x9159015a, lo: 0x3070dd17 },

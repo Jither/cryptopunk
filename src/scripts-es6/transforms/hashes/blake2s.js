@@ -1,4 +1,4 @@
-import { HashTransform } from "./hash";
+import { HashTransform, CONSTANTS } from "./hash";
 import { TransformError } from "../transforms";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
@@ -36,6 +36,8 @@ function g(m, v, i, a, b, c, d, e)
 	v[b] = ror(v[b] ^ v[c], 7);
 }
 
+const BLOCK_LENGTH = 64;
+
 class Blake2sTransform extends HashTransform
 {
 	constructor()
@@ -45,35 +47,33 @@ class Blake2sTransform extends HashTransform
 			.addOption("size", "Size", 256, { min: 8, max: 256, step: 8 });
 	}
 
-	padMessage(bytes)
+	padBlock(block)
 	{
-		// BLAKE-2: Simple zero padding
-		let paddingLength = 64 - bytes.length % 64;
-		// Don't pad if already aligned with blocks - except if we have 0 bytes
-		if (paddingLength === 64 && bytes.length > 0)
+		if (block.length === BLOCK_LENGTH)
 		{
-			// TODO: Yeah, we could just return bytes without doing anything, but until we get rid of
-			// the current too-much-cloning scheme, let's make absolutely sure the caller's array isn't modified.
-			paddingLength = 0;
+			return block;
 		}
+		// BLAKE-2: Simple zero padding
+		let paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
 
-		const padded = new Uint8Array(bytes.length + paddingLength);
-		padded.set(bytes);
+		const result = new Uint8Array(block.length + paddingLength);
+		result.set(block);
 
-		return padded;
+		return result;
 	}
 
 	getIV()
 	{
+		// Same constants as SHA-256
 		return [
-			0x6a09e667, 
-			0xbb67ae85, 
-			0x3c6ef372, 
-			0xa54ff53a, 
-			0x510e527f, 
-			0x9b05688c, 
-			0x1f83d9ab, 
-			0x5be0cd19
+			CONSTANTS.SQRT2, 
+			CONSTANTS.SQRT3, 
+			CONSTANTS.SQRT5, 
+			CONSTANTS.SQRT7, 
+			CONSTANTS.SQRT11, 
+			CONSTANTS.SQRT13, 
+			CONSTANTS.SQRT17, 
+			CONSTANTS.SQRT19
 		];
 	}
 
@@ -82,6 +82,7 @@ class Blake2sTransform extends HashTransform
 		options = Object.assign({}, this.defaults, options);
 
 		const keyLength = keyBytes ? keyBytes.length : 0;
+		const hashLength = options.size / 8;
 
 		if (options.size < 8 || options.size > 256)
 		{
@@ -97,64 +98,73 @@ class Blake2sTransform extends HashTransform
 			throw new TransformError(`Key must be between 0 and 256 bits. Was ${keyBytes.length * 8} bits.`);
 		}
 
-		const hashLength = options.size / 8;
-		const emptyMessage = bytes.length === 0;
-
 		const h = this.getIV();
 
 		// BLAKE-2: Parameter block: 0x0101kkbb
 		h[0] = h[0] ^ 0x01010000 ^ (keyLength << 8) ^ hashLength;
 
-		const t = [0, 0];
-		const v = new Array(16);
+		const context = {
+			h,
+			v: new Array(16),
+			byteCounter: 0
+		};
 
-		let byteCounter = 0;
+		// 0 bytes, no key => 1 block
+		// 0 bytes, key => 1 block
+		// 1 byte, no key => 1 block
+		// 1 byte, key => 2 blocks
+		let blocksRemaining = Math.ceil(bytes.length / BLOCK_LENGTH);
 
 		// BLAKE-2: Can be keyed - the key is prefixed as an extra block
 		if (keyLength > 0)
 		{
-			const block = this.padMessage(keyBytes);
-			const lastBlock = emptyMessage;
-			byteCounter += 64;
-			t[0] = byteCounter;
-			this.transformBlock(block, h, t, v, lastBlock);
-		}
+			const block = this.padBlock(keyBytes);
+			context.byteCounter += BLOCK_LENGTH;
 
-		// Keyed empty message should result in H(K), not H(K|M)
-		if (keyLength === 0 || !emptyMessage)
+			this.transformBlock(block, context, !blocksRemaining);
+		}
+		else if (blocksRemaining === 0)
 		{
-			const padded = this.padMessage(bytes);
-			const messageLength = keyLength > 0 ? 64 + bytes.length : bytes.length;
-			for (let blockIndex = 0; blockIndex < padded.length; blockIndex += 64)
-			{
-				const lastBlock = (blockIndex === padded.length - 64);
-
-				const block = padded.subarray(blockIndex, blockIndex + 64);
-				
-				// BLAKE-2: Counter is in bytes rather than bits
-				// and no special rule for blocks with no original content(?)
-				byteCounter += 64;
-				// TODO: this can be simplified when we do block padding instead of message padding:
-				if (byteCounter > messageLength)
-				{
-					// Block content smaller than block
-					byteCounter = messageLength;
-				}
-
-				t[0] = byteCounter & 0xffffffff;
-				t[1] = (byteCounter / 0x100000000) | 0;
-
-				this.transformBlock(block, h, t, v, lastBlock);
-			}
+			// Keyed empty message should result in H(K), not H(K|M)),
+			// but unkeyed empty message should still result in H(M)
+			blocksRemaining = 1;
 		}
-		return int32sToBytesLE(h).subarray(0, hashLength);
+
+		// Mix in actual message blocks (if any)
+		let offset = 0;
+		while (blocksRemaining > 0)
+		{
+			let block = bytes.subarray(offset, offset + BLOCK_LENGTH);
+			const isLastBlock = blocksRemaining === 1;
+
+			// BLAKE-2: Counter is in bytes rather than bits
+			// and no special rule for blocks with no original message content
+			context.byteCounter += block.length;
+
+			if (isLastBlock)
+			{
+				block = this.padBlock(block);
+			}
+
+			this.transformBlock(block, context, isLastBlock);
+			
+			offset += BLOCK_LENGTH;
+			blocksRemaining--;
+		}
+
+		return int32sToBytesLE(context.h).subarray(0, hashLength);
 	}
 
-	transformBlock(block, h, t, v, lastBlock)
+	transformBlock(block, context, isLastBlock)
 	{
 		// BLAKE-2: Byte streams are interpreted as LITTLE endian:
 		const m = bytesToInt32sLE(block);
-
+		
+		const
+			h = context.h,
+			v = context.v,
+			byteCounter = context.byteCounter;
+		
 		// BLAKE-2: Different initialization of working vector:
 		for (let i = 0; i < 8; i++)
 		{
@@ -167,10 +177,10 @@ class Blake2sTransform extends HashTransform
 			v[i + 8] = iv[i];
 		}
 
-		v[12] ^= t[0];
-		v[13] ^= t[1];
+		v[12] ^= byteCounter & 0xffffffff;
+		v[13] ^= (byteCounter / 0x100000000) | 0;
 
-		if (lastBlock)
+		if (isLastBlock)
 		{
 			v[14] ^= 0xffffffff;
 		}
