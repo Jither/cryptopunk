@@ -352,6 +352,7 @@ addPaletteItem(stringManipulation.SimpleTranspositionTransform, "Simple transpos
 addPaletteCategory("Classical two-way");
 addPaletteItem(rotx.RotXTransform, "ROT-X");
 addPaletteItem(rotx.Rot5Transform, "ROT-5");
+addPaletteItem(rotx.Rot13Transform, "ROT-13");
 addPaletteItem(rotx.Rot18Transform, "ROT-18");
 addPaletteItem(rotx.Rot47Transform, "ROT-47");
 
@@ -379,11 +380,11 @@ addPaletteItem(vigenere.VigenereEncryptTransform, "Vigènere", "Vigènere Encryp
 addPaletteCategory("Mechanical");
 addPaletteItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
 
-addPaletteCategory("Modern two-way");
+addPaletteCategory("Stream ciphers");
 addPaletteItem(rc4.Rc4Transform, "RC4");
 addPaletteItem(xor.XorTransform, "XOR");
 
-addPaletteCategory("Modern decryption");
+addPaletteCategory("Block cipher decryption");
 addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");
 //addPaletteItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt");
 addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
@@ -403,7 +404,7 @@ addPaletteItem(xtea.XTeaDecryptTransform, "XTEA", "XTEA Decrypt");
 addPaletteItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
 
-addPaletteCategory("Modern encryption");
+addPaletteCategory("Block cipher encryption");
 addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) Encrypt");
 //addPaletteItem(nativeAes.NativeAesCfbEncryptTransform, "AES (CFB)", "AES (CFB) Encrypt");
 addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");

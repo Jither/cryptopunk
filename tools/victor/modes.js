@@ -124,7 +124,7 @@ class EncryptDecryptTextMode extends TestMode
 		{
 			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
 			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.c);
+			result.assertTextsEqual(encResult, argValues.c);
 		}
 		catch (e)
 		{
@@ -136,7 +136,7 @@ class EncryptDecryptTextMode extends TestMode
 		{
 			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
 			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.p);
+			result.assertTextsEqual(decResult, argValues.p);
 		}
 		catch (e)
 		{
@@ -190,6 +190,68 @@ class DecryptEncryptMode extends TestMode
 	}
 }
 
+class EncryptTextMode extends TestMode
+{
+	get args()
+	{
+		return {
+			k: formats.UTF8,
+			p: formats.UTF8,
+			c: formats.UTF8
+		};
+	}
+
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const enc = transforms.encrypt;
+		try
+		{
+			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
+			const encResult = enc.transform.apply(enc, args);
+			result.assertTextsEqual(encResult, argValues.c);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
+}
+
+class DecryptTextMode extends TestMode
+{
+	get args()
+	{
+		return {
+			k: formats.UTF8,
+			p: formats.UTF8,
+			c: formats.UTF8
+		};
+	}
+
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const dec = transforms.decrypt;
+		try
+		{
+			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
+			const decResult = dec.transform.apply(dec, args);
+			result.assertTextsEqual(decResult, argValues.c);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
+}
+
 class HashMode extends TestMode
 {
 	get args()
@@ -229,6 +291,8 @@ class HashMode extends TestMode
 module.exports = {
 	EncryptDecryptMode,
 	EncryptDecryptTextMode,
+	EncryptTextMode,
+	DecryptTextMode,
 	DecryptEncryptMode,
 	HashMode
 };

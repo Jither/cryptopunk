@@ -1,129 +1,108 @@
-import { TransformError } from "../transforms";
-import { SubstitutionTransform } from "./substitution";
+import { Transform, TransformError } from "../transforms";
+import { polybius, depolybius, restoreFormatting } from "./cryptopunk.classical-utils";
 import { mod, isPerfectSquare } from "../../cryptopunk.math";
 import { removeWhiteSpace } from "../../cryptopunk.strings";
 
-class BifidEncryptTransform extends SubstitutionTransform
+class BifidTransform extends Transform
 {
-	constructor()
+	constructor(decrypt)
 	{
 		super();
-		this.addOption("alphabet", "Alphabet table", "ABCDEFGHIKLMNOPQRSTUVWXYZ")
+		this.addInput("string", decrypt ? "Ciphertext" : "Plaintext")
+			.addInput("string", "Alphabet")
+			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
+			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, options)
+	transform(str, alphabet, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
-		const alphabet = removeWhiteSpace(options.alphabet);
+		alphabet = removeWhiteSpace(alphabet);
+
+		if (alphabet.length < 1)
+		{
+			alphabet = "abcdefghiklmnopqrstuvwxyz";
+		}
 
 		if (!isPerfectSquare(alphabet.length))
 		{
 			throw new TransformError(`Alphabet table must be a perfect square.`);
 		}
 
-		const size = Math.sqrt(alphabet.length);
-
-		const rows = [], cols = [];
-		for (let i = 0; i < str.length; i++)
+		const originalStr = str;
+		if (options.ignoreCase)
 		{
-			const c = str.charAt(i);
-			this.substitute(
-				c,
-				alphabet,
-				options.ignoreCase,
-				index => {
-					rows.push(Math.floor(index / size));
-					cols.push(mod(index, size));
-					return " "; // DUMMY
-				}
-			);
+			alphabet = alphabet.toUpperCase();
+			str = str.toUpperCase();
 		}
 
-		const positions = rows.concat(cols);
-
-		let result = "";
-		let encryptedPosition = 0;
-		for (let i = 0; i < str.length; i++)
+		let result = this._transform(str, alphabet);
+		if (options.formatted)
 		{
-			const c = str.charAt(i);
-			result += this.substitute(
-				c,
-				alphabet,
-				options.ignoreCase,
-				() => {
-					const row = positions[encryptedPosition++];
-					const col = positions[encryptedPosition++];
-					return alphabet.charAt(row * size + col);
-				}
-			);
+			result = restoreFormatting(result, originalStr, alphabet, options.ignoreCase);
 		}
-
 		return result;
 	}
 }
 
-class BifidDecryptTransform extends SubstitutionTransform
+class BifidEncryptTransform extends BifidTransform
 {
 	constructor()
 	{
-		super();
-		this.addOption("alphabet", "Alphabet table", "ABCDEFGHIKLMNOPQRSTUVWXYZ")
-			.addOption("ignoreCase", "Ignore case", true);
+		super(false);
 	}
 
-	transform(str, options)
+	_transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
+		let coords = polybius(str, alphabet).filter(coord => coord !== null);
 
-		const alphabet = removeWhiteSpace(options.alphabet);
-
-		if (!isPerfectSquare(alphabet.length))
+		const positions = new Array(coords.length * 2);
+		for (let i = 0; i < coords.length; i++)
 		{
-			throw new TransformError(`Alphabet table must be a perfect square.`);
-		}
-		const size = Math.sqrt(alphabet.length);
-
-		const positions = [];
-		for (let i = 0; i < str.length; i++)
-		{
-			const c = str.charAt(i);
-			this.substitute(
-				c,
-				alphabet,
-				options.ignoreCase,
-				index => {
-					positions.push(Math.floor(index / size));
-					positions.push(mod(index, size));
-					return " "; // DUMMY
-				}
-			);
+			const coord = coords[i];
+			positions[i] = coord[0];
+			positions[i + coords.length] = coord[1];
 		}
 
-		let result = "";
-
-		const rows = positions;
-		const cols = positions.slice(positions.length / 2);
-
-		let encryptedPosition = 0;
-		for (let i = 0; i < str.length; i++)
+		for (let i = 0; i < coords.length; i++)
 		{
-			const c = str.charAt(i);
-			result += this.substitute(
-				c,
-				alphabet,
-				options.ignoreCase,
-				() => {
-					const row = rows[encryptedPosition];
-					const col = cols[encryptedPosition];
-					encryptedPosition++;
-					return alphabet.charAt(row * size + col);
-				}
-			);
+			coords[i][0] = positions[i * 2];
+			coords[i][1] = positions[i * 2 + 1];
 		}
 
-		return result;
+		return depolybius(coords, alphabet);
+	}
+}
+
+class BifidDecryptTransform extends BifidTransform
+{
+	constructor()
+	{
+		super(true);
+	}
+
+	_transform(str, alphabet)
+	{
+		const coords = polybius(str, alphabet).filter(coord => coord !== null);
+
+		const positions = new Array(coords.length * 2);
+
+		for (let i = 0; i < coords.length; i++)
+		{
+			const coord = coords[i];
+			positions[i * 2] = coord[0];
+			positions[i * 2 + 1] = coord[1];
+		}
+
+		for (let i = 0; i < coords.length; i++)
+		{
+			coords[i][0] = positions[i];
+			coords[i][1] = positions[i + coords.length];
+		}
+
+		return depolybius(coords, alphabet);
 	}
 }
 

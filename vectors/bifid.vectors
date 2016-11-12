@@ -1,0 +1,27 @@
+mode    : encrypt-decrypt-text
+encrypt : BifidEncryptTransform
+decrypt : BifidDecryptTransform
+arg     : a (alphabet)
+a-format: ascii
+c-format: ascii
+p-format: ascii
+
+title   : Bifid test vector
+
+a: abcdefghiklmnopqrstuvwxyz
+p: init decode sequence...five down, nine across...skip truncation...
+c: hiac aqtcag vcxmlast...rhts arns, tuou pexpde...thop cinpurxlts...
+
+mode    : encrypt-text
+option  : formatted = false
+
+a: abcdefghiklmnopqrstuvwxyz
+p: Red Wheelbarrow
+c: QEFCATPKRPVFGR
+
+mode    : decrypt-text
+option  : formatted = false
+
+a: abcdefghiklmnopqrstuvwxyz
+p: Qef Catpkrpvfgr!
+c: REDWHEELBARROW

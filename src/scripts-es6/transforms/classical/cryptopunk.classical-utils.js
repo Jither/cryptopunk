@@ -117,6 +117,12 @@ function polybius(message, alphabet, indices)
 	{
 		const c = message.charAt(i);
 		const index = alphabet.indexOf(c);
+		if (index < 0)
+		{
+			// Not in alphabet:
+			result[i] = null;
+			continue;
+		}
 		const row = Math.floor(index / width);
 		const column = index % width;
 		if (indices)
@@ -167,10 +173,51 @@ function depolybius(message, alphabet, indices)
 	return result;
 }
 
+// Restores case and non-alphabet characters from source text to text
+function restoreFormatting(text, source, alphabet, ignoreCase)
+{
+	let textIndex = 0;
+	let originalSource = source;
+	if (ignoreCase)
+	{
+		alphabet = alphabet.toUpperCase();
+		source = source.toUpperCase();
+	}
+	let result = "";
+	for (let sourceIndex = 0; sourceIndex < source.length; sourceIndex++)
+	{
+		const sourceC = source.charAt(sourceIndex);
+		const originalSourceC = originalSource.charAt(sourceIndex);
+		if (alphabet.indexOf(sourceC) >= 0)
+		{
+			// Source character was in alphabet, so get character from text
+			// and case from source:
+			let textC = text.charAt(textIndex++);
+			const isUpperCase = sourceC === originalSourceC;
+			if (ignoreCase)
+			{
+				textC = isUpperCase ? textC.toUpperCase() : textC.toLowerCase();
+			}
+			result += textC;
+		}
+		else
+		{
+			// Not in alphabet, so add character as is:
+			result += sourceC;
+		}
+	}
+	if (textIndex !== text.length)
+	{
+		throw new Error(`Text ${text} does not match source '${source}'.`);
+	}
+	return result;
+}
+
 export {
 	columnarTransposition,
 	depolybius,
 	getLetterSortPermutation,
 	inverseColumnarTransposition,
-	polybius
+	polybius,
+	restoreFormatting
 };

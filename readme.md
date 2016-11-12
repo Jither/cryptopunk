@@ -21,22 +21,25 @@ Supported
 
 * Enigma
 
-### Modern Ciphers
+### Block Ciphers
 
 * Blowfish
 * DES (64 bit with parity or 56 bit without)
 * IDEA
 * LUCIFER (Sorkin and Outerbridge variants)
-* RC4 (with discard parameter)
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack (including NESSIE variant)
-* Simple XOR
 * Serpent
 * Speck
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
 * Twofish
 * Browser-native AES, RSA (crypto.subtle)
+
+### Stream Ciphers
+
+* RC4 (with discard parameter)
+* Simple XOR
 
 ### Hashes
 

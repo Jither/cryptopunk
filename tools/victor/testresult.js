@@ -38,7 +38,7 @@ class TestResult
 			.concat(this.warnings.map(warning => `${warning}`));
 	}
 
-	assertEqual(actual, expected)
+	assertTextsEqual(actual, expected)
 	{
 		if (actual !== expected)
 		{

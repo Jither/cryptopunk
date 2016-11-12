@@ -32,6 +32,17 @@ function isPerfectSquare(n)
 	return rt * rt === n;
 }
 
+function isPerfectCube(n)
+{
+	if (n < 0)
+	{
+		return false;
+	}
+
+	const rt = Math.floor(Math.cbrt(n) + 0.5);
+	return rt * rt * rt === n;
+}
+
 // True modulo - works for negative numbers too
 function mod(n, m)
 {
@@ -41,6 +52,7 @@ function mod(n, m)
 export {
 	coprime,
 	gcd,
+	isPerfectCube,
 	isPerfectSquare,
 	mod
 };

@@ -1,0 +1,29 @@
+mode    : encrypt-text
+encrypt : RotXTransform
+arg     : a (alphabet)
+a-format: ascii
+c-format: ascii
+p-format: ascii
+
+title   : ROT-X test vector
+
+p: PBAGVAHRBASBEGURUBHEBSRAYVTUGRAZRAGVFHCBALBH
+c: CONTINUEONFORTHEHOUROFENLIGHTENMENTISUPONYOU
+
+option  : x = 15
+p: DPGPYESCPPDTIQTGPDTIQTGP
+c: SEVENTHREESIXFIVESIXFIVE
+
+title   : ROT-5 test vector
+encrypt : Rot5Transform
+clear   : options
+
+p: 4815162342
+c: 9360617897
+
+title   : ROT-47 test vector
+encrypt : Rot47Transform
+clear   : options
+
+p: https://www.whoismrrobot.com
+c: 9EEADi^^HHH]H9@:D>CC@3@E]4@>

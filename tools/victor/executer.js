@@ -10,6 +10,8 @@ const TEST_MODES = {
 	"encrypt-decrypt": modes.EncryptDecryptMode,
 	"decrypt-encrypt": modes.DecryptEncryptMode,
 	"encrypt-decrypt-text": modes.EncryptDecryptTextMode,
+	"encrypt-text": modes.EncryptTextMode,
+	"decrypt-text": modes.DecryptTextMode,
 	"hash": modes.HashMode
 };
 
@@ -89,7 +91,7 @@ class VictorExecuter
 				// Assign argument
 				if (this.argDefinitions.indexOf(line.prefix) >= 0)
 				{
-					this.assignArgument(line);
+					this.assignArgument(line.prefix, line.value);
 				}
 				// Set argument input format
 				else if (/[a-z]-format/.test(line.prefix))
@@ -99,7 +101,7 @@ class VictorExecuter
 				// Assign custom argument
 				else if (this.customArgDefinitions.indexOf(line.prefix) >= 0)
 				{
-					this.assignArgument(line);
+					this.assignArgument(line.prefix, line.value);
 				}
 				else
 				{
@@ -182,35 +184,32 @@ class VictorExecuter
 		this.transforms[name] = new tfClass();
 	}
 
-	assignArgument(line)
+	assignArgument(name, value)
 	{
-		let value;
-		const inputFormat = this.argInputFormats[line.prefix];
-		const callFormat = this.argCallFormats ? this.argCallFormats[line.prefix] : null;
+		const inputFormat = this.argInputFormats[name];
+		const callFormat = this.argCallFormats ? this.argCallFormats[name] : null;
 		switch (inputFormat)
 		{
 			case formats.ASCII:
-				value = line.value;
 				if (callFormat === formats.BYTES)
 				{
 					value = utils.asciiToBytes(value);
 				}
 				break;
 			case formats.UTF8:
-				value = line.value;
 				if (callFormat === formats.BYTES)
 				{
 					throw new Error("UTF-8 not yet supported for bytes arguments");
 				}
 				break;
 			case formats.HEX:
-				value = this.parseHexValue(line.value);
+				value = this.parseHexValue(value);
 				break;
 			default:
-				throw new Error(`Argument '${line.prefix}' has no format defined.`);
+				throw new Error(`Argument '${name}' has no format defined.`);
 		}
 
-		this.args[line.prefix] = value;
+		this.args[name] = value;
 	}
 
 	addCustomArgument(arg)
@@ -247,6 +246,18 @@ class VictorExecuter
 		}
 	}
 
+	fillCustomArguments()
+	{
+		for (let i = 0; i < this.customArgDefinitions.length; i++)
+		{
+			const def = this.customArgDefinitions[i];
+			if (typeof this.args[def] === "undefined")
+			{
+				this.args[def] = null;
+			}
+		}
+	}
+
 	execute()
 	{
 		if (Object.keys(this.args).length === 0)
@@ -261,6 +272,8 @@ class VictorExecuter
 		}
 
 		const passedOptions = Object.keys(this.options).length === 0 ? undefined : this.options;
+
+		this.fillCustomArguments();
 
 		const result = this.mode.execute(this.transforms, this.customArgDefinitions, this.args, passedOptions, this.settings);
 		this.reporter.report(this, result);

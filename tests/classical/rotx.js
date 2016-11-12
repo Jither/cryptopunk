@@ -17,25 +17,25 @@ test("Transforms ROT-47 (by default)", t => {
 test("Encrypts with other values for x", t => {
 	const tf = new RotXTransform();
 
-	t.is(tf.transform("ABCxyz", { x: 3 }), "DEFabc");
+	t.is(tf.transform("ABCxyz", null, { x: 3 }), "DEFabc");
 });
 
 test("Decrypts with other values for x", t => {
 	const tf = new RotXTransform();
 
-	t.is(tf.transform("DEFabc", { x: 3, decrypt: true }), "ABCxyz");
+	t.is(tf.transform("DEFabc", null, { x: 3, decrypt: true }), "ABCxyz");
 });
 
 test("Decrypts with x > alphabet size", t => {
 	const tf = new RotXTransform();
 
-	t.is(tf.transform("ABCxyz", { x: 3 }), "DEFabc");
+	t.is(tf.transform("ABCxyz", null, { x: 3 }), "DEFabc");
 });
 
 test("Encrypts with x > alphabet size", t => {
 	const tf = new RotXTransform();
 
-	t.is(tf.transform("DEFabc", { x: 29, decrypt: true }), "ABCxyz");
+	t.is(tf.transform("DEFabc", null, { x: 29, decrypt: true }), "ABCxyz");
 });
 
 test("Handles empty string gracefully", t => {

@@ -1,3 +1,6 @@
+import * as bifid from "./transforms/classical/bifid";
+import * as rotx from "./transforms/classical/rotx";
+
 import * as enigma from "./transforms/mechanical/enigma";
 
 import * as blowfish from "./transforms/block-ciphers/blowfish";
@@ -58,6 +61,9 @@ function addTransformsFrom(imp)
 		TRANSFORMS[name] = tfClass;
 	}
 }
+
+addTransformsFrom(bifid);
+addTransformsFrom(rotx);
 
 addTransformsFrom(enigma);
 
