@@ -1,5 +1,5 @@
 import test from "ava";
-import { TwofishEncryptTransform, TwofishDecryptTransform } from "transforms/modern/twofish";
+import { TwofishEncryptTransform, TwofishDecryptTransform } from "transforms/block-ciphers/twofish";
 import { testBytesToBytes } from "../_testutils";
 import { hexToBytes, bytesToHex } from "cryptopunk.utils";
 

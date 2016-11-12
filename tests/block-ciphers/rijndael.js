@@ -1,5 +1,5 @@
 import test from "ava";
-import { RijndaelEncryptTransform, RijndaelDecryptTransform } from "transforms/modern/rijndael";
+import { RijndaelEncryptTransform, RijndaelDecryptTransform } from "transforms/block-ciphers/rijndael";
 import { testBytesToBytes } from "../_testutils";
 import { hexToBytes, bytesToHex } from "cryptopunk.utils";
 

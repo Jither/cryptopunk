@@ -1,16 +1,17 @@
 import * as enigma from "./transforms/mechanical/enigma";
 
-import * as blowfish from "./transforms/modern/blowfish";
-import * as des from "./transforms/modern/des";
-import * as idea from "./transforms/modern/idea";
-import * as lucifer from "./transforms/modern/lucifer";
-import * as rc4 from "./transforms/modern/rc4";
-import * as rijndael from "./transforms/modern/rijndael";
-import * as serpent from "./transforms/modern/serpent";
-import * as skipjack from "./transforms/modern/skipjack";
-import * as speck from "./transforms/modern/speck";
-import * as threefish from "./transforms/modern/threefish";
-import * as twofish from "./transforms/modern/twofish";
+import * as blowfish from "./transforms/block-ciphers/blowfish";
+import * as des from "./transforms/block-ciphers/des";
+import * as idea from "./transforms/block-ciphers/idea";
+import * as lucifer from "./transforms/block-ciphers/lucifer";
+import * as rijndael from "./transforms/block-ciphers/rijndael";
+import * as serpent from "./transforms/block-ciphers/serpent";
+import * as skipjack from "./transforms/block-ciphers/skipjack";
+import * as speck from "./transforms/block-ciphers/speck";
+import * as threefish from "./transforms/block-ciphers/threefish";
+import * as twofish from "./transforms/block-ciphers/twofish";
+
+import * as rc4 from "./transforms/stream-ciphers/rc4";
 
 import * as blake256 from "./transforms/hashes/blake256";
 import * as blake512 from "./transforms/hashes/blake512";

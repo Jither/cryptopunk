@@ -1,7 +1,7 @@
 import test from "ava";
 import { testBytesToBytes } from "../_testutils";
 import { hexToBytes } from "cryptopunk.utils";
-import { XorTransform } from "transforms/modern/xor";
+import { XorTransform } from "transforms/stream-ciphers/xor";
 
 function doTest(title, expectedHex, inputHex, keyHex, repeatKey)
 {

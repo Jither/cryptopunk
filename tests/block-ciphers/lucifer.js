@@ -1,5 +1,5 @@
 import test from "ava";
-import { LuciferEncryptTransform, LuciferDecryptTransform } from "transforms/modern/lucifer";
+import { LuciferEncryptTransform, LuciferDecryptTransform } from "transforms/block-ciphers/lucifer";
 import { hexToBytes } from "cryptopunk.utils";
 
 test("LUCIFER (LSB0) does exercise (1000 iterations)", t => {
