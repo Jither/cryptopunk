@@ -1,3 +1,5 @@
+import * as enigma from "./transforms/mechanical/enigma";
+
 import * as blowfish from "./transforms/modern/blowfish";
 import * as des from "./transforms/modern/des";
 import * as idea from "./transforms/modern/idea";
@@ -53,6 +55,8 @@ function addTransformsFrom(imp)
 		TRANSFORMS[name] = tfClass;
 	}
 }
+
+addTransformsFrom(enigma);
 
 addTransformsFrom(blowfish);
 addTransformsFrom(des);

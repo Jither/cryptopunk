@@ -1,255 +1,16 @@
 "use strict";
 
-const utils = require("./utils");
-
-class Test
-{
-	constructor()
-	{
-		this.fails = [];
-		this.errors = [];
-		this.warnings = [];
-	}
-
-	get isSuccess()
-	{
-		return this.fails.length === 0 && this.errors.length === 0 && this.warnings.length === 0;
-	}
-
-	get isError()
-	{
-		return this.errors.length > 0;
-	}
-
-	get isFail()
-	{
-		return this.fails.length > 0;
-	}
-
-	get isWarning()
-	{
-		return this.warnings.length > 0;
-	}
-
-	get messages()
-	{
-		return this.fails.map(fail => `Expected: ${fail.expected} ::: Actual: ${fail.actual}`)
-			.concat(this.errors.map(error => `Error: ${error}`))
-			.concat(this.warnings.map(warning => `${warning}`));
-	}
-
-	assertEqual(actual, expected)
-	{
-		if (actual !== expected)
-		{
-			this.fails.push({ actual, expected });
-		}
-	}
-
-	assertBytesEqual(actual, expected)
-	{
-		let success = true;
-		if (actual.length !== expected.length)
-		{
-			success = false;
-		}
-		for (let i = 0; i < actual.length; i++)
-		{
-			if (actual[i] !== expected[i])
-			{
-				success = false;
-				break;
-			}
-		}
-
-		if (!success)
-		{
-			this.fails.push({ actual: utils.bytesToHex(actual), expected: utils.bytesToHex(expected) });
-		}
-	}
-
-	addError(e)
-	{
-		this.errors.push(`${e.name}: ${e.message}`);
-	}
-
-	skip(message)
-	{
-		this.warnings.push(`Skipped: ${message}`);
-		return this;
-	}
-}
-
-class TestMode
-{
-	makeArguments(knownArgDefinitions, customArgDefinitions, argValues, options)
-	{
-		const args = [];
-
-		// First we add the fixed arguments for the mode
-		for (let i = 0; i < knownArgDefinitions.length; i++)
-		{
-			const argName = knownArgDefinitions[i];
-			const argValue = argValues[argName];
-			if (typeof argValue !== "undefined")
-			{
-				args.push(argValues[argName]);
-			}
-		}
-
-		// Then any custom arguments defined by the test vectors file
-		for (let i = 0; i < customArgDefinitions.length; i++)
-		{
-			const argName = customArgDefinitions[i];
-			const argValue = argValues[argName];
-			if (typeof argValue !== "undefined")
-			{
-				args.push(argValues[argName]);
-			}
-		}
-
-		// And then options
-		if (options)
-		{
-			args.push(options);
-		}
-
-		return args;
-	}
-}
-
-class EncryptDecryptMode extends TestMode
-{
-	get args()
-	{
-		return {
-			k: VictorExecuter.FORMAT_BYTES,
-			p: VictorExecuter.FORMAT_BYTES,
-			c: VictorExecuter.FORMAT_BYTES
-		};
-	}
-
-	execute(transforms, customArgDefinitions, argValues, options, settings)
-	{
-		const result = new Test();
-
-		const enc = transforms.encrypt;
-		try
-		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
-			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.c);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		const dec = transforms.decrypt;
-		try
-		{
-			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
-			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.p);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		return result;
-	}
-}
-
-class DecryptEncryptMode extends TestMode
-{
-	get args()
-	{
-		return {
-			k: VictorExecuter.FORMAT_BYTES,
-			p: VictorExecuter.FORMAT_BYTES,
-			c: VictorExecuter.FORMAT_BYTES
-		};
-	}
-
-	execute(transforms, customArgDefinitions, argValues, options, settings)
-	{
-		const result = new Test();
-
-		const dec = transforms.decrypt;
-		try
-		{
-			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
-			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.p);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		const enc = transforms.encrypt;
-		try
-		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
-			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.c);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		return result;
-	}
-}
-
-class HashMode extends TestMode
-{
-	get args()
-	{
-		return {
-			m: VictorExecuter.FORMAT_BYTES,
-			h: VictorExecuter.FORMAT_BYTES
-		};
-	}
-
-	execute(transforms, customArgDefinitions, argValues, options, settings)
-	{
-		const result = new Test();
-
-		if (settings.fast)
-		{
-			if (argValues.m)
-			{
-				const length = argValues.m.length;
-				if (length > 4096)
-				{
-					return result.skip(`message length ${length} > 4096`);
-				}
-			}
-		}
-
-		const hash = transforms.hash;
-		try
-		{
-			const args = this.makeArguments(["m"], customArgDefinitions, argValues, options);
-			const hashResult = hash.transform.apply(hash, args);
-			result.assertBytesEqual(hashResult, argValues.h);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		return result;
-	}
-}
+const
+	modes = require("./modes"),
+	formats = require("./formats"),
+	utils = require("./utils"),
+	constants = require("./constants");
 
 const TEST_MODES = {
-	"encrypt-decrypt": EncryptDecryptMode,
-	"decrypt-encrypt": DecryptEncryptMode,
-	"hash": HashMode
+	"encrypt-decrypt": modes.EncryptDecryptMode,
+	"decrypt-encrypt": modes.DecryptEncryptMode,
+	"encrypt-decrypt-text": modes.EncryptDecryptTextMode,
+	"hash": modes.HashMode
 };
 
 class VictorExecuter
@@ -311,16 +72,19 @@ class VictorExecuter
 				this.addOption(line.value);
 				break;
 
-			// Clear custom arguments
-			case "no-args":
-				this.customArgDefinitions = [];
+			// Clear options/custom arguments/etc.
+			case "clear":
+				switch (line.value)
+				{
+					case "options":
+						this.options = {};
+						break;
+					case "args":
+						this.customArgDefinitions = [];
+						break;
+				}
 				break;
-
-			// Clear options
-			case "no-options":
-				this.options = {};
-				break;
-
+				
 			default:
 				// Assign argument
 				if (this.argDefinitions.indexOf(line.prefix) >= 0)
@@ -372,19 +136,31 @@ class VictorExecuter
 
 	parseHexValue(value)
 	{
-		// repeat AF x 32
+		// repeat AF x 32 => afafafafaf...
 		const repeat = /^repeat\s+([a-z0-f ]+)\s*x\s*(\d+)$/i.exec(value);
 		if (repeat)
 		{
 			const hex = repeat[1];
 			const count = parseInt(repeat[2], 10);
-			value = hex.repeat(count);
+			
+			if (this.settings.fast && (count * hex.length / 2) > constants.FAST_MAX_BYTE_LENGTH)
+			{
+				return { skip: true };
+			}
+			
+			return utils.hexToBytes(hex.repeat(count));
 		}
 		// runlength x 32 => 000102030405060708090a0b0c0d0e0f1011121314...
 		const runlength = /^runlength\s+x\s*(\d+)$/i.exec(value);
 		if (runlength)
 		{
 			const count = parseInt(runlength[1], 10);
+
+			if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
+			{
+				return { skip: true };
+			}
+			
 			const result = new Uint8Array(count);
 			for (let i = 0; i < result.length; i++)
 			{
@@ -392,6 +168,7 @@ class VictorExecuter
 			}
 			return result;
 		}
+
 		return utils.hexToBytes(value);
 	}
 
@@ -400,7 +177,7 @@ class VictorExecuter
 		const tfClass = this.transformClasses[className];
 		if (!tfClass)
 		{
-			throw new Error(`Could not locate transform class for ${tf}: ${tfClassName}.`);
+			throw new Error(`Could not locate transform class for ${name}: ${className}.`);
 		}
 		this.transforms[name] = new tfClass();
 	}
@@ -412,21 +189,21 @@ class VictorExecuter
 		const callFormat = this.argCallFormats ? this.argCallFormats[line.prefix] : null;
 		switch (inputFormat)
 		{
-			case VictorExecuter.FORMAT_ASCII:
+			case formats.ASCII:
 				value = line.value;
-				if (callFormat === VictorExecuter.FORMAT_BYTES)
+				if (callFormat === formats.BYTES)
 				{
 					value = utils.asciiToBytes(value);
 				}
 				break;
-			case VictorExecuter.FORMAT_UTF8:
+			case formats.UTF8:
 				value = line.value;
-				if (callFormat === VictorExecuter.FORMAT_BYTES)
+				if (callFormat === formats.BYTES)
 				{
 					throw new Error("UTF-8 not yet supported for bytes arguments");
 				}
 				break;
-			case VictorExecuter.FORMAT_HEX:
+			case formats.HEX:
 				value = this.parseHexValue(line.value);
 				break;
 			default:
@@ -452,7 +229,7 @@ class VictorExecuter
 
 		const name = pair[0];
 		const value = pair[1];
-		const valueAsInt = parseInt(value, 10);
+		const valueAsInt = Number(value); // Not parseInt - we want the *entire* string to be a number - 1,15,7 is a string
 		if (isNaN(valueAsInt))
 		{
 			this.options[name] = value;
@@ -487,12 +264,5 @@ class VictorExecuter
 }
 
 VictorExecuter.EMPTY_LINE = "empty";
-VictorExecuter.MODE_NONE = "none";
-VictorExecuter.MODE_ENCRYPT_DECRYPT = "encrypt-decrypt";
-VictorExecuter.MODE_HASH = "hash";
-VictorExecuter.FORMAT_BYTES = "bytes";
-VictorExecuter.FORMAT_HEX = "hex";
-VictorExecuter.FORMAT_ASCII = "ascii";
-VictorExecuter.FORMAT_UTF8 = "utf-8";
 
 module.exports = VictorExecuter;
