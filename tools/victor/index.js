@@ -49,10 +49,10 @@ function parseData(lines, executer)
 	executer.handleLine(VictorExecuter.EMPTY_LINE);
 }
 
-function testFile(filePath, reporter, transformClasses)
+function testFile(filePath, reporter, transformClasses, options)
 {
 	const fileName = path.basename(filePath, ".vectors");
-	const executer = new VictorExecuter(fileName, reporter, transformClasses);
+	const executer = new VictorExecuter(fileName, reporter, transformClasses, { fast: options.fast });
 	return new Promise((resolve, reject) => {
 		// Yeah, we're loading the entire file before processing, because
 		// otherwise we'd have to wait for the file to close to get the
@@ -69,7 +69,7 @@ function testFile(filePath, reporter, transformClasses)
 	});
 }
 
-function testFolder(folder, reporter, transformClasses)
+function testFolder(folder, reporter, transformClasses, options)
 {
 	return new Promise((resolve, reject) => {
 		fs.readdir(folder, (err, files) => {
@@ -82,7 +82,7 @@ function testFolder(folder, reporter, transformClasses)
 				if (path.extname(file).toLowerCase() === ".vectors")
 				{
 					const filePath = path.join(folder, file);
-					filePromises.push(testFile(filePath, reporter, transformClasses));
+					filePromises.push(testFile(filePath, reporter, transformClasses, options));
 				}
 			});
 			Promise.all(filePromises).then(() => {
@@ -107,6 +107,7 @@ commander
 	.arguments("<folder or file>")
 	.option("-t, --transforms <path>", "Javascript exposing transforms")
 	.option("-v, --verbose", "Verbose output")
+	.option("-f, --fast", "Exclude long vectors")
 	.action((path, options) => {
 		const transformClasses = loadTransforms(options.transforms);
 		const reporter = new Reporter(options.verbose);
@@ -115,13 +116,13 @@ commander
 
 		if (stats.isDirectory())
 		{
-			testFolder(path, reporter, transformClasses).then(() => {
+			testFolder(path, reporter, transformClasses, options).then(() => {
 				reporter.outputSummary();
 			});
 		}
 		else
 		{
-			testFile(path, reporter, transformClasses).then(() => {
+			testFile(path, reporter, transformClasses, options).then(() => {
 				reporter.outputSummary();
 			});
 		}

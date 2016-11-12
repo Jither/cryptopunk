@@ -8,11 +8,12 @@ class Test
 	{
 		this.fails = [];
 		this.errors = [];
+		this.warnings = [];
 	}
 
 	get isSuccess()
 	{
-		return this.fails.length === 0 && this.errors.length === 0;
+		return this.fails.length === 0 && this.errors.length === 0 && this.warnings.length === 0;
 	}
 
 	get isError()
@@ -25,10 +26,16 @@ class Test
 		return this.fails.length > 0;
 	}
 
+	get isWarning()
+	{
+		return this.warnings.length > 0;
+	}
+
 	get messages()
 	{
 		return this.fails.map(fail => `Expected: ${fail.expected} ::: Actual: ${fail.actual}`)
-			.concat(this.errors.map(error => `Error: ${error}`));
+			.concat(this.errors.map(error => `Error: ${error}`))
+			.concat(this.warnings.map(warning => `${warning}`));
 	}
 
 	assertEqual(actual, expected)
@@ -66,6 +73,11 @@ class Test
 		this.errors.push(`${e.name}: ${e.message}`);
 	}
 
+	skip(message)
+	{
+		this.warnings.push(`Skipped: ${message}`);
+		return this;
+	}
 }
 
 class TestMode
@@ -117,7 +129,7 @@ class EncryptDecryptMode extends TestMode
 		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new Test();
 
@@ -160,7 +172,7 @@ class DecryptEncryptMode extends TestMode
 		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new Test();
 
@@ -202,9 +214,21 @@ class HashMode extends TestMode
 		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options)
+	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new Test();
+
+		if (settings.fast)
+		{
+			if (argValues.m)
+			{
+				const length = argValues.m.length;
+				if (length > 4096)
+				{
+					return result.skip(`message length ${length} > 4096`);
+				}
+			}
+		}
 
 		const hash = transforms.hash;
 		try
@@ -230,11 +254,13 @@ const TEST_MODES = {
 
 class VictorExecuter
 {
-	constructor(fileName, reporter, transformClasses)
+	constructor(fileName, reporter, transformClasses, settings)
 	{
 		this.fileName = fileName;
 		this.reporter = reporter;
 		this.transformClasses = transformClasses;
+		this.settings = settings;
+
 		this.title = "Test vector";
 		this.transforms = {};
 		this.options = {};
@@ -261,7 +287,7 @@ class VictorExecuter
 			case "encrypt":
 			case "decrypt":
 			case "hash":
-				this.transforms[line.prefix] = line.value;
+				this.assignTransform(line.prefix, line.value);
 				break;
 
 			// Set title (template)
@@ -369,6 +395,16 @@ class VictorExecuter
 		return utils.hexToBytes(value);
 	}
 
+	assignTransform(name, className)
+	{
+		const tfClass = this.transformClasses[className];
+		if (!tfClass)
+		{
+			throw new Error(`Could not locate transform class for ${tf}: ${tfClassName}.`);
+		}
+		this.transforms[name] = new tfClass();
+	}
+
 	assignArgument(line)
 	{
 		let value;
@@ -440,25 +476,9 @@ class VictorExecuter
 			throw new Error(`No test mode set.`);
 		}
 
-		const transforms = {};
-		for (const tf in this.transforms)
-		{
-			if (!this.transforms.hasOwnProperty(tf))
-			{
-				continue;
-			}
-			const tfClassName = this.transforms[tf];
-			const tfClass = this.transformClasses[tfClassName];
-			if (!tfClass)
-			{
-				throw new Error(`Could not locate transform class for ${tf}: ${tfClassName}.`);
-			}
-			transforms[tf] = new tfClass();
-		}
-
 		const passedOptions = Object.keys(this.options).length === 0 ? undefined : this.options;
 
-		const result = this.mode.execute(transforms, this.customArgDefinitions, this.args, passedOptions);
+		const result = this.mode.execute(this.transforms, this.customArgDefinitions, this.args, passedOptions, this.settings);
 		this.reporter.report(this, result);
 
 		this.vectorIndex++;

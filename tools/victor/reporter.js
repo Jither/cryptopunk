@@ -24,6 +24,7 @@ class Reporter
 		this.failCount = 0;
 		this.passCount = 0;
 		this.errorCount = 0;
+		this.warningCount = 0;
 	}
 
 	log(type, message)
@@ -62,6 +63,11 @@ class Reporter
 			{
 				this.failCount++;
 				logType = "fail";
+			}
+			if (test.isWarning)
+			{
+				this.warningCount++;
+				logType = "warning";
 			}
 			this.log(logType, figures.cross + "  " + title);
 			for (let i = 0; i < test.messages.length; i++)
@@ -153,6 +159,10 @@ class Reporter
 		{
 			summary += ` Errors: ${this.errorCount}.`;
 			failed = true;
+		}
+		if (this.warningCount > 0)
+		{
+			summary += ` Warnings: ${this.warningCount}.`;
 		}
 
 		if (failed)
