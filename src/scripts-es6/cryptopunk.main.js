@@ -41,7 +41,7 @@ import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as speck from "./transforms/block-ciphers/speck";
 import * as stringManipulation from "./transforms/string-manipulation";
-import * as substitution from "./transforms/classical/substitution";
+import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
 import * as tiger from "./transforms/hashes/tiger";

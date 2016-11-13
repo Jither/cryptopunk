@@ -1,0 +1,13 @@
+mode    : encrypt-decrypt-text
+encrypt : AffineEncryptTransform
+decrypt : AffineDecryptTransform
+p-format: ascii
+c-format: ascii
+
+title   : Affine cipher test vector
+
+p: one flew over the cuckoo's nest
+c: zub gkbn zibo yqb rdrfzz't ubty
+
+p: One Flew Over the Cuckoo's Nest
+c: Zub Gkbn Zibo yqb Rdrfzz't Ubty

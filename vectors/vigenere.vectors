@@ -1,0 +1,14 @@
+mode    : encrypt-decrypt-text
+encrypt : VigenereEncryptTransform
+decrypt : VigenereDecryptTransform
+arg     : a (alphabet)
+k-format: ascii
+p-format: ascii
+a-format: ascii
+c-format: ascii
+
+title   : Vigenère test vector
+
+k: hellofriend
+p: Is any of it real? I mean, look at this. Look at it! A world built on fantasy. Synthetic emotions in the form of pills. Psychological warfare in the form of advertising. Mind-altering chemicals in the form of... food!
+c: Pw lym tw qx ehhp? T xsfe, tsbn hx eswx. Cwsx da me! L ktith oxppe zb krvxnvf. Wjyhmvbmp htsetcsj qr gkl jzca tw xmyoz. Tdjqmftstljew howwivr lu xsp ttiu ss dkzpchnjqrt. Ppro-lzyvzmaj jlpxwhrtw vq alp qcwd wj... srvh!

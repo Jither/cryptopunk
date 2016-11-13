@@ -1,5 +1,10 @@
+import * as adfgvx from "./transforms/classical/adfgvx";
+import * as affine from "./transforms/classical/affine";
 import * as bifid from "./transforms/classical/bifid";
 import * as rotx from "./transforms/classical/rotx";
+import * as skip from "./transforms/classical/skip";
+import * as subst from "./transforms/classical/simple-substitution";
+import * as vigenere from "./transforms/classical/vigenere";
 
 import * as enigma from "./transforms/mechanical/enigma";
 
@@ -62,8 +67,13 @@ function addTransformsFrom(imp)
 	}
 }
 
+addTransformsFrom(adfgvx);
+addTransformsFrom(affine);
 addTransformsFrom(bifid);
 addTransformsFrom(rotx);
+addTransformsFrom(skip);
+addTransformsFrom(subst);
+addTransformsFrom(vigenere);
 
 addTransformsFrom(enigma);
 

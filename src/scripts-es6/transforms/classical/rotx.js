@@ -1,6 +1,6 @@
 import { Transform } from "../transforms";
 import { mod } from "../../cryptopunk.math";
-import { restoreFormatting } from "./cryptopunk.classical-utils";
+import { restoreFormatting, hasDualCaseCharacters } from "./cryptopunk.classical-utils";
 
 class RotXBaseTransform extends Transform
 {
@@ -44,7 +44,7 @@ class RotXBaseTransform extends Transform
 
 		if (options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
+			result = restoreFormatting(result, original, alphabet, options.ignoreCase, hasDualCaseCharacters(alphabet));
 		}
 
 		return result;

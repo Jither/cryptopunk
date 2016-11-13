@@ -2,42 +2,6 @@ import test from "ava";
 import { AdfgvxEncryptTransform, AdfgvxDecryptTransform } from "transforms/classical/adfgvx";
 import { TransformError } from "transforms/transforms";
 
-test("Does ADFGVX encryption (default)", t => {
-	const tf = new AdfgvxEncryptTransform();
-
-	t.is(tf.transform("ATTACKAT1200AM", "na1c3h8tb2ome5wrpd4f6g7i9j0klqsuvxyz", "privacy"), "DGDD DAGD DGAF ADDF DADV DVFA ADVX");
-});
-
-test("Does ADFGVX decryption (default)", t => {
-	const tf = new AdfgvxDecryptTransform();
-	
-	t.is(tf.transform("DGDDDAGDDGAFADDFDADVDVFAADVX", "na1c3h8tb2ome5wrpd4f6g7i9j0klqsuvxyz", "privacy"), "ATTACKAT1200AM");
-});
-
-test("Encryption handles whitespace", t => {
-	const tf = new AdfgvxEncryptTransform();
-
-	t.is(tf.transform("Attack at 1200 am", "na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz", "privacy"), "DGDD DAGD DGAF ADDF DADV DVFA ADVX");
-});
-
-test("Decryption handles whitespace", t => {
-	const tf = new AdfgvxDecryptTransform();
-	
-	t.is(tf.transform("DGDD DAGD DG AFADD FDAD VDVFA ADVX ", "na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz", "privacy"), "ATTACKAT1200AM");
-});
-
-test("Does ADFGX encryption", t => {
-	const tf = new AdfgvxEncryptTransform();
-	const options = { headers: "ADFGX" };
-	t.is(tf.transform("attackatonce", "btalpdhozkqfvsngjcuxmrewy", "cargo", options), "FAXD FADD DGDG FFFA FAXA FAFX");
-});
-
-test("Does ADFGX decryption", t => {
-	const tf = new AdfgvxDecryptTransform();
-	const options = { headers: "ADFGX" };
-	t.is(tf.transform("FAXDFADDDGDGFFFAFAXAFAFX", "btalpdhozkqfvsngjcuxmrewy", "cargo", options), "ATTACKATONCE");
-});
-
 test("Throws for empty key", t => {
 	const enc = new AdfgvxEncryptTransform();
 

@@ -173,30 +173,59 @@ function depolybius(message, alphabet, indices)
 	return result;
 }
 
+// Returns true if string has characters that appear in both upper and lower case, otherwise false
+// This may be used to e.g. check if case matters for the output of a substitution cipher, based on its alphabet
+function hasDualCaseCharacters(str)
+{
+	const strLower = str.toLowerCase();
+	for (let i = 0; i < strLower.length; i++)
+	{
+		const c1 = strLower.charAt(i);
+		for (let j = i + 1; j < str.length; j++)
+		{
+			const c2 = strLower.charAt(j);
+			// Same character in lower case string, but not in original case string? That's dual case:
+			if (c1 === c2 && str.charAt(i) !== str.charAt(j))
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 // Restores case and non-alphabet characters from source text to text
-function restoreFormatting(text, source, alphabet, ignoreCase)
+function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMatters)
 {
 	let textIndex = 0;
 	let originalSource = source;
 	if (ignoreCase)
 	{
-		alphabet = alphabet.toUpperCase();
-		source = source.toUpperCase();
+		sourceAlphabet = sourceAlphabet.toLowerCase();
+		source = source.toLowerCase();
 	}
 	let result = "";
 	for (let sourceIndex = 0; sourceIndex < source.length; sourceIndex++)
 	{
 		const sourceC = source.charAt(sourceIndex);
-		const originalSourceC = originalSource.charAt(sourceIndex);
-		if (alphabet.indexOf(sourceC) >= 0)
+		if (sourceAlphabet.indexOf(sourceC) >= 0)
 		{
 			// Source character was in alphabet, so get character from text
 			// and case from source:
 			let textC = text.charAt(textIndex++);
-			const isUpperCase = sourceC === originalSourceC;
-			if (ignoreCase)
+
+			if (!textCaseMatters)
 			{
-				textC = isUpperCase ? textC.toUpperCase() : textC.toLowerCase();
+				const originalSourceC = originalSource.charAt(sourceIndex);
+				// E.g. numeric digits would report as isLowerCase, so we also check isUpperCase
+				const isLowerCase = sourceC === originalSourceC;
+				const isUpperCase = sourceC.toUpperCase() === originalSourceC;
+				// If it's "both upper and lower case" or neither (e.g. numeric digits), we don't do anything
+				const isCased = isLowerCase !== isUpperCase;
+				if (isCased)
+				{
+					textC = isLowerCase ? textC.toLowerCase() : textC.toUpperCase();
+				}
 			}
 			result += textC;
 		}
@@ -217,6 +246,7 @@ export {
 	columnarTransposition,
 	depolybius,
 	getLetterSortPermutation,
+	hasDualCaseCharacters,
 	inverseColumnarTransposition,
 	polybius,
 	restoreFormatting

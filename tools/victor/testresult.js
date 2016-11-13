@@ -33,8 +33,14 @@ class TestResult
 
 	get messages()
 	{
-		return this.fails.map(fail => `Expected: ${fail.expected} ::: Actual: ${fail.actual}`)
-			.concat(this.errors.map(error => `Error: ${error}`))
+		const result = [];
+		for (let i = 0; i < this.fails.length; i++)
+		{
+			const fail = this.fails[i];
+			result.push(`Expected: ${fail.expected}`);
+			result.push(`Actual  : ${fail.actual}`);
+		}
+		return result.concat(this.errors.map(error => `Error: ${error}`))
 			.concat(this.warnings.map(warning => `${warning}`));
 	}
 

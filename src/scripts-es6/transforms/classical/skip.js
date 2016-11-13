@@ -1,6 +1,7 @@
 import { Transform, TransformError } from "../transforms";
 import { coprime, mod } from "../../cryptopunk.math";
 
+// TODO: DRY (combine encrypt/decrypt - mostly the same)
 class SkipEncryptTransform extends Transform
 {
 	constructor()

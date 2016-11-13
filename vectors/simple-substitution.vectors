@@ -1,0 +1,53 @@
+mode    : encrypt-text
+encrypt : SimpleSubstitutionTransform
+arg     : a (alphabet)
+arg     : s (substitution alphabet)
+p-format: ascii
+c-format: ascii
+a-format: ascii
+s-format: ascii
+
+title   : Simple Atbash substitution
+
+a: abcdefghijklmnopqrstuvwxyz
+s: zyxwvutsrqponmlkjihgfedcba
+p: the quick brown fox jumps over the lazy dog.
+c: gsv jfrxp yildm ulc qfnkh levi gsv ozab wlt.
+
+title   : Mixed case Atbash
+
+a: abcdefghijklmnopqrstuvwxyz
+s: zyxwvutsrqponmlkjihgfedcba
+p: The Quick Brown Fox Jumps Over The Lazy Dog.
+c: Gsv Jfrxp Yildm Ulc Qfnkh Levi Gsv Ozab Wlt.
+
+title   : Short alphabet
+
+a: abcd123!
+s: 1234abc?
+p: abcd123!
+c: 1234abc?
+
+title   : Case-sensitive
+option  : ignoreCase = false
+
+a: ABCDabcd
+s: dcba4321
+p: abcdDCBA
+c: 4321abcd
+
+title   : Substitution with non-alphabet characters
+option  : ignoreCase = true
+
+a: abcdefghijklmnopqrstuvwxyz
+s: AaBbCcDdEeFfGgHhIiJjKkLlMm
+p: Hello, friend. Hello, friend? That's lame. Maybe I should give you a name.
+c: dCffH, ciECgb. dCffH, ciECgb? jdAj'J fAGC. GAMaC E JdHKfb DEkC MHK A gAGC.
+
+title   : Case-sensitive alphabet
+option  : ignoreCase = false
+
+a: abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+s: AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz
+p: But that's a slippery slope. You're only in my head. We have to remember that.
+c: nKj jdAj'J A JfEhhCiM JfHhC. ZHK'iC HgfM Eg GM dCAb. YC dAkC jH iCGCGaCi jdAj.

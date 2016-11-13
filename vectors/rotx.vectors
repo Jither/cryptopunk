@@ -7,12 +7,31 @@ p-format: ascii
 
 title   : ROT-X test vector
 
+# default ROT-13
 p: PBAGVAHRBASBEGURUBHEBSRAYVTUGRAZRAGVFHCBALBH
 c: CONTINUEONFORTHEHOUROFENLIGHTENMENTISUPONYOU
 
 option  : x = 15
 p: DPGPYESCPPDTIQTGPDTIQTGP
 c: SEVENTHREESIXFIVESIXFIVE
+
+option  : x = 3
+p: ABCxyz
+c: DEFabc
+
+option  : x = 30
+p: ABCxyz
+c: EFGbcd
+
+option  : decrypt = true
+option  : x = 3
+p: DEFabc
+c: ABCxyz
+
+option  : decrypt = true
+option  : x = 30
+p: EFGbcd
+c: ABCxyz
 
 title   : ROT-5 test vector
 encrypt : Rot5Transform
@@ -27,3 +46,14 @@ clear   : options
 
 p: https://www.whoismrrobot.com
 c: 9EEADi^^HHH]H9@:D>CC@3@E]4@>
+
+p: The Quick Brown Fox Jumps Over The Lazy Dog.
+c: %96 "F:4< qC@H? u@I yF>AD ~G6C %96 {2KJ s@8]
+
+title   : ROT-13 test vector
+encrypt : Rot13Transform
+clear   : options
+
+p: Why did the chicken cross the road? Gb trg gb gur bgure fvqr!
+c: Jul qvq gur puvpxra pebff gur ebnq? To get to the other side!
+

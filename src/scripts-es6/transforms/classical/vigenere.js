@@ -1,21 +1,23 @@
-import { TransformError } from "../transforms";
-import { SubstitutionTransform } from "./substitution";
+import { Transform, TransformError } from "../transforms";
 import { mod } from "../../cryptopunk.math";
+import { restoreFormatting } from "./cryptopunk.classical-utils";
 
-class VigenereEncryptTransform extends SubstitutionTransform
+class VigenereTransform extends Transform
 {
-	constructor()
+	constructor(decrypt)
 	{
 		super();
-		this.decrypt = false;
+		this.decrypt = decrypt;
 
-		this
+		this.addInput("string", decrypt ? "Ciphertext" : "Plaintext")
+			.addInput("string", "Alphabet")
 			.addInput("string", "Key")
-			.addOption("alphabet", "Alphabet", "abcdefghijklmnopqrstuvwxyz")
+			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
+			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	checkKey(alphabet, key)
+	checkKey(key, alphabet)
 	{
 		for (let i = 0; i < key.length; i++)
 		{
@@ -27,21 +29,27 @@ class VigenereEncryptTransform extends SubstitutionTransform
 		}
 	}
 
-	transform(str, key, options)
+	transform(str, key, alphabet, options)
 	{
 		options = Object.assign({}, this.defaults, options);
-		const alphabet = options.alphabet;
+		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
-		const ignoreCase = options.ignoreCase;
+
 		if (!key)
 		{
 			throw new TransformError("No key specified");
 		}
 
-		const keyAlphabet = ignoreCase ? alphabet.toLowerCase() : alphabet;
-		key = ignoreCase ? key.toLowerCase() : key;
+		const original = str;
 
-		this.checkKey(keyAlphabet, key);
+		if (options.ignoreCase)
+		{
+			str = str.toUpperCase();
+			alphabet = alphabet.toUpperCase();
+			key = key.toUpperCase();
+		}
+
+		this.checkKey(key, alphabet);
 
 		let result = "";
 
@@ -49,33 +57,44 @@ class VigenereEncryptTransform extends SubstitutionTransform
 		for (let i = 0; i < str.length; i++)
 		{
 			const c = str.charAt(i);
-			result += this.substitute(
-				c,
-				alphabet,
-				ignoreCase,
-				index => {
-					const keyChar = key.charAt(keyIndex);
-					const x = keyAlphabet.indexOf(keyChar);
-					keyIndex++;
-					if (keyIndex >= key.length)
-					{
-						keyIndex = 0;
-					}
-					const outIndex = this.decrypt ? index - x : index + x;
-					return alphabet.charAt(mod(outIndex, alphabetLength));
-				}
-			);
+			const index = alphabet.indexOf(c);
+			if (index < 0)
+			{
+				continue;
+			}
+			const keyChar = key.charAt(keyIndex++);
+			const x = alphabet.indexOf(keyChar);
+			if (keyIndex >= key.length)
+			{
+				keyIndex = 0;
+			}
+			const outIndex = this.decrypt ? index - x : index + x;
+			result += alphabet.charAt(mod(outIndex, alphabetLength));
 		}
+
+		if (options.formatted)
+		{
+			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
+		}
+
 		return result;
 	}
 }
 
-class VigenereDecryptTransform extends VigenereEncryptTransform
+class VigenereEncryptTransform extends VigenereTransform
 {
 	constructor()
 	{
-		super();
-		this.decrypt = true;
+		super(false);
+	}
+}
+
+
+class VigenereDecryptTransform extends VigenereTransform
+{
+	constructor()
+	{
+		super(true);
 	}
 }
 

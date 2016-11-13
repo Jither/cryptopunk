@@ -8,13 +8,13 @@ class AdfgvxTransform extends Transform
 	{
 		super();
 		this.addInput("string", decrypt ? "Ciphertext" : "Plaintext")
-			.addInput("string", "Mixed alphabet")
 			.addInput("string", "Transposition Key")
+			.addInput("string", "Alphabet")
 			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
 			.addOption("headers", "Table headers", "ADFGVX");
 	}
 
-	transform(message, alphabet, key, options)
+	transform(message, key, alphabet, options)
 	{
 		options = Object.assign({}, this.defaults, options);
 
@@ -44,7 +44,7 @@ class AdfgvxTransform extends Transform
 			throw new TransformError(`Key with duplicate characters would not be predictably decipherable.`);
 		}
 
-		return this._transform(message, alphabet, key, headers, options);
+		return this._transform(message, key, alphabet, headers, options);
 	}
 }
 
@@ -55,7 +55,7 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 		super(false);
 		this.addOption("grouping", "Group characters", 4, { min: 0 });
 	}
-	_transform(plaintext, alphabet, key, headers, options)
+	_transform(plaintext, key, alphabet, headers, options)
 	{
 		// TODO: Handle plaintext characters not in alphabet (likely throw)
 
@@ -81,7 +81,7 @@ class AdfgvxDecryptTransform extends AdfgvxTransform
 		super(true);
 	}
 
-	_transform(ciphertext, alphabet, key, headers)
+	_transform(ciphertext, key, alphabet, headers)
 	{
 		if (ciphertext.length % 2 !== 0)
 		{

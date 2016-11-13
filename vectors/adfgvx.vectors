@@ -1,0 +1,38 @@
+mode    : encrypt-decrypt-text
+encrypt : AdfgvxEncryptTransform
+decrypt : AdfgvxDecryptTransform
+arg     : a (alphabet)
+a-format: ascii
+c-format: ascii
+k-format: ascii
+p-format: ascii
+
+title   : ADFGVX test vector
+
+a: na1c3h8tb2ome5wrpd4f6g7i9j0klqsuvxyz
+k: privacy
+p: ATTACKAT1200AM
+c: DGDD DAGD DGAF ADDF DADV DVFA ADVX
+
+mode    : encrypt-text
+
+a: na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz
+k: privacy
+p: Attack at 1200 am
+c: DGDD DAGD DGAF ADDF DADV DVFA ADVX
+
+mode    : decrypt-text
+
+a: na1c3h 8tb2om e5wrpd 4f6g7i 9j0klq suvxyz
+k: privacy
+c: DGDD DAGD DG AFADD FDAD VDVFA ADVX
+p: ATTACKAT1200AM
+
+title   : ADFGX test vector
+mode    : encrypt-decrypt-text
+option  : headers = ADFGX
+
+a: btalpdhozkqfvsngjcuxmrewy
+k: cargo
+p: ATTACKATONCE
+c: FAXD FADD DGDG FFFA FAXA FAFX

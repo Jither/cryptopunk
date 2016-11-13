@@ -23,5 +23,5 @@ mode    : decrypt-text
 option  : formatted = false
 
 a: abcdefghiklmnopqrstuvwxyz
-p: Qef Catpkrpvfgr!
-c: REDWHEELBARROW
+c: Qef Catpkrpvfgr!
+p: REDWHEELBARROW

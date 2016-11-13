@@ -239,9 +239,9 @@ class DecryptTextMode extends TestMode
 		const dec = transforms.decrypt;
 		try
 		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues, options);
+			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues, options);
 			const decResult = dec.transform.apply(dec, args);
-			result.assertTextsEqual(decResult, argValues.c);
+			result.assertTextsEqual(decResult, argValues.p);
 		}
 		catch (e)
 		{
