@@ -165,3 +165,8 @@ TODO
 * Snefru
 * Spectral Hash
 * SWIFFT
+
+## Byte <-> Text
+* Baudot / ITA-2 / MTK-2 / US TTY
+* EBCDIC
+* UTF-32

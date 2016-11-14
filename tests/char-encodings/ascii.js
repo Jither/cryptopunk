@@ -1,6 +1,6 @@
 import test from "ava";
-import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "./_testutils";
-import { AsciiToBytesTransform, BytesToAsciiTransform } from "transforms/ascii";
+import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
+import { AsciiToBytesTransform, BytesToAsciiTransform } from "transforms/char-encodings/ascii";
 import { TransformError } from "transforms/transforms";
 
 test("Decodes simple ASCII", testStringToBytes, AsciiToBytesTransform, "61626341424378797a313233212540", "abcABCxyz123!%@");

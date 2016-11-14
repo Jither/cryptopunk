@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "./transforms";
+import { Transform, TransformError } from "../transforms";
 
 // Returns full 32 bit Unicode code point (based on up to two javascript character (UCS-2))
 function getCodePoint(str, index)

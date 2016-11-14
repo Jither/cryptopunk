@@ -1,6 +1,6 @@
 import test from "ava";
-import { Ucs2ToBytesTransform, BytesToUcs2Transform, Utf8ToBytesTransform, Utf16ToBytesTransform, BytesToUtf16Transform } from "transforms/unicode";
-import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "./_testutils";
+import { Ucs2ToBytesTransform, BytesToUcs2Transform, Utf8ToBytesTransform, Utf16ToBytesTransform, BytesToUtf16Transform } from "transforms/char-encodings/unicode";
+import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
 import { TransformError } from "transforms/transforms";
 
 // UCS-2
