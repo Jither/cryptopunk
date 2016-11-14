@@ -1,4 +1,5 @@
 import { Transform, TransformError } from "../transforms";
+import { RX_CONTROL_CODES } from "../../cryptopunk.strings";
 
 // Returns full 32 bit Unicode code point (based on up to two javascript character (UCS-2))
 function getCodePoint(str, index)
@@ -92,11 +93,14 @@ class BytesToUtf8Transform extends Transform
 	{
 		super();
 		this.addInput("bytes", "Bytes")
-			.addOutput("string", "String");
+			.addOutput("string", "String")
+			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes)
+	transform(bytes, options)
 	{
+		options = Object.assign({}, this.defaults, options);
+
 		let result = "";
 		let i = 0;
 		while (i < bytes.length)
@@ -148,6 +152,11 @@ class BytesToUtf8Transform extends Transform
 
 			result += codePointToStr(code);
 		}
+
+		if (options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
+		}
 		return result;
 	}
 }
@@ -194,6 +203,7 @@ class BytesToUcs2Transform extends Transform
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
 			.addOption("littleEndian", "Little Endian", false);
+			.addOption("stripCC", "Strip control codes", true);
 	}
 
 	transform(bytes, options)
@@ -207,6 +217,12 @@ class BytesToUcs2Transform extends Transform
 				bytes[i] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
+
+		if (options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
+		}
+
 		return result;
 	}
 }
@@ -289,6 +305,7 @@ class BytesToUtf16Transform extends Transform
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
 			.addOption("littleEndian", "Little Endian", false);
+			.addOption("stripCC", "Strip control codes", true);
 	}
 
 	transform(bytes, options)
@@ -302,6 +319,12 @@ class BytesToUtf16Transform extends Transform
 				bytes[i] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
+
+		if (options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
+		}
+		
 		return result;
 	}
 }

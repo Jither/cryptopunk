@@ -61,6 +61,8 @@ import { TransformError } from "./transforms/transforms";
 
 import { NodeEditor } from "./jither.nodeeditor";
 
+import { toVisualControlCodes } from "./cryptopunk.strings";
+
 const elePalette = document.getElementById("palette-nodes");
 let elePaletteCategory;
 
@@ -219,7 +221,7 @@ class TransformNodeController
 		}
 		else
 		{
-			this.node.contentElement.innerText = typeof output === "string" ? output : this.toHex(output);
+			this.node.contentElement.innerText = typeof output === "string" ? toVisualControlCodes(output) : this.toHex(output);
 		}
 		propertyPanel.updateOutputs(this.node);
 	}

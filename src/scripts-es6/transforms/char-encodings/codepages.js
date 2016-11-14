@@ -1,25 +1,13 @@
 import { Transform, TransformError } from "../transforms";
+import { RX_CONTROL_CODES } from "../../cryptopunk.strings";
 
 function createAscii()
 {
 	const result = [];
-	// Non-printable characters
-	for (let i = 0; i < 0x20; i++)
-	{
-		result.push(null);
-	}
-	// Restore the printable ones:
-	result[0x09] = "\t";
-	result[0x0a] = "\n";
-	result[0x0d] = "\r";
-	
-	// Printable characters:
-	for (let i = 0x20; i < 0x7f; i++)
+	for (let i = 0x00; i < 0x80; i++)
 	{
 		result.push(String.fromCharCode(i));
 	}
-	// Non-printable <DEL> character (0x7f)
-	result.push(null);
 
 	return result;
 }
@@ -27,9 +15,9 @@ function createAscii()
 function createIsoControlChars()
 {
 	const result = [];
-	for (let i = 0; i < 0x20; i++)
+	for (let i = 0x80; i < 0xa0; i++)
 	{
-		result.push(null);
+		result.push(String.fromCharCode(i));
 	}
 	return result;
 }
@@ -78,7 +66,7 @@ const CODE_PAGE_VALUES = [
 const CODE_PAGES = {
 	"iso-8859-1": createIsoCodePage("\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
 	"iso-8859-2": createIsoCodePage("\xa0Ą˘Ł¤ĽŚ§¨ŠŞŤŹ\xadŽŻ°ą˛ł´ľśˇ¸šşťź˝žżŔÁÂĂÄĹĆÇČÉĘËĚÍÎĎĐŃŇÓÔŐÖ×ŘŮÚŰÜÝŢßŕáâăäĺćçčéęëěíîďđńňóôőö÷řůúűüýţ˙"),
-	"iso-8859-3": createIsoCodePage("\xa0Ħ˘£¤_Ĥ§¨İŞĞĴ\xad Ż°ħ²³´µĥ·¸ışğĵ½ żÀÁÂ ÄĊĈÇÈÉÊËÌÍÎÏ ÑÒÓÔĠÖ×ĜÙÚÛÜŬŜßàáâ äċĉçèéêëìíîï ñòóôġö÷ĝùúûüŭŝ˙"),
+	"iso-8859-3": createIsoCodePage("\xa0Ħ˘£¤ Ĥ§¨İŞĞĴ\xad Ż°ħ²³´µĥ·¸ışğĵ½ żÀÁÂ ÄĊĈÇÈÉÊËÌÍÎÏ ÑÒÓÔĠÖ×ĜÙÚÛÜŬŜßàáâ äċĉçèéêëìíîï ñòóôġö÷ĝùúûüŭŝ˙"),
 	"windows-1252": createWinMacCodePage("€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž  ‘’“”•–—\u02dc™š›œ žŸ\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
 	"macos-roman":  createWinMacCodePage("ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…\xa0ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ") //  = Apple logo - private area
 };
@@ -121,7 +109,8 @@ class BytesToCodePageTransform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("codepage", "Code page", "iso_8859_1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES });
+			.addOption("codepage", "Code page", "iso-8859-1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES })
+			.addOption("stripCC", "Strip control codes", true);
 	}
 
 	transform(bytes, options)
@@ -139,6 +128,11 @@ class BytesToCodePageTransform extends Transform
 				c = "\ufffd";
 			}
 			result += c;
+		}
+
+		if (options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
 		}
 		return result;
 	}

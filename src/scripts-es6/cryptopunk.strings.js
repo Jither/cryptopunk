@@ -1,3 +1,5 @@
+const RX_CONTROL_CODES = /[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]/g;
+
 // Prepares string for use as part of a regular expression
 function escapeForRegex(str)
 {
@@ -71,11 +73,25 @@ function groupCharacters(str, groupLength)
 	return splitLength(str, groupLength).join(" ");
 }
 
+function toVisualControlCodes(str)
+{
+	return str.replace(RX_CONTROL_CODES, (match) => { // control codes except TAB (0x09), LF (0x0a), CR (0x0d)
+		const cc = match.charCodeAt(0);
+		if (cc === 0x7f)
+		{
+			return "\u2421"; // 0x7f DEL control picture
+		}
+		return String.fromCharCode(0x2400 | cc); // 0x00-0x1f control pictures
+	});
+}
+
 export {
 	escapeForRegex,
 	groupCharacters,
 	hasDuplicateCharacters,
 	multiByteStringReverse,
 	removeWhiteSpace,
-	splitLength
+	splitLength,
+	toVisualControlCodes,
+	RX_CONTROL_CODES
 };

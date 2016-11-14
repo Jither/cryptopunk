@@ -1,4 +1,5 @@
 import { Transform, TransformError } from "../transforms";
+import { RX_CONTROL_CODES } from "../../cryptopunk.strings";
 
 class AsciiToBytesTransform extends Transform
 {
@@ -32,30 +33,30 @@ class BytesToAsciiTransform extends Transform
 	{
 		super();
 		this.addInput("bytes", "Bytes")
-			.addOutput("string", "String");
+			.addOutput("string", "String")
+			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes)
+	transform(bytes, options)
 	{
+		options = Object.assign({}, this.defaults, options);
 		let result = "";
 		for (let i = 0; i < bytes.length; i++)
 		{
 			const code = bytes[i];
 			let c = String.fromCharCode(code);
 
-			if (code < 32)
-			{
-				if (code !== 13 && code !== 10 && code !== 9)
-				{
-					continue;
-				}
-			}
-			else if (code > 126) // 127 is non-printable <DEL>
+			if (code > 127) 
 			{
 				c = "\ufffd";
 			}
 			result += c;
 		}
+		if (options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
+		}
+
 		return result;
 	}
 }
