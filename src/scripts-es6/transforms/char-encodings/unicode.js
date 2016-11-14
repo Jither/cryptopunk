@@ -202,7 +202,7 @@ class BytesToUcs2Transform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("littleEndian", "Little Endian", false);
+			.addOption("littleEndian", "Little Endian", false)
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
@@ -304,7 +304,7 @@ class BytesToUtf16Transform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("littleEndian", "Little Endian", false);
+			.addOption("littleEndian", "Little Endian", false)
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
@@ -324,7 +324,7 @@ class BytesToUtf16Transform extends Transform
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}
-		
+
 		return result;
 	}
 }
