@@ -1,9 +1,10 @@
 import { Transform, TransformError } from "../transforms";
-import { polybius, depolybius, restoreFormatting } from "./cryptopunk.classical-utils";
-import { mod, isPerfectSquare } from "../../cryptopunk.math";
+import { polybius3, depolybius3, restoreFormatting } from "./cryptopunk.classical-utils";
+import { mod, isPerfectCube } from "../../cryptopunk.math";
 import { removeWhiteSpace } from "../../cryptopunk.strings";
 
-class BifidTransform extends Transform
+// TODO: Untested and buggy (particularly "formatted")
+class TrifidTransform extends Transform
 {
 	constructor(decrypt)
 	{
@@ -23,12 +24,12 @@ class BifidTransform extends Transform
 
 		if (alphabet.length < 1)
 		{
-			alphabet = "abcdefghiklmnopqrstuvwxyz";
+			alphabet = "abcdefghijklmnopqrstuvwxyz.";
 		}
 
-		if (!isPerfectSquare(alphabet.length))
+		if (!isPerfectCube(alphabet.length))
 		{
-			throw new TransformError(`Alphabet table must be a perfect square.`);
+			throw new TransformError(`Alphabet table must be a perfect cube.`);
 		}
 
 		const originalStr = str;
@@ -47,7 +48,7 @@ class BifidTransform extends Transform
 	}
 }
 
-class BifidEncryptTransform extends BifidTransform
+class TrifidEncryptTransform extends TrifidTransform
 {
 	constructor()
 	{
@@ -56,29 +57,31 @@ class BifidEncryptTransform extends BifidTransform
 
 	_transform(str, alphabet)
 	{
-		let coords = polybius(str, alphabet).filter(coord => coord !== null);
+		let coords = polybius3(str, alphabet).filter(coord => coord !== null);
 
-		const positions = new Array(coords.length * 2);
+		const positions = new Array(coords.length * 3);
 		for (let i = 0; i < coords.length; i++)
 		{
 			const coord = coords[i];
 			positions[i] = coord[0];
 			positions[i + coords.length] = coord[1];
+			positions[i + coords.length * 2] = coord[2];
 		}
 
 		for (let i = 0; i < coords.length; i++)
 		{
+			const index = i * 3;
 			const coord = coords[i];
-			const index = i * 2;
 			coord[0] = positions[index];
 			coord[1] = positions[index + 1];
+			coord[2] = positions[index + 2];
 		}
 
-		return depolybius(coords, alphabet);
+		return depolybius3(coords, alphabet);
 	}
 }
 
-class BifidDecryptTransform extends BifidTransform
+class TrifidDecryptTransform extends TrifidTransform
 {
 	constructor()
 	{
@@ -87,16 +90,17 @@ class BifidDecryptTransform extends BifidTransform
 
 	_transform(str, alphabet)
 	{
-		const coords = polybius(str, alphabet).filter(coord => coord !== null);
+		const coords = polybius3(str, alphabet).filter(coord => coord !== null);
 
-		const positions = new Array(coords.length * 2);
+		const positions = new Array(coords.length * 3);
 
 		for (let i = 0; i < coords.length; i++)
 		{
+			const index = i * 3;
 			const coord = coords[i];
-			const index = i * 2;
 			positions[index] = coord[0];
 			positions[index + 1] = coord[1];
+			positions[index + 2] = coord[2];
 		}
 
 		for (let i = 0; i < coords.length; i++)
@@ -104,13 +108,14 @@ class BifidDecryptTransform extends BifidTransform
 			const coord = coords[i];
 			coord[0] = positions[i];
 			coord[1] = positions[i + coords.length];
+			coord[2] = positions[i + coords.length * 2];
 		}
 
-		return depolybius(coords, alphabet);
+		return depolybius3(coords, alphabet);
 	}
 }
 
 export {
-	BifidEncryptTransform,
-	BifidDecryptTransform
+	TrifidEncryptTransform,
+	TrifidDecryptTransform
 };

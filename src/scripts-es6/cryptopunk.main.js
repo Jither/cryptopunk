@@ -45,6 +45,7 @@ import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
 import * as tiger from "./transforms/hashes/tiger";
+import * as trifid from "./transforms/classical/trifid";
 import * as twofish from "./transforms/block-ciphers/twofish";
 import * as unicode from "./transforms/unicode";
 import * as vigenere from "./transforms/classical/vigenere";
@@ -364,6 +365,7 @@ addPaletteItem(columns.ColumnarTranspositionDecryptTransform, "Columnar Transpos
 addPaletteItem(playfair.PlayfairDecryptTransform, "Playfair", "Playfair Decrypt");
 addPaletteItem(polybius.PolybiusDecryptTransform, "Polybius", "Polybius Decrypt");
 addPaletteItem(skip.SkipDecryptTransform, "Skip", "Skip Cipher Decrypt");
+addPaletteItem(trifid.TrifidDecryptTransform, "Trifid", "Trifid Decrypt");
 addPaletteItem(vigenere.VigenereDecryptTransform, "Vigènere", "Vigènere Decrypt");
 
 addPaletteCategory("Classical encryption");
@@ -375,6 +377,7 @@ addPaletteItem(playfair.PlayfairEncryptTransform, "Playfair", "Playfair Encrypt"
 addPaletteItem(polybius.PolybiusEncryptTransform, "Polybius", "Polybius Encrypt");
 addPaletteItem(substitution.SimpleSubstitutionTransform, "Simple Substitution");
 addPaletteItem(skip.SkipEncryptTransform, "Skip", "Skip Cipher Encrypt");
+addPaletteItem(trifid.TrifidEncryptTransform, "Trifid", "Trifid Encrypt");
 addPaletteItem(vigenere.VigenereEncryptTransform, "Vigènere", "Vigènere Encrypt");
 
 addPaletteCategory("Mechanical");

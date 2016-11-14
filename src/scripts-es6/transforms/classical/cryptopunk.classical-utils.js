@@ -137,6 +137,39 @@ function polybius(message, alphabet, indices)
 	return result;
 }
 
+// Returns an array of coordinates [z,y,x] / [slice, row, column] of message placed into Polybius cube using alphabet.
+// If a string of indices are supplied (e.g. "ABCDE"), an array of strings (e.g. "BCE") will be returned instead.
+function polybius3(message, alphabet, indices)
+{
+	const width = indices ? indices.length : Math.ceil(Math.cbrt(alphabet.length));
+	const sliceSize = width * width;
+
+	const result = new Array(message.length);
+	for (let i = 0; i < message.length; i++)
+	{
+		const c = message.charAt(i);
+		const index = alphabet.indexOf(c);
+		if (index < 0)
+		{
+			// Not in alphabet:
+			result[i] = null;
+			continue;
+		}
+		const slice = Math.floor(index / sliceSize)
+		const row = Math.floor((index - sliceSize * slice) / width);
+		const column = index % width;
+		if (indices)
+		{
+			result[i] = indices.charAt(slice) + indices.charAt(row) + indices.charAt(column);
+		}
+		else
+		{
+			result[i] = [slice, row, column];
+		}
+	}
+	return result;
+}
+
 // Returns string based on array of coordinates [y,x] / [row, column] into Polybius square using alphabet.
 // Alternatively based on string of coordinates where a character, c, maps to row/column at indices.indexOf(c))
 function depolybius(message, alphabet, indices)
@@ -173,6 +206,46 @@ function depolybius(message, alphabet, indices)
 	return result;
 }
 
+// Returns string based on array of coordinates [z,y,x] / [slice, row, column] into Polybius cube using alphabet.
+// Alternatively based on string of coordinates where a character, c, maps to slice/row/column at indices.indexOf(c))
+function depolybius3(message, alphabet, indices)
+{
+	const width = indices ? indices.length : Math.ceil(Math.cbrt(alphabet.length));
+	const sliceSize = width * width;
+
+	let result = "";
+
+	if (Array.isArray(message))
+	{
+		for (let i = 0; i < message.length; i++)
+		{
+			const coord = message[i];
+			const slice = coord[0];
+			const row = coord[1];
+			const column = coord[2];
+			const index = slice * sliceSize + row * width + column;
+
+			result += alphabet.charAt(index);
+		}
+	}
+	else
+	{
+		for (let i = 0; i < message.length; i += 3)
+		{
+			const sliceChar = message.charAt(i);
+			const rowChar = message.charAt(i + 1);
+			const colChar = message.charAt(i + 2);
+			const slice = indices.indexOf(sliceChar);
+			const row = indices.indexOf(rowChar);
+			const column = indices.indexOf(colChar);
+			const index = slice * sliceSize + row * width + column;
+
+			result += alphabet.charAt(index);
+		}
+	}
+	return result;
+}
+
 // Returns true if string has characters that appear in both upper and lower case, otherwise false
 // This may be used to e.g. check if case matters for the output of a substitution cipher, based on its alphabet
 function hasDualCaseCharacters(str)
@@ -201,8 +274,8 @@ function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMat
 	let originalSource = source;
 	if (ignoreCase)
 	{
-		sourceAlphabet = sourceAlphabet.toLowerCase();
-		source = source.toLowerCase();
+		sourceAlphabet = sourceAlphabet.toUpperCase();
+		source = source.toUpperCase();
 	}
 	let result = "";
 	for (let sourceIndex = 0; sourceIndex < source.length; sourceIndex++)
@@ -217,9 +290,9 @@ function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMat
 			if (!textCaseMatters)
 			{
 				const originalSourceC = originalSource.charAt(sourceIndex);
-				// E.g. numeric digits would report as isLowerCase, so we also check isUpperCase
-				const isLowerCase = sourceC === originalSourceC;
-				const isUpperCase = sourceC.toUpperCase() === originalSourceC;
+				// Non-letter characters would report as isUpperCase, so we also check isLowerCase
+				const isUpperCase = sourceC === originalSourceC;
+				const isLowerCase = sourceC.toLowerCase() === originalSourceC;
 				// If it's "both upper and lower case" or neither (e.g. numeric digits), we don't do anything
 				const isCased = isLowerCase !== isUpperCase;
 				if (isCased)
@@ -245,9 +318,11 @@ function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMat
 export {
 	columnarTransposition,
 	depolybius,
+	depolybius3,
 	getLetterSortPermutation,
 	hasDualCaseCharacters,
 	inverseColumnarTransposition,
 	polybius,
+	polybius3,
 	restoreFormatting
 };
