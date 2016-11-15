@@ -1,0 +1,64 @@
+%YAML 1.2
+---
+name: Victor test vectors
+file_extensions: [vectors]
+scope: source.vectors
+
+contexts:
+  main:
+    - match: ^#.*$
+      scope: comment.line
+    - match: "^([a-z])\\s*(:)"
+      captures:
+        1: variable.parameter
+        2: punctuation.separator
+      push: value
+    - match: "^(mode|arg|clear)\\s*(:)"
+      captures:
+        1: variable.language
+        2: punctuation.separator
+      push: value
+    - match: "^(title)\\s*(:)"
+      captures:
+        1: variable.language
+        2: punctuation.separator
+      push: string
+    - match: "^(option)\\s*(:)"
+      captures:
+        1: variable.language
+        2: punctuation.separator
+      push: option
+    - match: "^([a-z]-format)\\s*(:)"
+      captures:
+        1: variable.parameter
+        2: punctuation.separator
+      push: value
+    - match: "^(decrypt|encrypt|decode|encode|hash)\\s*(:)"
+      captures:
+        1: entity.name.type
+        2: punctuation.separator
+      push: value
+  value:
+    - match: "\\\\([bfnrtv]|x[a-zA-Z0-9]{2}|u[a-zA-Z0-9]{4})"
+      scope: constant.character.escape
+    - match: "(repeat)\\s+([a-zA-Z0-9]+)\\s*(x)\\s*(\\d+)"
+      captures:
+        1: variable.function
+        2: constant.numeric.hex
+        3: keyword.operator.arithmetic
+        4: constant.numeric.integer
+    - match: $
+      pop: true
+  string:
+    - match: .*
+      scope: string.unquoted
+    - match: $
+      pop: true
+  option:
+    - match: "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(=)\\s*(.+)"
+      captures:
+        1: variable.other.member
+        2: keyword.operator.assignment
+        3: variable.other
+    - match: $
+      pop: true

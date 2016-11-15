@@ -1,5 +1,5 @@
 import test from "ava";
-import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
+import { testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
 import { AsciiToBytesTransform, BytesToAsciiTransform } from "transforms/char-encodings/ascii";
 import { TransformError } from "transforms/transforms";
 

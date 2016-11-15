@@ -6,6 +6,7 @@ const
 	fs = require("fs"),
 	path = require("path"),
 	readline = require("readline"),
+	glob = require("glob"),
 	Reporter = require("./reporter"),
 
 	VictorExecuter = require("./executer");
@@ -72,18 +73,14 @@ function testFile(filePath, reporter, transformClasses, options)
 function testFolder(folder, reporter, transformClasses, options)
 {
 	return new Promise((resolve, reject) => {
-		fs.readdir(folder, (err, files) => {
+		glob(path.join(folder, "**/*.vectors"), (err, files) => {
 			if (err)
 			{
 				return reject(err);
 			}
 			const filePromises = [];
 			files.forEach(file => {
-				if (path.extname(file).toLowerCase() === ".vectors")
-				{
-					const filePath = path.join(folder, file);
-					filePromises.push(testFile(filePath, reporter, transformClasses, options));
-				}
+				filePromises.push(testFile(file, reporter, transformClasses, options));
 			});
 			Promise.all(filePromises).then(() => {
 				resolve();

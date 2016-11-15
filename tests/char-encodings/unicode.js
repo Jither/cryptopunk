@@ -1,6 +1,6 @@
 import test from "ava";
 import { Ucs2ToBytesTransform, BytesToUcs2Transform, Utf8ToBytesTransform, Utf16ToBytesTransform, BytesToUtf16Transform } from "transforms/char-encodings/unicode";
-import { testStringToBytes, testBytesToString, testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
+import { testHandlesEmptyString, testHandlesEmptyArray } from "../_testutils";
 import { TransformError } from "transforms/transforms";
 
 test("UCS-2 Decoder handles empty string gracefully", testHandlesEmptyString, Ucs2ToBytesTransform);

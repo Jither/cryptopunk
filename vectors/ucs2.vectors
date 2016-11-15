@@ -1,8 +1,10 @@
 mode    : encode-decode-text
-encode  : Ucs2ToBytesTransform
-decode  : BytesToUcs2Transform
+encode  : BytesToUcs2Transform
+decode  : Ucs2ToBytesTransform
 t-format: utf-8
 b-format: hex
+
+title   : UCS-2 test vector
 
 t: 它不是一个填字游戏
 b: 5b834e0d662f4e004e2a586b5b576e38620f

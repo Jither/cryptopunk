@@ -1,6 +1,6 @@
 mode    : encode-decode-text
-encode  : Utf16ToBytesTransform
-decode  : BytesToUtf16Transform
+encode  : BytesToUtf16Transform
+decode  : Utf16ToBytesTransform
 t-format: utf-8
 b-format: hex
 

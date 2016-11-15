@@ -1,9 +1,62 @@
-mode    : encode-decode-text
+mode    : decode-text
 t-format: ascii
 b-format: hex
 
-encode  : OctalToBytesTransform
-decode  : BytesToOctalTransform
+########################################################################################################
+# Binary
+
+encode  : BytesToBinaryTransform
+decode  : BinaryToBytesTransform
+title   : Binary
+
+t: 1010101111001101
+b: abcd
+
+t: 1010 101111 0 0110 1
+b: abcd
+
+t: 00000000 00000001 10101011 11001101
+b: 0001abcd
+
+t: 00000000 00000000 00000001 10101011 11001101
+b: 000001abcd
+
+t: 00000001 10101011 11001101 00000000
+b: 01abcd00
+
+t: 00000001 10101011 11001101 00000000 00000000
+b: 01abcd0000
+
+# None-byte alignment interpreted as missing leading bits
+t: 1 10101011
+b: 01ab
+
+t: 1 01010010 10101011
+b: 0152ab
+
+mode    : encode-text
+
+b: abcd
+t: 10101011 11001101
+
+b: 00abcd
+t: 00000000 10101011 11001101
+
+b: 0000abcd
+t: 00000000 00000000 10101011 11001101
+
+b: abcd00
+t: 10101011 11001101 00000000
+
+b: abcd0000
+t: 10101011 11001101 00000000 00000000
+
+########################################################################################################
+# Octal
+
+mode    : encode-decode-text
+encode  : BytesToOctalTransform
+decode  : OctalToBytesTransform
 title   : Octal
 
 t: 146
@@ -30,14 +83,17 @@ t: 1234567000
 b: 0a72ee00
 
 title   : Octal discards leading zeroes
-mode    : encode-text
+mode    : decode-text
 
 t: 0003146755730460562
 b: 666f6f626172
 
+########################################################################################################
+# Decimal
+
 mode    : encode-decode-text
-encode  : DecimalToBytesTransform
-decode  : BytesToDecimalTransform
+encode  : BytesToDecimalTransform
+decode  : DecimalToBytesTransform
 title   : Decimal
 
 t: 102
@@ -64,14 +120,67 @@ t: 123456789000
 b: 1cbe991a08
 
 title   : Decimal discards leading zeroes
-mode    : encode-text
+mode    : decode-text
 
 t: 000112628796121458
 b: 666f6f626172
 
+########################################################################################################
+# Hex
+
 mode    : encode-decode-text
-encode  : Base32ToBytesTransform
-decode  : BytesToBase32Transform
+encode  : BytesToHexTransform
+decode  : HexToBytesTransform
+title   : Hexadecimal
+
+b: abcd
+t: ab cd
+
+b: 00abcd
+t: 00 ab cd
+
+b: 0000abcd
+t: 00 00 ab cd
+
+b: abcd00
+t: ab cd 00
+
+b: abcd0000
+t: ab cd 00 00
+
+mode    : decode-text
+
+t: 01ABCD
+b: 01abcd
+
+t: 0 001 abc d
+b: 0001abcd
+
+t: 00 01 ab cd
+b: 0001abcd
+
+t: 00 00 01 ab cd
+b: 000001abcd
+
+t: 01 ab cd 00
+b: 01abcd00
+
+t: 01 ab cd 00 00
+b: 01abcd0000
+
+# None-byte alignment interpreted as missing leading nibble
+t: 1 ab
+b: 01ab
+
+t: 1 52 ab
+b: 0152ab
+
+########################################################################################################
+# Base32
+
+mode    : encode-decode-text
+encode  : BytesToBase32Transform
+decode  : Base32ToBytesTransform
 title   : Base32 lowercase
 
 t: my======
@@ -93,7 +202,7 @@ t: mzxw6ytboi======
 b: 666f6f626172
 
 title   : Base32 uppercase
-mode    : encode-text
+mode    : decode-text
 
 t: MY======
 b: 66
@@ -133,8 +242,11 @@ b: 666f6f62
 t: mzxw6ytboi
 b: 666f6f626172
 
-encode  : Base32HexToBytesTransform
-decode  : BytesToBase32HexTransform
+########################################################################################################
+# Base32-HEX
+
+encode  : BytesToBase32HexTransform
+decode  : Base32HexToBytesTransform
 clear   : options
 title   : Base32-HEX lowercase
 
@@ -157,7 +269,7 @@ t: cpnmuoj1e8======
 b: 666f6f626172
 
 title   : Base32-HEX uppercase
-mode    : encode-text
+mode    : decode-text
 
 t: CO======
 b: 66
@@ -196,8 +308,11 @@ b: 666f6f62
 t: cpnmuoj1e8
 b: 666f6f626172
 
-encode  : Base64ToBytesTransform
-decode  : BytesToBase64Transform
+########################################################################################################
+# Base64
+
+encode  : BytesToBase64Transform
+decode  : Base64ToBytesTransform
 clear   : options
 title   : Base64
 
@@ -246,8 +361,11 @@ b: 0000000000
 t: AAAAAAAAAAAAAA==
 b: 00000000000000000000
 
-encode  : Base64UrlToBytesTransform
-decode  : BytesToBase64UrlTransform
+########################################################################################################
+# Base64 URL-safe
+
+encode  : BytesToBase64UrlTransform
+decode  : Base64UrlToBytesTransform
 title   : Base64 URL-safe
 
 t: Pz8_Pj4-

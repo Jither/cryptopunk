@@ -344,14 +344,14 @@ class EncodeDecodeTextMode extends TestMode
 		const enc = transforms.encode;
 		try
 		{
-			const args = this.makeArguments(["t"], customArgDefinitions, argValues);
+			const args = this.makeArguments(["b"], customArgDefinitions, argValues);
 			enc.resetOptions();
 			if (options)
 			{
 				enc.setOptions(options);
 			}
 			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.b);
+			result.assertTextsEqual(encResult, argValues.t);
 		}
 		catch (e)
 		{
@@ -361,14 +361,14 @@ class EncodeDecodeTextMode extends TestMode
 		const dec = transforms.decode;
 		try
 		{
-			const args = this.makeArguments(["b"], customArgDefinitions, argValues);
+			const args = this.makeArguments(["t"], customArgDefinitions, argValues);
 			dec.resetOptions();
 			if (options)
 			{
 				dec.setOptions(options);
 			}
 			const decResult = dec.transform.apply(dec, args);
-			result.assertTextsEqual(decResult, argValues.t);
+			result.assertBytesEqual(decResult, argValues.b);
 		}
 		catch (e)
 		{
@@ -396,14 +396,14 @@ class EncodeTextMode extends TestMode
 		const enc = transforms.encode;
 		try
 		{
-			const args = this.makeArguments(["t"], customArgDefinitions, argValues);
+			const args = this.makeArguments(["b"], customArgDefinitions, argValues);
 			enc.resetOptions();
 			if (options)
 			{
 				enc.setOptions(options);
 			}
 			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.b);
+			result.assertTextsEqual(encResult, argValues.t);
 		}
 		catch (e)
 		{
@@ -431,14 +431,14 @@ class DecodeTextMode extends TestMode
 		const dec = transforms.decode;
 		try
 		{
-			const args = this.makeArguments(["b"], customArgDefinitions, argValues);
+			const args = this.makeArguments(["t"], customArgDefinitions, argValues);
 			dec.resetOptions();
 			if (options)
 			{
 				dec.setOptions(options);
 			}
 			const decResult = dec.transform.apply(dec, args);
-			result.assertTextsEqual(decResult, argValues.t);
+			result.assertBytesEqual(decResult, argValues.b);
 		}
 		catch (e)
 		{
