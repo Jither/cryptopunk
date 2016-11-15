@@ -23,6 +23,7 @@ import * as hex from "./transforms/hex";
 import * as md2 from "./transforms/hashes/md2";
 import * as md4 from "./transforms/hashes/md4";
 import * as md5 from "./transforms/hashes/md5";
+import * as morse from "./transforms/char-encodings/morse";
 import * as nativeAes from "./transforms/browser-native/aes";
 import * as nativeRsa from "./transforms/browser-native/rsa";
 import * as numbers from "./transforms/numbers";
@@ -323,6 +324,12 @@ addPaletteItem(baseN.BytesToBase32Transform, "Base32", "Bytes > Base32");
 addPaletteItem(baseN.BytesToBase32HexTransform, "Base32-HEX", "Bytes > Base32-HEX");
 addPaletteItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64");
 addPaletteItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
+
+addPaletteCategory("System to text"); // TODO: Better name
+addPaletteItem(morse.MorseToTextTransform, "Morse", "Morse > Text");
+
+addPaletteCategory("Text to system"); // TODO: Better name
+addPaletteItem(morse.TextToMorseTransform, "Morse", "Text > Morse");
 
 addPaletteCategory("Checksums");
 addPaletteItem(adler32.Adler32Transform, "Adler-32", "Adler-32");
