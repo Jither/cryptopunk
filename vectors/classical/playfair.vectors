@@ -13,7 +13,16 @@ a: PLAYFIREXMBCDGHKNOQSTUVWZ
 p: HIDETHEGOLDINTHETREXESTUMP
 c: BMODZ BXDNA BEKUD MUIXM MOUVI F
 
+# Test of auto double letter padding and case insensitivity
+title   : Playfair cipher test vector
+mode    : encrypt-text
+
+a: PLAYFIREXMBCDGHKNOQSTUVWZ
+p: Hide the gold in the tree stump
+c: BMODZ BXDNA BEKUD MUIXM MOUVI F
+
 title   : Playfair Kennedy cipher test vector
+mode    : encrypt-decrypt-text
 option  : doubleLetter = no-encrypt
 
 # Keyword: ROYAL NEW ZEALAND NAVY
@@ -21,11 +30,3 @@ a: ROYALNEWZDVBCFGHIKMPQSTUX
 p: PTBOATONEOWENINELOSTINACTIONINBLACKETTSTRAITTWOMILESSWMERESUCOCEXCREWOFTWELVEXREQUESTANYINFORMATIONX
 c: KXIEY UREBE ZWEHE WRYTU HEYFS KREHE GOYFI WTTTU OLKSY CAIPO BOTEI ZONTX BYBWT GONEY CUZWR GDSON SXBOU YWRHE BAAHY USEDQ
 
-# Test of auto double letter padding and case insensitivity
-title   : Playfair cipher test vector
-mode    : encrypt-text
-clear   : options
-
-a: PLAYFIREXMBCDGHKNOQSTUVWZ
-p: Hide the gold in the tree stump
-c: BMODZ BXDNA BEKUD MUIXM MOUVI F

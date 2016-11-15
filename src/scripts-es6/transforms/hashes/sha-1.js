@@ -24,6 +24,7 @@ function h(a, b, c, d, e, x, t)
 	return add((b & c) ^ (b & d) ^ (c & d), rol(a, 5), e, x, t);
 }
 
+const STEPS = 80;
 const OPS = [f, g, h, g];
 
 class Sha1Transform extends MdHashTransform
@@ -53,7 +54,7 @@ class Sha1Transform extends MdHashTransform
 		const x = bytesToInt32sBE(block);
 		
 		// Extend from 16 to 80 (d)words
-		for (let index = 16; index < 80; index++)
+		for (let index = 16; index < STEPS; index++)
 		{
 			let extension = x[index - 3] ^ x[index - 8] ^ x[index - 14] ^ x[index - 16];
 			if (!this.sha0)
@@ -66,7 +67,7 @@ class Sha1Transform extends MdHashTransform
 
 		let [a, b, c, d, e] = state;
 
-		for (let step = 0; step < x.length; step++)
+		for (let step = 0; step < STEPS; step++)
 		{
 			const round = Math.floor(step / 20);
 			const op = OPS[round];
