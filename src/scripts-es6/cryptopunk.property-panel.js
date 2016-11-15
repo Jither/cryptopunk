@@ -8,7 +8,7 @@ const eleOutputs = [];
 let currentNode;
 
 const eleNodeTitle = document.getElementById("node-title");
-eleNodeTitle.addEventListener("input", titleChangedListener)
+eleNodeTitle.addEventListener("input", titleChangedListener);
 
 function applyFromOptions(ele, option, attrName)
 {

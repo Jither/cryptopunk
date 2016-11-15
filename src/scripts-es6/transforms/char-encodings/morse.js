@@ -113,7 +113,6 @@ const ITU = {
 	"<AA>": ".-.-",
 	"<BT>": "-...-",
 	"<NJ>": "-..---",
-	"<SK>": "...-.-",
 	"<SOS>": "...---..."
 };
 
@@ -188,9 +187,8 @@ class MorseToTextTransform extends Transform
 			}
 			outWords.push(outWord);
 		}
-		let result = outWords.join(" ");
-
-		return result;
+		
+		return outWords.join(" ");
 	}
 }
 

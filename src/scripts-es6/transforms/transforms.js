@@ -89,6 +89,10 @@ class Transform
 	{
 		for (const name in options)
 		{
+			if (!options.hasOwnProperty(name))
+			{
+				continue;
+			}
 			this.options[name] = options[name];
 		}
 	}
@@ -100,8 +104,12 @@ class Transform
 
 	resetOptions()
 	{
-		for (const name in this.options)
+		for (const name in this.defaults)
 		{
+			if (!this.defaults.hasOwnProperty(name))
+			{
+				continue;
+			}
 			this.options[name] = this.defaults[name];
 		}
 	}

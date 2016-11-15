@@ -1,5 +1,3 @@
-const ONE = new Int64(1);
-
 class Int64
 {
 	constructor(hi, lo)
@@ -141,8 +139,8 @@ class Int64
 			{
 				// Javascript can shift at most 31 bits
 				// Besides, this is simpler:
-				this.hi = val.lo;
-				this.lo = val.hi;
+				this.hi = lo;
+				this.lo = hi;
 			}
 			else if (count < 32)
 			{
@@ -158,7 +156,7 @@ class Int64
 		return this;
 	}
 
-	function shl(val, count)
+	shl(val, count)
 	{
 		if (count > 0)
 		{
@@ -173,10 +171,10 @@ class Int64
 				this.lo = 0;
 			}
 		}
-		return result;
+		return this;
 	}
 
-	function shr(count)
+	shr(count)
 	{
 		if (count > 0)
 		{
@@ -191,7 +189,7 @@ class Int64
 				this.hi = 0;
 			}
 		}
-		return result;
+		return this;
 	}
 
 	xor(...terms)
@@ -210,9 +208,11 @@ class Int64
 
 	sub(term)
 	{
-		return this.add(term.not(), ONE_64);
+		return this.add(term.not(), Int64.ONE);
 	}
 }
+
+Int64.ONE = new Int64(1);
 
 export {
 	Int64

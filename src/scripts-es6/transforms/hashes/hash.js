@@ -1,5 +1,4 @@
-import { Transform } from "../transforms";
-import { int32ToBytesLE } from "../../cryptopunk.utils";
+import { Transform, TransformError } from "../transforms";
 
 const CONSTANTS = {
 	SQRT2_DIV4:  0x5a827999, // 2^^30 * SQRT(2)
@@ -90,7 +89,7 @@ class MdHashTransform extends HashTransform
 			if (blockIndex === blockCount - 1)
 			{
 				// Last block - pad it
-				let paddedBlock = block = this.padBlock(block, bytes.length, ...rest);
+				const paddedBlock = block = this.padBlock(block, bytes.length, ...rest);
 				// Padding may turn the block into two (if there is not enough
 				// space for padding). In that case, we need to transform both.
 				// Contract: Returned padded block length will always be a multiple

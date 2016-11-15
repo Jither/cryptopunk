@@ -1,4 +1,4 @@
-import { HashTransform, CONSTANTS } from "./hash";
+import { HashTransform } from "./hash";
 import { TransformError } from "../transforms";
 import { int64sToBytesLE, bytesToInt64sLE } from "../../cryptopunk.utils";
 import { add64, not64, ror64, xor64 } from "../../cryptopunk.bitarith";
@@ -66,7 +66,7 @@ class Blake2bTransform extends HashTransform
 		{
 			return block;
 		}
-		let paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
+		const paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
 
 		const result = new Uint8Array(block.length + paddingLength);
 		result.set(block);

@@ -321,12 +321,9 @@ function checkSize(size, requiredSize)
 			return `at most ${requiredSize.max}`;
 		}
 	}
-	else
+	else if (size !== requiredSize)
 	{
-		if (size !== requiredSize)
-		{
-			return requiredSize.toString();
-		}
+		return requiredSize.toString();
 	}
 
 	return null;

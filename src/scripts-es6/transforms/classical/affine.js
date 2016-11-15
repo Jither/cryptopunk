@@ -98,7 +98,7 @@ class AffineDecryptTransform extends Transform
 			throw new TransformError(`Could not find multiplicative inverse for a = ${a}, m = ${alphabetLength}.`);
 		}
 
-		let original = str;
+		const original = str;
 
 		if (this.options.ignoreCase)
 		{

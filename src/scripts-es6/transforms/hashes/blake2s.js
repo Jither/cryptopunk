@@ -55,7 +55,7 @@ class Blake2sTransform extends HashTransform
 			return block;
 		}
 		// BLAKE-2: Simple zero padding
-		let paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
+		const paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
 
 		const result = new Uint8Array(block.length + paddingLength);
 		result.set(block);

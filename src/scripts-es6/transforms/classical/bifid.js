@@ -1,6 +1,6 @@
 import { Transform, TransformError } from "../transforms";
 import { polybius, depolybius, restoreFormatting } from "./cryptopunk.classical-utils";
-import { mod, isPerfectSquare } from "../../cryptopunk.math";
+import { isPerfectSquare } from "../../cryptopunk.math";
 import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 class BifidTransform extends Transform
@@ -54,7 +54,7 @@ class BifidEncryptTransform extends BifidTransform
 
 	_transform(str, alphabet)
 	{
-		let coords = polybius(str, alphabet).filter(coord => coord !== null);
+		const coords = polybius(str, alphabet).filter(coord => coord !== null);
 
 		const positions = new Array(coords.length * 2);
 		for (let i = 0; i < coords.length; i++)

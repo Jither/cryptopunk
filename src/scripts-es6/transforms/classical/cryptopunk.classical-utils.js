@@ -155,7 +155,7 @@ function polybius3(message, alphabet, indices)
 			result[i] = null;
 			continue;
 		}
-		const slice = Math.floor(index / sliceSize)
+		const slice = Math.floor(index / sliceSize);
 		const row = Math.floor((index - sliceSize * slice) / width);
 		const column = index % width;
 		if (indices)
@@ -271,7 +271,7 @@ function hasDualCaseCharacters(str)
 function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMatters)
 {
 	let textIndex = 0;
-	let originalSource = source;
+	const originalSource = source;
 	if (ignoreCase)
 	{
 		sourceAlphabet = sourceAlphabet.toUpperCase();

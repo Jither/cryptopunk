@@ -1,4 +1,6 @@
+/* eslint-disable no-control-regex */
 const RX_CONTROL_CODES = /[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]/g;
+/* eslint-enable no-control-regex */
 
 // Prepares string for use as part of a regular expression
 function escapeForRegex(str)
@@ -75,7 +77,7 @@ function groupCharacters(str, groupLength)
 
 function toVisualControlCodes(str)
 {
-	return str.replace(RX_CONTROL_CODES, (match) => { // control codes except TAB (0x09), LF (0x0a), CR (0x0d)
+	return str.replace(RX_CONTROL_CODES, match => { // control codes except TAB (0x09), LF (0x0a), CR (0x0d)
 		const cc = match.charCodeAt(0);
 		if (cc === 0x7f)
 		{

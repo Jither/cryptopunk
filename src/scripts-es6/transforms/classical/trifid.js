@@ -1,6 +1,6 @@
 import { Transform, TransformError } from "../transforms";
 import { polybius3, depolybius3, restoreFormatting } from "./cryptopunk.classical-utils";
-import { mod, isPerfectCube } from "../../cryptopunk.math";
+import { isPerfectCube } from "../../cryptopunk.math";
 import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 // TODO: Untested and buggy (particularly "formatted")
@@ -55,7 +55,7 @@ class TrifidEncryptTransform extends TrifidTransform
 
 	_transform(str, alphabet)
 	{
-		let coords = polybius3(str, alphabet).filter(coord => coord !== null);
+		const coords = polybius3(str, alphabet).filter(coord => coord !== null);
 
 		const positions = new Array(coords.length * 3);
 		for (let i = 0; i < coords.length; i++)

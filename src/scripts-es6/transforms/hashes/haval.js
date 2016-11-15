@@ -177,9 +177,10 @@ class HavalTransform extends MdHashTransform
 	transformBlock(block, context)
 	{
 		const x = bytesToInt32sLE(block);
-		const state = context.state;
 
-		let ff1 = context.ff1, 
+		const
+			state = context.state,
+			ff1 = context.ff1, 
 			ff2 = context.ff2, 
 			ff3 = context.ff3, 
 			ff4 = context.ff4,

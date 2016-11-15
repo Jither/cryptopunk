@@ -1,5 +1,5 @@
 import { MdHashTransform } from "./hash";
-import { int64sToBytesBE, bytesToInt64sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { int64sToBytesBE, bytesToInt64sBE } from "../../cryptopunk.utils";
 import { add64, ror64, xor64 } from "../../cryptopunk.bitarith";
 
 const u512 = [
@@ -93,12 +93,12 @@ class Blake512Transform extends MdHashTransform
 			v: new Array(16),
 			bitCounter: 0,
 			messageSize: bytes.length * 8
-		}
+		};
 
 		this.fill(context.s);
 		this.fill(context.v);
 
-		this.transformBlocks(bytes, context)
+		this.transformBlocks(bytes, context);
 
 		if (this.isBlake384)
 		{

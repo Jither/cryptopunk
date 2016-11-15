@@ -33,13 +33,13 @@ class Md2Transform extends MdHashTransform
 	{
 		// Pad to multiple of block length. If already a multiple, still add a block of padding:
 		const paddingLength = BLOCK_LENGTH - block.length % BLOCK_LENGTH;
-
-		const result = new Uint8Array(block.length + paddingLength);
+		
+		const paddedLength = block.length + paddingLength;
+		const result = new Uint8Array(paddedLength);
 		result.set(block);
 
-		let index = block.length;
 		// Use the padding length as pad byte
-		result.fill(paddingLength, index, index + paddingLength);
+		result.fill(paddingLength, block.length, paddedLength);
 
 		return result;
 	}
