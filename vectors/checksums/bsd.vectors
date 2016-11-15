@@ -1,0 +1,33 @@
+mode    : hash
+hash    : BsdTransform
+m-format: ascii
+h-format: hex
+
+title: BSD checksum test vector
+
+m: fsociety
+h: a0e5
+
+m: yfsociet
+h: 32da
+
+m: tyfsocie
+h: 4ccd
+
+m: etyfsoci
+h: 62d1
+
+m: ietyfsoc
+h: 96d1
+
+m: cietyfso
+h: f2dd
+
+m: ocietyfs
+h: c2de
+
+m: societyf
+h: 6ad8
+
+m: init decode sequence...five down, nine across...skip truncation...
+h: 7290

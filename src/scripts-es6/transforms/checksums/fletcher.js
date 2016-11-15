@@ -4,7 +4,10 @@ const SIZES = [16, 32, 64];
 const MOD_16 = 255;
 const MOD_32 = 65535;
 const MOD_64 = 4294967296;
-// For now, this only supports the standard moduli
+
+// TODO: Fletcher-32 and Fletcher-64 make no sense - mixing endianness is the only way of getting expected (Wikipedia) results
+// Note that most implementations are wrong in that they add bytes rather than (16/32-bit) words.
+
 class FletcherTransform extends Transform
 {
 	constructor()
@@ -57,16 +60,19 @@ class FletcherTransform extends Transform
 		// We use simple 0 padding
 		for (let index = 0; index < bytes.length; index += 2)
 		{
-			const block = (bytes[index] << 8 | (bytes[index + 1 ] || 0));
+			// We read the byte stream as BE
+			const block = ((bytes[index] << 8) | (bytes[index + 1 ] || 0));
 			a = (a + block) % MOD_32;
 			b = (b + a) % MOD_32;
 		}
 
+		// And return the result as LE words... WTF!?
+		// (b at the "most significant end" is correct, but the order of bytes in b and a is reversed)
 		const result = new Uint8Array(4);
-		result[0] = b >> 8;
-		result[1] = b & 0xff;
-		result[2] = a >> 8;
-		result[3] = a & 0xff;
+		result[0] = b & 0xff;
+		result[1] = b >> 8;
+		result[2] = a & 0xff;
+		result[3] = a >> 8;
 
 		return result;
 	}
@@ -88,14 +94,14 @@ class FletcherTransform extends Transform
 		}
 
 		const result = new Uint8Array(8);
-		result[0] =  b >>> 24;
-		result[1] = (b >>  16) & 0xff;
-		result[2] = (b >>   8) & 0xff;
-		result[3] =  b         & 0xff;
-		result[4] =  a >>> 24;
-		result[5] = (a >>  16) & 0xff;
-		result[6] = (a >>   8) & 0xff;
-		result[7] =  a         & 0xff;
+		result[0] =  b         & 0xff;
+		result[1] = (b >>   8) & 0xff;
+		result[2] = (b >>  16) & 0xff;
+		result[3] =  b >>> 24;
+		result[4] =  a         & 0xff;
+		result[5] = (a >>   8) & 0xff;
+		result[6] = (a >>  16) & 0xff;
+		result[7] =  a >>> 24;
 
 		return result;
 	}

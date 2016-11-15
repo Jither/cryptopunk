@@ -2,6 +2,18 @@ import { Transform, TransformError } from "../transforms";
 import { groupCharacters, removeWhiteSpace } from "../../cryptopunk.strings";
 import { mod } from "../../cryptopunk.math";
 
+// TODO: Maybe add pre-padding (pad double letters *before* splitting into digrams)
+// and check for other variants
+const DOUBLE_LETTER_RULE_NAMES = [
+	"Pad",
+	"No encryption"
+];
+
+const DOUBLE_LETTER_RULE_VALUES = [
+	"pad",
+	"no-encrypt"
+];
+
 class PlayfairTransform extends Transform
 {
 	constructor(decrypt)
@@ -9,7 +21,8 @@ class PlayfairTransform extends Transform
 		super();
 		this.addInput("string", decrypt ? "Ciphertext" : "Plaintext")
 			.addInput("string", "Alphabet")
-			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext");
+			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
+			.addOption("doubleLetter", "Double letter rule", "pad", { type: "select", texts: DOUBLE_LETTER_RULE_NAMES, values: DOUBLE_LETTER_RULE_VALUES });
 	}
 
 	transform(str, alphabet)
@@ -43,17 +56,35 @@ class PlayfairEncryptTransform extends PlayfairTransform
 		let i = 0;
 		let result = "";
 		const padding = this.options.padding || "X";
+
 		while (i < str.length)
 		{
 			const digramA = str.charAt(i);
 			let digramB = str.charAt(i + 1);
 
-			// 1. If letters are the same, or only one was left, use padding character for second character:
-			if (digramB === digramA || digramB === "")
+			// 1. If only one letter was left, pad with padding character
+			if (digramB === "")
 			{
-				digramB = padding; // Use X if option was set to empty string
-				// Only add 1, since we didn't use the second letter.
+				digramB = padding;
+				// Only add 1 - no characters left
 				i++;
+			}
+			else if (digramA === digramB)
+			{
+				switch (this.options.doubleLetter)
+				{
+					case "pad":
+						// Use padding character instead of digram B, and push digram B to next digram
+						digramB = padding;
+						// Only add 1 - since we didn't use digram B.
+						i++;
+						break;
+					case "no-encrypt":
+						// No encryption, continue to next digram
+						result += digramA + digramB;
+						i += 2;
+						continue;
+				}
 			}
 			else
 			{
@@ -119,6 +150,13 @@ class PlayfairDecryptTransform extends PlayfairTransform
 		{
 			const digramA = str.charAt(i);
 			const digramB = str.charAt(i + 1);
+
+			if (digramA === digramB && this.options.doubleLetter === "no-encrypt")
+			{
+				result += digramA + digramB;
+				i += 2;
+				continue;
+			}
 
 			const indexA = alphabet.indexOf(digramA.toUpperCase());
 			const indexB = alphabet.indexOf(digramB.toUpperCase());

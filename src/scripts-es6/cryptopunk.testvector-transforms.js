@@ -8,6 +8,7 @@ import * as hex from "./transforms/hex";
 import * as adfgvx from "./transforms/classical/adfgvx";
 import * as affine from "./transforms/classical/affine";
 import * as bifid from "./transforms/classical/bifid";
+import * as playfair from "./transforms/classical/playfair";
 import * as rotx from "./transforms/classical/rotx";
 import * as skip from "./transforms/classical/skip";
 import * as subst from "./transforms/classical/simple-substitution";
@@ -51,7 +52,9 @@ import * as tiger from "./transforms/hashes/tiger";
 import * as whirlpool from "./transforms/hashes/whirlpool";
 
 import * as adler32 from "./transforms/checksums/adler-32";
+import * as bsd from "./transforms/checksums/bsd";
 import * as crc from "./transforms/checksums/crc";
+import * as fletcher from "./transforms/checksums/fletcher";
 
 const TRANSFORMS = {};
 
@@ -87,6 +90,7 @@ addTransformsFrom(hex);
 addTransformsFrom(adfgvx);
 addTransformsFrom(affine);
 addTransformsFrom(bifid);
+addTransformsFrom(playfair);
 addTransformsFrom(rotx);
 addTransformsFrom(skip);
 addTransformsFrom(subst);
@@ -130,7 +134,9 @@ addTransformsFrom(tiger);
 addTransformsFrom(whirlpool);
 
 addTransformsFrom(adler32);
+addTransformsFrom(bsd);
 addTransformsFrom(crc);
+addTransformsFrom(fletcher);
 
 // For now, we use globals
 /* globals global */
