@@ -37,9 +37,8 @@ class BytesToAsciiTransform extends Transform
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
 		let result = "";
 		for (let i = 0; i < bytes.length; i++)
 		{
@@ -52,7 +51,7 @@ class BytesToAsciiTransform extends Transform
 			}
 			result += c;
 		}
-		if (options.stripCC)
+		if (this.options.stripCC)
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}

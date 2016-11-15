@@ -10,10 +10,9 @@ class KeyboardInputGenerator extends Transform
 			.addOption("input", "Input", "");
 	}
 
-	transform(options)
+	transform()
 	{
-		options = Object.assign({}, this.defaults, options);
-		return options.input;
+		return this.options.input;
 	}
 }
 
@@ -26,10 +25,9 @@ class RandomBytesGenerator extends Transform
 			.addOption("length", "Length", 16, { min: 1 });
 	}
 
-	transform(options)
+	transform()
 	{
-		options = Object.assign({}, this.defaults, options);
-		const result = new Uint8Array(options.length);
+		const result = new Uint8Array(this.options.length);
 		window.crypto.getRandomValues(result);
 
 		return result;
@@ -45,11 +43,10 @@ class NullBytesGenerator extends Transform
 			.addOption("length", "Length", 16, { min: 1 });
 	}
 
-	transform(options)
+	transform()
 	{
-		options = Object.assign({}, this.defaults, options);
 		// TypedArrays are initialized to zero
-		const result = new Uint8Array(options.length);
+		const result = new Uint8Array(this.options.length);
 		return result;
 	}
 }
@@ -66,16 +63,15 @@ class KeyedAlphabetGenerator extends Transform
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(options)
+	transform()
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const combined = removeWhiteSpace(options.keyword + options.baseAlphabet);
+		const combined = removeWhiteSpace(this.options.keyword + this.options.baseAlphabet);
+		const ignoreCase = this.options.ignoreCase;
 
 		let result = "", resultCompare = "";
-		let remove = options.remove.toUpperCase();
+		let remove = this.options.remove.toUpperCase();
 
-		if (options.ignoreCase)
+		if (ignoreCase)
 		{
 			remove = remove.toUpperCase();
 		}
@@ -84,7 +80,7 @@ class KeyedAlphabetGenerator extends Transform
 		{
 			const originalC = combined.charAt(i);
 			let c = originalC;
-			if (options.ignoreCase)
+			if (ignoreCase)
 			{
 				c = c.toUpperCase();
 			}

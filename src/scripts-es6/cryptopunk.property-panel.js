@@ -120,7 +120,7 @@ function showProperties(node)
 
 	const controller = node.controller;
 
-	const optionDefinitions = controller.transform.options;
+	const optionDefinitions = controller.transform.optionDefinitions;
 
 	node.removed.add(nodeRemovedListener);
 

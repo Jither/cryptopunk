@@ -1,0 +1,27 @@
+mode    : encode-decode-text
+encode  : Utf16ToBytesTransform
+decode  : BytesToUtf16Transform
+t-format: utf-8
+b-format: hex
+
+title   : UTF-16 BMP (BE)
+
+t: Ξεσκεπάζω
+b: 039e03b503c303ba03b503c003ac03b603c9
+
+title   : UTF-16 SMP (BE)
+
+t: 𠜎𠾴𢵌𨳒
+b: d841df0ed843dfb4d84bdd4cd863dcd2
+
+option  : littleEndian = true
+
+title   : UTF-16 BMP (LE)
+
+t: Ξεσκεπάζω
+b: 9e03b503c303ba03b503c003ac03b603c903
+
+title   : UTF-16 SMP (LE)
+
+t: 𠜎𠾴𢵌𨳒
+b: 41d80edf43d8b4df4bd84cdd63d8d2dc

@@ -38,9 +38,9 @@ class Sha2Transform extends Transform
 		return this.current;
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		const tf = this.getVariant(options.variant);
+		const tf = this.getVariant(this.options.variant);
 		return tf.transform(bytes);
 	}
 }

@@ -40,8 +40,10 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 		}
 	}
 
-	strToDigits(str, options)
+	strToDigits(str)
 	{
+		const inferPadding = this.options.inferPadding;
+
 		let pad = 0;
 		// Check for padding (e.g. '=' at end of base-64)
 		for (let i = str.length - 1; i >= 0; i--)
@@ -72,7 +74,7 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 		}
 
 		// Padding may be inferred - if so, it will override any user-entered padding
-		if (this.usesPadding && options.inferPadding)
+		if (this.usesPadding && inferPadding)
 		{
 			pad = (this.padCharCount - result.length % this.padCharCount) % this.padCharCount;
 		}
@@ -86,10 +88,8 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 		return [result, pad];
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		if (str === "")
 		{
 			return new Uint8Array();
@@ -97,7 +97,7 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 
 		const radix = this.radix;
 
-		const [digits, pad] = this.strToDigits(str, options);
+		const [digits, pad] = this.strToDigits(str);
 
 		const resultLength = Math.ceil(digits.length * this.bitsPerDigit / 8);
 		const result = new Uint8Array(resultLength);
@@ -164,10 +164,8 @@ class BytesToBaseNTransform extends BaseNBaseTransform
 		}
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		if (bytes.length === 0)
 		{
 			return "";
@@ -217,7 +215,7 @@ class BytesToBaseNTransform extends BaseNBaseTransform
 			result = result.substr(0, result.length - padCount);
 
 			// Add "=" padding depending on option
-			if (options.pad)
+			if (this.options.pad)
 			{
 				for (let i = 0; i < padCount; i++)
 				{

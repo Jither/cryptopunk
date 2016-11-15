@@ -30,13 +30,15 @@ test("Throws for too long alphabet", t => {
 	const options = { headers: "ADFGX" };
 
 	const enc = new AdfgvxEncryptTransform();
+	enc.setOptions(options);
 
-	let error = t.throws(() => enc.transform("fivenine", "MOBLEY", "abcdefghijklmnopqrstuvwxyz", options));
+	let error = t.throws(() => enc.transform("fivenine", "MOBLEY", "abcdefghijklmnopqrstuvwxyz"));
 	t.true(error instanceof TransformError);
 
 	const dec = new AdfgvxDecryptTransform();
+	dec.setOptions(options);
 
-	error = t.throws(() => dec.transform("fivenine", "MOBLEY", "abcdefghijklmnopqrstuvwxyz", options));
+	error = t.throws(() => dec.transform("fivenine", "MOBLEY", "abcdefghijklmnopqrstuvwxyz"));
 	t.true(error instanceof TransformError);
 });
 

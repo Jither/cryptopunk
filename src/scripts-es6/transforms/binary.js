@@ -11,10 +11,9 @@ class BinaryToBytesTransform extends Transform
 			.addOption("ignoreWhiteSpace", "Ignore whitespace", true);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-		if (options.ignoreWhiteSpace)
+		if (this.options.ignoreWhiteSpace)
 		{
 			str = removeWhiteSpace(str);
 		}
@@ -61,14 +60,14 @@ class BytesToBinaryTransform extends Transform
 			.addOption("split", "Split into octets", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
+		const split = this.options.split;
 
 		let result = "";
 		for (let i = 0; i < bytes.length; i++)
 		{
-			if (options.split && i > 0)
+			if (split && i > 0)
 			{
 				result += " ";
 			}

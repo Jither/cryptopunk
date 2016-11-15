@@ -1,0 +1,22 @@
+mode    : encode-decode-text
+encode  : Utf8ToBytesTransform
+decode  : BytesToUtf8Transform
+t-format: utf-8
+b-format: hex
+
+title   : UTF-8 latin
+
+t: æøåÆØÅ§¤ñ
+b: c3a6c3b8c3a5c386c398c385c2a7c2a4c3b1
+
+
+title   : UTF-8 BMP
+
+t: Ξεσκεπάζω
+b: ce9eceb5cf83cebaceb5cf80ceacceb6cf89
+
+title   : UTF-8 SMP
+
+t: 𠜎𠾴𢵌𨳒
+b: f0a09c8ef0a0beb4f0a2b58cf0a8b392
+

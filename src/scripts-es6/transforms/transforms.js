@@ -8,6 +8,12 @@ class Transform
 			writable: false,
 			value: {}
 		});
+		Object.defineProperty(this, "optionDefinitions", {
+			enumerable: true,
+			configurable: false,
+			writable: false,
+			value: {}
+		});
 		Object.defineProperty(this, "defaults", {
 			enumerable: true,
 			configurable: false,
@@ -60,8 +66,8 @@ class Transform
 	addOption(name, caption, defaultValue, options)
 	{
 		options = options || {};
-		this.options[name] = { caption, options, type: options.type || this.getTypeByValue(defaultValue) };
-		this.defaults[name] = defaultValue;
+		this.optionDefinitions[name] = { caption, options, type: options.type || this.getTypeByValue(defaultValue) };
+		this.defaults[name] = this.options[name] =  defaultValue;
 		return this;
 	}
 
@@ -79,12 +85,26 @@ class Transform
 		return this;
 	}
 
-	setDefault(name, defaultValue)
+	setOptions(options)
 	{
-		this.defaults[name] = defaultValue;
-		return this;
+		for (const name in options)
+		{
+			this.options[name] = options[name];
+		}
 	}
 
+	setOption(name, value)
+	{
+		this.options[name] = value;
+	}
+
+	resetOptions()
+	{
+		for (const name in this.options)
+		{
+			this.options[name] = this.defaults[name];
+		}
+	}
 }
 
 function TransformError(message)

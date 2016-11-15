@@ -135,13 +135,16 @@ class TransformNodeController
 			args.push(value);
 			i++;
 		});
-		args.push(this.options);
 		return args;
 	}
 
 	update()
 	{
 		const args = this.inputsToArgs();
+
+		// TODO: Only apply options that actually changed
+		this.transform.resetOptions();
+		this.transform.setOptions(this.options);
 
 		if (this.transform.transformAsync)
 		{

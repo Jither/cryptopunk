@@ -60,11 +60,10 @@ class SkipjackTransform extends BlockCipherTransform
 		this.addOption("variant", "Variant", "original", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
 		this.checkKeySize(keyBytes, 80);
-		return this.transformBlocks(bytes, 64, keyBytes, options.variant);
+		return this.transformBlocks(bytes, 64, keyBytes, this.options.variant);
 	}
 }
 

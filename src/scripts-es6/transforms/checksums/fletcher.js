@@ -15,10 +15,9 @@ class FletcherTransform extends Transform
 			.addOption("size", "Size", 32, { type: "select", texts: SIZES });
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const size = options.size;
+		const size = this.options.size;
 
 		switch (size)
 		{

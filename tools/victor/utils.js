@@ -1,5 +1,32 @@
 "use strict";
 
+function applyEscapes(str)
+{
+	str = str.replace(/\\x([a-fA-F0-9]{2})/g, (match, hex) => {
+		return String.fromCharCode(parseInt(hex, 16));
+	});
+	str = str.replace(/\\u([a-fA-F0-9]{4})/g, (match, hex) => {
+		return String.fromCharCode(parseInt(hex, 16));
+	});
+	str = str.replace(/\\u\{([a-fA-F0-9]{1,})\}/g, (match, hex) => {
+		return String.fromCodePoint(parseInt(hex, 16));
+	});
+	str = str.replace(/\\(.)/g, (match, escapeChar) => {
+		switch (escapeChar)
+		{
+			case "b": return "\b";
+			case "f": return "\f";
+			case "n": return "\n";
+			case "r": return "\r";
+			case "t": return "\t";
+			case "v": return "\v";
+			case "\\": return "\\";
+			default: return escapeChar;
+		}
+	});
+	return str;
+}
+
 function asciiToBytes(ascii)
 {
 	const bytes = new Uint8Array(ascii.length);
@@ -43,6 +70,7 @@ function hexToBytes(hex)
 }
 
 module.exports = {
+	applyEscapes,
 	asciiToBytes,
 	bytesToHex,
 	hexToBytes

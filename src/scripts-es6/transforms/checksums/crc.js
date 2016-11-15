@@ -99,13 +99,12 @@ class CrcTransform extends Transform
 		return result;
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const variant = CRC_VARIANTS[options.variant];
+		const variant = CRC_VARIANTS[this.options.variant];
 		if (typeof variant === "undefined")
 		{
-			throw new TransformError(`Unknown CRC variant, ID ${options.variant}.`);
+			throw new TransformError(`Unknown CRC variant, ID ${this.options.variant}.`);
 		}
 		
 		const crcTable = this.getTable(variant);

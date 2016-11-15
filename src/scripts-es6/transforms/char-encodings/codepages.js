@@ -89,10 +89,9 @@ class CodePageToBytesTransform extends Transform
 			.addOption("codepage", "Code page", "iso-8859-1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES });
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const codepage = CODE_PAGES[options.codepage];
+		const codepage = CODE_PAGES[this.options.codepage];
 
 		const result = new Uint8Array(str.length);
 		for (let i = 0; i < str.length; i++)
@@ -101,7 +100,7 @@ class CodePageToBytesTransform extends Transform
 			const code = codepage.indexOf(chr);
 			if (code < 0)
 			{
-				throw new TransformError(`Character '${chr}' doesn't exist in ${options.codepage}`);
+				throw new TransformError(`Character '${chr}' doesn't exist in ${this.options.codepage}`);
 			}
 			result[i] = code;
 		}
@@ -120,10 +119,9 @@ class BytesToCodePageTransform extends Transform
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const codepage = CODE_PAGES[options.codepage];
+		const codepage = CODE_PAGES[this.options.codepage];
 
 		let result = "";
 		for (let i = 0; i < bytes.length; i++)
@@ -137,7 +135,7 @@ class BytesToCodePageTransform extends Transform
 			result += c;
 		}
 
-		if (options.stripCC)
+		if (this.options.stripCC)
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}

@@ -20,12 +20,12 @@ class Sha3Transform extends KeccakBaseTransform
 		this.addOption("variant", "Variant", "SHA3-256", { type: "select", texts: SHA3_VARIANT_NAMES });
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
+		// TODO: Handle in optionsChanged instead (when implemented)
 		const keccakOptions = { suffix: 0x02 }; // Suffix 01 (lsb first)
 
-		switch (options.variant)
+		switch (this.options.variant)
 		{
 			case "SHA3-224":
 				keccakOptions.capacity = 448;
@@ -44,7 +44,8 @@ class Sha3Transform extends KeccakBaseTransform
 				keccakOptions.size = 512;
 				break;
 		}
-		return super.transform(bytes, keccakOptions);
+		this.setOptions(keccakOptions);
+		return super.transform(bytes);
 	}
 }
 
@@ -57,12 +58,12 @@ class ShakeTransform extends KeccakBaseTransform
 			.addOption("size", "Size", 128, { min: 0, step: 8 });
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const keccakOptions = { suffix: 0x0f, size: options.size }; // Suffix 1111
+		// TODO: Handle in optionsChanged instead (when implemented)
+		const keccakOptions = { suffix: 0x0f, size: this.options.size }; // Suffix 1111
 
-		switch (options.variant)
+		switch (this.options.variant)
 		{
 			case "SHAKE-128":
 				keccakOptions.capacity = 256;
@@ -71,7 +72,9 @@ class ShakeTransform extends KeccakBaseTransform
 				keccakOptions.capacity = 512;
 				break;
 		}
-		return super.transform(bytes, keccakOptions);
+		
+		this.setOptions(keccakOptions);
+		return super.transform(bytes);
 	}
 }
 

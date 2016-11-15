@@ -12,9 +12,8 @@ class PlayfairTransform extends Transform
 			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext");
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
 		alphabet = removeWhiteSpace(alphabet).toUpperCase();
 		str = removeWhiteSpace(str);
 
@@ -26,7 +25,7 @@ class PlayfairTransform extends Transform
 			throw new TransformError(`Alphabet length must be a square number. Was: ${alphabet.length}.`);
 		}
 
-		return this._transform(str, alphabet, options, width);
+		return this._transform(str, alphabet, width);
 	}
 }
 
@@ -39,10 +38,11 @@ class PlayfairEncryptTransform extends PlayfairTransform
 			.addOption("grouping", "Group characters", 5, { min: 0 });
 	}
 
-	_transform(str, alphabet, options, width)
+	_transform(str, alphabet, width)
 	{
 		let i = 0;
 		let result = "";
+		const padding = this.options.padding || "X";
 		while (i < str.length)
 		{
 			const digramA = str.charAt(i);
@@ -51,7 +51,7 @@ class PlayfairEncryptTransform extends PlayfairTransform
 			// 1. If letters are the same, or only one was left, use padding character for second character:
 			if (digramB === digramA || digramB === "")
 			{
-				digramB = options.padding || "X"; // Use X if option was set to empty string
+				digramB = padding; // Use X if option was set to empty string
 				// Only add 1, since we didn't use the second letter.
 				i++;
 			}
@@ -93,7 +93,7 @@ class PlayfairEncryptTransform extends PlayfairTransform
 			result += resultA + resultB;
 		}
 
-		return groupCharacters(result, options.grouping);
+		return groupCharacters(result, this.options.grouping);
 	}
 }
 
@@ -104,7 +104,7 @@ class PlayfairDecryptTransform extends PlayfairTransform
 		super(true);
 	}
 
-	_transform(str, alphabet, options, width)
+	_transform(str, alphabet, width)
 	{
 		let i = 0;
 		let result = "";

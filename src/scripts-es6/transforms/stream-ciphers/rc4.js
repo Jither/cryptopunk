@@ -46,13 +46,11 @@ class Rc4Transform extends Transform
 		return [i, j];
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.default, options);
-
 		const sbox = this.generateSbox(keyBytes);
 
-		let [i, j] = this.discardKeyBytes(sbox, options.discard);
+		let [i, j] = this.discardKeyBytes(sbox, this.options.discard);
 
 		const result = new Uint8Array(bytes.length);
 		for (let index = 0; index < bytes.length; index++)

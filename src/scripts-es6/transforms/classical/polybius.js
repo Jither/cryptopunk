@@ -11,14 +11,12 @@ class PolybiusTransform extends Transform
 			.addInput("string", "Alphabet")
 			.addOutput("string", "Ciphertext")
 			.addOption("removeWhiteSpace", "Remove whitespace", true)
-			.addOption("caseSensitive", "Case sensitive", false);
+			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(message, alphabet, options)
+	transform(message, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		if (options.removeWhiteSpace)
+		if (this.options.removeWhiteSpace)
 		{
 			message = removeWhiteSpace(message);
 			alphabet = removeWhiteSpace(alphabet);
@@ -29,13 +27,13 @@ class PolybiusTransform extends Transform
 			alphabet = "abcdefghjklmnopqrstuvwxyz";
 		}
 
-		if (!options.caseSensitive)
+		if (!this.options.ignoreCase)
 		{
 			message = message.toUpperCase();
 			alphabet = alphabet.toUpperCase();
 		}
 
-		return this._transform(message, alphabet, options);
+		return this._transform(message, alphabet);
 	}
 }
 
@@ -47,9 +45,10 @@ class PolybiusEncryptTransform extends PolybiusTransform
 		this.addOption("separator", "Separator", " ", { type: "short-string" });
 	}
 
-	_transform(plaintext, alphabet, options)
+	_transform(plaintext, alphabet)
 	{
 		// TODO: Handle plaintext characters not in alphabet (likely throw)
+		const separator = this.options.separator;
 
 		let result = "";
 		const coords = polybius(plaintext, alphabet);
@@ -57,7 +56,7 @@ class PolybiusEncryptTransform extends PolybiusTransform
 		{
 			if (i > 0)
 			{
-				result += options.separator;
+				result += separator;
 			}
 			// Polybius indices are 1-based
 			result += String(coords[i][0] + 1) + (coords[i][1] + 1);

@@ -185,15 +185,13 @@ class DesTransform extends BlockCipherTransform
 		this.addOption("checkParity", "Check parity of 64-bit keys", true);
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		this.checkKeySize(keyBytes, [56, 64]);
 
 		if (keyBytes.length === 8)
 		{
-			if (options.checkParity)
+			if (this.options.checkParity)
 			{
 				this.checkParity(keyBytes);
 			}

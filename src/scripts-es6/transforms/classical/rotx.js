@@ -11,19 +11,19 @@ class RotXBaseTransform extends Transform
 			.addOutput("string", "Output");
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
 		const alphabetLength = alphabet.length;
 
-		let x = options.x;
-		if (options.decrypt)
+		let x = this.options.x;
+		if (this.options.decrypt)
 		{
 			x = -x;
 		}
 
 		const original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			alphabet = alphabet.toUpperCase();
 			str = str.toUpperCase();
@@ -42,9 +42,9 @@ class RotXBaseTransform extends Transform
 			result += alphabet.charAt(mod(index + x, alphabetLength));
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase, hasDualCaseCharacters(alphabet));
+			result = restoreFormatting(result, original, alphabet, this.options.ignoreCase, hasDualCaseCharacters(alphabet));
 		}
 
 		return result;
@@ -63,10 +63,9 @@ class RotXTransform extends RotXBaseTransform
 			.addOption("decrypt", "Decrypt", false);
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
-		return super.transform(str, alphabet || "abcdefghijklmnopqrstuvwxyz", options);
+		return super.transform(str, alphabet || "abcdefghijklmnopqrstuvwxyz");
 	}
 }
 
@@ -79,12 +78,13 @@ class Rot5Transform extends RotXBaseTransform
 		this.addOption("formatted", "Formatted", true);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-		options.x = 5;
-		options.ignoreCase = false;
-		return super.transform(str, "0123456789", options);
+		this.setOptions({
+			x: 5,
+			ignoreCase: false
+		});
+		return super.transform(str, "0123456789");
 	}
 }
 
@@ -97,12 +97,13 @@ class Rot13Transform extends RotXBaseTransform
 		this.addOption("formatted", "Formatted", true);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-		options.x = 13;
-		options.ignoreCase = true;
-		return super.transform(str, "abcdefghijklmnopqrstuvwxyz", options);
+		this.setOptions({
+			x: 13,
+			ignoreCase: true
+		});
+		return super.transform(str, "abcdefghijklmnopqrstuvwxyz");
 	}
 }
 
@@ -122,17 +123,16 @@ class Rot18Transform extends Transform
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, alphabetAlpha, alphabetNum, options)
+	transform(str, alphabetAlpha, alphabetNum)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const xAlpha = options.xAlpha;
-		const xNum = options.xNum;
+		const xAlpha = this.options.xAlpha;
+		const xNum = this.options.xNum;
 		alphabetAlpha = alphabetAlpha || "abcdefghijklmnopqrstuvwxyz";
 		alphabetNum = alphabetNum || "0123456789";
 
 		const original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			str = str.toUpperCase();
 			alphabetAlpha = alphabetAlpha.toUpperCase();
@@ -156,9 +156,9 @@ class Rot18Transform extends Transform
 			result += alphabet.charAt(mod(index + x, alphabet.length));
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabetAlpha + alphabetNum, options.ignoreCase);
+			result = restoreFormatting(result, original, alphabetAlpha + alphabetNum, this.options.ignoreCase);
 		}
 
 		return result;
@@ -174,12 +174,13 @@ class Rot47Transform extends RotXBaseTransform
 		this.addOption("formatted", "Formatted", true);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-		options.x = 47;
-		options.ignoreCase = false;
-		return super.transform(str, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~", options);
+		this.setOptions({
+			x: 47,
+			ignoreCase: false
+		});
+		return super.transform(str, "!\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
 	}
 }
 

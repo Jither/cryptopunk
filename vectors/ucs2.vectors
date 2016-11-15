@@ -1,0 +1,14 @@
+mode    : encode-decode-text
+encode  : Ucs2ToBytesTransform
+decode  : BytesToUcs2Transform
+t-format: utf-8
+b-format: hex
+
+t: 它不是一个填字游戏
+b: 5b834e0d662f4e004e2a586b5b576e38620f
+
+
+option  : littleEndian = true
+
+t: 它不是一个填字游戏
+b: 835b0d4e2f66004e2a4e6b58575b386e0f62

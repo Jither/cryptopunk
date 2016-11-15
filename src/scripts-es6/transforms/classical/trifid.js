@@ -16,10 +16,8 @@ class TrifidTransform extends Transform
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		alphabet = removeWhiteSpace(alphabet);
 
 		if (alphabet.length < 1)
@@ -33,16 +31,16 @@ class TrifidTransform extends Transform
 		}
 
 		const originalStr = str;
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			alphabet = alphabet.toUpperCase();
 			str = str.toUpperCase();
 		}
 
 		let result = this._transform(str, alphabet);
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, originalStr, alphabet, options.ignoreCase);
+			result = restoreFormatting(result, originalStr, alphabet, this.options.ignoreCase);
 		}
 		return result;
 	}

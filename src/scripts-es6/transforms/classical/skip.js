@@ -13,11 +13,9 @@ class SkipEncryptTransform extends Transform
 			.addOption("skip", "Skip", 1);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const skip = options.skip;
+		const skip = this.options.skip;
 		const strLength = str.length;
 
 		if (!coprime(skip, strLength))
@@ -25,7 +23,7 @@ class SkipEncryptTransform extends Transform
 			throw new TransformError(`Skip (${skip}) should be co-prime with message length (${strLength}) in order to encrypt the full message.`);
 		}
 
-		let index = options.start;
+		let index = this.options.start;
 		let count = 0;
 		const result = [];
 		while (count < strLength)
@@ -51,11 +49,9 @@ class SkipDecryptTransform extends Transform
 			.addOption("skip", "Skip", 1);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const skip = options.skip;
+		const skip = this.options.skip;
 		const strLength = str.length;
 
 		if (!coprime(skip, strLength))
@@ -63,7 +59,7 @@ class SkipDecryptTransform extends Transform
 			throw new TransformError(`Skip (${skip}) should be co-prime with message length (${strLength}) in order to decrypt the full message.`);
 		}
 
-		let index = options.start;
+		let index = this.options.start;
 		let count = 0;
 		let result = "";
 		while (count < strLength)

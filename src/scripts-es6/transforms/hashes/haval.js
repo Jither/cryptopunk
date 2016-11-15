@@ -118,22 +118,20 @@ class HavalTransform extends MdHashTransform
 			.addOption("size", "Size", 128, { type: "select", texts: SIZE_NAMES });
 	}
 
-	writeSuffix(block, offset, messageLength, state, options)
+	writeSuffix(block, offset, messageLength)
 	{
 		// Difference from standard Merkle:
 		// Version number, round count, hash length (last 3 bits) and bit length of message
 		// are stored in the last 10 bytes after the padding:
-		const info = HAVAL_VERSION | (options.passes << 3) | (options.size << 6);
+		const info = HAVAL_VERSION | (this.options.passes << 3) | (this.options.size << 6);
 		block[offset++] = info & 0xff;
 		block[offset++] = info >>> 8;
 
 		super.writeSuffix(block, offset, messageLength);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		const state = [
 			0x243f6a88,
 			0x85a308d3,
@@ -145,44 +143,47 @@ class HavalTransform extends MdHashTransform
 			0xec4e6c89
 		];
 
+		const context = { state };
+
 		/* eslint-disable camelcase */
-		switch (options.passes)
+		switch (this.options.passes)
 		{
 			case 3:
-				options.ff1 = ff1_3;
-				options.ff2 = ff2_3;
-				options.ff3 = ff3_3;
+				context.ff1 = ff1_3;
+				context.ff2 = ff2_3;
+				context.ff3 = ff3_3;
 				break;
 			case 4:
-				options.ff1 = ff1_4;
-				options.ff2 = ff2_4;
-				options.ff3 = ff3_4;
-				options.ff4 = ff4_4;
+				context.ff1 = ff1_4;
+				context.ff2 = ff2_4;
+				context.ff3 = ff3_4;
+				context.ff4 = ff4_4;
 				break;
 			default:
-				options.ff1 = ff1_5;
-				options.ff2 = ff2_5;
-				options.ff3 = ff3_5;
-				options.ff4 = ff4_5;
-				options.ff5 = ff5_5;
+				context.ff1 = ff1_5;
+				context.ff2 = ff2_5;
+				context.ff3 = ff3_5;
+				context.ff4 = ff4_5;
+				context.ff5 = ff5_5;
 				break;
 		}
 		/* eslint-enable camelcase */
 
-		this.transformBlocks(bytes, state, options);
+		this.transformBlocks(bytes, context);
 
-		return this.tailor(state, options.size);
+		return this.tailor(context.state, this.options.size);
 	}
 
-	transformBlock(block, state, options)
+	transformBlock(block, context)
 	{
 		const x = bytesToInt32sLE(block);
+		const state = context.state;
 
-		let ff1 = options.ff1, 
-			ff2 = options.ff2, 
-			ff3 = options.ff3, 
-			ff4 = options.ff4,
-			ff5 = options.ff5;
+		let ff1 = context.ff1, 
+			ff2 = context.ff2, 
+			ff3 = context.ff3, 
+			ff4 = context.ff4,
+			ff5 = context.ff5;
 
 		let [t0, t1, t2, t3, t4, t5, t6, t7] = state;
 
@@ -299,7 +300,7 @@ class HavalTransform extends MdHashTransform
 		t1 = ff3(t1, t0, t7, t6, t5, t4, t3, t2, x[ 5], 0xafd6ba33);
 		t0 = ff3(t0, t7, t6, t5, t4, t3, t2, t1, x[ 2], 0x6c24cf5c);
 
-		if (options.passes >= 4)
+		if (this.options.passes >= 4)
 		{
 			t7 = ff4(t7, t6, t5, t4, t3, t2, t1, t0, x[24], 0x7a325381);
 			t6 = ff4(t6, t5, t4, t3, t2, t1, t0, t7, x[ 4], 0x28958677);
@@ -338,7 +339,7 @@ class HavalTransform extends MdHashTransform
 			t0 = ff4(t0, t7, t6, t5, t4, t3, t2, t1, x[13], 0x137a3be4);
 		}
 
-		if (options.passes >= 5)
+		if (this.options.passes >= 5)
 		{
 			t7 = ff5(t7, t6, t5, t4, t3, t2, t1, t0, x[27], 0xba3bf050);
 			t6 = ff5(t6, t5, t4, t3, t2, t1, t0, t7, x[ 3], 0x7efb2a98);

@@ -11,9 +11,10 @@ class XorTransform extends Transform
 		this.addOption("repeatKey", "Repeat key", true);
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
+		const repeatKey = this.options.repeatKey;
+		
 		const result = new Uint8Array(bytes.length);
 
 		let keyPosition = 0;
@@ -25,7 +26,7 @@ class XorTransform extends Transform
 				b ^= keyBytes[keyPosition++];
 			}
 			result[i] = b;
-			if (options.repeatKey && keyPosition >= keyBytes.length)
+			if (repeatKey && keyPosition >= keyBytes.length)
 			{
 				keyPosition = 0;
 			}

@@ -49,10 +49,9 @@ class NumbersToBytesTransform extends Transform
 		}
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
+		const unit = this.options.unit;
 		str = str.trim();
 
 		if (str === "")
@@ -60,14 +59,14 @@ class NumbersToBytesTransform extends Transform
 			return new Uint8Array();
 		}
 
-		const max = this.unitToMax(options.unit);
+		const max = this.unitToMax(unit);
 
 		this.checkStringAgainstBase(str);
 
 		const numbers = str.split(/\s+/g);
 
 		let byteLength;
-		switch (options.unit)
+		switch (unit)
 		{
 			case "byte": byteLength = numbers.length; break;
 			case "short": byteLength = numbers.length * 2; break;
@@ -87,10 +86,10 @@ class NumbersToBytesTransform extends Transform
 			}
 			if (value > max)
 			{
-				throw new TransformError(`Value (${num}) is above the maximum size of the selected unit (${options.unit})`);
+				throw new TransformError(`Value (${num}) is above the maximum size of the selected unit (${unit})`);
 			}
 
-			switch (options.unit)
+			switch (unit)
 			{
 				case "byte":
 					result[destIndex++] = value;
@@ -124,13 +123,11 @@ class BytesToNumbersTransform extends Transform
 			.addOption("separator", "Separator", " ");
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const separator = options.separator;
-		const unit = options.unit;
-		const pad = options.pad;
+		const separator = this.options.separator;
+		const unit = this.options.unit;
+		const pad = this.options.pad;
 		const padding = this.padding[unit];
 
 		let result = "";
@@ -146,7 +143,7 @@ class BytesToNumbersTransform extends Transform
 			case "byte": break;
 			case "short": byteCount = 2; break;
 			case "int": byteCount = 4; break;
-			default: throw new TransformError(`Unknown unit: ${options.unit}`);
+			default: throw new TransformError(`Unknown unit: ${unit}`);
 		}
 
 		let i = 0;

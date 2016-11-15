@@ -21,11 +21,11 @@ test("LUCIFER (MSB0) does exercise (1000 iterations)", t => {
 	let key = hexToBytes("0123456789abcdeffedcba9876543210");
 	let plain = hexToBytes("00000000000000000000000000000000");
 	const tf = new LuciferEncryptTransform();
-	const options = { variant: "msb0" };
+	tf.setOptions({ variant: "msb0" });
 	let result;
 	for (let i = 0; i < 1000; i++)
 	{
-		result = tf.transform(plain, key, options);
+		result = tf.transform(plain, key);
 		// Next iteration: Encrypt key (as plaintext) with previous result (as key)
 		plain = key;
 		key = result;

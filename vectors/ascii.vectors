@@ -1,0 +1,21 @@
+mode    : encode-decode-text
+encode  : AsciiToBytesTransform
+decode  : BytesToAsciiTransform
+t-format: ascii
+b-format: hex
+
+title   : ASCII test vector
+option  : stripCC = false
+
+t: abcABCxyz123!%@
+b: 61626341424378797a313233212540
+
+t: \t\r\n\x01\x1f
+b: 090d0a011f
+
+mode    : decode-text
+option  : stripCC = true
+
+# Removes everything but tab, newline, carriage return
+b: 090d0a011f
+t: \t\r\n

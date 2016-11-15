@@ -471,13 +471,11 @@ class EnigmaTransform extends Transform
 		return new EnigmaMachine(rotorNames, rotorPositions, ringSettings, options.reflector, plugPairs);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		let result = "";
 
-		const machine = this.createMachine(options);
+		const machine = this.createMachine(this.options);
 
 		for (let i = 0; i < str.length; i++)
 		{

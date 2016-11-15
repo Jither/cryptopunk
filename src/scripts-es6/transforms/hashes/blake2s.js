@@ -78,20 +78,20 @@ class Blake2sTransform extends HashTransform
 		];
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
+		const size = this.options.size;
 
 		const keyLength = keyBytes ? keyBytes.length : 0;
-		const hashLength = options.size / 8;
+		const hashLength = size / 8;
 
-		if (options.size < 8 || options.size > 256)
+		if (size < 8 || size > 256)
 		{
-			throw new TransformError(`Size must be between 8 and 256 bits. Was ${options.size} bits.`);
+			throw new TransformError(`Size must be between 8 and 256 bits. Was ${size} bits.`);
 		}
-		if (options.size % 8 !== 0)
+		if (size % 8 !== 0)
 		{
-			throw new TransformError(`Size must be a multiple of 8 bits. Was ${options.size} bits.`);
+			throw new TransformError(`Size must be a multiple of 8 bits. Was ${size} bits.`);
 		}
 
 		if (keyLength > 32)

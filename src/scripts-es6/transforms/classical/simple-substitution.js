@@ -14,10 +14,8 @@ class SimpleSubstitutionTransform extends Transform
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, alphabet, substAlphabet, options)
+	transform(str, alphabet, substAlphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		substAlphabet = substAlphabet || "zyxwvutsrqponmlkjihgfedcba";
 
@@ -28,7 +26,7 @@ class SimpleSubstitutionTransform extends Transform
 
 		const original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			str = str.toUpperCase();
 			alphabet = alphabet.toUpperCase();
@@ -46,9 +44,9 @@ class SimpleSubstitutionTransform extends Transform
 			result += substAlphabet.charAt(index);
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase, hasDualCaseCharacters(substAlphabet));
+			result = restoreFormatting(result, original, alphabet, this.options.ignoreCase, hasDualCaseCharacters(substAlphabet));
 		}
 
 		return result;

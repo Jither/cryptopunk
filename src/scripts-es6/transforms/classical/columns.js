@@ -12,11 +12,9 @@ class ColumnarTranspositionEncryptTransform extends Transform
 			.addOption("key", "Key", "3,1,4,2,0");
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const columnOrder = removeWhiteSpace(options.key).split(",").map(key => parseInt(key.trim(), 10));
+		const columnOrder = removeWhiteSpace(this.options.key).split(",").map(key => parseInt(key.trim(), 10));
 
 		return columnarTransposition(str, columnOrder);
 	}
@@ -32,11 +30,9 @@ class ColumnarTranspositionDecryptTransform extends Transform
 			.addOption("key", "Key", "3,1,4,2,0");
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const columnOrder = removeWhiteSpace(options.key).split(",").map(key => parseInt(key.trim(), 10));
+		const columnOrder = removeWhiteSpace(this.options.key).split(",").map(key => parseInt(key.trim(), 10));
 
 		return inverseColumnarTransposition(str, columnOrder);
 	}

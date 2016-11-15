@@ -53,26 +53,26 @@ class XXTeaTransform extends BlockCipherTransform
 		);
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		this.checkKeySize(keyBytes, 128);
 
-		if (options.blockSize < 64)
+		const blockSize = this.options.blockSize;
+
+		if (blockSize < 64)
 		{
-			throw new TransformError(`Block size must be >= 64 bits. Was: ${options.blockSize} bits.`);
+			throw new TransformError(`Block size must be >= 64 bits. Was: ${blockSize} bits.`);
 		}
-		if (options.blockSize % 32 !== 0)
+		if (blockSize % 32 !== 0)
 		{
-			throw new TransformError(`Block size must be a multiple of 32 bits. Was: ${options.blockSize} bits.`);
+			throw new TransformError(`Block size must be a multiple of 32 bits. Was: ${blockSize} bits.`);
 		}
 
-		this.bytesToInt32s = options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
-		this.int32sToBytes = options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;
+		this.bytesToInt32s = this.options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
+		this.int32sToBytes = this.options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;
 
 		let mx;
-		switch (options.variant)
+		switch (this.options.variant)
 		{
 			case "xxtea":
 				mx = this.mxXXTea;
@@ -81,12 +81,12 @@ class XXTeaTransform extends BlockCipherTransform
 				mx = this.mxBlockTea;
 				break;
 			default:
-				throw new TransformError(`Unknown variant: '${options.variant}'.`);
+				throw new TransformError(`Unknown variant: '${this.options.variant}'.`);
 		}
 
 		const key = this.bytesToInt32s(keyBytes);
 
-		return this.transformBlocks(bytes, options.blockSize, key, mx);
+		return this.transformBlocks(bytes, blockSize, key, mx);
 	}
 }
 

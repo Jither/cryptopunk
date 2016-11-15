@@ -18,7 +18,7 @@
 		eleSize.innerText = bench.stats.sample.length;
 	}
 
-	function runBench(tfName, name, arg1, arg2)
+	function runBench(tfName, name, options, arg1, arg2)
 	{
 		var tfClass = cryptopunk.hashes[tfName];
 		var tf = new tfClass();
@@ -31,6 +31,11 @@
 		eleName.innerText = name || tfName;
 
 		const message = cryptopunk.utils.asciiToBytes("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque rhoncus dolor sit amet ipsum sodales, ac tincidunt purus vulputate. Sed fermentum non quam ac mattis. Maecenas egestas, tellus feugiat tempus aliquam, ligula dui lobortis sapien, tempus auctor massa magna non ex. Donec ornare, dolor eu maximus mollis, ex augue consequat libero, vitae placerat purus elit nec nibh. Praesent aliquet id enim sed semper. Sed elit orci, tempor vel arcu interdum, blandit laoreet libero. Morbi placerat iaculis quam. Nam amet.");
+
+		if (options)
+		{
+			tf.setOptions(options);
+		}
 
 		var bench = new Benchmark(name || tfName, function()
 		{
@@ -57,8 +62,8 @@
 		runBench("Blake256Transform", "BLAKE-256");
 		runBench("Blake384Transform", "BLAKE-384");
 		runBench("Blake512Transform", "BLAKE-512");
-		runBench("Blake2sTransform", "BLAKE2s", emptyKey);
-		runBench("Blake2bTransform", "BLAKE2b", emptyKey);
+		runBench("Blake2sTransform", "BLAKE2s", null, emptyKey);
+		runBench("Blake2bTransform", "BLAKE2b", null, emptyKey);
 		runBench("HavalTransform", "HAVAL-128 (3 pass)", { passes: 3, length: 128 });
 		runBench("HavalTransform", "HAVAL-128 (4 pass)", { passes: 4, length: 128 });
 		runBench("HavalTransform", "HAVAL-128 (5 pass)", { passes: 5, length: 128 });

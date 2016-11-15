@@ -22,11 +22,9 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", texts: RSA_OAEP_HASHES });
 	}
 
-	transformAsync(bytes, keyBytes, labelBytes, options)
+	transformAsync(bytes, keyBytes, labelBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const eBytes = intToByteArray(options.e);
+		const eBytes = intToByteArray(this.options.e);
 
 		if (keyBytes.length === 0)
 		{
@@ -43,14 +41,14 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 		}
 
 		let keyAlgo;
-		switch (options.hash)
+		switch (this.options.hash)
 		{
 			case "SHA-1": keyAlgo = "RSA-OAEP"; break;
 			case "SHA-256": keyAlgo = "RSA-OAEP-256"; break;
 			case "SHA-384": keyAlgo = "RSA-OAEP-384"; break;
 			case "SHA-512": keyAlgo = "RSA-OAEP-512"; break; // TODO: Throws unspecific error in Chrome
 			default:
-				throw new TransformError(`Unsupported underlying hash: ${options.hash}`);
+				throw new TransformError(`Unsupported underlying hash: ${this.options.hash}`);
 		}
 
 		const methodName = "encrypt";
@@ -66,7 +64,7 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 			},
 			{
 				name: "RSA-OAEP",
-				hash: { name: options.hash }
+				hash: { name: this.options.hash }
 			},
 			true, // Extractable - this isn't a security application, but a messing-about application
 			[methodName]
@@ -104,11 +102,9 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 			.addOption("hash", "Underlying hash", "SHA-256", { type: "select", texts: RSA_OAEP_HASHES });
 	}
 
-	transformAsync(bytes, privateKeyBytes, publicKeyBytes, labelBytes, options)
+	transformAsync(bytes, privateKeyBytes, publicKeyBytes, labelBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const eBytes = intToByteArray(options.e);
+		const eBytes = intToByteArray(this.options.e);
 
 		if (privateKeyBytes.length === 0)
 		{
@@ -130,14 +126,14 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 		}
 
 		let keyAlgo;
-		switch (options.hash)
+		switch (this.options.hash)
 		{
 			case "SHA-1": keyAlgo = "RSA-OAEP"; break;
 			case "SHA-256": keyAlgo = "RSA-OAEP-256"; break;
 			case "SHA-384": keyAlgo = "RSA-OAEP-384"; break;
 			case "SHA-512": keyAlgo = "RSA-OAEP-512"; break; // TODO: Throws unspecific error in Chrome
 			default:
-				throw new TransformError(`Unsupported underlying hash: ${options.hash}`);
+				throw new TransformError(`Unsupported underlying hash: ${this.options.hash}`);
 		}
 
 		return window.crypto.subtle.importKey(
@@ -152,7 +148,7 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 			},
 			{
 				name: "RSA-OAEP",
-				hash: { name: options.hash }
+				hash: { name: this.options.hash }
 			},
 			true, // Extractable - this isn't a security application, but a messing-about application
 			["decrypt"]

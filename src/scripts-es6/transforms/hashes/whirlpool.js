@@ -171,11 +171,9 @@ class WhirlpoolTransform extends MdHashTransform
 		}
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const [C, RC] = precompute(options.variant);
+		const [C, RC] = precompute(this.options.variant);
 
 		const context = {
 			hash: new Array(8),

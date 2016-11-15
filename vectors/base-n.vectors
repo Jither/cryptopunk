@@ -1,0 +1,255 @@
+mode    : encode-decode-text
+t-format: ascii
+b-format: hex
+
+encode  : OctalToBytesTransform
+decode  : BytesToOctalTransform
+title   : Octal
+
+t: 146
+b: 66
+
+t: 63157
+b: 666f
+
+t: 31467557
+b: 666f6f
+
+t: 14633667542
+b: 666f6f62
+
+t: 6315733661141
+b: 666f6f6261
+
+t: 3146755730460562
+b: 666f6f626172
+
+title   : Octal keeps trailing zeroes
+
+t: 1234567000
+b: 0a72ee00
+
+title   : Octal discards leading zeroes
+mode    : encode-text
+
+t: 0003146755730460562
+b: 666f6f626172
+
+mode    : encode-decode-text
+encode  : DecimalToBytesTransform
+decode  : BytesToDecimalTransform
+title   : Decimal
+
+t: 102
+b: 66
+
+t: 26223
+b: 666f
+
+t: 6713199
+b: 666f6f
+
+t: 1718579042
+b: 666f6f62
+
+t: 439956234849
+b: 666f6f6261
+
+t: 112628796121458
+b: 666f6f626172
+
+title   : Decimal keeps trailing zeroes
+
+t: 123456789000
+b: 1cbe991a08
+
+title   : Decimal discards leading zeroes
+mode    : encode-text
+
+t: 000112628796121458
+b: 666f6f626172
+
+mode    : encode-decode-text
+encode  : Base32ToBytesTransform
+decode  : BytesToBase32Transform
+title   : Base32 lowercase
+
+t: my======
+b: 66
+
+t: mzxq====
+b: 666f
+
+t: mzxw6===
+b: 666f6f
+
+t: mzxw6yq=
+b: 666f6f62
+
+t: mzxw6ytb
+b: 666f6f6261
+
+t: mzxw6ytboi======
+b: 666f6f626172
+
+title   : Base32 uppercase
+mode    : encode-text
+
+t: MY======
+b: 66
+
+t: MZXQ====
+b: 666f
+
+t: MZXW6===
+b: 666f6f
+
+t: MZXW6YQ=
+b: 666f6f62
+
+t: MZXW6YTB
+b: 666f6f6261
+
+t: MZXW6YTBOI======
+b: 666f6f626172
+
+
+title   : Base32 without padding
+mode    : encode-decode-text
+option  : pad = false
+
+t: my
+b: 66
+
+t: mzxq
+b: 666f
+
+t: mzxw6
+b: 666f6f
+
+t: mzxw6yq
+b: 666f6f62
+
+t: mzxw6ytboi
+b: 666f6f626172
+
+encode  : Base32HexToBytesTransform
+decode  : BytesToBase32HexTransform
+clear   : options
+title   : Base32-HEX lowercase
+
+t: co======
+b: 66
+
+t: cpng====
+b: 666f
+
+t: cpnmu===
+b: 666f6f
+
+t: cpnmuog=
+b: 666f6f62
+
+t: cpnmuoj1
+b: 666f6f6261
+
+t: cpnmuoj1e8======
+b: 666f6f626172
+
+title   : Base32-HEX uppercase
+mode    : encode-text
+
+t: CO======
+b: 66
+
+t: CPNG====
+b: 666f
+
+t: CPNMU===
+b: 666f6f
+
+t: CPNMUOG=
+b: 666f6f62
+
+t: CPNMUOJ1
+b: 666f6f6261
+
+t: CPNMUOJ1E8======
+b: 666f6f626172
+
+title   : Base32-HEX without padding
+mode    : encode-decode-text
+option  : pad = false
+
+t: co
+b: 66
+
+t: cpng
+b: 666f
+
+t: cpnmu
+b: 666f6f
+
+t: cpnmuog
+b: 666f6f62
+
+t: cpnmuoj1e8
+b: 666f6f626172
+
+encode  : Base64ToBytesTransform
+decode  : BytesToBase64Transform
+clear   : options
+title   : Base64
+
+t: Zg==
+b: 66
+
+t: Zm8=
+b: 666f
+
+t: Zm9v
+b: 666f6f
+
+t: Zm9vYg==
+b: 666f6f62
+
+t: Zm9vYmE=
+b: 666f6f6261
+
+t: Zm9vYmFy
+b: 666f6f626172
+
+t: Pz8/Pj4+
+b: 3f3f3f3e3e3e
+
+title   : Base64 without padding
+option  : pad = false
+
+t: Zg
+b: 66
+
+t: Zm8
+b: 666f
+
+t: Zm9vYg
+b: 666f6f62
+
+t: Zm9vYmE
+b: 666f6f6261
+
+title   : Base64 keeps zero bytes
+clear   : options
+
+t: AAAAAAA=
+b: 0000000000
+
+t: AAAAAAAAAAAAAA==
+b: 00000000000000000000
+
+encode  : Base64UrlToBytesTransform
+decode  : BytesToBase64UrlTransform
+title   : Base64 URL-safe
+
+t: Pz8_Pj4-
+b: 3f3f3f3e3e3e
+

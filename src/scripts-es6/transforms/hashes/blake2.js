@@ -36,10 +36,11 @@ class Blake2Transform extends Transform
 		return this.current;
 	}
 
-	transform(bytes, key, options)
+	transform(bytes, key)
 	{
-		const tf = this.getVariant(options.variant);
-		return tf.transform(bytes, key, options);
+		const tf = this.getVariant(this.options.variant);
+		tf.setOptions(this.options);
+		return tf.transform(bytes, key);
 	}
 }
 

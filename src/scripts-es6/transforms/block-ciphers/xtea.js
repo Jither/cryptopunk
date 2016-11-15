@@ -23,13 +23,12 @@ class XTeaTransform extends BlockCipherTransform
 		this.addOption("endianness", "Endianess", "BE", { type: "select", texts: ENDIAN_NAMES, values: ENDIAN_VALUES });
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
 		this.checkKeySize(keyBytes, 128);
 
-		this.bytesToInt32s = options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
-		this.int32sToBytes = options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;
+		this.bytesToInt32s = this.options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
+		this.int32sToBytes = this.options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;
 
 		const key = this.bytesToInt32s(keyBytes);
 

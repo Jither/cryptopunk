@@ -142,6 +142,7 @@ class MorseToTextTransform extends Transform
 {
 	constructor()
 	{
+		// TODO: Actually use dot/dash options
 		super();
 		this.addInput("string", "Morse")
 			.addOutput("string", "Text")
@@ -152,18 +153,16 @@ class MorseToTextTransform extends Transform
 			.addOption("space", "Space", "/", { type: "char" });
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const dictionaries = DICTIONARIES[options.variant];
+		const dictionaries = DICTIONARIES[this.options.variant];
 		if (!dictionaries)
 		{
-			throw new TransformError(`Variant '${options.variant}' not yet implemented.`);
+			throw new TransformError(`Variant '${this.options.variant}' not yet implemented.`);
 		}
 		const dictionary = dictionaries.morseToText;
 
-		const inWords = str.split(options.space);
+		const inWords = str.split(this.options.space);
 		const outWords = [];
 		for (let wordIndex = 0; wordIndex < inWords.length; wordIndex++)
 		{
@@ -174,7 +173,7 @@ class MorseToTextTransform extends Transform
 				continue;
 			}
 
-			const letters = word.split(options.gap);
+			const letters = word.split(this.options.gap);
 
 			let outWord = "";
 			for (let letterIndex = 0; letterIndex < letters.length; letterIndex++)
@@ -209,16 +208,14 @@ class TextToMorseTransform extends Transform
 			.addOption("space", "Space", "/", { type: "char" });
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		// TODO: Prosigns
 
-		const dictionaries = DICTIONARIES[options.variant];
+		const dictionaries = DICTIONARIES[this.options.variant];
 		if (!dictionaries)
 		{
-			throw new TransformError(`Variant '${options.variant}' not yet implemented.`);
+			throw new TransformError(`Variant '${this.options.variant}' not yet implemented.`);
 		}
 		const dictionary = dictionaries.textToMorse;
 
@@ -228,7 +225,7 @@ class TextToMorseTransform extends Transform
 			const c = str.charAt(i).toUpperCase();
 			if (c === " ")
 			{
-				result.push(options.space);
+				result.push(this.options.space);
 				continue;
 			}
 
@@ -236,7 +233,7 @@ class TextToMorseTransform extends Transform
 			result.push(letter);
 		}
 
-		return result.join(options.gap);
+		return result.join(this.options.gap);
 	}
 }
 

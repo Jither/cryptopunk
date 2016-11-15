@@ -97,14 +97,14 @@ class ThreefishTransform extends BlockCipherTransform
 		this.addOption("blockSize", "Block size", 256, { type: "select", texts: BLOCK_SIZES });
 	}
 
-	transform(bytes, keyBytes, tweakBytes, options)
+	transform(bytes, keyBytes, tweakBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		
-		checkSize(options.blockSize, BLOCK_SIZES);
+		const blockSize = this.options.blockSize;
+
+		checkSize(blockSize, BLOCK_SIZES);
 		
 		const keySize = keyBytes.length * 8;
-		const keyRequirement = checkSize(keySize, options.blockSize);
+		const keyRequirement = checkSize(keySize, blockSize);
 		if (keyRequirement)
 		{
 			throw new TransformError(`Key size must be ${keyRequirement} bits (same as block size). Was: ${keySize} bits.`);
@@ -117,11 +117,11 @@ class ThreefishTransform extends BlockCipherTransform
 			throw new TransformError(`Tweak size must be ${tweakRequirement} bits. Was ${tweakSize} bits.`);
 		}
 
-		const rounds = ROUNDS_BY_BLOCK_SIZE[options.blockSize];
+		const rounds = ROUNDS_BY_BLOCK_SIZE[blockSize];
 
 		const subKeys = this.createRoundKeys(keyBytes, tweakBytes, rounds);
 
-		return this.transformBlocks(bytes, options.blockSize, subKeys, rounds);
+		return this.transformBlocks(bytes, blockSize, subKeys, rounds);
 	}
 
 	createRoundKeys(keyBytes, tweakBytes, rounds)

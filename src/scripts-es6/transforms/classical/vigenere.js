@@ -29,9 +29,8 @@ class VigenereTransform extends Transform
 		}
 	}
 
-	transform(str, key, alphabet, options)
+	transform(str, key, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
 
@@ -42,7 +41,7 @@ class VigenereTransform extends Transform
 
 		const original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			str = str.toUpperCase();
 			alphabet = alphabet.toUpperCase();
@@ -72,9 +71,9 @@ class VigenereTransform extends Transform
 			result += alphabet.charAt(mod(outIndex, alphabetLength));
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
+			result = restoreFormatting(result, original, alphabet, this.options.ignoreCase);
 		}
 
 		return result;

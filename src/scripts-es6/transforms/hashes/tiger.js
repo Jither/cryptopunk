@@ -338,11 +338,9 @@ class TigerTransform extends MdHashTransform
 		this.addOption("variant", "Variant", "tiger", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		this.paddingStartBit = options.variant === "tiger2" ? 0x80 : 0x01;
+		this.paddingStartBit = this.options.variant === "tiger2" ? 0x80 : 0x01;
 
 		const state = [
 			{ hi: 0x01234567, lo: 0x89abcdef },
@@ -350,12 +348,12 @@ class TigerTransform extends MdHashTransform
 			{ hi: 0xf096a5b4, lo: 0xc3b2e187 }
 		];
 
-		this.transformBlocks(bytes, state, options);
+		this.transformBlocks(bytes, state);
 
 		return int64sToBytesLE(state);
 	}
 
-	transformBlock(block, state, options)
+	transformBlock(block, state)
 	{
 		const x = bytesToInt64sLE(block);
 

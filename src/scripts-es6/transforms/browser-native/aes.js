@@ -84,16 +84,15 @@ class NativeAesCtrEncryptTransform extends NativeAesBaseTransform
 			.addOption("counterLength", "Counter length (bits)", 128);
 	}
 
-	transformAsync(bytes, keyBytes, counterBytes, options)
+	transformAsync(bytes, keyBytes, counterBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		if (options.counterLength < 1 || options.counterLength > 128)
+		const counterLength = this.options.counterLength;
+		if (counterLength < 1 || counterLength > 128)
 		{
-			throw new TransformError(`Counter length must be > 1 and <= 128 bits. Was: ${options.counterLength}`);
+			throw new TransformError(`Counter length must be > 1 and <= 128 bits. Was: ${counterLength}`);
 		}
 
-		return this._transform("AES-CTR", bytes, keyBytes, counterBytes, "counter", { length: options.counterLength });
+		return this._transform("AES-CTR", bytes, keyBytes, counterBytes, "counter", { length: counterLength });
 	}
 }
 
@@ -106,16 +105,15 @@ class NativeAesCtrDecryptTransform extends NativeAesBaseTransform
 			.addOption("counterLength", "Counter length (bits)", 128);
 	}
 
-	transformAsync(bytes, keyBytes, counterBytes, options)
+	transformAsync(bytes, keyBytes, counterBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		if (options.counterLength < 1 || options.counterLength > 128)
+		const counterLength = this.options.counterLength;
+		if (counterLength < 1 || counterLength > 128)
 		{
-			throw new TransformError(`Counter length must be > 1 and <= 128 bits. Was: ${options.counterLength}`);
+			throw new TransformError(`Counter length must be > 1 and <= 128 bits. Was: ${counterLength}`);
 		}
 
-		return this._transform("AES-CTR", bytes, keyBytes, counterBytes, "counter", { length: options.counterLength });
+		return this._transform("AES-CTR", bytes, keyBytes, counterBytes, "counter", { length: counterLength });
 	}
 }
 
@@ -188,12 +186,10 @@ class NativeAesGcmEncryptTransform extends NativeAesBaseTransform
 			.addOption("tagLength", "Tag length", 128, { type: "select", texts: GCM_TAG_LENGTHS });
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, authBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes, authBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		const additional = {
-			tagLength: parseInt(options.tagLength, 10)
+			tagLength: parseInt(this.options.tagLength, 10)
 		};
 
 		if (authBytes.length > 0)
@@ -215,12 +211,10 @@ class NativeAesGcmDecryptTransform extends NativeAesBaseTransform
 			.addOption("tagLength", "Tag length", 128, { type: "select", texts: GCM_TAG_LENGTHS });
 	}
 
-	transformAsync(bytes, keyBytes, ivBytes, authBytes, options)
+	transformAsync(bytes, keyBytes, ivBytes, authBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		const additional = {
-			tagLength: options.tagLength
+			tagLength: this.options.tagLength
 		};
 
 		if (authBytes.length > 0)

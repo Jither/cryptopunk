@@ -1,3 +1,10 @@
+import * as ascii from "./transforms/char-encodings/ascii";
+import * as unicode from "./transforms/char-encodings/unicode";
+
+import * as baseN from "./transforms/base-n";
+import * as binary from "./transforms/binary";
+import * as hex from "./transforms/hex";
+
 import * as adfgvx from "./transforms/classical/adfgvx";
 import * as affine from "./transforms/classical/affine";
 import * as bifid from "./transforms/classical/bifid";
@@ -66,6 +73,13 @@ function addTransformsFrom(imp)
 		TRANSFORMS[name] = tfClass;
 	}
 }
+
+addTransformsFrom(ascii);
+addTransformsFrom(unicode);
+
+addTransformsFrom(baseN);
+addTransformsFrom(binary);
+addTransformsFrom(hex);
 
 addTransformsFrom(adfgvx);
 addTransformsFrom(affine);

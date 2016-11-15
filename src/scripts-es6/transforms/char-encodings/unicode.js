@@ -97,10 +97,8 @@ class BytesToUtf8Transform extends Transform
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		let result = "";
 		let i = 0;
 		while (i < bytes.length)
@@ -153,7 +151,7 @@ class BytesToUtf8Transform extends Transform
 			result += codePointToStr(code);
 		}
 
-		if (options.stripCC)
+		if (this.options.stripCC)
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}
@@ -172,15 +170,14 @@ class Ucs2ToBytesTransform extends Transform
 			.addOption("littleEndian", "Little Endian", false);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
 		const result = new Uint8Array(str.length * 2);
 		let destIndex = 0;
 		for (let i = 0; i < str.length; i++)
 		{
 			const code = str.charCodeAt(i);
-			if (options.littleEndian)
+			if (this.options.littleEndian)
 			{
 				result[destIndex++] = code & 0xff;
 				result[destIndex++] = code >> 8;
@@ -206,19 +203,18 @@ class BytesToUcs2Transform extends Transform
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
 		let result = "";
 		for (let i = 0; i < bytes.length; i += 2)
 		{
-			const code = options.littleEndian ?
+			const code = this.options.littleEndian ?
 				bytes[i + 1] << 8 | bytes[i] :
 				bytes[i] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
 
-		if (options.stripCC)
+		if (this.options.stripCC)
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}
@@ -237,9 +233,8 @@ class Utf16ToBytesTransform extends Transform
 			.addOption("littleEndian", "Little Endian", false);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
 		// Can't predetermine length, so no TypedArray
 		const result = [];
 		let i = 0;
@@ -261,7 +256,7 @@ class Utf16ToBytesTransform extends Transform
 				low = 0xdc00 + (sp & 0x3ff);
 			}
 
-			if (options.littleEndian)
+			if (this.options.littleEndian)
 			{
 				if (high === 0)
 				{
@@ -308,19 +303,18 @@ class BytesToUtf16Transform extends Transform
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
 		let result = "";
 		for (let i = 0; i < bytes.length; i += 2)
 		{
-			const code = options.littleEndian ?
+			const code = this.options.littleEndian ?
 				bytes[i + 1] << 8 | bytes[i] :
 				bytes[i] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
 
-		if (options.stripCC)
+		if (this.options.stripCC)
 		{
 			result = result.replace(RX_CONTROL_CODES, "");
 		}

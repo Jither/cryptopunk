@@ -65,13 +65,11 @@ class LuciferTransform extends BlockCipherTransform
 		this.addOption("variant", "Variant", "lsb0", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		this.checkKeySize(keyBytes, 128);
 
-		return this.transformBlocks(bytes, 128, keyBytes, options.variant);
+		return this.transformBlocks(bytes, 128, keyBytes, this.options.variant);
 	}
 
 	transformBlock(block, dest, destOffset, keyBytes, variant)

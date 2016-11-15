@@ -170,10 +170,9 @@ class SpeckTransform extends BlockCipherTransform
 		this.addOption("blockSize", "Block size", 64, { type: "select", texts: BLOCK_SIZES });
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-		const blockSize = options.blockSize;
+		const blockSize = this.options.blockSize;
 		const validKeySizes = KEY_SIZES_BY_BLOCK_SIZE[blockSize];
 		if (!validKeySizes)
 		{

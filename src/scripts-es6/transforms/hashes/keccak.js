@@ -143,11 +143,10 @@ class KeccakBaseTransform extends HashTransform
 		}
 	}
 
-	transform(bytes, options)
+	transform(bytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const capacity = options.capacity;
+		const capacity = this.options.capacity;
+		const size = this.options.size;
 		// "The rate r is a positive integer that is strictly less than the width b [1600]"
 		// "The capacity, denoted by c, is the positive integer b - r. Thus, r + c = b."
 		// It follows that the capacity must also be 0 < c < 1600. And r = b - c
@@ -161,9 +160,9 @@ class KeccakBaseTransform extends HashTransform
 			throw new TransformError(`Capacity must be a multiple of 8. Was: ${capacity}`);
 		}
 
-		if (options.size % 8 !== 0)
+		if (size % 8 !== 0)
 		{
-			throw new TransformError(`Size must be a multiple of 8. Was: ${options.size}`);
+			throw new TransformError(`Size must be a multiple of 8. Was: ${size}`);
 		}
 
 		const rate = 1600 - capacity;
@@ -173,7 +172,7 @@ class KeccakBaseTransform extends HashTransform
 		// - SHA-3's      01 (0x02) becomes   011 (0x06)
 		// - SHAKE's    1111 (0x0f) becomes 11111 (0x1f)
 		// - Original Keccak (0x00) becomes     1 (0x01)
-		const suffixAndPaddingStart = append1bit(options.suffix);
+		const suffixAndPaddingStart = append1bit(this.options.suffix);
 
 		const state = new Uint8Array(200);
 
@@ -219,7 +218,7 @@ class KeccakBaseTransform extends HashTransform
 		this.permute(state);
 
 		// Squeeze state out into output
-		let remainingOutput = options.size / 8;
+		let remainingOutput = size / 8;
 		const output = new Uint8Array(remainingOutput);
 		let outputPosition = 0;
 		while (remainingOutput > 0)

@@ -20,9 +20,9 @@ class RemoveCharsTransform extends Transform
 			.addOption("chars", "Specific characters", "");
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
+		const options = this.options;
 
 		if (options.allWhitespace)
 		{
@@ -80,11 +80,9 @@ class SimpleTranspositionTransform extends Transform
 			.addOption("reverse", "Reverse", false);
 	}
 
-	transform(str, options)
+	transform(str)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		if (options.reverse)
+		if (this.options.reverse)
 		{
 			str = multiByteStringReverse(str);
 		}

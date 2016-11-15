@@ -12,6 +12,9 @@ const TEST_MODES = {
 	"encrypt-decrypt-text": modes.EncryptDecryptTextMode,
 	"encrypt-text": modes.EncryptTextMode,
 	"decrypt-text": modes.DecryptTextMode,
+	"encode-decode-text": modes.EncodeDecodeTextMode,
+	"encode-text": modes.EncodeTextMode,
+	"decode-text": modes.DecodeTextMode,
 	"hash": modes.HashMode
 };
 
@@ -49,6 +52,8 @@ class VictorExecuter
 			// Assign transforms
 			case "encrypt":
 			case "decrypt":
+			case "encode":
+			case "decode":
 			case "hash":
 				this.assignTransform(line.prefix, line.value);
 				break;
@@ -191,12 +196,14 @@ class VictorExecuter
 		switch (inputFormat)
 		{
 			case formats.ASCII:
+				value = utils.applyEscapes(value);
 				if (callFormat === formats.BYTES)
 				{
 					value = utils.asciiToBytes(value);
 				}
 				break;
 			case formats.UTF8:
+				value = utils.applyEscapes(value);
 				if (callFormat === formats.BYTES)
 				{
 					throw new Error("UTF-8 not yet supported for bytes arguments");
@@ -227,23 +234,21 @@ class VictorExecuter
 		const pair = option.split("=").map(p => p.trim());
 
 		const name = pair[0];
-		const value = pair[1];
+		let value = pair[1];
 		const valueAsInt = Number(value); // Not parseInt - we want the *entire* string to be a number - 1,15,7 is a string
 		if (isNaN(valueAsInt))
 		{
 			if (value === "true" || value === "false")
 			{
-				this.options[name] = (value === "true");
-			}
-			else
-			{
-				this.options[name] = value;
+				value = (value === "true");
 			}
 		}
 		else
 		{
-			this.options[name] = valueAsInt;
+			value = valueAsInt;
 		}
+
+		this.options[name] = value;
 	}
 
 	fillCustomArguments()

@@ -14,11 +14,9 @@ class AdfgvxTransform extends Transform
 			.addOption("headers", "Table headers", "ADFGVX");
 	}
 
-	transform(message, key, alphabet, options)
+	transform(message, key, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
-
-		const headers = options.headers.toUpperCase();
+		const headers = this.options.headers.toUpperCase();
 		const headersCount = headers.length;
 		const maxAlphabetLength = headersCount * headersCount;
 
@@ -44,7 +42,7 @@ class AdfgvxTransform extends Transform
 			throw new TransformError(`Key with duplicate characters would not be predictably decipherable.`);
 		}
 
-		return this._transform(message, key, alphabet, headers, options);
+		return this._transform(message, key, alphabet, headers);
 	}
 }
 
@@ -55,7 +53,7 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 		super(false);
 		this.addOption("grouping", "Group characters", 4, { min: 0 });
 	}
-	_transform(plaintext, key, alphabet, headers, options)
+	_transform(plaintext, key, alphabet, headers)
 	{
 		// TODO: Handle plaintext characters not in alphabet (likely throw)
 
@@ -70,7 +68,7 @@ class AdfgvxEncryptTransform extends AdfgvxTransform
 		// Columnar transposition
 		const columnOrder = getLetterSortPermutation(key);
 		const transposed = columnarTransposition(fractionated, columnOrder);
-		return groupCharacters(transposed, options.grouping);
+		return groupCharacters(transposed, this.options.grouping);
 	}
 }
 

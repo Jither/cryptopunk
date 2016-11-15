@@ -6,7 +6,8 @@ test("Decryption throws when not full coverage", t => {
 	const tf = new SkipDecryptTransform();
 
 	// 3 is not coprime with 9 (message length). This means we'd only get ADGADGADG...
-	const error = t.throws(() => tf.transform("ABCDEFGHI", { start: 0, skip: 3 }));
+	tf.setOptions({ start: 0, skip: 3 });
+	const error = t.throws(() => tf.transform("ABCDEFGHI"));
 	t.true(error instanceof TransformError);
 });
 
@@ -20,7 +21,8 @@ test("Encryption throws when not full coverage", t => {
 	const tf = new SkipEncryptTransform();
 
 	// 3 is not coprime with 9 (message length). This means we'd only get ADGADGADG...
-	const error = t.throws(() => tf.transform("ABCDEFGHI", { start: 0, skip: 3 }));
+	tf.setOptions({ start: 0, skip: 3 });
+	const error = t.throws(() => tf.transform("ABCDEFGHI"));
 	t.true(error instanceof TransformError);
 });
 

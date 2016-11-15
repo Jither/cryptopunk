@@ -116,13 +116,11 @@ class RijndaelBaseTransform extends BlockCipherTransform
 			.addOption("rounds", "Rounds", 0, { type: "select", texts: ROUND_COUNT_NAMES, values: ROUND_COUNTS });
 	}
 
-	transform(bytes, keyBytes, options)
+	transform(bytes, keyBytes)
 	{
-		options = Object.assign({}, this.defaults, options);
-
 		this.checkKeySize(keyBytes, KEY_SIZES);
 
-		const blockSize = options.blockSize;
+		const blockSize = this.options.blockSize;
 		if (BLOCK_SIZES.indexOf(blockSize) < 0)
 		{
 			throw new TransformError(`Block size must be one of 128, 160, 192, 224 or 256 bits. Was ${blockSize} bits`);
@@ -134,7 +132,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		const keySize = keyBytes.length * 8;
 		const blockSizeBytes = blockSize / 8;
 
-		let roundCount = options.rounds;
+		let roundCount = this.options.rounds;
 		if (roundCount === 0)
 		{
 			// Get recommended round count based on key size or block size (higher size decides):

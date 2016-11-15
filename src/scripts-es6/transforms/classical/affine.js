@@ -16,13 +16,12 @@ class AffineEncryptTransform extends Transform
 			.addOption("ignoreCase", "Ignore case", true);
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
-		const a = options.a;
-		const b = options.b;
+		const a = this.options.a;
+		const b = this.options.b;
 
 		// a must be coprime with alphabetLength (m) in order for the message to be decryptable
 		if (!coprime(a, alphabetLength))
@@ -32,7 +31,7 @@ class AffineEncryptTransform extends Transform
 
 		const original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			str = str.toUpperCase();
 			alphabet = alphabet.toUpperCase();
@@ -52,9 +51,9 @@ class AffineEncryptTransform extends Transform
 			result += alphabet.charAt(mod(a * index + b, alphabetLength));
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
+			result = restoreFormatting(result, original, alphabet, this.options.ignoreCase);
 		}
 		return result;
 	}
@@ -86,13 +85,12 @@ class AffineDecryptTransform extends Transform
 		return null;
 	}
 
-	transform(str, alphabet, options)
+	transform(str, alphabet)
 	{
-		options = Object.assign({}, this.defaults, options);
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 		const alphabetLength = alphabet.length;
-		const a = options.a;
-		const b = options.b;
+		const a = this.options.a;
+		const b = this.options.b;
 
 		const x = this.findInverse(a, alphabetLength);
 		if (x === null)
@@ -102,7 +100,7 @@ class AffineDecryptTransform extends Transform
 
 		let original = str;
 
-		if (options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			str = str.toUpperCase();
 			alphabet = alphabet.toUpperCase();
@@ -121,9 +119,9 @@ class AffineDecryptTransform extends Transform
 			result += alphabet.charAt(mod(x * (index - b), alphabetLength));
 		}
 
-		if (options.formatted)
+		if (this.options.formatted)
 		{
-			result = restoreFormatting(result, original, alphabet, options.ignoreCase);
+			result = restoreFormatting(result, original, alphabet, this.options.ignoreCase);
 		}
 		return result;
 	}
