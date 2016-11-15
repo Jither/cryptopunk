@@ -3,7 +3,6 @@ import { int32sToBytesBE, bytesToInt32sBE, int32sToBytesLE, bytesToInt32sLE } fr
 import { add } from "../../cryptopunk.bitarith";
 
 const DELTA = 0x9e3779b9;
-const ROUNDS = 32;
 
 const ENDIAN_NAMES = [
 	"Big Endian",
@@ -20,7 +19,8 @@ class XTeaTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
-		this.addOption("endianness", "Endianess", "BE", { type: "select", texts: ENDIAN_NAMES, values: ENDIAN_VALUES });
+		this.addOption("endianness", "Endianess", "BE", { type: "select", texts: ENDIAN_NAMES, values: ENDIAN_VALUES })
+			.addOption("rounds", "Rounds", 32, { min: 1 });
 	}
 
 	transform(bytes, keyBytes)
@@ -45,9 +45,11 @@ class XTeaEncryptTransform extends XTeaTransform
 
 	transformBlock(block, dest, destOffset, k)
 	{
+		const rounds = this.options.rounds;
+
 		let [v0, v1] = this.bytesToInt32s(block);
 		let sum = 0;
-		for (let i = 0; i < ROUNDS; i++)
+		for (let i = 0; i < rounds; i++)
 		{
 			let K = k[sum & 3];
 			v0 = add(v0, add((v1 << 4) ^ (v1 >>> 5), v1) ^ add(sum, K));
@@ -68,9 +70,10 @@ class XTeaDecryptTransform extends XTeaTransform
 
 	transformBlock(block, dest, destOffset, k)
 	{
+		const rounds = this.options.rounds;
 		let [v0, v1] = this.bytesToInt32s(block);
-		let sum = (DELTA * ROUNDS) & 0xffffffff;
-		for (let i = 0; i < ROUNDS; i++)
+		let sum = (DELTA * rounds) & 0xffffffff;
+		for (let i = 0; i < rounds; i++)
 		{
 			let K = k[(sum >>> 11) & 3];
 			v1 = add(v1, -(add((v0 << 4) ^ (v0 >>> 5), v0) ^ add(sum, K)));

@@ -1,0 +1,267 @@
+mode    : encrypt-decrypt
+encrypt : TeaEncryptTransform
+decrypt : TeaDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+option  : endianess = BE
+
+title   : TEA (BE) Keith Lockstone vector
+
+k: 00000000 00000000 00000000 00000000
+p: 00000000 00000000
+c: 41ea3a0a 94baa940
+
+k: 00000000 00000000 00000000 41ea3a0a
+p: 94baa940 00000000
+c: 4e8e7829 7d8236d8
+
+k: 00000000 00000000 41ea3a0a 4e8e7829
+p: 7d8236d8 00000000
+c: c88ba95e e7edac02
+
+k: 00000000 41ea3a0a 4e8e7829 c88ba95e
+p: e7edac02 00000000
+c: b84e28af b6b62088
+
+k: 41ea3a0a 4e8e7829 c88ba95e b84e28af
+p: b6b62088 00000000
+c: a0a47295 8fadf3b3
+
+k: 4e8e7829 c88ba95e b84e28af a0a47295
+p: 8fadf3b3 41ea3a0a
+c: ed650698 cf9f2b79
+
+k: c88ba95e b84e28af a0a47295 ed650698
+p: cf9f2b79 4e8e7829
+c: 1024eea0 6220ae1c
+
+k: b84e28af a0a47295 ed650698 1024eea0
+p: 6220ae1c c88ba95e
+c: 5ddf75d9 7a4ce68f
+
+k: a0a47295 ed650698 1024eea0 5ddf75d9
+p: 7a4ce68f b84e28af
+c: f1be9d1e 8dd4a984
+
+k: ed650698 1024eea0 5ddf75d9 f1be9d1e
+p: 8dd4a984 a0a47295
+c: d32c758c 092dabad
+
+k: 1024eea0 5ddf75d9 f1be9d1e d32c758c
+p: 092dabad ed650698
+c: bdb43728 f7183fc0
+
+k: 5ddf75d9 f1be9d1e d32c758c bdb43728
+p: f7183fc0 1024eea0
+c: a9c3801a d9dcfb4e
+
+k: f1be9d1e d32c758c bdb43728 a9c3801a
+p: d9dcfb4e 5ddf75d9
+c: 32a1e654 a9df917c
+
+k: d32c758c bdb43728 a9c3801a 32a1e654
+p: a9df917c f1be9d1e
+c: 08b63bb9 b20bd3e8
+
+k: bdb43728 a9c3801a 32a1e654 08b63bb9
+p: b20bd3e8 d32c758c
+c: 21410574 cc4264c6
+
+k: a9c3801a 32a1e654 08b63bb9 21410574
+p: cc4264c6 bdb43728
+c: 4ec5d2e2 5ada1d89
+
+k: 32a1e654 08b63bb9 21410574 4ec5d2e2
+p: 5ada1d89 a9c3801a
+c: dd46249e 28aa0b4b
+
+k: 08b63bb9 21410574 4ec5d2e2 dd46249e
+p: 28aa0b4b 32a1e654
+c: 2486dcba a713df03
+
+k: 21410574 4ec5d2e2 dd46249e 2486dcba
+p: a713df03 08b63bb9
+c: b7c7af9d 1acb6cab
+
+k: 4ec5d2e2 dd46249e 2486dcba b7c7af9d
+p: 1acb6cab 21410574
+c: 8cc0400a 9aa49fbb
+
+k: dd46249e 2486dcba b7c7af9d 8cc0400a
+p: 9aa49fbb 4ec5d2e2
+c: 9c241876 6cbc8c66
+
+k: 2486dcba b7c7af9d 8cc0400a 9c241876
+p: 6cbc8c66 dd46249e
+c: b59c5d45 a90066f9
+
+k: b7c7af9d 8cc0400a 9c241876 b59c5d45
+p: a90066f9 2486dcba
+c: b765a1b3 64b37eb0
+
+k: 8cc0400a 9c241876 b59c5d45 b765a1b3
+p: 64b37eb0 b7c7af9d
+c: 7b172fac f5ab4933
+
+k: 9c241876 b59c5d45 b765a1b3 7b172fac
+p: f5ab4933 8cc0400a
+c: fe48f4fb ada404b1
+
+k: b59c5d45 b765a1b3 7b172fac fe48f4fb
+p: ada404b1 9c241876
+c: c5294093 c1d53e3d
+
+k: b765a1b3 7b172fac fe48f4fb c5294093
+p: c1d53e3d b59c5d45
+c: 759ca8e2 77a96649
+
+k: 7b172fac fe48f4fb c5294093 759ca8e2
+p: 77a96649 b765a1b3
+c: 69c53e0f 3e979807
+
+k: fe48f4fb c5294093 759ca8e2 69c53e0f
+p: 3e979807 7b172fac
+c: 60388ada a21fa8e8
+
+k: c5294093 759ca8e2 69c53e0f 60388ada
+p: a21fa8e8 fe48f4fb
+c: df70a1f5 ac4aa407
+
+k: 759ca8e2 69c53e0f 60388ada df70a1f5
+p: ac4aa407 c5294093
+c: d9cb4e09 92636233
+
+k: 69c53e0f 60388ada df70a1f5 d9cb4e09
+p: 92636233 759ca8e2
+c: 7d2c6c57 7a6adb4d
+
+k: 60388ada df70a1f5 d9cb4e09 7d2c6c57
+p: 7a6adb4d 69c53e0f
+c: 44b71215 cf25368a
+
+k: df70a1f5 d9cb4e09 7d2c6c57 44b71215
+p: cf25368a 60388ada
+c: c10105a1 ef781a18
+
+k: d9cb4e09 7d2c6c57 44b71215 c10105a1
+p: ef781a18 df70a1f5
+c: bfdb29fa 9ece39b6
+
+k: 7d2c6c57 44b71215 c10105a1 bfdb29fa
+p: 9ece39b6 d9cb4e09
+c: 9b0b256d dc04574c
+
+k: 44b71215 c10105a1 bfdb29fa 9b0b256d
+p: dc04574c 7d2c6c57
+c: f8295142 8c022711
+
+k: c10105a1 bfdb29fa 9b0b256d f8295142
+p: 8c022711 44b71215
+c: 61341d1c 3a85f2f0
+
+k: bfdb29fa 9b0b256d f8295142 61341d1c
+p: 3a85f2f0 c10105a1
+c: f6a0d30c ad230209
+
+k: 9b0b256d f8295142 61341d1c f6a0d30c
+p: ad230209 bfdb29fa
+c: 3de21a3f aa0cf5c9
+
+k: f8295142 61341d1c f6a0d30c 3de21a3f
+p: aa0cf5c9 9b0b256d
+c: a7e307c6 bd52d939
+
+k: 61341d1c f6a0d30c 3de21a3f a7e307c6
+p: bd52d939 f8295142
+c: 017bc3a7 66fd8c77
+
+k: f6a0d30c 3de21a3f a7e307c6 017bc3a7
+p: 66fd8c77 61341d1c
+c: d8f8fc86 d01b5761
+
+k: 3de21a3f a7e307c6 017bc3a7 d8f8fc86
+p: d01b5761 f6a0d30c
+c: e186c41a 5e6e5a4d
+
+k: a7e307c6 017bc3a7 d8f8fc86 e186c41a
+p: 5e6e5a4d 3de21a3f
+c: 4368d224 dbb4e677
+
+k: 017bc3a7 d8f8fc86 e186c41a 4368d224
+p: dbb4e677 a7e307c6
+c: 9bd0321e 84096523
+
+k: d8f8fc86 e186c41a 4368d224 9bd0321e
+p: 84096523 017bc3a7
+c: b7c56d5b 97c65866
+
+k: e186c41a 4368d224 9bd0321e b7c56d5b
+p: 97c65866 d8f8fc86
+c: 63a1bfac 5a5d7ca2
+
+k: 4368d224 9bd0321e b7c56d5b 63a1bfac
+p: 5a5d7ca2 e186c41a
+c: 91f56dff 7281794f
+
+k: 9bd0321e b7c56d5b 63a1bfac 91f56dff
+p: 7281794f 4368d224
+c: e4c63780 019aedf7
+
+k: b7c56d5b 63a1bfac 91f56dff e4c63780
+p: 019aedf7 9bd0321e
+c: a9fb56e7 35f4aeca
+
+k: 63a1bfac 91f56dff e4c63780 a9fb56e7
+p: 35f4aeca b7c56d5b
+c: a6537187 f0f1ba93
+
+k: 91f56dff e4c63780 a9fb56e7 a6537187
+p: f0f1ba93 63a1bfac
+c: cc960eda e44c6b8f
+
+k: e4c63780 a9fb56e7 a6537187 cc960eda
+p: e44c6b8f 91f56dff
+c: e12f106d 4f1152d0
+
+k: a9fb56e7 a6537187 cc960eda e12f106d
+p: 4f1152d0 e4c63780
+c: 556ad853 f79992fd
+
+k: a6537187 cc960eda e12f106d 556ad853
+p: f79992fd a9fb56e7
+c: 78e8e265 128df6ad
+
+k: cc960eda e12f106d 556ad853 78e8e265
+p: 128df6ad a6537187
+c: f23892aa 288cb926
+
+k: e12f106d 556ad853 78e8e265 f23892aa
+p: 288cb926 cc960eda
+c: 1d115839 6a117fca
+
+k: 556ad853 78e8e265 f23892aa 1d115839
+p: 6a117fca e12f106d
+c: cf899635 5b087e34
+
+k: 78e8e265 f23892aa 1d115839 cf899635
+p: 5b087e34 556ad853
+c: 5c60bff2 e68d88c2
+
+k: f23892aa 1d115839 cf899635 5c60bff2
+p: e68d88c2 78e8e265
+c: 7072d01c bffeb50a
+
+k: 1d115839 cf899635 5c60bff2 7072d01c
+p: bffeb50a f23892aa
+c: 4513c5eb 9c99ae9e
+
+k: cf899635 5c60bff2 7072d01c 4513c5eb
+p: 9c99ae9e 1d115839
+c: 8f3a38ab 80d9c4ad
+
+k: 5c60bff2 7072d01c 4513c5eb 8f3a38ab
+p: 80d9c4ad cf899635
+c: 2bb0f1b3 c023ed11
+

@@ -23,8 +23,11 @@ import * as rijndael from "./transforms/block-ciphers/rijndael";
 import * as serpent from "./transforms/block-ciphers/serpent";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as speck from "./transforms/block-ciphers/speck";
+import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
 import * as twofish from "./transforms/block-ciphers/twofish";
+import * as xtea from "./transforms/block-ciphers/xtea";
+import * as xxtea from "./transforms/block-ciphers/xxtea";
 
 import * as rc4 from "./transforms/stream-ciphers/rc4";
 import * as xor from "./transforms/stream-ciphers/xor";
@@ -99,8 +102,11 @@ addTransformsFrom(rijndael);
 addTransformsFrom(serpent);
 addTransformsFrom(skipjack);
 addTransformsFrom(speck);
+addTransformsFrom(tea);
 addTransformsFrom(threefish);
 addTransformsFrom(twofish);
+addTransformsFrom(xtea);
+addTransformsFrom(xxtea);
 
 addTransformsFrom(rc4);
 addTransformsFrom(xor);

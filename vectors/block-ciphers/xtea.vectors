@@ -1,0 +1,331 @@
+mode    : encrypt-decrypt
+encrypt : XTeaEncryptTransform
+decrypt : XTeaDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+option  : endianess = BE
+
+title   : XTEA (BE) Keith Lockstone vector
+
+option: rounds = 1
+k: 00000000 00000000 00000000 00000000
+p: 00000000 00000000
+c: 00000000 9e3779b9
+
+option: rounds = 2
+k: 00000000 00000000 00000000 00000000
+p: 9e3779b9 00000000
+c: ec01a1de aaa0256d
+
+option: rounds = 3
+k: 00000000 00000000 00000000 ec01a1de
+p: aaa0256d 00000000
+c: 114f6d74 a39e590c
+
+option: rounds = 4
+k: 00000000 00000000 ec01a1de 114f6d74
+p: a39e590c 00000000
+c: bc3a7de2 4e238eb9
+
+option: rounds = 5
+k: 00000000 ec01a1de 114f6d74 bc3a7de2
+p: 4e238eb9 00000000
+c: 845846cf 2f36d07f
+
+option: rounds = 6
+k: ec01a1de 114f6d74 bc3a7de2 845846cf
+p: 2f36d07f 00000000
+c: 2794a127 4f3e4b6a
+
+option: rounds = 7
+k: 114f6d74 bc3a7de2 845846cf 2794a127
+p: 4f3e4b6a ec01a1de
+c: 6b8ea8b8 d99e66c3
+
+option: rounds = 8
+k: bc3a7de2 845846cf 2794a127 6b8ea8b8
+p: d99e66c3 114f6d74
+c: 31c5fa6c 241756d6
+
+option: rounds = 9
+k: 845846cf 2794a127 6b8ea8b8 31c5fa6c
+p: 241756d6 bc3a7de2
+c: 4a581696 1fd58a6b
+
+option: rounds = 10
+k: 2794a127 6b8ea8b8 31c5fa6c 4a581696
+p: 1fd58a6b 845846cf
+c: dfcd0451 df8822cd
+
+option: rounds = 11
+k: 6b8ea8b8 31c5fa6c 4a581696 dfcd0451
+p: df8822cd 2794a127
+c: 3ad1ff17 f465776c
+
+option: rounds = 12
+k: 31c5fa6c 4a581696 dfcd0451 3ad1ff17
+p: f465776c 6b8ea8b8
+c: 6a1d78c8 4d30bdb9
+
+option: rounds = 13
+k: 4a581696 dfcd0451 3ad1ff17 6a1d78c8
+p: 4d30bdb9 31c5fa6c
+c: 08c86d67 f6ef939b
+
+option: rounds = 14
+k: dfcd0451 3ad1ff17 6a1d78c8 08c86d67
+p: f6ef939b 4a581696
+c: 2a65bfbe f733428c
+
+option: rounds = 15
+k: 3ad1ff17 6a1d78c8 08c86d67 2a65bfbe
+p: f733428c dfcd0451
+c: b4bd6e46 40672bcc
+
+option: rounds = 16
+k: 6a1d78c8 08c86d67 2a65bfbe b4bd6e46
+p: 40672bcc 3ad1ff17
+c: 1d8e6992 9a478905
+
+option: rounds = 17
+k: 08c86d67 2a65bfbe b4bd6e46 1d8e6992
+p: 9a478905 6a1d78c8
+c: f8994ada 80dee76a
+
+option: rounds = 18
+k: 2a65bfbe b4bd6e46 1d8e6992 f8994ada
+p: 80dee76a 08c86d67
+c: 0997e6ed cdfef370
+
+option: rounds = 19
+k: b4bd6e46 1d8e6992 f8994ada 0997e6ed
+p: cdfef370 2a65bfbe
+c: ece50553 10b76c66
+
+option: rounds = 20
+k: 1d8e6992 f8994ada 0997e6ed ece50553
+p: 10b76c66 b4bd6e46
+c: a6d39c7b dce1a473
+
+option: rounds = 21
+k: f8994ada 0997e6ed ece50553 a6d39c7b
+p: dce1a473 1d8e6992
+c: 21d06fb7 fbb98544
+
+option: rounds = 22
+k: 0997e6ed ece50553 a6d39c7b 21d06fb7
+p: fbb98544 f8994ada
+c: 72cdd36c e1115fb6
+
+option: rounds = 23
+k: ece50553 a6d39c7b 21d06fb7 72cdd36c
+p: e1115fb6 0997e6ed
+c: 25bc6eb3 e4c28ab7
+
+option: rounds = 24
+k: a6d39c7b 21d06fb7 72cdd36c 25bc6eb3
+p: e4c28ab7 ece50553
+c: 4932a288 78020b9e
+
+option: rounds = 25
+k: 21d06fb7 72cdd36c 25bc6eb3 4932a288
+p: 78020b9e a6d39c7b
+c: 25285da1 b66c4459
+
+option: rounds = 26
+k: 72cdd36c 25bc6eb3 4932a288 25285da1
+p: b66c4459 21d06fb7
+c: 39b0155c f227ab20
+
+option: rounds = 27
+k: 25bc6eb3 4932a288 25285da1 39b0155c
+p: f227ab20 72cdd36c
+c: 547571aa f38f1e39
+
+option: rounds = 28
+k: 4932a288 25285da1 39b0155c 547571aa
+p: f38f1e39 25bc6eb3
+c: 27f917b1 e5796aee
+
+option: rounds = 29
+k: 25285da1 39b0155c 547571aa 27f917b1
+p: e5796aee 4932a288
+c: c1da8993 670f9fd2
+
+option: rounds = 30
+k: 39b0155c 547571aa 27f917b1 c1da8993
+p: 670f9fd2 25285da1
+c: 60e2acaa d0a60db4
+
+option: rounds = 31
+k: 547571aa 27f917b1 c1da8993 60e2acaa
+p: d0a60db4 39b0155c
+c: a6eb923d af20a390
+
+option: rounds = 32
+k: 27f917b1 c1da8993 60e2acaa a6eb923d
+p: af20a390 547571aa
+c: d26428af 0a202283
+
+option: rounds = 33
+k: c1da8993 60e2acaa a6eb923d d26428af
+p: 0a202283 27f917b1
+c: 1c03ceb9 96e9f2d3
+
+option: rounds = 34
+k: 60e2acaa a6eb923d d26428af 1c03ceb9
+p: 96e9f2d3 c1da8993
+c: e260b3c1 bbd7dff0
+
+option: rounds = 35
+k: a6eb923d d26428af 1c03ceb9 e260b3c1
+p: bbd7dff0 60e2acaa
+c: d33073f9 12841b97
+
+option: rounds = 36
+k: d26428af 1c03ceb9 e260b3c1 d33073f9
+p: 12841b97 a6eb923d
+c: 17b7ea05 1d723f18
+
+option: rounds = 37
+k: 1c03ceb9 e260b3c1 d33073f9 17b7ea05
+p: 1d723f18 d26428af
+c: 9f571045 31e849b9
+
+option: rounds = 38
+k: e260b3c1 d33073f9 17b7ea05 9f571045
+p: 31e849b9 1c03ceb9
+c: 288351d2 bd0a0054
+
+option: rounds = 39
+k: d33073f9 17b7ea05 9f571045 288351d2
+p: bd0a0054 e260b3c1
+c: 9236883a 2bd13143
+
+option: rounds = 40
+k: 17b7ea05 9f571045 288351d2 9236883a
+p: 2bd13143 d33073f9
+c: e91dcf23 7c3fd716
+
+option: rounds = 41
+k: 9f571045 288351d2 9236883a e91dcf23
+p: 7c3fd716 17b7ea05
+c: 5c8ff51e c3abe43d
+
+option: rounds = 42
+k: 288351d2 9236883a e91dcf23 5c8ff51e
+p: c3abe43d 9f571045
+c: 446e9f7c ecb0eb4d
+
+option: rounds = 43
+k: 9236883a e91dcf23 5c8ff51e 446e9f7c
+p: ecb0eb4d 288351d2
+c: 86455f77 ffc74050
+
+option: rounds = 44
+k: e91dcf23 5c8ff51e 446e9f7c 86455f77
+p: ffc74050 9236883a
+c: ae85d873 e21ef8d3
+
+option: rounds = 45
+k: 5c8ff51e 446e9f7c 86455f77 ae85d873
+p: e21ef8d3 e91dcf23
+c: cf411a68 18dce768
+
+option: rounds = 46
+k: 446e9f7c 86455f77 ae85d873 cf411a68
+p: 18dce768 5c8ff51e
+c: 4ef68794 07d2b1b3
+
+option: rounds = 47
+k: 86455f77 ae85d873 cf411a68 4ef68794
+p: 07d2b1b3 446e9f7c
+c: d75a1925 07476976
+
+option: rounds = 48
+k: ae85d873 cf411a68 4ef68794 d75a1925
+p: 07476976 86455f77
+c: 909d29cb 16b37e1b
+
+option: rounds = 49
+k: cf411a68 4ef68794 d75a1925 909d29cb
+p: 16b37e1b ae85d873
+c: e05578cd bd40cd0c
+
+option: rounds = 50
+k: 4ef68794 d75a1925 909d29cb e05578cd
+p: bd40cd0c cf411a68
+c: 988b50e5 adf1b74c
+
+option: rounds = 51
+k: d75a1925 909d29cb e05578cd 988b50e5
+p: adf1b74c 4ef68794
+c: 90699d3d d2333c19
+
+option: rounds = 52
+k: 909d29cb e05578cd 988b50e5 90699d3d
+p: d2333c19 d75a1925
+c: a119eb2e 3488c65b
+
+option: rounds = 53
+k: e05578cd 988b50e5 90699d3d a119eb2e
+p: 3488c65b 909d29cb
+c: e4c43e62 e9c4894b
+
+option: rounds = 54
+k: 988b50e5 90699d3d a119eb2e e4c43e62
+p: e9c4894b e05578cd
+c: e1aec3f2 1976c384
+
+option: rounds = 55
+k: 90699d3d a119eb2e e4c43e62 e1aec3f2
+p: 1976c384 988b50e5
+c: 1b7b0e2b 0b392b46
+
+option: rounds = 56
+k: a119eb2e e4c43e62 e1aec3f2 1b7b0e2b
+p: 0b392b46 90699d3d
+c: 1a6ffc0c 600f2ee0
+
+option: rounds = 57
+k: e4c43e62 e1aec3f2 1b7b0e2b 1a6ffc0c
+p: 600f2ee0 a119eb2e
+c: 82ccc9d3 94ba3d77
+
+option: rounds = 58
+k: e1aec3f2 1b7b0e2b 1a6ffc0c 82ccc9d3
+p: 94ba3d77 e4c43e62
+c: 38b5ebd1 c56af77e
+
+option: rounds = 59
+k: 1b7b0e2b 1a6ffc0c 82ccc9d3 38b5ebd1
+p: c56af77e e1aec3f2
+c: f5571f9d fe136a04
+
+option: rounds = 60
+k: 1a6ffc0c 82ccc9d3 38b5ebd1 f5571f9d
+p: fe136a04 1b7b0e2b
+c: 62ee209f 08550367
+
+option: rounds = 61
+k: 82ccc9d3 38b5ebd1 f5571f9d 62ee209f
+p: 08550367 1a6ffc0c
+c: 069b7afc b0fcde91
+
+option: rounds = 62
+k: 38b5ebd1 f5571f9d 62ee209f 069b7afc
+p: b0fcde91 82ccc9d3
+c: 376a8936 11b9c087
+
+option: rounds = 63
+k: f5571f9d 62ee209f 069b7afc 376a8936
+p: 11b9c087 38b5ebd1
+c: cdc9e923 2e6c1fe7
+
+option: rounds = 64
+k: 62ee209f 069b7afc 376a8936 cdc9e923
+p: 2e6c1fe7 f5571f9d
+c: 7a01cbc9 b03d6068
+
