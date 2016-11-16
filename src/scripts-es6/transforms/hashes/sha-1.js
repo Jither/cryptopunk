@@ -67,11 +67,19 @@ class Sha1Transform extends MdHashTransform
 
 		let [a, b, c, d, e] = state;
 
+		let round = -1,
+			op,
+			k;
+		
 		for (let step = 0; step < STEPS; step++)
 		{
-			const round = Math.floor(step / 20);
-			const op = OPS[round];
-			const temp = op(a, b, c, d, e, x[step], K[round]);
+			if (step % 20 === 0)
+			{
+				round++;
+				op = OPS[round];
+				k = K[round];
+			}
+			const temp = op(a, b, c, d, e, x[step], k);
 
 			e = d;
 			d = c;

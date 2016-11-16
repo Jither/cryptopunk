@@ -97,15 +97,24 @@ class Has160Transform extends MdHashTransform
 		
 		let [a, b, c, d, e] = state;
 
+		let round = -1, 
+			op, 
+			rotB, 
+			k;
+
 		for (let step = 0; step < STEPS; step++)
 		{
-			const round = Math.floor(step / 20);
-
-			// HAS-160 vs SHA-1: Different expansion. x[16..19] are built from varying parts of x[0..15] each round:
-			// Extend from 16 to 20 (d)words
 			const roundstep = step % 20;
 			if (roundstep === 0)
 			{
+				round++;
+				op = OPS[round];
+				k = K[round];
+				// HAS-160 vs SHA-1: Rotation of b changes for each round:
+				rotB = ROT_B[round];
+
+				// HAS-160 vs SHA-1: Different expansion. x[16..19] are built from varying parts of x[0..15] each round:
+				// Extend from 16 to 20 (d)words
 				let exp = round * 16;
 				x[16] = x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]];
 				x[17] = x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]];
@@ -113,16 +122,14 @@ class Has160Transform extends MdHashTransform
 				x[19] = x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]] ^ x[EXPAND[exp++]];
 			}
 
-			const op = OPS[round];
 			// HAS-160 vs SHA-1:
 			// - Message parts (x[0..19]) are processed in a defined order by step
 			// - Rotation of a in F, G, H changes for each step
-			const temp = op(a, b, c, d, e, x[X_ORDER[step]], K[round], ROT_A[roundstep]);
+			const temp = op(a, b, c, d, e, x[X_ORDER[step]], k, ROT_A[roundstep]);
 
-			// HAS-160 vs SHA-1: Rotation of b changes for each round:
 			e = d;
 			d = c;
-			c = rol(b, ROT_B[round]);
+			c = rol(b, rotB);
 			b = a;
 			a = temp;
 		}

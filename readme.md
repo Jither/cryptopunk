@@ -15,6 +15,7 @@ Supported
 * ROT-X / Caesar (with specific support for ROT-5, ROT-18, ROT-47)
 * Skip
 * Simple substitution
+* Trifid
 * Vigenère
 
 ### Mechanical Ciphers
@@ -46,6 +47,7 @@ Supported
 * BLAKE (224, 256, 384, 512)
 * BLAKE2 (BLAKE2s, BLAKE2b)
 * HAVAL (128, 160, 192, 224, 256, 3-5 passes)
+* HAS-160
 * Keccak (variable capacity, hash length, suffix)
 * MD2
 * MD4
@@ -96,13 +98,13 @@ TODO
 * Four-square
 * Great Cipher?
 * Hill Cipher
+* Jefferson Wheel Cipher
 * Keyword Cipher (based on caesar)
 * Myszkowski
 * Null
 * Rail Fence
 * Straddling Checkerboard
 * Tap Code
-* Trifid
 * Two-square
 * VIC
 
@@ -134,6 +136,7 @@ TODO
 * Khafre
 * KHAZAD
 * Khufu
+* Madryga
 * MISTY1
 * NewDES / NewDES-96
 * Nimbus
@@ -141,6 +144,7 @@ TODO
 * NUSH
 * PRESENT
 * Q
+* Red Pike
 * S-1
 * SAFER/SAFER+/SAFER++
 * SC2000
@@ -156,6 +160,7 @@ TODO
 * FSB
 * Fugue
 * Grøstl
+* HAS-V
 * JH
 * MD6
 * PANAMA
