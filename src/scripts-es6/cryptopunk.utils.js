@@ -200,9 +200,9 @@ function int16sToBytesBE(ints)
 	return result;
 }
 
-function int32sToBytesBE(ints)
+function int32sToBytesBE(ints, dest)
 {
-	const result = new Uint8Array(ints.length * 4);
+	const result = dest || new Uint8Array(ints.length * 4);
 	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
@@ -216,9 +216,9 @@ function int32sToBytesBE(ints)
 	return result;
 }
 
-function int32sToBytesLE(ints)
+function int32sToBytesLE(ints, dest)
 {
-	const result = new Uint8Array(ints.length * 4);
+	const result = dest || new Uint8Array(ints.length * 4);
 	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
@@ -232,9 +232,9 @@ function int32sToBytesLE(ints)
 	return result;
 }
 
-function int64sToBytesBE(ints)
+function int64sToBytesBE(ints, dest)
 {
-	const result = new Uint8Array(ints.length * 8);
+	const result = dest || new Uint8Array(ints.length * 8);
 	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
@@ -252,9 +252,9 @@ function int64sToBytesBE(ints)
 	return result;
 }
 
-function int64sToBytesLE(ints)
+function int64sToBytesLE(ints, dest)
 {
-	const result = new Uint8Array(ints.length * 8);
+	const result = dest || new Uint8Array(ints.length * 8);
 	let index = 0;
 	for (let i = 0; i < ints.length; i++)
 	{
@@ -272,6 +272,7 @@ function int64sToBytesLE(ints)
 	return result;
 }
 
+// TODO: Get rid of this (only used by browser-native RSA)
 function intToByteArray(num)
 {
 	const result = new Uint8Array();

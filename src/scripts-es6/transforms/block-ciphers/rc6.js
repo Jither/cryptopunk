@@ -2,7 +2,7 @@ import { Rc5BaseTransform } from "./rc5";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, mul, rol, ror } from "../../cryptopunk.bitarith";
 
-// TODO: 32 and 128 bit block sizes
+// TODO: 64 and 256 bit block sizes
 
 const BLOCK_SIZES = [
 	64,
@@ -51,7 +51,8 @@ class Rc6EncryptTransform extends Rc6Transform
 		for (let i = 1; i <= rounds; i++)
 		{
 			// 2 * b + 1 will stay well within 2^53 limit, so we can use javascript multiplication.
-			// Multiplying the result with b will not, however. Hence the mul() function call.
+			// Multiplying the result with b, however, will not. Hence the mul() function call.
+			// TODO: Math.imul can be used instead
 			const t = rol(mul(b, (2 * b + 1)), rot);
 			const u = rol(mul(d, (2 * d + 1)), rot);
 			a = add(rol(a ^ t, u % wordSize), subKeys[2 * i]);

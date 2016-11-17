@@ -10,6 +10,7 @@ import * as blake2 from "./transforms/hashes/blake2";
 import * as blowfish from "./transforms/block-ciphers/blowfish";
 import * as bsd from "./transforms/checksums/bsd";
 import * as codepages from "./transforms/char-encodings/codepages";
+import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
 import * as des from "./transforms/block-ciphers/des";
@@ -408,6 +409,7 @@ addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) D
 //addPaletteItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt");
 addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
 addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt");
+addPaletteItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt");
 addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
 addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
 addPaletteItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt");
@@ -431,6 +433,7 @@ addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) E
 addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");
 addPaletteItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt");
 addPaletteItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt");
+addPaletteItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt");
 addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
 addPaletteItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt");
 addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt");

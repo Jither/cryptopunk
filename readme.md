@@ -25,6 +25,7 @@ Supported
 ### Block Ciphers
 
 * Blowfish
+* CAST-128
 * DES (64 bit with parity or 56 bit without)
 * IDEA
 * LUCIFER (Sorkin and Outerbridge variants)
@@ -118,7 +119,7 @@ TODO
 ### Modern Ciphers
 
 * Camellia
-* CAST-128, CAST-256
+* CAST-256
 * 3DES
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
 * RC2
