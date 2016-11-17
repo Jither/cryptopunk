@@ -28,6 +28,8 @@ Supported
 * DES (64 bit with parity or 56 bit without)
 * IDEA
 * LUCIFER (Sorkin and Outerbridge variants)
+* RC5
+* RC6
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Skipjack (including NESSIE variant)
 * Serpent
@@ -119,7 +121,8 @@ TODO
 * CAST-128, CAST-256
 * 3DES
 * GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
-* RC2, RC5, RC6
+* RC2
+* RC5, RC6 (16/64 bit word sizes)
 * Serpent-0, tnepreS
 * Browser-native RSA decryption
 

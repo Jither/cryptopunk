@@ -22,6 +22,23 @@ function add(...terms)
 	return (hi << 16) | lo;
 }
 
+function mul(a, b)
+{
+	const
+		a16 = a >>> 16,
+		a00 = a & 0xffff,
+
+		b16 = b >>> 16,
+		b00 = b & 0xffff;
+
+	let r00, r16;
+
+	r00  = a00 * b00;
+	r16  = (r00 >>> 16) + a16 * b00 + a00 * b16;
+
+	return ((r16 & 0xffff) << 16) | (r00 & 0xffff);
+}
+
 function rol(val, count)
 {
 	return (val << count) | (val >>> (32 - count));
@@ -292,6 +309,7 @@ function xor64(...terms)
 
 export {
 	add,
+	mul,
 	rol,
 	ror,
 	add64,

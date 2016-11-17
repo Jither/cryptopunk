@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { int32sToBytesBE, bytesToInt32sBE, int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
+import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, rol, ror } from "../../cryptopunk.bitarith";
 
 // TODO: 32 and 128 bit block sizes
@@ -18,18 +18,16 @@ const Q_16 = 0x9e37;
 const Q_32 = 0x9e3779b9;
 const Q_64 = { hi: 0x9E3779B9, lo: 0x7F4A7C15 };
 
-class Rc5Transform extends BlockCipherTransform
+class Rc5BaseTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
 	{
 		super(decrypt);
-		this.addOption("rounds", "Rounds", 12, { min: 0, max: 255 })
-			.addOption("blockSize", "Block size", 64, { type: "select", texts: BLOCK_SIZES });
 	}
 
 	generateSubKeys(keyBytes)
 	{
-		const wordSize = this.options.blockSize / 2;
+		const wordSize = this.wordSize;
 		const wordLength = wordSize / 8;
 
 		const keyLength = keyBytes.length;
@@ -44,7 +42,7 @@ class Rc5Transform extends BlockCipherTransform
 			L[index] |= keyBytes[i];
 		}
 
-		const roundKeyCount = (this.options.rounds + 1) * 2;
+		const roundKeyCount = this.roundKeyCount;
 
 		const S = new Array(roundKeyCount);
 		S[0] = P_32;
@@ -71,7 +69,6 @@ class Rc5Transform extends BlockCipherTransform
 		return S;
 	}
 
-
 	transform(bytes, keyBytes)
 	{
 		const subKeys = this.generateSubKeys(keyBytes);
@@ -79,6 +76,26 @@ class Rc5Transform extends BlockCipherTransform
 		return this.transformBlocks(bytes, this.options.blockSize, subKeys);
 	}
 
+}
+
+class Rc5Transform extends Rc5BaseTransform
+{
+	constructor(decrypt)
+	{
+		super(decrypt);
+		this.addOption("rounds", "Rounds", 12, { min: 0, max: 255 })
+			.addOption("blockSize", "Block size", 64, { type: "select", texts: BLOCK_SIZES });
+	}
+
+	get roundKeyCount()
+	{
+		return 2 * this.options.rounds + 2;
+	}
+
+	get wordSize()
+	{
+		return this.options.blockSize / 2;
+	}
 }
 
 class Rc5EncryptTransform extends Rc5Transform
@@ -90,7 +107,7 @@ class Rc5EncryptTransform extends Rc5Transform
 
 	transformBlock(block, dest, destOffset, subKeys)
 	{
-		const wordSize = this.options.blockSize / 2;
+		const wordSize = this.wordSize;
 		const rounds = this.options.rounds;
 
 		let [a, b] = bytesToInt32sLE(block);
@@ -120,7 +137,7 @@ class Rc5DecryptTransform extends Rc5Transform
 
 	transformBlock(block, dest, destOffset, subKeys)
 	{
-		const wordSize = this.options.blockSize / 2;
+		const wordSize = this.wordSize;
 		const rounds = this.options.rounds;
 
 		let [a, b] = bytesToInt32sLE(block);
@@ -139,6 +156,7 @@ class Rc5DecryptTransform extends Rc5Transform
 }
 
 export {
+	Rc5BaseTransform,
 	Rc5EncryptTransform,
 	Rc5DecryptTransform
 };
