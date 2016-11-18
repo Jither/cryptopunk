@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://eprint.iacr.org/2013/404.pdf
+
 title   : Speck {blockSize}/{keybits} test vector #{index}
 
 option: blockSize = 32

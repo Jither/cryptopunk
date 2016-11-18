@@ -3,6 +3,8 @@ hash    : HavalTransform
 m-format: ascii
 h-format: hex
 
+# From: https://web.archive.org/web/20150111210116/http://labs.calyptix.com/haval-1.1.tar.gz - haval.cert
+
 title   : cert vector
 
 # empty string

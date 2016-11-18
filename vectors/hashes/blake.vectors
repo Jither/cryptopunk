@@ -3,6 +3,8 @@ hash    : Blake224Transform
 m-format: hex
 h-format: hex
 
+# From: https://131002.net/blake/blake.pdf
+
 title   : BLAKE Paper test vector
 
 m: 00

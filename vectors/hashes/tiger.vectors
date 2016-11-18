@@ -3,6 +3,8 @@ hash    : TigerTransform
 m-format: ascii
 h-format: hex
 
+# From: http://www.cs.technion.ac.il/~biham/Reports/Tiger/testresults.html
+
 title   : Tiger test vectors (adapted to byte stream order, not including vectors also in NESSIE sets)
 
 m: Tiger
@@ -29,6 +31,8 @@ h: c54034e5b43eb800 5848a7e0ae6aac76 e4ff590ae715fd25
 m-format: hex
 m: runlength x 65536
 h: fdf4f5b35139f48e 710e421be5af411d e1a8aac333f26204
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/hash/tiger/Tiger-192.test-vectors
 
 title   : NESSIE Tiger test vector, Set 1 vector
 m-format: ascii
@@ -61,6 +65,8 @@ h: 1c14795529fd9f207a958f84c52f11e887fa0cabdfd91bfd
 m-format: hex
 m: repeat 61 x 1000000
 h: 6db0e2729cbead93d715c6a7d36302e9b3cee0d2bc314b41
+
+# From: http://www.cs.technion.ac.il/~biham/Reports/Tiger/tiger2-test-vectors-nessie-format.dat
 
 ##############################################################################################
 # Tiger2

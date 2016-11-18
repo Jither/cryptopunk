@@ -3,6 +3,8 @@ hash    : Sha3Transform
 m-format: hex
 h-format: hex
 
+# From: https://github.com/gvanas/KeccakCodePackage/tree/master/TestVectors
+
 title   : {variant} NIST ShortMsgKAT len = {msgbits}
 
 option: variant = SHA3-224

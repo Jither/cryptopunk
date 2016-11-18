@@ -3,6 +3,7 @@ hash    : FletcherTransform
 m-format: ascii
 h-format: hex
 
+# Self-generated and tested against common implementations
 # TODO: Fletcher-32, Fletcher-64 (find proper implementations and vectors)
 
 title   : Fletcher-16 test vector

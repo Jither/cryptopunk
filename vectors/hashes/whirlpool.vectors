@@ -3,6 +3,8 @@ hash    : WhirlpoolTransform
 m-format: ascii
 h-format: hex
 
+# From: http://www.larc.usp.br/~pbarreto/whirlpool.zip
+
 title: WHIRLPOOL ISO test vector
 
 m: 
@@ -33,6 +35,8 @@ h: 466ef18babb0154d25b9d38a6414f5c08784372bccb204d6549c4afadb6014294d5bd8df2a6c4
 m-format: hex
 m: repeat 61 x 1000000
 h: 0c99005beb57eff50a7cf005560ddf5d29057fd86b20bfd62deca0f1ccea4af51fc15490eddc47af32bb2b66c34ff9ad8c6008ad677f77126953b226e4ed8b01
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/hash/whirlpool/index.html
 
 title : WHIRLPOOL-0 NESSIE test vector
 option: variant = whirlpool-0

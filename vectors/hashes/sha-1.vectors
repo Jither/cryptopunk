@@ -3,14 +3,16 @@ hash    : Sha0Transform
 m-format: ascii
 h-format: hex
 
+title   : FIPS-180 (original)
+
+m: abc
+h: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
+
 #####################################
 title   : SHA-0 libmd test vector
 
 m:
 h: f96cea198ad1dd5617ac084a3d92c6107708c0ef
-
-m: abc
-h: 0164b8a914cd2a5e74c4f7ff082c4d97f1edf880
 
 m: message digest
 h: c1b0f222d150ebb9aa36a40cafdc8bcbed830b14
@@ -23,6 +25,8 @@ h: 79e966f7a3a990df33e40e3d7f8f18d2caebadfa
 
 m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 h: 4aa29d14d171522ece47bee8957e35a41f3e9cff
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/hash/sha/Sha-1-160.test-vectors
 
 #####################################
 title   : SHA-1 NESSIE test vector

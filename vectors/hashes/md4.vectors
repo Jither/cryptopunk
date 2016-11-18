@@ -3,6 +3,10 @@ hash    : Md4Transform
 m-format: ascii
 h-format: hex
 
+# From: https://tools.ietf.org/html/rfc1320
+
+title   : RFC 1320 test vector
+
 m:
 h: 31d6cfe0d16ae931b73c59d7e0c089c0
 
@@ -23,6 +27,8 @@ h: 043f8582f241db351ce627e153e7f0e4
 
 m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 h: e33b4ddc9c38f2199c3e7b164fcc0536
+
+# Self-generated and compared to common implementations
 
 # Exactly 448 bits
 m: 01234567890123456789012345678901234567890123456789012345

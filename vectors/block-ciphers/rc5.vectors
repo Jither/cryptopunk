@@ -5,7 +5,9 @@ k-format: hex
 p-format: hex
 c-format: hex
 
-# Note: RFC 2040 vectors have been manually derived from CBC mode (by pre-XOR'ing IV and plaintext)
+# From: https://tools.ietf.org/html/rfc2040
+# Note: These have been manually derived from CBC mode (by pre-XOR'ing IV and plaintext)
+
 title   : Derived from RFC 2040
 
 option  : rounds = 0
@@ -150,6 +152,7 @@ k: 0102030405
 p: 6d91c29b619f3f10
 c: 7fd1a023a5bba217
 
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/rc5/Rc5-128-64.verified.test-vectors
 
 title : NESSIE Set 1
 option: rounds = 12

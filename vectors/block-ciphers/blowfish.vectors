@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://www.schneier.com/code/vectors.txt
+
 title: Eric Young ECB test data
 
 k: 0000000000000000

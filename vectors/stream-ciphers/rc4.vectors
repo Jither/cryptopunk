@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://tools.ietf.org/html/rfc6229
+
 title   : RFC 6229, key: '{key}' ({keybits}), discard: {discard}
 
 option: discard = 0

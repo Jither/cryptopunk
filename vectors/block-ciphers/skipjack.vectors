@@ -7,6 +7,7 @@ c-format: hex
 
 title: SKIPJACK and KEA Algorithm Specifications test vector
 
+# From: http://csrc.nist.gov/groups/ST/toolkit/documents/skipjack/skipjack.pdf
 ## That one test vector the NSA felt like providing
 
 k: 00998877665544332211
@@ -15,6 +16,7 @@ c: 2587cae27a12d300
 
 title: Jason Papadopoulos vector
 
+# From: https://groups.google.com/d/msg/sci.crypt/WMg8e2dwIV4/X15UcIiWglcJ
 ## Vectors for original variant from a different implementation based on the spec.
 
 k: f8da02647722f7103adf
@@ -217,9 +219,10 @@ k: 2ea09f1cc89e064f09bc
 p: 543208b05bfa3858
 c: a95d87fad12c3593
 
-option: variant = nessie
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/skipjack/Skipjack-80-64.unverified.test-vectors
 
 title : NESSIE Set 1
+option: variant = nessie
 
 k: 80000000000000000000
 p: 0000000000000000

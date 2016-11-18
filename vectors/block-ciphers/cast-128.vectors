@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://tools.ietf.org/html/rfc2144
+
 title   : RFC 2144 test vector
 
 k: 0123456712345678234567893456789a
@@ -18,6 +20,8 @@ c: eb6a711a2c02271b
 k: 0123456712
 p: 0123456789abcdef
 c: 7ac816d16e9b302e
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/cast-128/Cast-128-128-64.verified.test-vectors
 
 title: NESSIE test vectors Set 1
 

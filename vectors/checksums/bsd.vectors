@@ -3,6 +3,8 @@ hash    : BsdTransform
 m-format: ascii
 h-format: hex
 
+# Self-generated and tested against common implementations
+
 title: BSD checksum test vector
 
 m: fsociety

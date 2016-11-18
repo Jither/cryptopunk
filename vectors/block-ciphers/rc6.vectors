@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: http://people.csail.mit.edu/rivest/pubs/RRSY98.pdf
+
 title   : RRSY98 vector
 
 k: 00000000000000000000000000000000
@@ -30,6 +32,8 @@ c: 8f5fbd0510d15fa893fa3fda6e857ec2
 k: 0123456789abcdef0112233445566778899aabbccddeeff01032547698badcfe
 p: 02132435465768798a9bacbdcedfe0f1
 c: c8241816f0d7e48920ad16a1674e5d48
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/rc6/rc6.html
 
 title: NESSIE key size 128 Set 1
 

@@ -1,0 +1,23 @@
+mode    : encrypt-decrypt
+encrypt : Cast256EncryptTransform
+decrypt : Cast256DecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: https://tools.ietf.org/html/rfc2612
+
+title   : RFC 2612 test vector
+
+k: 2342bb9efa38542c0af75647f29f615d
+p: 00000000000000000000000000000000
+c: c842a08972b43d20836c91d1b7530f6b
+
+k: 2342bb9efa38542cbed0ac83940ac298bac77a7717942863
+p: 00000000000000000000000000000000
+c: 1b386c0210dcadcbdd0e41aa08a7a7e8
+
+k: 2342bb9efa38542cbed0ac83940ac2988d7c47ce264908461cc1b5137ae6b604
+p: 00000000000000000000000000000000
+c: 4f6a2038286897b9c9870136553317fa
+

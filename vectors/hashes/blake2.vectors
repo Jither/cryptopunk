@@ -3,6 +3,8 @@ hash    : Blake2sTransform
 m-format: hex
 h-format: hex
 
+# From: https://github.com/BLAKE2/BLAKE2/blob/master/testvectors/blake2-kat.json
+
 #############################################################################################################################
 # BLAKE2s
 

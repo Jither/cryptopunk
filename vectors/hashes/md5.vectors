@@ -3,6 +3,10 @@ hash    : Md5Transform
 m-format: ascii
 h-format: hex
 
+# From: https://tools.ietf.org/html/rfc1321
+
+title   : RFC 1321 test vector
+
 m:
 h: d41d8cd98f00b204e9800998ecf8427e
 
@@ -23,6 +27,8 @@ h: d174ab98d277d9f5a5611c2c9f419d9f
 
 m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 h: 57edf4a22be3c955ac49da2e2107b67a
+
+# Self-generated and compared to common implementations
 
 # Exactly 448 bits
 m: 01234567890123456789012345678901234567890123456789012345

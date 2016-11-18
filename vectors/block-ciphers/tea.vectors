@@ -5,9 +5,11 @@ k-format: hex
 p-format: hex
 c-format: hex
 
-option  : endianess = BE
+# From: http://www.cix.co.uk/~klockstone/teavect.htm
+# Derived from vectors and unmodified code
 
 title   : TEA (BE) Keith Lockstone vector
+option  : endianess = BE
 
 k: 00000000 00000000 00000000 00000000
 p: 00000000 00000000

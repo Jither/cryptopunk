@@ -32,8 +32,8 @@ Supported
 * RC5
 * RC6
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
-* Skipjack (including NESSIE variant)
 * Serpent
+* Skipjack (including NESSIE variant)
 * Speck
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
@@ -131,30 +131,74 @@ TODO
 
 * 3-Way, BaseKing
 * A5/1, A5/2
+* Akelarre
 * Anubis
-* ARIA
+* CRYPTON (0.5, 1.0)
 * CS-Cipher
+* DEAL
+* DES-X
+* DFC / DFCv2-128
+* E2
+* FEAL
+* FROG
 * Grand Cru
 * Hierocrypt
+* IDEA NXT
+* Iraqi
 * KASUMI
 * Khafre
 * KHAZAD
 * Khufu
+* LOKI89/91 / LOKI97
+* MacGuffin
 * Madryga
-* MISTY1
+* MAGENTA
+* MARS
+* MISTY1 / MISTY2
 * NewDES / NewDES-96
-* Nimbus
-* NOEKON
-* NUSH
+* NOEKEON
 * PRESENT
-* Q
 * Red Pike
 * S-1
-* SAFER/SAFER+/SAFER++
+* SAFER / SAFER+ / SAFER++
 * SC2000
+* Scream
+* SEAL(-3.0)
 * SEED
 * Shacal
+* Shark-A / Shark-E
+* Simon
+* SNOW
+* SPEED
+* Square
+* Treyfer
 * Unicorn-A, Unicorn-E
+
+#### Third priority
+
+* ARIA
+* BassOmatic
+* Diamond2
+* FEA-M
+* HPC-1 / HPC-2
+* Mercy
+* MESH
+* MMB
+* MULTI2
+* New Data Seal
+* Nimbus
+* NUSH
+* Rainbow
+* Q
+* REDOC II / REDOC III
+* Sapphire-II
+* SM4
+* Spectr-H64
+* SXAL / MBAL
+* UES
+* Xenon
+* xmx
+* Zodiac
 
 ### Hashes
 

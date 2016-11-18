@@ -2,6 +2,8 @@ mode    : hash
 m-format: ascii
 h-format: hex
 
+# From: http://www.di-mgt.com.au/sha_testvectors.html
+
 title   : SHA-224 std. test vector
 hash    : Sha224Transform
 
@@ -25,6 +27,8 @@ h: bff72b4fcb7d75e5632900ac5f90d219e05e97a7bde72e740db393d9
 
 m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 h: b50aecbe4e9bb0b57bc5f3ae760a8e01db24f203fb3cdcd13148046e
+
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/hash/sha/index.html
 
 title   : SHA-256 NESSIE test vector
 hash    : Sha256Transform

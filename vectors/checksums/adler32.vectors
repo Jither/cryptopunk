@@ -3,6 +3,8 @@ hash    : Adler32Transform
 m-format: ascii
 h-format: hex
 
+# Generated with C implementation in RFC 1950 (https://tools.ietf.org/html/rfc1950)
+
 title: Standard test vector
 
 m:
@@ -25,3 +27,24 @@ h: 8adb150c
 
 m: 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 h: 97b61069
+
+title   : Other test vector
+m-format: hex
+
+m: 00010203
+h: 000e0007
+
+m: 0001020304050607
+h: 005c001d
+
+m: 000102030405060708090a0b0c0d0e0f
+h: 02b80079
+
+m: 41414141
+h: 028e0105
+
+m: 4242424242424242
+h: 09500211
+
+m: 43434343434343434343434343434343
+h: 23a80431

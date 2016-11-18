@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/serpent/index.html
+
 title: NESSIE Serpent 128-bit key, Set 1 vector
 
 k: 80000000000000000000000000000000

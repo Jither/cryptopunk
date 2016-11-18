@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: [Cryptography] Regarding LUCIFER - http://www.metzdowd.com/pipermail/cryptography/2015-March/025060.html
+
 title: Richard Outerbridge test vectors (LSB0)
 
 k: 0123456789abcdeffedcba9876543210
@@ -30,6 +32,8 @@ c: cf46622fa98546bb9a5bc00239eb0c92
 k: fedcba98765432100123456789abcdef
 p: 0123456789abcdeffedcba9876543210
 c: 7faf65bfc5458fd2dc9cc2266012ef44
+
+# Sets with same input as NESSIE, generated from Graven Cyphers/Richard Outerbridge's lucifer.c
 
 title: Test vector generated from lucifer.c (Outerbridge), Set 0
 
@@ -1067,6 +1071,9 @@ c: 99de0e4839823328834edc975d0601d3
 k: 00000000000000000000000000000001
 p: 00000000000000000000000000000000
 c: b2e649c69bf5454e796df9db0195eca5
+
+# Sets with same input as NESSIE, generated from Sorkin's Fortran implementation, running on Intel x64
+# (See /specs for source)
 
 option: variant = msb0
 

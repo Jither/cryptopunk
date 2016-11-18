@@ -3,6 +3,8 @@ hash    : RipeMd128Transform
 m-format: ascii
 h-format: hex
 
+# From: http://homes.esat.kuleuven.be/~bosselae/ripemd160.html
+
 #####################################
 title   : RIPEMD-128
 

@@ -5,6 +5,8 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From: https://www.schneier.com/code/ecb_ival.txt
+
 title   : ecb_ival.txt KEYSIZE={keybits}
 
 k: 00000000000000000000000000000000

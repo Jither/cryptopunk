@@ -3,6 +3,9 @@ hash    : CrcTransform
 m-format: ascii
 h-format: hex
 
+# From: http://reveng.sourceforge.net/crc-catalogue/
+
+
 title   : {variant} test vector
 
 option: variant = crc-16-arc

@@ -3,6 +3,10 @@ hash    : Has160Transform
 m-format: ascii
 h-format: hex
 
+# From: https://www.randombit.net/has160.html
+
+title   : HAS-160 test vector
+
 m: 
 h: 307964ef34151d37c8047adec7ab50f4ff89762d
 
