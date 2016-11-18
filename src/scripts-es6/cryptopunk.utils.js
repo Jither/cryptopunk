@@ -40,6 +40,21 @@ function hexToBytes(hex)
 	return bytes;
 }
 
+function int16sToHex(ints)
+{
+	let result = "";
+	for (let i = 0; i < ints.length; i++)
+	{
+		if (i > 0)
+		{
+			result += " ";
+		}
+		const int = ints[i];
+		result += ("0000" + (int >>> 0).toString(16)).substr(-4);
+	}
+	return result;
+}
+
 function int32ToHex(int)
 {
 	return ("00000000" + (int >>> 0).toString(16)).substr(-8);
@@ -112,6 +127,19 @@ function bytesToInt16sBE(bytes)
 		result.push(
 			(bytes[i    ] <<  8) |
 			(bytes[i + 1])
+		);
+	}
+	return result;
+}
+
+function bytesToInt16sLE(bytes)
+{
+	const result = [];
+	for (let i = 0; i < bytes.length; i +=2)
+	{
+		result.push(
+			(bytes[i    ]) |
+			(bytes[i + 1] << 8)
 		);
 	}
 	return result;
@@ -196,6 +224,19 @@ function int16sToBytesBE(ints)
 		const value = ints[i];
 		result[index++] = (value >> 8) & 0xff;
 		result[index++] = (value) & 0xff;
+	}
+	return result;
+}
+
+function int16sToBytesLE(ints)
+{
+	const result = new Uint8Array(ints.length * 2);
+	let index = 0;
+	for (let i = 0; i < ints.length; i++)
+	{
+		const value = ints[i];
+		result[index++] = (value) & 0xff;
+		result[index++] = (value >> 8) & 0xff;
 	}
 	return result;
 }
@@ -334,6 +375,7 @@ export {
 	asciiToBytes,
 	bytesToHex,
 	bytesToInt16sBE,
+	bytesToInt16sLE,
 	bytesToInt32sBE,
 	bytesToInt32sLE,
 	bytesToInt64sBE,
@@ -342,12 +384,14 @@ export {
 	hexToBytes,
 	intToByteArray,
 	int16sToBytesBE,
+	int16sToBytesLE,
 	int32sToBytesBE,
 	int32sToBytesLE,
 	int32ToBytesBE,
 	int32ToBytesLE,
 	int64sToBytesBE,
 	int64sToBytesLE,
+	int16sToHex,
 	int32ToHex,
 	int32sToHex,
 	int64ToHex,

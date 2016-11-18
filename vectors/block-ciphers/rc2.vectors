@@ -1,0 +1,46 @@
+mode    : encrypt-decrypt
+encrypt : Rc2EncryptTransform
+decrypt : Rc2DecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: https://tools.ietf.org/html/rfc2268
+
+title   : RFC 2268 test vector
+
+option  : effectiveKeySize = 63
+k: 00000000 00000000
+p: 00000000 00000000
+c: ebb773f9 93278eff
+
+option  : effectiveKeySize = 64
+k: ffffffff ffffffff
+p: ffffffff ffffffff
+c: 278b27e4 2e2f0d49
+
+k: 30000000 00000000
+p: 10000000 00000001
+c: 30649edf 9be7d2c2
+
+k: 88
+p: 00000000 00000000
+c: 61a8a244 adacccf0
+
+k: 88bca90e 90875a
+p: 00000000 00000000
+c: 6ccf4308 974c267f
+
+k: 88bca90e 90875a7f 0f79c384 627bafb2
+p: 00000000 00000000
+c: 1a807d27 2bbe5db1
+
+option  : effectiveKeySize = 128
+k: 88bca90e 90875a7f 0f79c384 627bafb2
+p: 00000000 00000000
+c: 2269552a b0f85ca6
+
+option  : effectiveKeySize = 129
+k: 88bca90e 90875a7f 0f79c384 627bafb2 16f80a6f 85920584 c42fceb0 be255daf 1e
+p: 00000000 00000000
+c: 5b78d3a4 3dfff1f1

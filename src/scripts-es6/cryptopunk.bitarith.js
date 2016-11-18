@@ -1,6 +1,18 @@
 const ONE_64 = { hi: 0, lo: 1 };
 const ZERO_64 = { hi: 0, lo: 0 };
 
+function rol16(val, count)
+{
+	count = count % 16;
+	return (val << count) | (val >>> (16 - count)) & 0xffff;
+}
+
+function ror16(val, count)
+{
+	count = count % 16;
+	return (val >>> count) | (val << (16 - count)) & 0xffff;
+}
+
 function add(...terms)
 {
 	const len = terms.length;
@@ -309,21 +321,23 @@ function xor64(...terms)
 
 export {
 	add,
-	mul,
-	rol,
-	ror,
 	add64,
 	and64,
+	mul,
 	mul64,
 	not64,
+	rol,
+	rol16,
+	rol48,
 	rol64,
+	ror,
+	ror16,
+	ror48,
 	ror64,
-	xor64,
 	shl64,
 	shr64,
 	sub64,
+	xor64,
 	ONE_64,
-	ZERO_64,
-	rol48,
-	ror48
+	ZERO_64
 };
