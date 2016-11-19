@@ -54,6 +54,7 @@ import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
 import * as tiger from "./transforms/hashes/tiger";
+import * as treyfer from "./transforms/block-ciphers/treyfer";
 import * as trifid from "./transforms/classical/trifid";
 import * as twofish from "./transforms/block-ciphers/twofish";
 import * as unicode from "./transforms/char-encodings/unicode";
@@ -430,6 +431,7 @@ addPaletteItem(skipjack.SkipjackDecryptTransform, "Skipjack", "Skipjack Decrypt"
 addPaletteItem(speck.SpeckDecryptTransform, "Speck", "Speck Decrypt");
 addPaletteItem(tea.TeaDecryptTransform, "TEA", "TEA Decrypt");
 addPaletteItem(threefish.ThreefishDecryptTransform, "Threefish", "Threefish Decrypt");
+addPaletteItem(treyfer.TreyferDecryptTransform, "Treyfer", "Treyfer Decrypt");
 addPaletteItem(twofish.TwofishDecryptTransform, "Twofish", "Twofish Decrypt");
 addPaletteItem(xtea.XTeaDecryptTransform, "XTEA", "XTEA Decrypt");
 addPaletteItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
@@ -457,6 +459,7 @@ addPaletteItem(skipjack.SkipjackEncryptTransform, "Skipjack", "Skipjack Encrypt"
 addPaletteItem(speck.SpeckEncryptTransform, "Speck", "Speck Encrypt");
 addPaletteItem(tea.TeaEncryptTransform, "TEA", "TEA Encrypt");
 addPaletteItem(threefish.ThreefishEncryptTransform, "Threefish", "Threefish Encrypt");
+addPaletteItem(treyfer.TreyferEncryptTransform, "Treyfer", "Treyfer Encrypt");
 addPaletteItem(twofish.TwofishEncryptTransform, "Twofish", "Twofish Encrypt");
 addPaletteItem(xtea.XTeaEncryptTransform, "XTEA", "XTEA Encrypt");
 addPaletteItem(xxtea.XXTeaEncryptTransform, "XXTEA", "XXTEA Encrypt");

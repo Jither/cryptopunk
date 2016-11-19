@@ -1,6 +1,6 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE } from "../../cryptopunk.utils";
+import { TransformError } from "../transforms";
+import { bytesToInt32sBE, checkSize } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
 
 // Pure implementation of Rijndael (AES) allowing
@@ -121,9 +121,10 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		this.checkKeySize(keyBytes, KEY_SIZES);
 
 		const blockSize = this.options.blockSize;
-		if (BLOCK_SIZES.indexOf(blockSize) < 0)
+		const requirement = checkSize(blockSize, BLOCK_SIZES);
+		if (requirement)
 		{
-			throw new TransformError(`Block size must be one of 128, 160, 192, 224 or 256 bits. Was ${blockSize} bits`);
+			throw new TransformError(`Block size must be ${requirement} bits. Was ${blockSize} bits`);
 		}
 
 		// Precalculate tables (once, stored for later use)

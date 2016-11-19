@@ -1,0 +1,35 @@
+mode    : encrypt-decrypt
+encrypt : TreyferEncryptTransform
+decrypt : TreyferDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: Generated from reference C implementation in original paper
+
+title: Generated from treyfer.c
+
+k: 0000000000000000
+p: 0000000000000000
+c: c0c01e5304ecb11e
+
+k: 8000000000000000
+p: 0000000000000000
+c: deb32d7524b148b3
+
+k: 0000000000000000
+p: 8000000000000000
+c: a2d7fc8591e898fd
+
+k: 0000000000000000
+p: f0e1d2c3b4a59687
+c: f8c8b946af2384de
+
+k: f0e1d2c3b4a59687
+p: 0000000000000000
+c: 4610f933305b0c15
+
+k: 73637265746b6579
+p: 7472657966657221
+c: 75d7cb9ad39941a0
+

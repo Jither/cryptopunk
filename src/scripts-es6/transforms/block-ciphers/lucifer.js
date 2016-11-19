@@ -36,6 +36,7 @@ const O = [
 	7, 6, 2, 1, 5, 0, 3, 4
 ];
 
+// Used for Sorkin variant
 function mirror(value, bits)
 {
 	let result = 0;
@@ -99,7 +100,6 @@ class LuciferTransform extends BlockCipherTransform
 		let keyPosition = 0;
 		if (this.decrypt)
 		{
-			// ""
 			keyPosition = 8;
 		}
 
@@ -137,7 +137,7 @@ class LuciferTransform extends BlockCipherTransform
 					[l, h] = [h, l];
 				}
 				// In either case, substitute using the S-boxes, and recombine
-				// the two 4-bit halves into a byte (v).
+				// the two 4-bit nibbles into a byte (v).
 				let v;
 				if (variant === "lsb0")
 				{
@@ -145,7 +145,7 @@ class LuciferTransform extends BlockCipherTransform
 				}
 				else
 				{
-					// Original Sorkin uses S-box 1 for high half and S-box 0 for low half.
+					// Original Sorkin uses S-box 1 for high nibble and S-box 0 for low nibble.
 					v = ((SBOX_1[h] << 4) | SBOX_0[l]);
 					// ... and also stores the resulting bits reversed
 					v = mirror(v, 8);
@@ -172,9 +172,7 @@ class LuciferTransform extends BlockCipherTransform
 				}
 			}
 			// Swap message halves
-			const temp = h0;
-			h0 = h1;
-			h1 = temp;
+			[h0, h1] = [h1, h0];
 		}
 		dest.set(h1, destOffset);
 		dest.set(h0, destOffset + 8);

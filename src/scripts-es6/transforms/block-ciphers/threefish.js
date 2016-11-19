@@ -1,5 +1,5 @@
-import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
+import { TransformError } from "../transforms";
 import { checkSize, bytesToInt64sLE, int64sToBytesLE } from "../../cryptopunk.utils";
 import { add64, rol64, ror64, sub64, xor64 } from "../../cryptopunk.bitarith";
 

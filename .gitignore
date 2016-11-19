@@ -3,13 +3,11 @@ src/styles/main.css
 benchmarks/libs/
 benchmarks/scripts/
 specs/
-references/lucifer/obj/
+references/private-*/**
+references/**/bin/
+references/**/obj/
 *.depend
 *.layout
-references/lucifer-outerbridge/bin/
-references/lucifer-outerbridge/obj/
 *.pyc
-references/speckpy/
-references/Skein/
 vectors/transforms.js.map
 vectors/transforms.js
