@@ -5,7 +5,7 @@ Disclaimer
 ----------
 The cryptography algorithms included in this software are intended for historical, academic and educational purposes only. They are *not* intended for any kind of security purpose. In other words, do *not* use the code in production software, and do *not* use the output for e.g. secure communication.
 
-The algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled", code has been refactored into functions even in tight loops; 64-bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
+The algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled"; code has been refactored into functions even in tight loops; bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
 
 Supported
 ---------
@@ -68,7 +68,7 @@ Supported
 * RIPEMD (128, 160, 256, 320)
 * SHA-0
 * SHA-1
-* SHA-2 (128, 192, 256, 512)
+* SHA-2 (128, 192, 256, 512, 512/224, 512/256 - as well as any non-approved 512/t for byte sized t)
 * SHA-3 (128, 192, 256, 512)
 * SHAKE (128, 256)
 * Tiger / Tiger2
@@ -219,7 +219,6 @@ TODO
 * MD6
 * PANAMA
 * RadioGatún
-* SHA-2 512/224, 512/256 - maybe other truncations
 * Skein
 * Snefru
 * Spectral Hash

@@ -1,5 +1,6 @@
 import { MdHashTransform } from "./hash";
-import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
+import { TransformError } from "../transforms";
+import { bytesToInt64sBE, int64sToBytesBE, asciiToBytes } from "../../cryptopunk.utils";
 import { add64, and64, not64, ror64, shr64, xor64 } from "../../cryptopunk.bitarith";
 
 // SHA-512 (and 384) have an identical structure to SHA-256 (and 224), except they use 64-bit words
@@ -142,7 +143,73 @@ class Sha384Transform extends Sha512Transform
 	}
 }
 
+const TRUNCATED_IV_CACHE = {};
+const TRUNCATE_XOR = { hi: 0xa5a5a5a5, lo: 0xa5a5a5a5 };
+
+class Sha512TruncatedTransform extends Sha512Transform
+{
+	constructor()
+	{
+		super();
+		// "t is any positive integer without a leading zero such that t < 512, and t is not 384."
+		// We make the additional requirement that t % 8 = 0
+		this.addOption("size", "Size (for SHA-512/t)", 256, { min: 8, max: 504, step: 8 });
+	}
+
+	transform(bytes)
+	{
+		const size = this.options.size;
+
+		if (size <= 0 || size >= 512)
+		{
+			throw new TransformError(`Size must be be > 0 and < 512 bits. Was: ${size} bits.`);
+		}
+		if (size % 8 !== 0)
+		{
+			throw new TransformError(`Size must be a multiple of 8 bits. Was: ${size} bits.`);
+		}
+		else if (size === 384)
+		{
+			throw new TransformError(`SHA-512/t specification does not allow size of 384 bits.`);
+		}
+
+		const state = this.getIV(size);
+
+		this.transformBlocks(bytes, state);
+
+		return int64sToBytesBE(state).subarray(0, size / 8);
+	}
+
+	getIV(size)
+	{
+		const result = TRUNCATED_IV_CACHE[size];
+		if (result)
+		{
+			// Clone for future-proofing (when we do 64-bit arithmetic in-place)
+			return result.map(h => { return { hi: h.hi, lo: h.lo }; });
+		}
+
+		// Truncated SHA-512 uses a generated IV that is:
+		// SHA-512 of the ASCII string "SHA-512/t" (where t is the size)
+		//   using the standard IV XOR'ed by 0xa5a5a5a5...
+
+		const state = super.getIV();
+		for (let i = 0; i < 8; i++)
+		{
+			state[i] = xor64(state[i], TRUNCATE_XOR);
+		}
+
+		const truncateSeed = asciiToBytes("SHA-512/" + size);
+		this.transformBlocks(truncateSeed, state);
+
+		TRUNCATED_IV_CACHE[size] = state;
+		// Clone for future-proofing (when we do 64-bit arithmetic in-place)
+		return state.map(h => { return { hi: h.hi, lo: h.lo }; });
+	}
+}
+
 export {
 	Sha384Transform,
-	Sha512Transform
+	Sha512Transform,
+	Sha512TruncatedTransform
 };
