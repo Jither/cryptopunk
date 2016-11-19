@@ -31,6 +31,7 @@ Supported
 ### Block Ciphers
 
 * Blowfish
+* Camellia
 * CAST-128, CAST-256
 * DES (64 bit with parity or 56 bit without)
 * IDEA
@@ -126,7 +127,6 @@ TODO
 
 ### Modern Ciphers
 
-* Camellia
 * 3DES
 * Kuznyechik (GOST R 34.12-2015)
 * RC5, RC6 (16/64 bit word sizes)
@@ -230,7 +230,7 @@ TODO
 * EBCDIC
 * UTF-32
 
-Terms and conventions
----------------------
+Terminology and conventions
+---------------------------
 Generally, in the source code and UI, the term *size* (e.g. *key size* or *block size*) refers to number of *bits*, while *length* (e.g. *key length* or *block length*) refers to number of *bytes*. That is, a key *size* of 128 corresponds to a key *length* of 16 (128 divided by 8). This may not always follow the terms chosen by individual algorithm authors.
 

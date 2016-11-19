@@ -17,6 +17,7 @@ import * as vigenere from "./transforms/classical/vigenere";
 import * as enigma from "./transforms/mechanical/enigma";
 
 import * as blowfish from "./transforms/block-ciphers/blowfish";
+import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
 import * as des from "./transforms/block-ciphers/des";
@@ -106,6 +107,7 @@ addTransformsFrom(vigenere);
 addTransformsFrom(enigma);
 
 addTransformsFrom(blowfish);
+addTransformsFrom(camellia);
 addTransformsFrom(cast128);
 addTransformsFrom(cast256);
 addTransformsFrom(des);

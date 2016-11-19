@@ -9,9 +9,10 @@ import * as blake from "./transforms/hashes/blake";
 import * as blake2 from "./transforms/hashes/blake2";
 import * as blowfish from "./transforms/block-ciphers/blowfish";
 import * as bsd from "./transforms/checksums/bsd";
-import * as codepages from "./transforms/char-encodings/codepages";
+import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
+import * as codepages from "./transforms/char-encodings/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
 import * as des from "./transforms/block-ciphers/des";
@@ -413,6 +414,7 @@ addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) D
 addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
 addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt");
 addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
+addPaletteItem(camellia.CamelliaDecryptTransform, "Camellia", "Camellia Decrypt");
 addPaletteItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt");
 addPaletteItem(cast256.Cast256DecryptTransform, "CAST-256", "CAST-256 Decrypt");
 addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
@@ -439,6 +441,7 @@ addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) E
 addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");
 addPaletteItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt");
 addPaletteItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt");
+addPaletteItem(camellia.CamelliaEncryptTransform, "Camellia", "Camellia Encrypt");
 addPaletteItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt");
 addPaletteItem(cast256.Cast256EncryptTransform, "CAST-256", "CAST-256 Encrypt");
 addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
