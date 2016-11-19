@@ -1,6 +1,12 @@
 CryptoPunk
 ==========
 
+Disclaimer
+----------
+The cryptography algorithms included in this software are intended for historical, academic and educational purposes only. They are *not* intended for any kind of security purpose. In other words, do *not* use the code in production software, and do *not* use the output for e.g. secure communication.
+
+The algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled", code has been refactored into functions even in tight loops; 64-bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
+
 Supported
 ---------
 
@@ -29,6 +35,7 @@ Supported
 * DES (64 bit with parity or 56 bit without)
 * IDEA
 * LUCIFER (Sorkin and Outerbridge variants)
+* Magma (GOST 28147-89)
 * RC2
 * RC5
 * RC6
@@ -121,7 +128,7 @@ TODO
 
 * Camellia
 * 3DES
-* GOST (Magma) (GOST 28147-89, GOST R 34.12-2015)
+* Kuznyechik (GOST R 34.12-2015)
 * RC5, RC6 (16/64 bit word sizes)
 * Serpent-0, tnepreS
 * Browser-native RSA decryption
