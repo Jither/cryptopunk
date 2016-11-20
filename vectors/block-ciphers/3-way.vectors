@@ -1,0 +1,24 @@
+mode    : encrypt-decrypt
+encrypt : ThreeWayEncryptTransform
+decrypt : ThreeWayDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: https://github.com/weidai11/cryptopp/blob/master/TestData/3wayval.dat
+
+k: 000000000000000000000000
+p: 000000010000000100000001
+c: 4059c76e83ae9dc4ad21ecf7
+
+k: 000000060000000500000004
+p: 000000030000000200000001
+c: d2f05b5ed6144138cab920cd
+
+k: def01234456789abbcdef012
+p: 234567899abcdef001234567
+c: 0aa55dbb9cdddb6d7cdb76b2
+
+k: d2f05b5ed6144138cab920cd
+p: 4059c76e83ae9dc4ad21ecf7
+c: 478ea8716b13f17c15b155ed

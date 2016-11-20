@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { mirror } from "../../cryptopunk.bitarith";
 
 const ROUNDS = 11;
@@ -122,16 +122,16 @@ class ThreeWayEncryptTransform extends ThreeWayTransform
 
 	generateKeys(keyBytes)
 	{
-		return bytesToInt32sLE(keyBytes);		
+		return bytesToInt32sBE(keyBytes);		
 	}
 
 	transformBlock(block, dest, destOffset, keys, roundConstants)
 	{
-		const a = bytesToInt32sLE(block);
+		const a = bytesToInt32sBE(block);
 
 		this.doRounds(a, keys, roundConstants);
 
-		dest.set(int32sToBytesLE(a), destOffset);
+		dest.set(int32sToBytesBE(a), destOffset);
 	}
 }
 
@@ -149,7 +149,7 @@ class ThreeWayDecryptTransform extends ThreeWayTransform
 
 	generateKeys(keyBytes)
 	{
-		const keys = bytesToInt32sLE(keyBytes);
+		const keys = bytesToInt32sBE(keyBytes);
 		theta(keys);
 		mu(keys);
 		return keys;
@@ -157,7 +157,7 @@ class ThreeWayDecryptTransform extends ThreeWayTransform
 
 	transformBlock(block, dest, destOffset, keys, roundConstants)
 	{
-		const a = bytesToInt32sLE(block);
+		const a = bytesToInt32sBE(block);
 
 		mu(a);
 
@@ -165,7 +165,7 @@ class ThreeWayDecryptTransform extends ThreeWayTransform
 
 		mu(a);
 
-		dest.set(int32sToBytesLE(a), destOffset);
+		dest.set(int32sToBytesBE(a), destOffset);
 	}
 }
 
