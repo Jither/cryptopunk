@@ -1,4 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
+import { mirror } from "../../cryptopunk.bitarith";
 
 const ROUNDS = 16;
 
@@ -35,18 +36,6 @@ const PR = [
 const O = [
 	7, 6, 2, 1, 5, 0, 3, 4
 ];
-
-// Used for Sorkin variant
-function mirror(value, bits)
-{
-	let result = 0;
-	for (let i = 0; i < bits; i++)
-	{
-		result <<= 1;
-		result |= (value >>> i) & 1;
-	}
-	return result;
-}
 
 const VARIANT_NAMES = [
 	"Original (LSB 0)",

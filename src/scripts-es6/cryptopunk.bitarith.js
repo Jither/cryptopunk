@@ -319,6 +319,17 @@ function xor64(...terms)
 	return result;
 }
 
+function mirror(value, bits)
+{
+	let result = 0;
+	for (let i = 0; i < bits; i++)
+	{
+		result <<= 1;
+		result |= (value >>> i) & 1;
+	}
+	return result;
+}
+
 export {
 	add,
 	add64,
@@ -338,6 +349,7 @@ export {
 	shr64,
 	sub64,
 	xor64,
+	mirror,
 	ONE_64,
 	ZERO_64
 };

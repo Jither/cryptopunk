@@ -53,6 +53,7 @@ import * as stringManipulation from "./transforms/string-manipulation";
 import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
+import * as threeway from "./transforms/block-ciphers/3-way";
 import * as tiger from "./transforms/hashes/tiger";
 import * as treyfer from "./transforms/block-ciphers/treyfer";
 import * as trifid from "./transforms/classical/trifid";
@@ -410,6 +411,7 @@ addPaletteItem(rc4.Rc4Transform, "RC4");
 addPaletteItem(xor.XorTransform, "XOR");
 
 addPaletteCategory("Block cipher decryption");
+addPaletteItem(threeway.ThreeWayDecryptTransform, "3-Way", "3-Way Decrypt");
 addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");
 //addPaletteItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt");
 addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
@@ -438,6 +440,7 @@ addPaletteItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
 //addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
 
 addPaletteCategory("Block cipher encryption");
+addPaletteItem(threeway.ThreeWayEncryptTransform, "3-Way", "3-Way Encrypt");
 addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) Encrypt");
 //addPaletteItem(nativeAes.NativeAesCfbEncryptTransform, "AES (CFB)", "AES (CFB) Encrypt");
 addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");

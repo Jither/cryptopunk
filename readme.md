@@ -30,6 +30,7 @@ Supported
 
 ### Block Ciphers
 
+* 3-Way
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
@@ -46,6 +47,7 @@ Supported
 * Speck
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
+* Treyfer
 * Twofish
 * Browser-native AES, RSA (crypto.subtle)
 
@@ -135,7 +137,7 @@ TODO
 
 #### Second priority
 
-* 3-Way, BaseKing
+* BaseKing
 * A5/1, A5/2
 * Akelarre
 * Anubis
@@ -177,7 +179,6 @@ TODO
 * SNOW
 * SPEED
 * Square
-* Treyfer
 * Unicorn-A, Unicorn-E
 
 #### Third priority
