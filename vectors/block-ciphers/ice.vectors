@@ -1,0 +1,27 @@
+mode    : encrypt-decrypt
+encrypt : IceEncryptTransform
+decrypt : IceDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: http://www.darkside.com.au/ice/paper.html
+
+title   : ICE test vector
+k: deadbeef01234567
+p: fedcba9876543210
+c: 7d6ef1ef30d47a96
+
+title   : ThinICE test vector
+option  : level = 0
+
+k: deadbeef01234567
+p: fedcba9876543210
+c: de240d83a00a9cc0
+
+title   : ICE-2 test vector
+option  : level = 2
+
+k: 00112233445566778899aabbccddeeff
+p: fedcba9876543210
+c: f94840d86972f21c

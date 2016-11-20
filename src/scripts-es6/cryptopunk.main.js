@@ -21,6 +21,7 @@ import * as fletcher from "./transforms/checksums/fletcher";
 import * as has160 from "./transforms/hashes/has-160";
 import * as haval from "./transforms/hashes/haval";
 import * as hex from "./transforms/hex";
+import * as ice from "./transforms/block-ciphers/ice";
 import * as idea from "./transforms/block-ciphers/idea";
 import * as keccak from "./transforms/hashes/keccak";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
@@ -421,6 +422,7 @@ addPaletteItem(camellia.CamelliaDecryptTransform, "Camellia", "Camellia Decrypt"
 addPaletteItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt");
 addPaletteItem(cast256.Cast256DecryptTransform, "CAST-256", "CAST-256 Decrypt");
 addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
+addPaletteItem(ice.IceDecryptTransform, "ICE", "ICE Decrypt");
 addPaletteItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt");
 addPaletteItem(lucifer.LuciferDecryptTransform, "LUCIFER", "LUCIFER Decrypt");
 addPaletteItem(magma.MagmaDecryptTransform, "Magma (GOST)", "Magma (GOST) Decrypt");
@@ -450,6 +452,7 @@ addPaletteItem(camellia.CamelliaEncryptTransform, "Camellia", "Camellia Encrypt"
 addPaletteItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt");
 addPaletteItem(cast256.Cast256EncryptTransform, "CAST-256", "CAST-256 Encrypt");
 addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
+addPaletteItem(ice.IceEncryptTransform, "ICE", "ICE Encrypt");
 addPaletteItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt");
 addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt");
 addPaletteItem(magma.MagmaEncryptTransform, "Magma (GOST)", "Magma (GOST) Encrypt");
