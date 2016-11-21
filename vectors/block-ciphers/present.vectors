@@ -1,0 +1,56 @@
+mode    : encrypt-decrypt
+encrypt : PresentEncryptTransform
+decrypt : PresentDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: http://www.lightweightcrypto.org/downloads/implementations/present21.tgz
+
+title: Official PRESENT 80-bit key test vector
+
+k: 0000000000000000 0000
+p: 0000000000000000
+c: 5579c1387b228445
+
+k: 0000000000000000 0000
+p: ffffffffffffffff
+c: a112ffc72f68417b
+
+k: ffffffffffffffff ffff
+p: 0000000000000000
+c: e72c46c0f5945049
+
+k: ffffffffffffffff ffff
+p: ffffffffffffffff
+c: 3333dcd3213210d2
+
+title: Official PRESENT 128-bit key test vector
+
+k: 0000000000000000 0000000000000000
+p: 0000000000000000
+c: 96db702a2e6900af
+
+k: 0000000000000000 0000000000000000
+p: ffffffffffffffff
+c: 3c6019e5e5edd563
+
+k: ffffffffffffffff ffffffffffffffff
+p: 0000000000000000
+c: 13238c710272a5d8
+
+k: ffffffffffffffff ffffffffffffffff
+p: ffffffffffffffff
+c: 628d9fbd4218e5b4
+
+# Generated from present.exe compiled from http://www.lightweightcrypto.org/downloads/implementations/present21.tgz
+title: Generated test vector from present.exe
+
+k: 0011223344556677 8899
+p: 0000000000000000
+c: 130d208057a6a74f
+
+k: 0011223344556677 8899aabbccddeeff
+p: 0000000000000000
+c: dbc00f5fb431a0b3
+

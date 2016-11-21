@@ -159,6 +159,24 @@ function not64(term)
 	return { hi: ~term.hi, lo: ~term.lo };
 }
 
+function or64(...terms)
+{
+	const len = terms.length;
+	if (len < 2)
+	{
+		throw new Error("Cannot or64() a single term");
+	}
+
+	const result = { lo: terms[0].lo, hi: terms[0].hi };
+	for (let i = 1; i < len; i++)
+	{
+		const term = terms[i];
+		result.lo |= term.lo;
+		result.hi |= term.hi;
+	}
+	return result;
+}
+
 function rol64(val, count)
 {
 	const result = {};
@@ -337,6 +355,7 @@ export {
 	mul,
 	mul64,
 	not64,
+	or64,
 	rol,
 	rol16,
 	rol48,
