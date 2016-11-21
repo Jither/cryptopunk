@@ -35,9 +35,11 @@ Supported
 * Camellia
 * CAST-128, CAST-256
 * DES (64 bit with parity or 56 bit without)
+* ICE
 * IDEA
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
+* NOEKEON
 * RC2
 * RC5
 * RC6
@@ -164,7 +166,6 @@ TODO
 * MARS
 * MISTY1 / MISTY2
 * NewDES / NewDES-96
-* NOEKEON
 * PRESENT
 * Red Pike
 * S-1
