@@ -14,11 +14,19 @@ class Int64
 		}
 	}
 
+	clone()
+	{
+		return new Int64(this.hi, this.lo);
+	}
+
 	add(...terms)
 	{
 		const len = terms.length;
 
-		let r00 = 0, r16 = 0, r32 = 0, r48 = 0;
+		let r00 = this.lo & 0xffff,
+			r16 = this.lo >>> 16,
+			r32 = this.hi & 0xffff, 
+			r48 = this.hi >>> 16;
 
 		for (let i = 0; i < len; i++)
 		{
@@ -35,6 +43,7 @@ class Int64
 			r32 &= 0xffff;
 			r48 &= 0xffff;
 		}
+
 		this.hi = (r48 << 16) | r32;
 		this.lo = (r16 << 16) | r00;
 		return this;
@@ -43,11 +52,23 @@ class Int64
 	and(...terms)
 	{
 		const len = terms.length;
-		for (let i = 1; i < len; i++)
+		for (let i = 0; i < len; i++)
 		{
 			const term = terms[i];
 			this.lo &= term.lo;
 			this.hi &= term.hi;
+		}
+		return this;
+	}
+
+	or(...terms)
+	{
+		const len = terms.length;
+		for (let i = 0; i < len; i++)
+		{
+			const term = terms[i];
+			this.lo |= term.lo;
+			this.hi |= term.hi;
 		}
 		return this;
 	}
@@ -156,7 +177,47 @@ class Int64
 		return this;
 	}
 
-	shl(val, count)
+	rol48(count)
+	{
+		count = count % 48;
+		if (count > 0)
+		{
+			const lo = this.lo;
+			const hi = this.hi & 0xffff;
+			if (count <= 16)
+			{
+				this.hi = ((hi << count) | (lo >>> (32 - count))) & 0xffff;
+				this.lo = ((lo << count) | (hi >>> (16 - count)));
+			}
+			else
+			{
+				throw Error("rol48 only supports up to 16 bit rotation for now.");
+			}
+		}
+		return this;
+	}
+
+	ror48(count)
+	{
+		count = count % 48;
+		if (count > 0)
+		{
+			const lo = this.lo;
+			const hi = this.hi & 0xffff;
+			if (count <= 16)
+			{
+				this.hi = ((hi >>> count) | (lo << (16 - count))) & 0xffff;
+				this.lo = ((lo >>> count) | (hi << (32 - count)));
+			}
+			else
+			{
+				throw Error("ror48 only supports up to 16 bit rotation for now.");
+			}
+		}
+		return this;
+	}
+
+	shl(count)
 	{
 		if (count > 0)
 		{
@@ -192,11 +253,31 @@ class Int64
 		return this;
 	}
 
+	sub(term)
+	{
+		const termlo = (~term.lo) + 1;
+		let termhi = (~term.hi);
+		if (termlo === 0)
+		{
+			termhi++;
+		}
+
+		let r00 = ((this.lo & 0xffff) + (termlo & 0xffff)               ) & 0xffff;
+		let r16 = ((this.lo >>> 16)   + (termlo   >>> 16) + (r00 >>> 16)) & 0xffff;
+		let r32 = ((this.hi & 0xffff) + (termhi & 0xffff) + (r16 >>> 16)) & 0xffff;
+		let r48 = ((this.hi >>> 16)   + (termhi   >>> 16) + (r32 >>> 16)) & 0xffff;
+
+		this.hi = (r48 << 16) | r32;
+		this.lo = (r16 << 16) | r00;
+
+		return this;
+	}
+
 	xor(...terms)
 	{
 		const len = terms.length;
 
-		for (let i = 1; i < len; i++)
+		for (let i = 0; i < len; i++)
 		{
 			const term = terms[i];
 			this.lo ^= term.lo;
@@ -205,13 +286,13 @@ class Int64
 		return this;
 	}
 
-
-	sub(term)
+	equals(other)
 	{
-		return this.add(term.not(), Int64.ONE);
+		return (this.hi === other.hi) && (this.lo === other.lo);
 	}
 }
 
+Int64.ZERO = new Int64(0);
 Int64.ONE = new Int64(1);
 
 export {

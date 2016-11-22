@@ -40,6 +40,7 @@ Supported
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
 * NOEKEON
+* PRESENT
 * RC2
 * RC5
 * RC6
@@ -166,7 +167,6 @@ TODO
 * MARS
 * MISTY1 / MISTY2
 * NewDES / NewDES-96
-* PRESENT
 * Red Pike
 * S-1
 * SAFER / SAFER+ / SAFER++
