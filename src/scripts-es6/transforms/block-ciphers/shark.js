@@ -1,5 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { int32sToBytesBE } from "../../cryptopunk.utils";
+import { gfLog2Tables } from "../../cryptopunk.math";
 
 const ROUNDS = 6;
 const ROUND_KEYS = ROUNDS + 1;
@@ -107,21 +108,7 @@ function precompute()
 		return;
 	}
 
-	LOG = new Array(256);
-	ALOG = new Array(256);
-
-	LOG[0] = 0;
-	let alog = ALOG[0] = 1;
-	for (let i = 1; i < 256; i++)
-	{
-		alog <<= 1;
-		if (alog & 0x100)
-		{
-			alog ^= 0x1f5;
-		}
-		ALOG[i] = alog;
-		LOG[alog] = i < 255 ? i : 0;
-	}
+	[LOG, ALOG] = gfLog2Tables(0x1f5);
 
 	// Since the C-boxes are rather huge, we calculate them here, rather than
 	// storing them in the JS
