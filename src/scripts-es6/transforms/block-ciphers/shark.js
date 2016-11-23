@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { int64sToBytesBE, bytesToInt64sBE } from "../../cryptopunk.utils";
-import { shl64, shr64, xor64, ZERO_64 } from "../../cryptopunk.bitarith";
+import { int32sToBytesBE } from "../../cryptopunk.utils";
 
 const ROUNDS = 6;
 const ROUND_KEYS = ROUNDS + 1;
@@ -124,6 +123,8 @@ function precompute()
 		LOG[alog] = i < 255 ? i : 0;
 	}
 
+	// Since the C-boxes are rather huge, we calculate them here, rather than
+	// storing them in the JS
 	CBOX_ENC = new Array(8);
 	CBOX_DEC = new Array(8);
 
@@ -140,78 +141,20 @@ function gfMultiply(a, b)
 	return ALOG[(LOG[a] + LOG[b]) % 255];
 }
 
-function transform(a)
+function transformKey(a)
 {
 	const
-		k = new Array(8),
-		t = new Array(8);
+		t = new Uint8Array(8);
 
 	for (let i = 0; i < 8; i++)
 	{
-		k[i] = shr64(a, 56 - 8 * i).lo & 0xff;
-	}
-
-	for (let i = 0; i < 8; i++)
-	{
-		t[i] = 0;
 		for (let j = 0; j < 8; j++)
 		{
-			t[i] ^= gfMultiply(G_INV[i * 8 + j], k[j]);
+			t[i] ^= gfMultiply(G_INV[i * 8 + j], a[j]);
 		}
 	}
 
-	let r = { hi: 0, lo: 0 };
-	for (let i = 0; i < 8; i++)
-	{
-		r = shl64(r, 8);
-		r.lo ^= t[i];
-	}
-
-	return r;
-}
-
-function crypt(text, keys, sbox, cboxes)
-{
-	let temp = { hi: text.hi, lo: text.lo };
-
-	for (let r = 0; r < ROUNDS - 1; r++)
-	{
-		temp = xor64(temp, keys[r]);
-		const
-			index0 =  temp.hi >>> 24,
-			index1 = (temp.hi >>  16) & 0xff,
-			index2 = (temp.hi >>   8) & 0xff,
-			index3 = (temp.hi       ) & 0xff,
-			index4 =  temp.lo >>> 24,
-			index5 = (temp.lo >>  16) & 0xff,
-			index6 = (temp.lo >>   8) & 0xff,
-			index7 = (temp.lo       ) & 0xff;
-
-		temp = xor64(
-				{ hi: cboxes[0][index0 * 2], lo: cboxes[0][index0 * 2 + 1] },
-				{ hi: cboxes[1][index1 * 2], lo: cboxes[1][index1 * 2 + 1] },
-				{ hi: cboxes[2][index2 * 2], lo: cboxes[2][index2 * 2 + 1] },
-				{ hi: cboxes[3][index3 * 2], lo: cboxes[3][index3 * 2 + 1] },
-				{ hi: cboxes[4][index4 * 2], lo: cboxes[4][index4 * 2 + 1] },
-				{ hi: cboxes[5][index5 * 2], lo: cboxes[5][index5 * 2 + 1] },
-				{ hi: cboxes[6][index6 * 2], lo: cboxes[6][index6 * 2 + 1] },
-				{ hi: cboxes[7][index7 * 2], lo: cboxes[7][index7 * 2 + 1] }
-		);
-	}
-
-	temp = xor64(temp, keys[ROUNDS - 1]);
-
-	temp = {
-		hi: (sbox[(temp.hi >>> 24)       ] << 24) ^
-			(sbox[(temp.hi >>  16) & 0xff] << 16) ^
-			(sbox[(temp.hi >>   8) & 0xff] <<  8) ^
-			(sbox[(temp.hi       ) & 0xff]      ),
-		lo: (sbox[(temp.lo >>> 24) & 0xff] << 24) ^
-			(sbox[(temp.lo >>  16) & 0xff] << 16) ^
-			(sbox[(temp.lo >>   8) & 0xff] <<  8) ^
-			(sbox[(temp.lo       ) & 0xff]      )
-	};
-	return xor64(temp, keys[ROUNDS]);
+	a.set(t);
 }
 
 class SharkTransform extends BlockCipherTransform
@@ -219,57 +162,6 @@ class SharkTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
-	}
-
-	generateSubKeys(keyBytes)
-	{
-		const a = new Array(ROUND_KEYS);
-
-		let i = 0;
-		for (let r = 0; r < ROUND_KEYS; r++)
-		{
-			a[r] = {
-				hi: (keyBytes[(i++) % 16] << 24) |
-					(keyBytes[(i++) % 16] << 16) |
-					(keyBytes[(i++) % 16] <<  8) |
-					(keyBytes[(i++) % 16]),
-				lo: (keyBytes[(i++) % 16] << 24) |
-					(keyBytes[(i++) % 16] << 16) |
-					(keyBytes[(i++) % 16] <<  8) |
-					(keyBytes[(i++) % 16])
-			};
-		}
-
-		const tempKeys = new Array(ROUND_KEYS);
-		for (let r = 0; r < ROUND_KEYS; r++)
-		{
-			tempKeys[r] = { hi: CBOX_ENC[0][r * 2], lo: CBOX_ENC[0][r * 2 + 1] };
-		}
-		tempKeys[ROUNDS] = transform(tempKeys[ROUNDS]);
-
-		let result = new Array(ROUND_KEYS);
-
-		result[0] = xor64(a[0], crypt(ZERO_64, tempKeys, SBOX_ENC, CBOX_ENC));
-		for (let r = 1; r < ROUND_KEYS; r++)
-		{
-			result[r] = xor64(a[r], crypt(result[r - 1], tempKeys, SBOX_ENC, CBOX_ENC));
-		}
-		result[ROUNDS] = transform(result[ROUNDS]);
-
-		if (this.decrypt)
-		{
-			const decryptResult = new Array(ROUND_KEYS);
-			decryptResult[0] = result[ROUNDS];
-			decryptResult[ROUNDS] = result[0];
-			for (let r = 1; r < ROUNDS; r++)
-			{
-				decryptResult[r] = transform(result[ROUNDS - r]);
-			}
-
-			result = decryptResult;
-		}
-
-		return result;
 	}
 
 	transform(bytes, keyBytes)
@@ -282,6 +174,103 @@ class SharkTransform extends BlockCipherTransform
 
 		return this.transformBlocks(bytes, 64, subKeys);
 	}
+
+	crypt(block, keys, sbox, cboxes)
+	{
+		const result = Uint8Array.from(block);
+		const temp = new Uint8Array(8);
+
+		for (let r = 0; r < ROUNDS - 1; r++)
+		{
+			const key = keys[r];
+			for (let i = 0; i < 8; i++)
+			{
+				result[i] ^= key[i];
+			}
+
+			temp.fill(0);
+			for (let i = 0; i < 8; i++)
+			{
+				const cbox = cboxes[i];
+				const index = result[i] * 2;
+				for (let j = 0; j < 4; j++)
+				{
+					temp[j] ^= (cbox[index] >>> (24 - 8 * j)) & 0xff;
+				}
+				for (let j = 4; j < 8; j++)
+				{
+					temp[j] ^= (cbox[index + 1] >>> (24 - 8 * (j - 4))) & 0xff;
+				}
+			}
+			result.set(temp);
+		}
+
+		for (let i = 0; i < 8; i++)
+		{
+			result[i] ^= keys[ROUNDS - 1][i];
+			result[i] = sbox[result[i]];
+			result[i] ^= keys[ROUNDS][i];
+		}
+
+		return result;
+	}
+
+	generateSubKeys(keyBytes)
+	{
+		const keyWords = new Array(ROUND_KEYS);
+
+		// Initial keys = alternating high and low 64-bit words
+		for (let r = 0; r < ROUND_KEYS; r++)
+		{
+			keyWords[r] = r % 2 === 0 ? keyBytes.subarray(0, 8) : keyBytes.subarray(8, 16);
+		}
+
+		// Temporary keys for round key encryption: First values of CBOX 0
+		const tempKeys = new Array(ROUND_KEYS);
+		for (let r = 0; r < ROUND_KEYS; r++)
+		{
+			tempKeys[r] = int32sToBytesBE([ CBOX_ENC[0][r * 2], CBOX_ENC[0][r * 2 + 1] ]);
+		}
+		// ... Except the last one:
+		transformKey(tempKeys[ROUNDS]);
+
+		let result = new Array(ROUND_KEYS);
+
+		// Generate encryption keys by encrypting the key words in Cipher FeedBack mode, with:
+		// - The temporary keys
+		// - Null IV 
+		let iv = new Uint8Array(8);
+		for (let r = 0; r < ROUND_KEYS; r++)
+		{
+			iv = this.crypt(iv, tempKeys, SBOX_ENC, CBOX_ENC);
+			const keyWord = keyWords[r];
+			for (let i = 0; i < 8; i++)
+			{
+				iv[i] ^= keyWord[i];
+			}
+			result[r] = iv;
+		}
+		// Transfrom the last key:
+		transformKey(result[ROUNDS]);
+
+		// Decryption uses reverse key order
+		// and transforms the "middle" keys
+		if (this.decrypt)
+		{
+			const decryptResult = new Array(ROUND_KEYS);
+			decryptResult[0] = result[ROUNDS];
+			decryptResult[ROUNDS] = result[0];
+			for (let r = 1; r < ROUNDS; r++)
+			{
+				transformKey(result[ROUNDS - r]);
+				decryptResult[r] = result[ROUNDS - r];
+			}
+
+			result = decryptResult;
+		}
+
+		return result;
+	}
 }
 
 class SharkEncryptTransform extends SharkTransform
@@ -293,9 +282,8 @@ class SharkEncryptTransform extends SharkTransform
 
 	transformBlock(block, dest, destOffset, subKeys)
 	{
-		const text = bytesToInt64sBE(block)[0];
-		const result = crypt(text, subKeys, SBOX_ENC, CBOX_ENC);
-		dest.set(int64sToBytesBE([result]), destOffset);
+		const result = this.crypt(block, subKeys, SBOX_ENC, CBOX_ENC);
+		dest.set(result, destOffset);
 	}
 }
 
@@ -306,12 +294,10 @@ class SharkDecryptTransform extends SharkTransform
 		super(true);
 	}
 
-
 	transformBlock(block, dest, destOffset, subKeys)
 	{
-		const text = bytesToInt64sBE(block)[0];
-		const result = crypt(text, subKeys, SBOX_DEC, CBOX_DEC);
-		dest.set(int64sToBytesBE([result]), destOffset);
+		const result = this.crypt(block, subKeys, SBOX_DEC, CBOX_DEC);
+		dest.set(result, destOffset);
 	}
 }
 
