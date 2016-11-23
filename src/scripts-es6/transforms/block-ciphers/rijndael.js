@@ -2,6 +2,7 @@ import { BlockCipherTransform } from "./block-cipher";
 import { TransformError } from "../transforms";
 import { bytesToInt32sBE, checkSize } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
+import { ror } from "../../cryptopunk.bitarith";
 
 // Pure implementation of Rijndael (AES) allowing
 // experimentation without modes of operation etc.
@@ -58,15 +59,19 @@ function precompute()
 		a3inv = []; // Map of a*{03} -> a in Rijndael field
 	for (let x = 0; x < 256; x++)
 	{
-		// 0x11b = Rijndael polynomial (x8 + x4 + x3 + x + 1 = {100011011} = {0x11b})
-		const x2 = x << 1 ^ (x >> 7) * 0x11b;
+		let x2 = x << 1;
+		if (x2 & 0x100)
+		{
+			// 0x11b = Rijndael polynomial (x^8 + x^4 + x^3 + x + 1 = {100011011} = {0x11b})
+			x2 ^= 0x11b;
+		} 
 		a2[x] = x2;
 
 		a3inv[x2 ^ x] = x;
 	}
 
 	// For each iteration, n:
-	// - x will be {03}^^n
+	// - x will be {03}**n
 	// - xInv will be 1/x
 	// (both in Rijndael field)
 	// {03} is a generator for the Rijndael field, meaning we'll get through all values, 0-255
@@ -96,12 +101,12 @@ function precompute()
 		for (let i = 0; i < 4; i++)
 		{
 			// ROR 8
-			tEnc = tEnc << 24 | tEnc >>> 8;
-			tDec = tDec << 24 | tDec >>> 8;
+			tEnc = ror(tEnc, 8);
+			tDec = ror(tDec, 8);
 			encTables[i][x] = tEnc;
 			decTables[i][s] = tDec;
 		}
-		// Get next x and xInv:
+		// Get next x (i.e. {03}*x) and xInv:
 		x ^= x2 || 1;
 		xInv = a3inv[xInv] || 1;
 	}

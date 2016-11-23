@@ -52,6 +52,7 @@ import * as sha3 from "./transforms/hashes/sha-3";
 import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as speck from "./transforms/block-ciphers/speck";
+import * as square from "./transforms/block-ciphers/square";
 import * as stringManipulation from "./transforms/string-manipulation";
 import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
@@ -437,6 +438,7 @@ addPaletteItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt"
 addPaletteItem(serpent.SerpentDecryptTransform, "Serpent", "Serpent Decrypt");
 addPaletteItem(skipjack.SkipjackDecryptTransform, "Skipjack", "Skipjack Decrypt");
 addPaletteItem(speck.SpeckDecryptTransform, "Speck", "Speck Decrypt");
+addPaletteItem(square.SquareDecryptTransform, "SQUARE", "SQUARE Decrypt");
 addPaletteItem(tea.TeaDecryptTransform, "TEA", "TEA Decrypt");
 addPaletteItem(threefish.ThreefishDecryptTransform, "Threefish", "Threefish Decrypt");
 addPaletteItem(treyfer.TreyferDecryptTransform, "Treyfer", "Treyfer Decrypt");
@@ -469,6 +471,7 @@ addPaletteItem(rijndael.RijndaelEncryptTransform, "Rijndael", "Rijndael Encrypt"
 addPaletteItem(serpent.SerpentEncryptTransform, "Serpent", "Serpent Encrypt");
 addPaletteItem(skipjack.SkipjackEncryptTransform, "Skipjack", "Skipjack Encrypt");
 addPaletteItem(speck.SpeckEncryptTransform, "Speck", "Speck Encrypt");
+addPaletteItem(square.SquareEncryptTransform, "SQUARE", "SQUARE Encrypt");
 addPaletteItem(tea.TeaEncryptTransform, "TEA", "TEA Encrypt");
 addPaletteItem(threefish.ThreefishEncryptTransform, "Threefish", "Threefish Encrypt");
 addPaletteItem(treyfer.TreyferEncryptTransform, "Treyfer", "Treyfer Encrypt");

@@ -35,13 +35,14 @@ class PresentTransform extends BlockCipherTransform
 	{
 		const subKeys = new Array(ROUNDS + 1);
 		let [keyHigh, keyLow] = bytesToInt64sBE(keyBytes);
-		// Hack for now: Key-low is supposed to be stored in the bottom 2 bytes, but we've loaded it into the top 2.
+		// Hack for now: Key-low is supposed to be stored in the least significant 2 bytes, but we've loaded it into the most significant 2.
 		keyLow = shr64(keyLow, 48);
 
 		subKeys[0] = keyHigh;
 		for (let i = 1; i < subKeys.length; i++)
 		{
 			let temp = keyHigh;
+			// ROL61 on 80-bit integer
 			keyHigh = or64(shl64(keyHigh, 61), shl64(keyLow, 45));
 			keyHigh = or64(keyHigh, shr64(temp, 19));
 			keyLow = and64(shr64(temp, 3), LOW_WORD);
@@ -68,6 +69,7 @@ class PresentTransform extends BlockCipherTransform
 		for (let i = 1; i < subKeys.length; i++)
 		{
 			let temp = keyHigh;
+			// ROL61 on 128-bit integer
 			keyHigh = or64(shl64(keyHigh, 61), shr64(keyLow, 3));
 			keyLow  = or64(shr64(temp, 3), shl64(keyLow, 61));
 
