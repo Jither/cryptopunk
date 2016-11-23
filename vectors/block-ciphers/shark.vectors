@@ -1,0 +1,40 @@
+mode    : encrypt-decrypt
+encrypt : SharkEncryptTransform
+decrypt : SharkDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: https://github.com/weidai11/cryptopp/blob/master/TestData/sharkval.dat
+
+title: Crypto++ test vector
+k: 00000000000000000000000000000000
+p: 0000000000000000
+c: 214bcf4e7716420a
+
+# From: ftp://ftp.esat.kuleuven.ac.be/pub/COSIC/rijmen/shark/ (reference source, main.c)
+
+title: Iterative test vector
+k: 000102030405060708090a0b0c0d0e0f
+p: 0000000000000000
+c: c76c696289898137
+
+k: 000102030405060708090a0b0c0d0e0f
+p: c76c696289898137
+c: 077a4a59faeeea4d
+
+k: 915f4619be41b2516355a50110a9ce91
+p: 21a5dbee154b8f6d
+c: 6ff33b98f448e95a
+
+k: 783348e75aeb0f2fd7b169bb8dc16787
+p: f7c013ac5b2b8952
+c: e5e554abe9ced2d2
+
+k: dc49db1375a5584f6485b413b5f12baf
+p: 2f42b3b70369fc92
+c: 9ae068313f343a7a
+
+k: 5269f149d41ba0152497574d7f153125
+p: 65c178b284d197cc
+c: d3f111a282f17f29

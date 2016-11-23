@@ -46,8 +46,10 @@ Supported
 * RC6
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Serpent
+* Shark-E
 * Skipjack (including NESSIE variant)
 * Speck
+* SQUARE
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish
 * Treyfer
@@ -175,11 +177,10 @@ TODO
 * SEAL(-3.0)
 * SEED
 * Shacal
-* Shark-A / Shark-E
+* Shark-A
 * Simon
 * SNOW
 * SPEED
-* Square
 * Unicorn-A, Unicorn-E
 
 #### Third priority

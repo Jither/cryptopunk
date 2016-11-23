@@ -1,8 +1,9 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { int32sToBytesBE, bytesToInt32sBE, bytesToHex, int32sToHex, hexToBytes } from "../../cryptopunk.utils";
+import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
 import { rol, ror } from "../../cryptopunk.bitarith";
 
 const ROUNDS = 8;
+const ROUND_KEYS = ROUNDS + 1;
 
 const SBOX_ENC = [
 	0xb1, 0xce, 0xc3, 0x95, 0x5a, 0xad, 0xe7, 0x02, 0x4d, 0x44, 0xfb, 0x91, 0x0c, 0x87, 0xa1, 0x50, 
@@ -291,9 +292,9 @@ class SquareTransform extends BlockCipherTransform
 	{
 		const keyWords = bytesToInt32sBE(keyBytes);
 
-		const tempKeys = new Array(ROUNDS + 1);
+		const tempKeys = new Array(ROUND_KEYS);
 
-		for (let i = 0; i < ROUNDS + 1; i++)
+		for (let i = 0; i < ROUND_KEYS; i++)
 		{
 			tempKeys[i] = new Array(4);
 		}
@@ -303,7 +304,7 @@ class SquareTransform extends BlockCipherTransform
 			tempKeys[0][i] = keyWords[i];
 		}
 
-		for (let i = 1; i < ROUNDS + 1; i++)
+		for (let i = 1; i < ROUND_KEYS; i++)
 		{
 			const
 				dest = tempKeys[i],
@@ -315,7 +316,7 @@ class SquareTransform extends BlockCipherTransform
 			dest[3] = source[3] ^ dest[2];
 		}
 
-		const result = new Array(ROUNDS + 1);
+		const result = new Array(ROUND_KEYS);
 
 		if (this.decrypt)
 		{
