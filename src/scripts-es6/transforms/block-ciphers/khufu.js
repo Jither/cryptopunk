@@ -1,11 +1,18 @@
 import { BlockCipherTransform } from "./block-cipher";
+import { TransformError } from "../transforms";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { ror, rol } from "../../cryptopunk.bitarith";
+
+// TODO: Combine Khufu and Khafre(?)
 
 const ROTATE_SCHEDULE = [16, 16, 8, 8, 16, 16, 24, 24];
-const SBOX_COUNT = 8;
+const MAX_STANDARD_SBOX_COUNT = 8;
+const INITIAL_SBOX_COUNT = 2;
 
 // The first 606 5-digit numbers in "A Million Random Digits with 100,000 Normal Deviates" (1955)
-// Converted to consecutive digits in a string for easy access
+// Converted to consecutive digits in a string for easy access.
+// Why 606? Because Merkle has determined that is the exact amount needed to generate the initial S-Box
+// using his algorithm (which discards some numbers).
 const RAND = 
 	"10097325337652013586346735487680959091173929274945375420480564894742962480524037" +
 	"20636104020082291665084226895319645093032320902560159533476435080336069901902529" +
@@ -48,67 +55,86 @@ const RAND =
 
 let STANDARD_SBOXES = new Array();
 
+class RandProvider
+{
+	constructor()
+	{
+		this.position = 0;
+	}
+	inRange(low, high)
+	{
+		const range = (high - low) + 1;
+		let rnd, max;
+		do
+		{
+			rnd = 0;
+			max = 1;
+			while (max < range)
+			{
+				max *= 10;
+				rnd = (rnd * 10) + this.digit();
+			}
+		}
+		while (rnd >= Math.floor(max / range) * range);
+
+		return low + (rnd % range);
+	}
+
+	digit()
+	{
+		return RAND.charCodeAt(this.position++) - 0x30;
+	}
+}
+
 function swapBytesInSbox(sbox, row1, row2, column)
 {
 	let mask = 0xff000000;
-	mask >>= column * 8;
+	mask >>>= column * 8;
 	const temp = sbox[row1];
 	sbox[row1] = (sbox[row1] & (~mask)) | (sbox[row2] & mask);
 	sbox[row2] = (sbox[row2] & (~mask)) | (temp & mask);
 }
 
-function randInRange(low, high)
-{
-	const range = (high - low) + 1;
-	let rnd;
-	do
-	{
-		rnd = 0;
-		let max = 1;
-		while (max < range)
-		{
-			max *= 10;
-			rnd = (rnd * 10) + randDigit();
-		}
-	}
-	while (rnd >= max); // Merkle truncates here - (uint)(max / range) * range
-
-	return low + (rnd % range);
-}
-
-function randDigit()
-{
-	return RAND.charCodeAt(randIndex++) - 0x30;
-}
-
 function encryptKeyWords(keyWords, iv, auxKeys, sboxes)
 {
 	const khufu = new KhufuEncryptTransform();
-	khufu(keyWords, keyWords, 64, encrypt, iv, zeroAuxKeys, initialSboxes, 16);
+	const result = new Array(keyWords.length);
+	for (let pos = 0; pos < keyWords.length; pos += 2)
+	{
+		const left = keyWords[pos] ^ iv[0];
+		const right = keyWords[pos + 1] ^ iv[1];
+		iv = khufu.transformWords(left, right, { auxKeys, sboxes }, 16);
+		result[pos] = iv[0];
+		result[pos + 1] = iv[1];
+	}
+	return result;
 }
 
-function keyMaterialFromWords(keyWords)
+function keyMaterialFromWords(keyWords, sboxCount)
 {
 	// The initial S-boxes are simply clones of the first Standard S-box:
+	const initialSboxes = new Array(INITIAL_SBOX_COUNT);
 	for (let i = 0; i < INITIAL_SBOX_COUNT; i++)
 	{
 		initialSboxes[i] = STANDARD_SBOXES[0].concat();
 	}
 
 	// The last two words in the key are used for IV
-	const iv = keyWords.slice(-2);
+	let iv = keyWords.slice(-2);
 	const zeroAuxKeys = [0, 0, 0, 0];
 
 	// Encrypt the 16 key words (512 bits) three times with Khufu in CBC mode, using:
 	// - the IV (last 2 key words)
 	// - the initial S-boxes
 	// - the 0 auxiliary keys
-	// Note that IV, S-boxes and auxiliary keys stay the same for each iteration. Only the
-	// plaintext input changes (by being replaced by the ciphertext output).
+	// Note that S-boxes and auxiliary keys stay the same for each iteration. Only the
+	// plaintext input and the IV changes (by being replaced by the ciphertext output
+	// and the last 2 words of the ciphertext output respectively).
 	// The resulting ciphertext is used moving forward, for randomizing the S-boxes.
 	for (let count = 0; count < 3; count++)
 	{
 		keyWords = encryptKeyWords(keyWords, iv, zeroAuxKeys, initialSboxes);
+		iv = keyWords.slice(-2);
 	}
 
 	// Auxiliary keys are the first 4 encrypted words
@@ -121,8 +147,8 @@ function keyMaterialFromWords(keyWords)
 	// Initialize all S-boxes to be clones of the first initial S-box
 	// TODO: Can we just reuse the initial S-boxes?
 	const initialSbox = initialSboxes[0];
-	const sboxes = new Array(SBOX_COUNT);
-	for (let i = 0; i < SBOX_COUNT; i++)
+	const sboxes = new Array(sboxCount);
+	for (let i = 0; i < sboxCount; i++)
 	{
 		sboxes[i] = initialSbox.concat();
 	}
@@ -131,7 +157,7 @@ function keyMaterialFromWords(keyWords)
 	// Set to 16, because we used 4 words for the auxiliary keys:
 	let count = 16;
 
-	for (let sboxIndex = 0; sboxIndex < SBOX_COUNT; sboxIndex++)
+	for (let sboxIndex = 0; sboxIndex < sboxCount; sboxIndex++)
 	{
 		for (let column = 0; column < 4; column++)
 		{
@@ -167,6 +193,7 @@ function keyMaterialFromWords(keyWords)
 					{
 						count = 0;
 						keyWords = encryptKeyWords(keyWords, iv, zeroAuxKeys, initialSboxes);
+						iv = keyWords.slice(-2);
 
 						// Adjust mask to make random numbers more likely be in range
 						while ((smallerMask | (255 - row)) === smallerMask)
@@ -191,13 +218,15 @@ function keyMaterialFromWords(keyWords)
 
 function precomputeInitialStandardSbox()
 {
+	const rand = new RandProvider();
+
 	// The initial Standard S-box is simply sorted rows (00... 01... 02...) randomized using the RAND table
 	const sbox = STANDARD_SBOXES[0] = new Array(256);
 
 	for (let row = 0; row < 256; row++)
 	{
 		// Fill with trivial permutation: 00000000 01010101 02020202 ... ffffffff
-		sbox[row] = row | (row << 8) | (row << 16) | (row << 24);
+		sbox[row] = 0x01010101 * row;
 	}
 
 	for (let column = 0; column < 4; column++)
@@ -205,7 +234,7 @@ function precomputeInitialStandardSbox()
 		// Knuth/Fisher-Yates shuffle (hence why we only iterate to 254)
 		for (let row = 0; row < 255; row++)
 		{
-			swapBytesInSbox(sbox, row, randInRange(row, 255), column);
+			swapBytesInSbox(sbox, row, rand.inRange(row, 255), column);
 		}
 	}
 }
@@ -216,7 +245,7 @@ function precomputeStandardSboxes()
 	const keyWords = new Array(16);
 	keyWords.fill(0);
 
-	const keyMaterial = keyMaterialFromWords(keyWords);
+	const keyMaterial = keyMaterialFromWords(keyWords, MAX_STANDARD_SBOX_COUNT);
 	const standardSboxes = keyMaterial.sboxes;
 
 	for (let i = 0; i < standardSboxes.length; i++)
@@ -227,13 +256,13 @@ function precomputeStandardSboxes()
 
 function precompute()
 {
-	if (STANDARD_SBOXES.length === 0)
+	if (STANDARD_SBOXES.length !== 0)
 	{
-		// Generate standard S-boxes
-		precomputeInitialStandardSbox();
-		precomputeStandardSboxes();
+		return;
 	}
-
+	// Generate standard S-boxes
+	precomputeInitialStandardSbox();
+	precomputeStandardSboxes();
 }
 
 class KhufuTransform extends BlockCipherTransform
@@ -256,8 +285,7 @@ class KhufuTransform extends BlockCipherTransform
 			throw new TransformError("Number of rounds must be a multiple of 8.");
 		}
 
-		this.checkKeySize(keyBytes, 512);
-
+		precompute();
 		const keyMaterial = this.generateKeyMaterial(keyBytes, rounds);
 
 		return this.transformBlocks(bytes, 64, keyMaterial, rounds);
@@ -265,10 +293,20 @@ class KhufuTransform extends BlockCipherTransform
 
 	generateKeyMaterial(keyBytes, rounds)
 	{
+		this.checkKeySize(keyBytes, 512);
+		
 		const sboxCount = rounds / 8;
-		//const sboxes = new Array(sboxCount);
 		const keyWords = bytesToInt32sBE(keyBytes);
-		return keyMaterialFromWords(keyWords);
+		return keyMaterialFromWords(keyWords, sboxCount);
+	}
+
+	transformBlock(block, dest, destOffset, keyMaterial, rounds)
+	{
+		let [left, right] = bytesToInt32sBE(block);
+
+		const result = this.transformWords(left, right, keyMaterial, rounds);
+
+		dest.set(int32sToBytesBE(result), destOffset);
 	}
 }
 
@@ -279,31 +317,28 @@ class KhufuEncryptTransform extends KhufuTransform
 		super(false);
 	}
 
-	transformBlock(block, dest, destOffset, keyMaterial, rounds)
+	transformWords(left, right, keyMaterial, rounds)
 	{
-		let [left, right] = bytesToInt32sBE(block);
-
 		left ^= keyMaterial.auxKeys[0];
 		right ^= keyMaterial.auxKeys[1];
 
-		let sbox;
-		for (let round = 0; round < rounds; i++)
+		const octets = rounds / 8;
+		for (let octet = 0; octet < octets; octet++)
 		{
-			const roundStep = round % 8;
-			if (roundStep === 0)
+			const sbox = keyMaterial.sboxes[octet];
+			for (let round = 0; round < 8; round++)
 			{
-				sbox = keyMaterial.sboxes[i / 8];
-			}
-			right ^= sbox[left & 0xff];
-			left = ror(left, ROTATE_SCHEDULE[roundStep]);
+				right ^= sbox[left & 0xff];
+				left = ror(left, ROTATE_SCHEDULE[round]);
 
-			[left, right] = [right, left];
+				[left, right] = [right, left];
+			}
 		}
 
 		left ^= keyMaterial.auxKeys[2];
 		right ^= keyMaterial.auxKeys[3];
 
-		dest.set(int32sToBytesBE([left, right]), destOffset);
+		return [left, right];
 	}
 }
 
@@ -314,59 +349,150 @@ class KhufuDecryptTransform extends KhufuTransform
 		super(true);
 	}
 
-	transformBlock(block, dest, destOffset, sboxes, rounds)
+	transformWords(left, right, keyMaterial, rounds)
 	{
+		left ^= keyMaterial.auxKeys[2];
+		right ^= keyMaterial.auxKeys[3];
 
+		const octets = rounds / 8;
+		for (let octet = octets - 1; octet >= 0; octet--)
+		{
+			const sbox = keyMaterial.sboxes[octet];
+			for (let round = 7; round >= 0; round--)
+			{
+				[left, right] = [right, left];
+
+				left = rol(left, ROTATE_SCHEDULE[round]);
+				right ^= sbox[left & 0xff];
+			}
+		}
+
+		left ^= keyMaterial.auxKeys[0];
+		right ^= keyMaterial.auxKeys[1];
+
+		return [left, right];
 	}
 }
 
-class KhafreEncryptTransform extends KhufuTransform
+class KhafreTransform extends KhufuTransform
+{
+	constructor(decrypt)
+	{
+		super(decrypt);
+	}
+
+	generateKeyMaterial(keyBytes, rounds)
+	{
+		this.checkKeySize(keyBytes, { min: 64 });
+		
+		const keyLength = keyBytes.length;
+
+		if (keyLength % 8 !== 0)
+		{
+			throw new TransformError(`Key size must be a multiple of 64 bits (8 bytes).`);
+		}
+		if ((rounds / 8 + 1) % (keyLength / 8) !== 0)
+		{
+			throw new TransformError(`Key size incompatible with number of rounds.`);
+		}
+
+		const keyWords = bytesToInt32sBE(keyBytes);
+		return { keys: keyWords, sboxes: STANDARD_SBOXES };
+	}
+}
+
+class KhafreEncryptTransform extends KhafreTransform
 {
 	constructor()
 	{
 		super(false);
 	}
 
-	transformBlock(block, dest, destOffset, sboxes, rounds)
+	transformWords(left, right, keyMaterial, rounds)
 	{
-		let [left, right] = bytesToInt32sBE(block);
+		const keys = keyMaterial.keys;
+		const sboxes = keyMaterial.sboxes;
+		const octets = rounds / 8;
 
 		let keyIndex = 0;
-		let octet = 1;
-		left ^= keys[keyIndex++];
-		right ^= keys[keyIndex++];
-
-		let sbox;
-		for (let round = 0; round < rounds; i++)
+		let octet = 0;
+		for (;;)
 		{
-			const roundStep = round % 8;
-
-			left ^= sboxes[octet - 1][right & 0xff];
-			right = ror(right, ROTATE_SCHEDULE[roundStep]);
-
-			[left, right] = [right, left];
-
-			if (roundStep === 0)
+			if (keyIndex >= keys.length)
 			{
-				if (keyIndex >= keys.length)
-				{
-					keyIndex = 0;
-				}
-				left  ^= ror(keys[keyIndex++], octet);
-				right ^= ror(keys[keyIndex++], octet);
+				keyIndex = 0;
 			}
-		}
 
-		dest.set(int32sToBytesBE([left, right]), destOffset);
+			left  ^= ror(keys[keyIndex++], octet);
+			right ^= ror(keys[keyIndex++], octet);
+
+			if (octet >= octets)
+			{
+				break;
+			}
+
+			for (let round = 0; round < 8; round++)
+			{
+				right ^= sboxes[octet][left & 0xff];
+				left = ror(left, ROTATE_SCHEDULE[round]);
+
+				[left, right] = [right, left];
+			}
+
+			octet++;
+		}
+		return [left, right];
 	}
 }
 
-class KhafreDecryptTransform extends KhufuTransform
+class KhafreDecryptTransform extends KhafreTransform
 {
+	constructor()
+	{
+		super(true);
+	}
 
+	transformWords(left, right, keyMaterial, rounds)
+	{
+		const keys = keyMaterial.keys;
+		const sboxes = keyMaterial.sboxes;
+		const octets = rounds / 8;
+
+		let keyIndex = keys.length - 2;
+		let octet = octets;
+		for (;;)
+		{
+			left  ^= ror(keys[keyIndex], octet);
+			right ^= ror(keys[keyIndex + 1], octet);
+
+			if (octet === 0)
+			{
+				break;
+			}
+
+			if (keyIndex === 0)
+			{
+				keyIndex = keys.length;
+			}
+
+			keyIndex -= 2;
+			octet--;
+
+			for (let round = 7; round >= 0; round--)
+			{
+				[left, right] = [right, left];
+
+				left = rol(left, ROTATE_SCHEDULE[round]);
+				right ^= sboxes[octet][left & 0xff];
+			}
+		}
+		return [left, right];
+	}
 }
 
 export {
 	KhufuEncryptTransform,
-	KhufuDecryptTransform
+	KhufuDecryptTransform,
+	KhafreEncryptTransform,
+	KhafreDecryptTransform,
 };

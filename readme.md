@@ -37,6 +37,7 @@ Supported
 * DES (64 bit with parity or 56 bit without)
 * ICE
 * IDEA
+* Khufu, Khafre (both with the actual S-boxes)
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
 * NOEKEON
@@ -159,9 +160,7 @@ TODO
 * IDEA NXT
 * Iraqi
 * KASUMI
-* Khafre
 * KHAZAD
-* Khufu
 * LOKI89/91 / LOKI97
 * MacGuffin
 * Madryga
