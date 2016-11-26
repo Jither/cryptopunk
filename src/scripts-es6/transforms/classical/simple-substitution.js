@@ -7,9 +7,9 @@ class SimpleSubstitutionTransform extends Transform
 	{
 		super();
 		this.addInput("string", "Input")
-			.addInput("string", "Output")
 			.addInput("string", "Alphabet")
 			.addInput("string", "Substitution alphabet")
+			.addOutput("string", "Output")
 			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}

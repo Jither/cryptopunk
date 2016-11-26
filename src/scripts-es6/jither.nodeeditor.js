@@ -116,9 +116,9 @@ class NodeSocket
 		this.node.onConnectionChanged(this);
 
 		// Update input to reflect new output's value
-		if (this.type === INPUT && this.output)
+		if (this.type === INPUT)
 		{
-			this.onValueChanged(this.output.value);
+			this.onValueChanged(this.output ? this.output.value : null);
 		}
 	}
 
@@ -309,9 +309,9 @@ class NodeInput extends NodeSocket
 	{
 		if (this.output)
 		{
-			this.output.inputs.splice(this.output.inputs.indexOf(this), 1);
-
 			const output = this.output;
+			output.inputs.splice(output.inputs.indexOf(this), 1);
+
 			this.output = null;
 			output.onConnectionChanged();
 		}
@@ -626,7 +626,7 @@ class NodeEditor
 
 	_removeNode(node)
 	{
-		this.nodes.splice(this.nodes.indexOf(node));
+		this.nodes.splice(this.nodes.indexOf(node), 1);
 		this.element.removeChild(node.element);
 	}
 
