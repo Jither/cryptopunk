@@ -33,28 +33,31 @@ k: 1f293b1a353a615dee2e1a2b26204f
 p: 0c17222d38434e59
 c: 63f836f34bc83b28
 
-title   : NewDES exercise test vector
+# Generated from original code at https://groups.google.com/d/msg/sci.crypt/DFmZzBcgF2M/xZ36MbKGuX8J
+
+title   : NewDES-96 test vector
+option  : variant = newdes-96
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 0000000000000000
-c: 3c9bc83438bbc7f9
+c: a962a8af23aba04a
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 0102030405060708
-c: e2040eed8ff4912e
+c: b50cf77176fb446b
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 0a141e28323c4650
-c: eb84090330660e9f
+c: 09550a0830ffb163
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 0202020202020202
-c: f2b93fee21f85295
+c: 96e81449ca7d006d
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 65666768696a6b6c
-c: 686f8f96399e7498
+c: ef0a34ebef58eb63
 
 k: 1f293b1a353a615dee2e1a2b26204f
 p: 0c17222d38434e59
-c: 63f836f34bc83b28
+c: d194e17640679218

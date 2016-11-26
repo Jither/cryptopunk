@@ -1,0 +1,20 @@
+mode    : encrypt-decrypt
+encrypt : RedPikeEncryptTransform
+decrypt : RedPikeDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# Generated from http://permalink.gmane.org/gmane.comp.security.cypherpunks/3680
+
+k: 0000000000000000
+p: 0000000000000000
+c: 5ea93b8ff564908d
+
+k: fedcba9876543210
+p: 0123456789abcdef
+c: 7f517518d9160d00
+
+k: bada5500ffeeeedd
+p: deadbeef01234567
+c: eda70dbdea6f337f

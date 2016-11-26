@@ -1,4 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
+import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
+
+const ROUNDS = 8;
 
 // The United States Declaration of Independence, on which the S-box is based:
 const DECLARATION =
@@ -51,6 +54,16 @@ and our sacred Honor.`;
 
 let S_BOX;
 
+const VARIANT_NAMES = [
+	"NewDES",
+	"NewDES-96"
+];
+
+const VARIANT_VALUES = [
+	"newdes",
+	"newdes-96"
+];
+
 function precompute()
 {
 	if (S_BOX)
@@ -83,6 +96,7 @@ class NewDesTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
+		this.addOption("variant", "Variant", "newdes", { type: "select", texts: VARIANT_NAMES, values: VARIANT_VALUES });
 	}
 
 	transform(bytes, keyBytes)
@@ -90,50 +104,33 @@ class NewDesTransform extends BlockCipherTransform
 		this.checkKeySize(keyBytes, 120);
 
 		precompute();
-
-		return this.transformBlocks(bytes, 64, keyBytes);
+		const keys = this.generateSubKeys(keyBytes);
+		return this.transformBlocks(bytes, 64, keys);
 	}
 
-	transformBlock(block, dest, destOffset, keyBytes)
+	generateSubKeys(keyBytes)
 	{
-		// Encryption and decryption only differ in these three constants
-		// (Like DES, a different key offset origin and different delta to next offset in key)
-		const [I, F, DELTA] = this.getConstants();
+		const variant = this.options.variant;
 
-		let [b0, b1, b2, b3, b4, b5, b6, b7] = block;
-
-		let i = I;
-		for(;;)
+		const keyLength = keyBytes.length;
+		const subKeyCount = keyLength * 4;
+		
+		const result = new Uint8Array(subKeyCount);
+		
+		let i = 0;
+		for (let round = 0; round < 4; round++)
 		{
-			b4 ^= S_BOX[b0 ^ keyBytes[i++]]; if (i === 15) { i = 0; }
-			b5 ^= S_BOX[b1 ^ keyBytes[i++]]; if (i === 15) { i = 0; }
-			b6 ^= S_BOX[b2 ^ keyBytes[i++]]; if (i === 15) { i = 0; }
-			b7 ^= S_BOX[b3 ^ keyBytes[i]];
-
-			i += DELTA;
-
-			if (i > 14)
+			for (let step = 0; step < keyLength; step++)
 			{
-				i -= 15;
-			}
-			if (i === F)
-			{
-				break;
-			}
-
-			b1 ^= S_BOX[b4 ^ keyBytes[i++]];
-			b2 ^= S_BOX[b4 ^ b5];
-			b3 ^= S_BOX[b6 ^ keyBytes[i++]];
-			b0 ^= S_BOX[b7 ^ keyBytes[i]];
-
-			i += DELTA;
-			if (i > 14)
-			{
-				i -= 15;
+				result[i] = keyBytes[i % keyLength];
+				if (round > 0 && variant === "newdes-96")
+				{
+					result[i] ^= keyBytes[round + 6];
+				}
+				i++;
 			}
 		}
-
-		dest.set([b0, b1, b2, b3, b4, b5, b6, b7], destOffset);
+		return result;
 	}
 }
 
@@ -144,9 +141,30 @@ class NewDesEncryptTransform extends NewDesTransform
 		super(false);
 	}
 
-	getConstants()
+	transformBlock(block, dest, destOffset, keys)
 	{
-		return [0, 0, 1];
+		let [b0, b1, b2, b3, b4, b5, b6, b7] = Uint8Array.from(block);
+
+		let keyIndex = 0;
+		for(let i = 0; i < ROUNDS; i++)
+		{
+			b4 ^= S_BOX[b0 ^ keys[keyIndex++]];
+			b5 ^= S_BOX[b1 ^ keys[keyIndex++]];
+			b6 ^= S_BOX[b2 ^ keys[keyIndex++]];
+			b7 ^= S_BOX[b3 ^ keys[keyIndex++]];
+
+			b1 ^= S_BOX[b4 ^ keys[keyIndex++]];
+			b2 ^= S_BOX[b4 ^ b5];
+			b3 ^= S_BOX[b6 ^ keys[keyIndex++]];
+			b0 ^= S_BOX[b7 ^ keys[keyIndex++]];
+		}
+
+		b4 ^= S_BOX[b0 ^ keys[keyIndex++]];
+		b5 ^= S_BOX[b1 ^ keys[keyIndex++]];
+		b6 ^= S_BOX[b2 ^ keys[keyIndex++]];
+		b7 ^= S_BOX[b3 ^ keys[keyIndex++]];
+
+		dest.set([b0, b1, b2, b3, b4, b5, b6, b7], destOffset);
 	}
 }
 
@@ -157,9 +175,30 @@ class NewDesDecryptTransform extends NewDesTransform
 		super(true);
 	}
 
-	getConstants()
+	transformBlock(block, dest, destOffset, keys)
 	{
-		return [11, 12, 9];
+		let [b0, b1, b2, b3, b4, b5, b6, b7] = Uint8Array.from(block);
+
+		let keyIndex = keys.length - 1;
+		for(let i = ROUNDS - 1; i >= 0; i--)
+		{
+			b7 ^= S_BOX[b3 ^ keys[keyIndex--]];
+			b6 ^= S_BOX[b2 ^ keys[keyIndex--]];
+			b5 ^= S_BOX[b1 ^ keys[keyIndex--]];
+			b4 ^= S_BOX[b0 ^ keys[keyIndex--]];
+
+			b0 ^= S_BOX[b7 ^ keys[keyIndex--]];
+			b3 ^= S_BOX[b6 ^ keys[keyIndex--]];
+			b2 ^= S_BOX[b4 ^ b5];
+			b1 ^= S_BOX[b4 ^ keys[keyIndex--]];
+		}
+
+		b7 ^= S_BOX[b3 ^ keys[keyIndex--]];
+		b6 ^= S_BOX[b2 ^ keys[keyIndex--]];
+		b5 ^= S_BOX[b1 ^ keys[keyIndex--]];
+		b4 ^= S_BOX[b0 ^ keys[keyIndex--]];
+
+		dest.set([b0, b1, b2, b3, b4, b5, b6, b7], destOffset);
 	}
 }
 

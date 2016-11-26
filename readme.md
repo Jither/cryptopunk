@@ -40,12 +40,13 @@ Supported
 * Khufu, Khafre (both with the actual S-boxes)
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
-* NewDES
+* NewDES, NewDES-96
 * NOEKEON
 * PRESENT
 * RC2
 * RC5
 * RC6
+* Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
 * Serpent
 * Shark-E
@@ -168,8 +169,6 @@ TODO
 * MAGENTA
 * MARS
 * MISTY1 / MISTY2
-* NewDES-96
-* Red Pike
 * S-1
 * SAFER / SAFER+ / SAFER++
 * SC2000

@@ -371,6 +371,50 @@ function checkSize(size, requiredSize)
 	return null;
 }
 
+function cipherTest(encTransformClass, decTransformClass, plainHex, keyHex, expectedHex)
+{
+	function normalize(str)
+	{
+		return str.toUpperCase().replace(/\s+/g, "");
+	}
+
+	const enc = new encTransformClass();
+	const plain = hexToBytes(plainHex);
+	const key = hexToBytes(keyHex);
+	const encResult = enc.transform(plain, key);
+	const encResultHex = bytesToHex(encResult);
+	console.log(encResultHex);
+	if (expectedHex)
+	{
+		const matches = normalize(encResultHex) === normalize(expectedHex);
+		if (matches)
+		{
+			console.log("Encryption matches");
+		}
+		else
+		{
+			console.error("Encryption failed - expected:", expectedHex, ". Got:", encResultHex);
+		}
+	}
+
+	if (decTransformClass)
+	{
+		const dec = new decTransformClass();
+		const decResult = dec.transform(encResult, key);
+		const decResultHex = bytesToHex(decResult);
+		console.log(decResultHex);
+		const matches = normalize(decResultHex) === normalize(plainHex);
+		if (matches)
+		{
+			console.log("Decryption matches");
+		}
+		else
+		{
+			console.error("Encryption failed - expected:", plainHex, ". Got:", decResultHex);
+		}
+	}
+}
+
 export {
 	asciiToBytes,
 	bytesToHex,
@@ -395,5 +439,7 @@ export {
 	int32ToHex,
 	int32sToHex,
 	int64ToHex,
-	int64sToHex
+	int64sToHex,
+
+	cipherTest
 };
