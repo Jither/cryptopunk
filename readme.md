@@ -40,6 +40,7 @@ Supported
 * Khufu, Khafre (both with the actual S-boxes)
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
+* NewDES
 * NOEKEON
 * PRESENT
 * RC2
@@ -167,7 +168,7 @@ TODO
 * MAGENTA
 * MARS
 * MISTY1 / MISTY2
-* NewDES / NewDES-96
+* NewDES-96
 * Red Pike
 * S-1
 * SAFER / SAFER+ / SAFER++
