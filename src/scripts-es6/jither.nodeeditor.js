@@ -227,9 +227,11 @@ class NodeOutput extends NodeSocket
 
 	disconnectAll()
 	{
-		this.inputs.forEach(input => {
-			this.disconnect(input);
-		});
+		// Need reverse loop, since this will mutate the this.inputs array:
+		for (let i = this.inputs.length - 1; i >= 0; i--)
+		{
+			this.disconnect(this.inputs[i]);
+		}
 	}
 
 	redrawPaths()
