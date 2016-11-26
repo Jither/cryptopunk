@@ -262,10 +262,11 @@ class Int64
 			termhi++;
 		}
 
-		let r00 = ((this.lo & 0xffff) + (termlo & 0xffff)               ) & 0xffff;
-		let r16 = ((this.lo >>> 16)   + (termlo   >>> 16) + (r00 >>> 16)) & 0xffff;
-		let r32 = ((this.hi & 0xffff) + (termhi & 0xffff) + (r16 >>> 16)) & 0xffff;
-		let r48 = ((this.hi >>> 16)   + (termhi   >>> 16) + (r32 >>> 16)) & 0xffff;
+		const
+			r00 = ((this.lo & 0xffff) + (termlo & 0xffff)               ) & 0xffff,
+			r16 = ((this.lo >>> 16)   + (termlo   >>> 16) + (r00 >>> 16)) & 0xffff,
+			r32 = ((this.hi & 0xffff) + (termhi & 0xffff) + (r16 >>> 16)) & 0xffff,
+			r48 = ((this.hi >>> 16)   + (termhi   >>> 16) + (r32 >>> 16)) & 0xffff;
 
 		this.hi = (r48 << 16) | r32;
 		this.lo = (r16 << 16) | r00;

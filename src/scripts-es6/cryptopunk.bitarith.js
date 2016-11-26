@@ -43,10 +43,8 @@ function mul(a, b)
 		b16 = b >>> 16,
 		b00 = b & 0xffff;
 
-	let r00, r16;
-
-	r00  = a00 * b00;
-	r16  = (r00 >>> 16) + a16 * b00 + a00 * b16;
+	const r00 = a00 * b00;
+	const r16 = (r00 >>> 16) + a16 * b00 + a00 * b16;
 
 	return ((r16 & 0xffff) << 16) | (r00 & 0xffff);
 }

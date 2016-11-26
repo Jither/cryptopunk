@@ -66,9 +66,9 @@ function gfPow7(b, m)
 	}
 
 	let x = gfMultiply(b, b, m);
-		x = gfMultiply(b, x, m);
-		x = gfMultiply(x, x, m);
-		x = gfMultiply(b, x, m);
+	x = gfMultiply(b, x, m);
+	x = gfMultiply(x, x, m);
+	x = gfMultiply(b, x, m);
 	return x;
 }
 
@@ -204,8 +204,8 @@ class IceTransform extends BlockCipherTransform
 	{
 		for (let i = 0; i < 8; i++)
 		{
-			let kr = KEY_ROTATION[keyRotationIndex + i];
-			let subKey = subKeys[n + i] = new Array(3);
+			const kr = KEY_ROTATION[keyRotationIndex + i];
+			const subKey = subKeys[n + i] = new Array(3);
 
 			subKey.fill(0);
 

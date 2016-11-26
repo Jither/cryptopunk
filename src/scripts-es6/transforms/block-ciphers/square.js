@@ -256,7 +256,7 @@ function round(text, T, k)
 	{
 		const shift = 24 - 8 * i;
 		temp[i] =
-			    T[(text[0] >>> shift) & 0xff] ^
+			T[(text[0] >>> shift) & 0xff] ^
 			ror(T[(text[1] >>> shift) & 0xff],  8) ^
 			ror(T[(text[2] >>> shift) & 0xff], 16) ^
 			ror(T[(text[3] >>> shift) & 0xff], 24);

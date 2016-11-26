@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE, bytesToHex } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { rol, ror } from "../../cryptopunk.bitarith";
 
 const MODE_NAMES = [
@@ -24,22 +24,22 @@ function precompute()
 		return;
 	}
 
- 	ROUND_CONSTANTS = new Array(ROUNDS + 1);
+	ROUND_CONSTANTS = new Array(ROUNDS + 1);
 
- 	let constant = 0x80;
- 	for (let i = 0; i < ROUND_CONSTANTS.length; i++)
- 	{
- 		ROUND_CONSTANTS[i] = constant & 0xff;
+	let constant = 0x80;
+	for (let i = 0; i < ROUND_CONSTANTS.length; i++)
+	{
+		ROUND_CONSTANTS[i] = constant & 0xff;
 
- 		if ((constant & 0x80) !== 0)
- 		{
- 			constant = (constant << 1) ^ 0x1b;
- 		}
- 		else
- 		{
- 			constant = constant << 1;
- 		}
- 	}
+		if ((constant & 0x80) !== 0)
+		{
+			constant = (constant << 1) ^ 0x1b;
+		}
+		else
+		{
+			constant = constant << 1;
+		}
+	}
 }
 
 function gamma(state)
@@ -137,7 +137,7 @@ class NoekeonTransform extends BlockCipherTransform
 		}
 
 		// Indirect mode = encrypt key (as plaintext) with null vector as key
-		this.keyEncrypter = this.keyEncrypter || new NoekeonEncryptTransform();
+		this.keyEncrypter = this.keyEncrypter || new NoekeonEncryptTransform(); // eslint-disable-line no-use-before-define
 		this.keyEncryptResult = this.keyEncryptResult || new Uint8Array(16);
 		this.keyEncrypter.transformBlock(keyBytes, this.keyEncryptResult, 0, NULL_VECTOR);
 

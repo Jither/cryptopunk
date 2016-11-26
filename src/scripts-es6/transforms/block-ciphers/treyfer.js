@@ -1,6 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { TransformError } from "../transforms";
-import { checkSize, hexToBytes, bytesToHex } from "../../cryptopunk.utils";
+import { checkSize } from "../../cryptopunk.utils";
 
 const ROUNDS = 32;
 

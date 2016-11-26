@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt64sBE, int64sToBytesBE, hexToBytes, int64sToHex, int64ToHex, bytesToHex } from "../../cryptopunk.utils";
+import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
 import { rol, not64, xor64, ZERO_64 } from "../../cryptopunk.bitarith";
 
 const
@@ -129,10 +129,12 @@ function f(fIn, ke)
 
 function fl(flIn, ke)
 {
-	let x1 = flIn.hi,
-		x2 = flIn.lo,
+	const
 		k1 = ke.hi,
 		k2 = ke.lo;
+
+	let x1 = flIn.hi,
+		x2 = flIn.lo;
 	
 	x2 ^= rol(x1 & k1, 1);
 	x1 ^= (x2 | k2);
@@ -142,10 +144,12 @@ function fl(flIn, ke)
 
 function flInv(flInvIn, ke)
 {
-	let y1 = flInvIn.hi,
-		y2 = flInvIn.lo,
+	const
 		k1 = ke.hi,
 		k2 = ke.lo;
+
+	let y1 = flInvIn.hi,
+		y2 = flInvIn.lo;
 	
 	y1 ^= (y2 | k2);
 	y2 ^= rol(y1 & k1, 1);

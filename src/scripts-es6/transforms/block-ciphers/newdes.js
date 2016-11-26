@@ -1,5 +1,4 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
 
 const ROUNDS = 8;
 

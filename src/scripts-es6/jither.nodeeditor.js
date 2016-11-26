@@ -34,9 +34,17 @@ function createPathStr(a, b)
 {
 	const distX = b.x - a.x;
 	//const distY = b.y - a.y;
-
-	const strPath = `M${a.x},${a.y} C${a.x + distX / 3 * 2},${a.y} ${a.x + distX / 3},${b.y} ${b.x},${b.y}`;
-	return strPath;
+	if (distX < 0)
+	{
+		const distY = b.y - a.y;
+		const deltaY = Math.round(distY / 4);
+		const deltaX = Math.abs(deltaY);
+		return `M${a.x},${a.y} q ${deltaX},0 ${deltaX},${deltaY} t ${-deltaX},${deltaY} h ${distX} q ${-deltaX},0 ${-deltaX},${deltaY} T ${b.x},${b.y}`;
+	}
+	else
+	{
+		return `M${a.x},${a.y} C${a.x + distX / 3 * 2},${a.y} ${a.x + distX / 3},${b.y} ${b.x},${b.y}`;
+	}
 }
 
 function createPath(svg)

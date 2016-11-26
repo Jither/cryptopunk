@@ -53,7 +53,7 @@ const RAND =
 	"28466687957776220791917575374161613622695026390212557817651483483470558941592694" +
 	"0039758391126071764648949723069454137408775130382086864299016841482774";
 
-let STANDARD_SBOXES = new Array();
+const STANDARD_SBOXES = new Array();
 
 class RandProvider
 {
@@ -97,7 +97,7 @@ function swapBytesInSbox(sbox, row1, row2, column)
 
 function encryptKeyWords(keyWords, iv, auxKeys, sboxes)
 {
-	const khufu = new KhufuEncryptTransform();
+	const khufu = new KhufuEncryptTransform(); // eslint-disable-line no-use-before-define
 	const result = new Array(keyWords.length);
 	for (let pos = 0; pos < keyWords.length; pos += 2)
 	{
@@ -302,7 +302,7 @@ class KhufuTransform extends BlockCipherTransform
 
 	transformBlock(block, dest, destOffset, keyMaterial, rounds)
 	{
-		let [left, right] = bytesToInt32sBE(block);
+		const [left, right] = bytesToInt32sBE(block);
 
 		const result = this.transformWords(left, right, keyMaterial, rounds);
 

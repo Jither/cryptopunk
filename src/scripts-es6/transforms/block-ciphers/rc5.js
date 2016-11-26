@@ -10,13 +10,13 @@ const BLOCK_SIZES = [
 	128
 ];
 
-const P_16 = 0xb7e1;
+//const P_16 = 0xb7e1;
 const P_32 = 0xb7e15163;
-const P_64 = { hi: 0xb7e15162, lo: 0x8aed2a6d };
+//const P_64 = { hi: 0xb7e15162, lo: 0x8aed2a6d };
 
-const Q_16 = 0x9e37;
+//const Q_16 = 0x9e37;
 const Q_32 = 0x9e3779b9;
-const Q_64 = { hi: 0x9E3779B9, lo: 0x7F4A7C15 };
+//const Q_64 = { hi: 0x9E3779B9, lo: 0x7F4A7C15 };
 
 class Rc5BaseTransform extends BlockCipherTransform
 {

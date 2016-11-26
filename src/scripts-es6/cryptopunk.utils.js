@@ -135,7 +135,7 @@ function bytesToInt16sBE(bytes)
 function bytesToInt16sLE(bytes)
 {
 	const result = [];
-	for (let i = 0; i < bytes.length; i +=2)
+	for (let i = 0; i < bytes.length; i += 2)
 	{
 		result.push(
 			(bytes[i    ]) |
@@ -371,6 +371,7 @@ function checkSize(size, requiredSize)
 	return null;
 }
 
+/* eslint-disable no-console */
 function cipherTest(encTransformClass, decTransformClass, plainHex, keyHex, expectedHex)
 {
 	function normalize(str)
@@ -414,6 +415,7 @@ function cipherTest(encTransformClass, decTransformClass, plainHex, keyHex, expe
 		}
 	}
 }
+/* eslint-enable no-console */
 
 export {
 	asciiToBytes,

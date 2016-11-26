@@ -1,6 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
-import { and64, or64, xor64, rol64, shl64, shr64, ZERO_64 } from "../../cryptopunk.bitarith";
+import { and64, or64, xor64, rol64, shl64, shr64 } from "../../cryptopunk.bitarith";
 
 const ROUNDS = 31;
 
@@ -68,7 +68,7 @@ class PresentTransform extends BlockCipherTransform
 		subKeys[0] = keyHigh;
 		for (let i = 1; i < subKeys.length; i++)
 		{
-			let temp = keyHigh;
+			const temp = keyHigh;
 			// ROL61 on 128-bit integer
 			keyHigh = or64(shl64(keyHigh, 61), shr64(keyLow, 3));
 			keyLow  = or64(shr64(temp, 3), shl64(keyLow, 61));
@@ -112,7 +112,7 @@ class PresentEncryptTransform extends PresentTransform
 				state = rol64(state, 4);
 			}
 
-			let temp = { hi: 0, lo: 0 };
+			const temp = { hi: 0, lo: 0 };
 			for (let k = 0; k < 64; k++)
 			{
 				let pos = (16 * k) % 63;
@@ -153,7 +153,7 @@ class PresentDecryptTransform extends PresentTransform
 		{
 			state = xor64(state, subKeys[i]);
 
-			let temp = { hi: 0, lo: 0 };
+			const temp = { hi: 0, lo: 0 };
 			for (let k = 0; k < 64; k++)
 			{
 				let pos = (4 * k) % 63; // Different for decryption

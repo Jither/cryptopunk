@@ -1,5 +1,5 @@
 import { MdHashTransform, CONSTANTS } from "./hash";
-import { bytesToInt32sLE, int32sToBytesLE, bytesToHex, hexToBytes, int32sToHex } from "../../cryptopunk.utils";
+import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
 // HAS-160 has many similarities to SHA-1. Differences noted below.
@@ -44,28 +44,28 @@ const EXPAND = [
 	8, 9, 10, 11, 
 	12, 13, 14, 15,
 
-  	3, 6, 9, 12, 
-  	15, 2, 5, 8, 
-  	11, 14, 1, 4, 
-  	7, 10, 13, 0,
+	3, 6, 9, 12, 
+	15, 2, 5, 8, 
+	11, 14, 1, 4, 
+	7, 10, 13, 0,
 
-  	12, 5, 14, 7, 
-  	0, 9, 2, 11, 
-  	4, 13, 6, 15, 
-  	8, 1, 10, 3,
+	12, 5, 14, 7, 
+	0, 9, 2, 11, 
+	4, 13, 6, 15, 
+	8, 1, 10, 3,
 
-  	7, 2, 13, 8, 
-  	3, 14, 9, 4, 
-  	15, 10, 5, 0, 
-  	11, 6, 1, 12
+	7, 2, 13, 8, 
+	3, 14, 9, 4, 
+	15, 10, 5, 0, 
+	11, 6, 1, 12
 ];
 
 // HAS-160 vs SHA-1: Message parts (x[0..19]) are processed in a defined order by step:
 const X_ORDER = [
 	18, 0, 1, 2, 3, 19, 4, 5, 6, 7, 16, 8, 9, 10, 11, 17, 12, 13, 14, 15,
 	18, 3, 6, 9, 12, 19, 15, 2, 5, 8, 16, 11, 14, 1, 4, 17, 7, 10, 13, 0,
-  	18, 12, 5, 14, 7, 19, 0, 9, 2, 11, 16, 4, 13, 6, 15, 17, 8, 1, 10, 3,
-  	18, 7, 2, 13, 8, 19, 3, 14, 9, 4, 16, 15, 10, 5, 0, 17, 11, 6, 1, 12,
+	18, 12, 5, 14, 7, 19, 0, 9, 2, 11, 16, 4, 13, 6, 15, 17, 8, 1, 10, 3,
+	18, 7, 2, 13, 8, 19, 3, 14, 9, 4, 16, 15, 10, 5, 0, 17, 11, 6, 1, 12,
 ];
 
 class Has160Transform extends MdHashTransform

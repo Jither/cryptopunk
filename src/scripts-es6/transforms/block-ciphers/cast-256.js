@@ -9,8 +9,7 @@ const
 const ROUNDS = 12;
 
 // Identical to first four CAST-128 S-boxes
-const S1 =
-[
+const S1 = [
 	0x30fb40d4, 0x9fa0ff0b, 0x6beccd2f, 0x3f258c7a, 0x1e213f2f, 0x9c004dd3, 0x6003e540, 0xcf9fc949,
 	0xbfd4af27, 0x88bbbdb5, 0xe2034090, 0x98d09675, 0x6e63a0e0, 0x15c361d2, 0xc2e7661d, 0x22d4ff8e,
 	0x28683b6f, 0xc07fd059, 0xff2379c8, 0x775f50e2, 0x43c340d3, 0xdf2f8656, 0x887ca41a, 0xa2d2bd2d,
@@ -45,8 +44,7 @@ const S1 =
 	0x1a69e783, 0x02cc4843, 0xa2f7c579, 0x429ef47d, 0x427b169c, 0x5ac9f049, 0xdd8f0f00, 0x5c8165bf
 ];
 
-const S2 = 
-[
+const S2 = [
 	0x1f201094, 0xef0ba75b, 0x69e3cf7e, 0x393f4380, 0xfe61cf7a, 0xeec5207a, 0x55889c94, 0x72fc0651,
 	0xada7ef79, 0x4e1d7235, 0xd55a63ce, 0xde0436ba, 0x99c430ef, 0x5f0c0794, 0x18dcdb7d, 0xa1d6eff3,
 	0xa0b52f7b, 0x59e83605, 0xee15b094, 0xe9ffd909, 0xdc440086, 0xef944459, 0xba83ccb3, 0xe0c3cdfb,
@@ -81,8 +79,7 @@ const S2 =
 	0x43d79572, 0x7e6dd07c, 0x06dfdf1e, 0x6c6cc4ef, 0x7160a539, 0x73bfbe70, 0x83877605, 0x4523ecf1
 ];
 
-const S3 = 
-[
+const S3 = [
 	0x8defc240, 0x25fa5d9f, 0xeb903dbf, 0xe810c907, 0x47607fff, 0x369fe44b, 0x8c1fc644, 0xaececa90,
 	0xbeb1f9bf, 0xeefbcaea, 0xe8cf1950, 0x51df07ae, 0x920e8806, 0xf0ad0548, 0xe13c8d83, 0x927010d5,
 	0x11107d9f, 0x07647db9, 0xb2e3e4d4, 0x3d4f285e, 0xb9afa820, 0xfade82e0, 0xa067268b, 0x8272792e,
@@ -162,9 +159,9 @@ function precompute()
 	}
 
 	let cm = SQRT2_DIV4;
-	let mm = SQRT3_DIV4;
 	let cr = 19;
-	let mr = 17;
+	const mm = SQRT3_DIV4;
+	const mr = 17;
 
 	TM = new Array(ROUNDS * 2);
 	TR = new Array(ROUNDS * 2);
@@ -243,8 +240,6 @@ function qbar(beta, kmi, kri)
 	beta[1] ^= f2(beta[2], kmi[1], kri[1]);
 	beta[2] ^= f1(beta[3], kmi[0], kri[0]);
 }
-
-const OPS = [f1, f2, f3];
 
 class Cast256Transform extends BlockCipherTransform
 {
@@ -336,7 +331,7 @@ class Cast256DecryptTransform extends Cast256Transform
 		super(true);
 	}
 
-	transformBlock(block, dest, destOffset, subKeys, rounds)
+	transformBlock(block, dest, destOffset, subKeys)
 	{
 		const beta = bytesToInt32sBE(block);
 
