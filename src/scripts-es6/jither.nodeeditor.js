@@ -30,20 +30,35 @@ function getOffset(element, coordSpace)
 	return result;
 }
 
-function createPathStr(a, b)
+function createPathStr(a, b, nodeA, nodeB)
 {
 	const distX = b.x - a.x;
 	//const distY = b.y - a.y;
-	if (distX < 0)
+	if (distX > 0)
 	{
-		const distY = b.y - a.y;
-		const deltaY = Math.round(distY / 4);
-		const deltaX = Math.abs(deltaY);
-		return `M${a.x},${a.y} q ${deltaX},0 ${deltaX},${deltaY} t ${-deltaX},${deltaY} h ${distX} q ${-deltaX},0 ${-deltaX},${deltaY} T ${b.x},${b.y}`;
+		return `M${a.x},${a.y} C${a.x + distX / 3 * 2},${a.y} ${a.x + distX / 3},${b.y} ${b.x},${b.y}`;
 	}
 	else
 	{
-		return `M${a.x},${a.y} C${a.x + distX / 3 * 2},${a.y} ${a.x + distX / 3},${b.y} ${b.x},${b.y}`;
+		// "Loop back"
+		const distY = b.y - a.y;
+		let deltaY1, deltaY2;
+		if (nodeA && nodeB)
+		{
+			// Find Y coordinate exactly between nodes (rather than sockets)
+			const midPoint = Math.floor((nodeA.centerY + nodeB.centerY) / 2);
+			deltaY1 = Math.floor((midPoint - a.y) / 2);
+			deltaY2 = Math.floor((b.y- midPoint) / 2);
+		}
+		else
+		{
+			deltaY1 = deltaY2 = Math.round(distY / 4);
+		}
+
+		let deltaX1 = Math.abs(deltaY1);
+		let deltaX2 = Math.abs(deltaY2);
+
+		return `M${a.x},${a.y} q ${deltaX1},0 ${deltaX1},${deltaY1} t ${-deltaX1},${deltaY1} h ${distX} q ${-deltaX2},0 ${-deltaX2},${deltaY2} T ${b.x},${b.y}`;
 	}
 }
 
@@ -278,7 +293,7 @@ class NodeInput extends NodeSocket
 		}
 		const inPoint = this.connectPoint;
 		const outPoint = this.output.connectPoint;
-		const pathStr = createPathStr(outPoint, inPoint);
+		const pathStr = createPathStr(outPoint, inPoint, this.node, this.output.node);
 		this.path.setAttributeNS(null, "d", pathStr);
 	}
 
@@ -414,6 +429,11 @@ class Node
 	set error(val)
 	{
 		this.element.classList.toggle("error", val);
+	}
+
+	get centerY()
+	{
+		return this.element.offsetTop + Math.floor(this.element.offsetHeight / 2);
 	}
 
 	addInput(name)
@@ -756,7 +776,8 @@ class NodeEditor
 			const path = this.wiringPath;
 			const connectPoint = this.wiringFromPoint;
 			const point = { x: e.pageX - this.element.offsetLeft, y: e.pageY - this.element.offsetTop };
-			const pathStr = createPathStr(connectPoint, point);
+			// Input socket point should be second argument always
+			const pathStr = this.wiringFromSocket.type === INPUT ? createPathStr(point, connectPoint) : createPathStr(connectPoint, point);
 			path.setAttributeNS(null, "d", pathStr);
 		}
 	}
