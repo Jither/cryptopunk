@@ -48,15 +48,15 @@ function createPathStr(a, b, nodeA, nodeB)
 			// Find Y coordinate exactly between nodes (rather than sockets)
 			const midPoint = Math.floor((nodeA.centerY + nodeB.centerY) / 2);
 			deltaY1 = Math.floor((midPoint - a.y) / 2);
-			deltaY2 = Math.floor((b.y- midPoint) / 2);
+			deltaY2 = Math.floor((b.y - midPoint) / 2);
 		}
 		else
 		{
 			deltaY1 = deltaY2 = Math.round(distY / 4);
 		}
 
-		let deltaX1 = Math.abs(deltaY1);
-		let deltaX2 = Math.abs(deltaY2);
+		const deltaX1 = Math.abs(deltaY1);
+		const deltaX2 = Math.abs(deltaY2);
 
 		return `M${a.x},${a.y} q ${deltaX1},0 ${deltaX1},${deltaY1} t ${-deltaX1},${deltaY1} h ${distX} q ${-deltaX2},0 ${-deltaX2},${deltaY2} T ${b.x},${b.y}`;
 	}

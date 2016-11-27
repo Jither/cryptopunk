@@ -235,8 +235,8 @@ class VictorExecuter
 
 		const name = pair[0];
 		let value = pair[1];
-		const valueAsInt = Number(value); // Not parseInt - we want the *entire* string to be a number - 1,15,7 is a string
-		if (isNaN(valueAsInt))
+		const valueIsInt = /^[0-9]+$/.test(value); // We want the *entire* string to be a number - 1,15,7 is a string
+		if (!valueIsInt)
 		{
 			if (value === "true" || value === "false")
 			{
@@ -245,7 +245,7 @@ class VictorExecuter
 		}
 		else
 		{
-			value = valueAsInt;
+			value = parseInt(value, 10);
 		}
 
 		this.options[name] = value;

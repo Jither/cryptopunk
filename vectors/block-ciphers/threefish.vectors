@@ -8,6 +8,9 @@ c-format: hex
 t-format: hex
 
 # From: https://www.schneier.com/code/skein_NIST_CD_102610.zip - skein_golden_kat_internals.txt
+# These are extracted from the intermediate values in the test vectors for internals of Skein. Note that the last
+# intermediate value of the Threefish test vectors is *after plaintext feed forward* - the actual result of Threefish
+# is the "state after key injection #N".
 
 title: NIST (extracted) 1.3 test vector
 
@@ -46,3 +49,91 @@ t: 000102030405060708090a0b0c0d0e0f
 k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f
 p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddcdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6c5c4c3c2c1c0bfbebdbcbbbab9b8b7b6b5b4b3b2b1b0afaeadacabaaa9a8a7a6a5a4a3a2a1a09f9e9d9c9b9a999897969594939291908f8e8d8c8b8a89888786858483828180
 c: a6654ddbd73cc3b05dd777105aa849bce49372eaaffc5568d254771bab85531c94f780e7ffaae430d5d8af8c70eebbe1760f3b42b737a89cb363490d670314bd8aa41ee63c2e1f45fbd477922f8360b388d6125ea6c7af0ad7056d01796e90c83313f4150a5716b30ed5f569288ae974ce2b4347926fce57de44512177dd7cde
+
+# From: http://www.skein-hash.info/sites/default/files/skein_NIST_CD_091409.zip - skein_golden_kat_internals.txt
+# These are extracted from the intermediate values in the test vectors for internals of Skein. Note that the last
+# intermediate value of the Threefish test vectors is *after plaintext feed forward* - the actual result of Threefish
+# is the "state after key injection #N".
+
+title: NIST (extracted) 1.2 test vector (different key schedule constant)
+
+option: variant = 1.2
+option: blockSize = 256
+
+t: repeat 00 x 16
+k: repeat 00 x 32
+p: repeat 00 x 32
+c: eb373aaeb6f28d3f6343799c778aadae98c87a2888b43842b06295c7d76af54b
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0
+c: cae203508c25dbd5d6e9b1b764da7b692e1cd4652db8fb95476251746e1ef88e
+
+option: blockSize = 512
+
+t: repeat 00 x 16
+k: repeat 00 x 64
+p: repeat 00 x 64
+c: 54c48fea2dac72222c0380d1a1a9f7684d47bd90fc491724dc599e1824b6b30ae22db97e841482db209c0e6974c2111ad6c691984919c11f987fc2d132379fb4
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddcdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6c5c4c3c2c1c0
+c: 950de978fcf76e5dadadfd196621e6f6d5c70c5bc509c019ddf8a4e0981828a0bd7c4757ab6715848d126c0d7cbc3618e81add4ec67703a1f26d207e17f051ae
+
+option: blockSize = 1024
+
+t: repeat 00 x 16
+k: repeat 00 x 128
+p: repeat 00 x 128
+c: 71bdc133e22bdc347d4eb02d9a7535f82de8d4c32622e0fd492083aace875edc6114e11fd928665e3a2947f2e92897d2f62a2afbb98d20a9e2a5ddfc6cdad498644874786afe373b7853672a6da106725e946b45d48ed270ed4843f1a5ac7a2397cc46f04d3736d8536612823db0ac1ffaa29e6fcc6eab4ff3f36cfaec59468a
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddcdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6c5c4c3c2c1c0bfbebdbcbbbab9b8b7b6b5b4b3b2b1b0afaeadacabaaa9a8a7a6a5a4a3a2a1a09f9e9d9c9b9a999897969594939291908f8e8d8c8b8a89888786858483828180
+c: 77dc85b15aad64241ce371d5bfc84de05a91a18034a7e69c33fee38523790836f568193e7b1acd3269fff1fc4db043235e97142620444cb937079f485a8c1aa5dff872f15edd018bec0ccd44fa7a52c6770a1427335376a94ed1713919aeb31db7b012e958284acae5226b0ea5a865764a9cf92c5a3427817e413eccf678f29e
+
+# From: http://www.skein-hash.info/sites/default/files/skein_NIST_CD_121508.zip - skein_golden_kat_internals.txt
+# These are extracted from the intermediate values in the test vectors for internals of Skein. Note that the last
+# intermediate value of the Threefish test vectors is *after plaintext feed forward* - the actual result of Threefish
+# is the "state after key injection #N".
+
+title: NIST (extracted) 1.1 test vector (different round constants)
+
+option: variant = 1.1
+option: blockSize = 256
+
+t: repeat 00 x 16
+k: repeat 00 x 32
+p: repeat 00 x 32
+c: e39756f9f3b6cf3ff91d2bc3d324ce618574ea1623b2367f88382e2a93afa858
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0
+c: 1e9b8f641bed9511be4f40df57c3d7a1bc42718edd7af7139b3d4c52b2a920f8
+
+option: blockSize = 512
+
+t: repeat 00 x 16
+k: repeat 00 x 64
+p: repeat 00 x 64
+c: 408be942494492eab19daa3e96ad19aedfc41f4e55f8a2626c1e46d54547a713d43b21f0de1a10881ed5c4adefdad1c4172cd768c8fc28d0dde9df018042fe3e
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddcdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6c5c4c3c2c1c0
+c: 869ae12210e51d3b0736399f2acb400de230600b13e62f1df7596a146232d281dfbf127a65571b9a798906c719678394c50d995138fd83f2bfa54a3bc350d2f0
+
+option: blockSize = 1024
+
+t: repeat 00 x 16
+k: repeat 00 x 128
+p: repeat 00 x 128
+c: 43cf2a34cb1668e38c2e19ea1757d6b31ac6dead02fea99459d8a0331bdc7273a1f7e9495d60402d1f8b43e48a5ac4f9d9d30965835e07f5455b87f963fdbca6df66b4446b91ffdd27634573f6e0e4c19633cf80da8fe11b890bcf639ac67b347f87c5daa1acc1b8cd0303f4a9168c0b9b7b78baa6fc68db2cbd3337b8519170
+
+t: 000102030405060708090a0b0c0d0e0f
+k: 101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f606162636465666768696a6b6c6d6e6f707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f
+p: fffefdfcfbfaf9f8f7f6f5f4f3f2f1f0efeeedecebeae9e8e7e6e5e4e3e2e1e0dfdedddcdbdad9d8d7d6d5d4d3d2d1d0cfcecdcccbcac9c8c7c6c5c4c3c2c1c0bfbebdbcbbbab9b8b7b6b5b4b3b2b1b0afaeadacabaaa9a8a7a6a5a4a3a2a1a09f9e9d9c9b9a999897969594939291908f8e8d8c8b8a89888786858483828180
+c: 44e66b3125aa434261adbef4c310101cef1d185272b43132d6e67e75692b2851a7e3acf8dfd3d6c6dfea2724150d287e8c2babff27e971fac163781be181f2bf572ab84862259ef8fa628a77a61d128f2f1517bd518592fe9382ff670d848adab31582dccf36c2c607153aae34a2853ff0c14cf462c903cc2860734ae50c04b1

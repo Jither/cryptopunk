@@ -186,7 +186,7 @@ class Sha512TruncatedTransform extends Sha512Transform
 		if (result)
 		{
 			// Clone for future-proofing (when we do 64-bit arithmetic in-place)
-			return result.map(h => { return { hi: h.hi, lo: h.lo }; });
+			return result.map(h => ({ hi: h.hi, lo: h.lo }));
 		}
 
 		// Truncated SHA-512 uses a generated IV that is:
@@ -204,7 +204,7 @@ class Sha512TruncatedTransform extends Sha512Transform
 
 		TRUNCATED_IV_CACHE[size] = state;
 		// Clone for future-proofing (when we do 64-bit arithmetic in-place)
-		return state.map(h => { return { hi: h.hi, lo: h.lo }; });
+		return state.map(h => ({ hi: h.hi, lo: h.lo }));
 	}
 }
 
