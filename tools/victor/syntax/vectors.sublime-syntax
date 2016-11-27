@@ -39,7 +39,7 @@ contexts:
         2: punctuation.separator
       push: value
   value:
-    - match: "\\\\([bfnrtv]|x[a-zA-Z0-9]{2}|u[a-zA-Z0-9]{4})"
+    - match: "\\\\([bfnrtv]|x[a-zA-Z0-9]{2}|u[a-zA-Z0-9]{4}|u\\{[a-zA-Z0-9]{1,}\\})"
       scope: constant.character.escape
     - match: "(repeat)\\s+([a-zA-Z0-9]+)\\s*(x)\\s*(\\d+)"
       captures:

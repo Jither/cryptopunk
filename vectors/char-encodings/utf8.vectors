@@ -20,3 +20,67 @@ title   : UTF-8 SMP
 t: 𠜎𠾴𢵌𨳒
 b: f0a09c8ef0a0beb4f0a2b58cf0a8b392
 
+# From: http://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
+
+title   : Markus Kuhn test vector
+mode    : encode-text
+encode  : BytesToUtf8Transform
+option  : stripCC = false
+
+# 1 Some correct UTF-8 text
+b: ce ba e1 bd b9 cf 83 ce bc ce b5
+t: κόσμε
+
+# 2.1 First possible sequence of a certain length
+b: 00
+t: \u0000
+
+b: c2 80
+t: \u0080
+
+b: e0 a0 80
+t: \u0800
+
+b: f0 90 80 80
+t: \u{10000}
+
+# U+200000 - not representable in UTF-16, and hence not in Javascript
+# b: F8 88 80 80 80
+
+# U+400000 - not representable in UTF-16, and hence not in Javascript
+# b: FC 84 80 80 80 80
+
+# 2.2 Last possible sequence of a certain length
+b: 7f
+t: \u007f
+
+b: df bf
+t: \u07ff
+
+b: ef bf bf
+t: \uffff
+
+# U+1FFFFFF - not representable in UTF-16, and hence not in Javascript
+# b: F7 BF BF BF
+
+# U+3FFFFFF - not representable in UTF-16, and hence not in Javascript
+# b: FB BF BF BF BF
+
+# U+7FFFFFF - not representable in UTF-16, and hence not in Javascript
+# b: FD BF BF BF BF BF
+
+# Other boundary conditions
+b: ed 9f bf
+t: \ud7ff
+
+b: ee 80 80
+t: \ue000
+
+b: ef bf bd
+t: \ufffd
+
+b: f4 8f bf bf
+t: \u{10ffff}
+
+# U+110000 - not representable in UTF-16, and hence not in Javascript
+# b: f4 90 80 80

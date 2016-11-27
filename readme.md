@@ -54,7 +54,7 @@ Supported
 * Speck
 * SQUARE
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
-* Threefish
+* Threefish (1.1, 1.2 and 1.3 variants)
 * Treyfer
 * Twofish
 * Browser-native AES, RSA (crypto.subtle)
