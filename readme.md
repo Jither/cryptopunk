@@ -18,6 +18,7 @@ Supported
 * Columnar transposition
 * Playfair
 * Polybius square
+* Rail fence
 * ROT-X / Caesar (with specific support for ROT-5, ROT-18, ROT-47)
 * Skip
 * Simple substitution
@@ -111,10 +112,14 @@ TODO
 
 ### Classical Ciphers
 * Alberti?
+* AMSCO
 * Autokey ciphers (e.g. Vigenère)
 * Bacon
+* Bazeries
 * Beaufort (= Vigènere + Atbash)
+* Cadenius
 * Chaocipher
+* Condi
 * DRYAD
 * Dvorak encoding?
 * Four-square
@@ -124,7 +129,6 @@ TODO
 * Keyword Cipher (based on caesar)
 * Myszkowski
 * Null
-* Rail Fence
 * Straddling Checkerboard
 * Tap Code
 * Two-square
