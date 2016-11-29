@@ -16,6 +16,7 @@ Supported
 * Affine
 * Bifid
 * Columnar transposition
+* Letter-Number (a = 1, b = 2, c = 3...)
 * Playfair
 * Polybius square
 * Rail fence
@@ -23,7 +24,7 @@ Supported
 * Skip
 * Simple substitution
 * Trifid
-* Vigenère
+* Vigenère, Autokey Vigenère
 
 ### Mechanical Ciphers
 
@@ -116,7 +117,7 @@ TODO
 * Autokey ciphers (e.g. Vigenère)
 * Bacon
 * Bazeries
-* Beaufort (= Vigènere + Atbash)
+* Beaufort (= Vigenère + Atbash)
 * Cadenius
 * Chaocipher
 * Condi

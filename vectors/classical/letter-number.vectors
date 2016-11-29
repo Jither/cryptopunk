@@ -1,0 +1,27 @@
+mode    : encrypt-decrypt-text
+encrypt : LetterNumberEncryptTransform
+decrypt : LetterNumberDecryptTransform
+p-format: ascii
+c-format: ascii
+
+p: gurcreevacntrfjvyyuryclbhsvaqlbhepnyyvatohgqbagorqhcrqphgqbjagurjbbqfgurlorreqbf
+c: 7-21-18-3-18-5-5-22-1-3-14-20-18-6-10-22-25-25-21-18-25-3-12-2-8-19-22-1-17-12-2-8-5-16-14-25-25-22-1-20-15-8-7-17-2-1-7-15-18-17-8-3-18-17-16-8-7-17-2-10-1-7-21-18-10-2-2-17-6-7-21-18-12-15-18-18-5-17-2-6
+
+option  : leadingZero = true
+
+p: gurcreevacntrfjvyyuryclbhsvaqlbhepnyyvatohgqbagorqhcrqphgqbjagurjbbqfgurlorreqbf
+c: 07-21-18-03-18-05-05-22-01-03-14-20-18-06-10-22-25-25-21-18-25-03-12-02-08-19-22-01-17-12-02-08-05-16-14-25-25-22-01-20-15-08-07-17-02-01-07-15-18-17-08-03-18-17-16-08-07-17-02-10-01-07-21-18-10-02-02-17-06-07-21-18-12-15-18-18-05-17-02-06
+
+option   : leadingZero = true
+option   : separator = x
+option   : start = 7
+
+p: gurcreevacntrfjvyyuryclbhsvaqlbhepnyyvatohgqbagorqhcrqphgqbjagurjbbqfgurlorreqbf
+c: 13x27x24x09x24x11x11x28x07x09x20x26x24x12x16x28x31x31x27x24x31x09x18x08x14x25x28x07x23x18x08x14x11x22x20x31x31x28x07x26x21x14x13x23x08x07x13x21x24x23x14x09x24x23x22x14x13x23x08x16x07x13x27x24x16x08x08x23x12x13x27x24x18x21x24x24x11x23x08x12
+
+# This one won't decrypt to the exact formatted text, so we only test encryption
+mode    : encrypt-text
+clear   : options
+
+p: The Perrin pages will help you find your calling, but dont be duped: Cut down the woods - they be Erdos.
+c: 20-8-5-16-5-18-18-9-14-16-1-7-5-19-23-9-12-12-8-5-12-16-25-15-21-6-9-14-4-25-15-21-18-3-1-12-12-9-14-7-2-21-20-4-15-14-20-2-5-4-21-16-5-4-3-21-20-4-15-23-14-20-8-5-23-15-15-4-19-20-8-5-25-2-5-5-18-4-15-19

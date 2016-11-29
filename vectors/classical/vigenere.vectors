@@ -12,3 +12,10 @@ title   : Vigenère test vector
 k: hellofriend
 p: Is any of it real? I mean, look at this. Look at it! A world built on fantasy. Synthetic emotions in the form of pills. Psychological warfare in the form of advertising. Mind-altering chemicals in the form of... food!
 c: Pw lym tw qx ehhp? T xsfe, tsbn hx eswx. Cwsx da me! L ktith oxppe zb krvxnvf. Wjyhmvbmp htsetcsj qr gkl jzca tw xmyoz. Tdjqmftstljew howwivr lu xsp ttiu ss dkzpchnjqrt. Ppro-lzyvzmaj jlpxwhrtw vq alp qcwd wj... srvh!
+
+title   : Vigenère autokey test vector
+option  : autokey = true
+
+k: hellofriend
+p: Is any of it real? I mean, look at this. Look at it! A world built on fantasy. Synthetic emotions in the form of pills. Psychological warfare in the form of advertising. Mind-altering chemicals in the form of... food!
+c: Pw lym tw qx ehid? I zcos, thfo ae btms. Yzcy kt bm! H egczr lubtm oj trywbmg. Drbgmegbc wkgrvhuw bv vlq thza bx xvesw. Ugpovtawrtupd ucytlfk qp tsa ffwm fj iqolvywjubl. Mlih-rebwzvts kuhmtveca vt voi rwtm zx... nbhk!

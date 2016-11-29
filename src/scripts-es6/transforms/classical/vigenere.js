@@ -1,6 +1,7 @@
 import { Transform, TransformError } from "../transforms";
 import { mod } from "../../cryptopunk.math";
 import { restoreFormatting } from "./cryptopunk.classical-utils";
+import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 class VigenereTransform extends Transform
 {
@@ -13,6 +14,7 @@ class VigenereTransform extends Transform
 			.addInput("string", "Alphabet")
 			.addInput("string", "Key")
 			.addOutput("string", decrypt ? "Plaintext" : "Ciphertext")
+			.addOption("autokey", "Autokey", false)
 			.addOption("formatted", "Formatted", true)
 			.addOption("ignoreCase", "Ignore case", true);
 	}
@@ -53,20 +55,46 @@ class VigenereTransform extends Transform
 		let result = "";
 
 		let keyIndex = 0;
+		let autokeying = false;
+
 		for (let i = 0; i < str.length; i++)
 		{
 			const c = str.charAt(i);
 			const index = alphabet.indexOf(c);
+			// Skip any characters not in alphabet entirely (they may be reinstated by restoreFormatting)
 			if (index < 0)
 			{
 				continue;
 			}
-			const keyChar = key.charAt(keyIndex++);
-			const x = alphabet.indexOf(keyChar);
-			if (keyIndex >= key.length)
+
+			// If no more key characters, start over - or start using plaintext as key
+			if (!autokeying && keyIndex >= key.length)
 			{
+				if (this.options.autokey)
+				{
+					autokeying = true;
+				}
 				keyIndex = 0;
 			}
+
+			let keyChar;
+			if (autokeying)
+			{
+				do
+				{
+					keyChar = this.decrypt ? result.charAt(keyIndex++) : str.charAt(keyIndex++);
+				}
+				// Only use autokey characters actually in alphabet (plaintext may include
+				// non-alphabetic characters which are skipped above when it's used *as* plaintext,
+				// but not when it's used as key):
+				while (alphabet.indexOf(keyChar) < 0);
+			}
+			else
+			{
+				keyChar = key.charAt(keyIndex++);
+			}
+
+			const x = alphabet.indexOf(keyChar);
 			const outIndex = this.decrypt ? index - x : index + x;
 			result += alphabet.charAt(mod(outIndex, alphabetLength));
 		}
