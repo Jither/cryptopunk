@@ -16,6 +16,7 @@ Supported
 * Affine
 * Bifid
 * Columnar transposition
+* Hill Cipher
 * Letter-Number (a = 1, b = 2, c = 3...)
 * Playfair
 * Polybius square
@@ -114,7 +115,6 @@ TODO
 ### Classical Ciphers
 * Alberti?
 * AMSCO
-* Autokey ciphers (e.g. Vigenère)
 * Bacon
 * Bazeries
 * Beaufort (= Vigenère + Atbash)
@@ -125,7 +125,6 @@ TODO
 * Dvorak encoding?
 * Four-square
 * Great Cipher?
-* Hill Cipher
 * Jefferson Wheel Cipher
 * Keyword Cipher (based on caesar)
 * Myszkowski

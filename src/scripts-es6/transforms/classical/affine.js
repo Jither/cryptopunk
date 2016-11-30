@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "../transforms";
-import { coprime, mod } from "../../cryptopunk.math";
+import { isCoPrime, mod } from "../../cryptopunk.math";
 import { restoreFormatting } from "./cryptopunk.classical-utils";
 
 class AffineEncryptTransform extends Transform
@@ -24,7 +24,7 @@ class AffineEncryptTransform extends Transform
 		const b = this.options.b;
 
 		// a must be coprime with alphabetLength (m) in order for the message to be decryptable
-		if (!coprime(a, alphabetLength))
+		if (!isCoPrime(a, alphabetLength))
 		{
 			throw new TransformError(`a (${a}) must be coprime with alphabet length (${alphabetLength}) for message to be decryptable`);
 		}

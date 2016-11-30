@@ -1,9 +1,9 @@
-function coprime(a, b)
+function isCoPrime(a, b)
 {
 	return gcd(a,b) === 1;
 }
 
-// Finds greatest common divisor of two numbers
+// Finds greatest common divisor of two numbers (Euclidean algorithm)
 function gcd(a, b)
 {
 	// a should be largest
@@ -74,11 +74,44 @@ function mod(n, m)
 	return ((n % m) + m) % m;
 }
 
+// Finds the multplicative inverse of a mod m
+function modularInverse(a, m)
+{
+	if (a == null || m == null)
+	{
+		throw new Error("Invalid arguments to inverseMod");
+	}
+
+	// Extended Euclidian algorithm finds Bézout identity
+	// (we don't need the second Bézout coefficient or the actual gcd):
+	let t = 0,
+		newT = 1,
+		r = m,
+		newR = a;
+
+	while (newR !== 0)
+	{
+		const quotient = Math.floor(r / newR);
+		[t, newT] = [newT, t - quotient * newT];
+		[r, newR] = [newR, r - quotient * newR];
+	}
+	if (r > 1)
+	{
+		return null;
+	}
+	if (t < 0)
+	{
+		t += m;
+	}
+	return t;
+}
+
 export {
-	coprime,
+	isCoPrime,
 	gcd,
 	gfLog2Tables,
 	isPerfectCube,
 	isPerfectSquare,
-	mod
+	mod,
+	modularInverse
 };

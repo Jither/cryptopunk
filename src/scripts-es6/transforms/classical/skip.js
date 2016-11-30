@@ -1,5 +1,5 @@
 import { Transform, TransformError } from "../transforms";
-import { coprime, mod } from "../../cryptopunk.math";
+import { isCoPrime, mod } from "../../cryptopunk.math";
 
 // TODO: DRY (combine encrypt/decrypt - mostly the same)
 class SkipEncryptTransform extends Transform
@@ -18,7 +18,7 @@ class SkipEncryptTransform extends Transform
 		const skip = this.options.skip;
 		const strLength = str.length;
 
-		if (!coprime(skip, strLength))
+		if (!isCoPrime(skip, strLength))
 		{
 			throw new TransformError(`Skip (${skip}) should be co-prime with message length (${strLength}) in order to encrypt the full message.`);
 		}
@@ -54,7 +54,7 @@ class SkipDecryptTransform extends Transform
 		const skip = this.options.skip;
 		const strLength = str.length;
 
-		if (!coprime(skip, strLength))
+		if (!isCoPrime(skip, strLength))
 		{
 			throw new TransformError(`Skip (${skip}) should be co-prime with message length (${strLength}) in order to decrypt the full message.`);
 		}
