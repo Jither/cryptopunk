@@ -1,7 +1,6 @@
 import { Transform, TransformError } from "../transforms";
 import { mod } from "../../cryptopunk.math";
 import { restoreFormatting } from "./cryptopunk.classical-utils";
-import { removeWhiteSpace } from "../../cryptopunk.strings";
 
 class VigenereTransform extends Transform
 {

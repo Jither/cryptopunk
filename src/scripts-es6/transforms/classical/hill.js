@@ -108,7 +108,7 @@ class HillTransform extends Transform
 
 		if (matrixInfo.inverse === null)
 		{
-			throw new TransformError("Key matrix must be invertible (this one isn't).");
+			throw new TransformError("Couldn't determine inverse key matrix.");
 		}
 
 		if (!isCoPrime(matrixInfo.determinant, alphabetLength))
@@ -117,9 +117,9 @@ class HillTransform extends Transform
 		}
 
 		this.lastKey = {
-			alphabet: alphabet,
-			key: key,
-			matrix: matrix,
+			alphabet,
+			key,
+			matrix,
 			inverse: matrixInfo.inverse
 		};
 
@@ -131,7 +131,6 @@ class HillTransform extends Transform
 		const matrixDim = matrix.length;
 		const blockVector = new Array(matrixDim);
 
-		let i = 0;
 		let result = "";
 
 		// Process string in blocks of [matrix dimension] characters

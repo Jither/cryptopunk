@@ -1,4 +1,4 @@
-import { Transform, TransformError } from "../transforms";
+import { Transform } from "../transforms";
 
 const RX_DIGITS = /\d+/g;
 
@@ -19,12 +19,10 @@ class LetterNumberEncryptTransform extends Transform
 	{
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
 
-		const original = str;
-
 		str = str.toUpperCase();
 		alphabet = alphabet.toUpperCase();
 
-		let result = [];
+		const result = [];
 		for (let i = 0; i < str.length; i++)
 		{
 			const c = str.charAt(i);
@@ -62,7 +60,7 @@ class LetterNumberDecryptTransform extends Transform
 
 		let result = "";
 		let match;
-		while (match = RX_DIGITS.exec(str))
+		while (match = RX_DIGITS.exec(str)) // eslint-disable-line no-cond-assign
 		{
 			const index = parseInt(match[0], 10) - this.options.start;
 			if (index >= 0 && index < alphabet.length)

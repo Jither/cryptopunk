@@ -39,7 +39,7 @@ test("Gauss-Jordan dimension 3", testGaussJordan,
 	17
 );
 
-test("Gauss-Jordan dimension 3", testGaussJordan,
+test("Gauss-Jordan dimension 3 - composite 1st column", testGaussJordan,
 	[
 		[6, 24, 1],
 		[13, 16, 10],
@@ -81,7 +81,7 @@ test("Gauss-Jordan dimension 2", testGaussJordan,
 	4
 );
 
-test("Gauss-Jordan dimension 2", testGaussJordan,
+test("Gauss-Jordan dimension 2 - composite 1st column", testGaussJordan,
 	[
 		[3, 2], 
 		[2, 1]

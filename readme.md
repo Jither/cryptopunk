@@ -88,15 +88,21 @@ Supported
 * WHIRLPOOL (0, T, final)
 
 ### Checksums
+
 * ADLER-32
 * BSD
 * CRC (multiple variants)
 * Fletcher (16, 32, 64)
 
+### Text representations
+
+* Morse
+
 ### Byte <-> Text conversions
 
 * ASCII
 * Code pages (ISO-8859, MacOS Roman, Windows 1252...)
+* EBCDIC
 * UCS-2
 * UTF-8
 * UTF-16
@@ -113,6 +119,7 @@ TODO
 ----
 
 ### Classical Ciphers
+
 * Alberti?
 * AMSCO
 * Bacon
@@ -135,6 +142,7 @@ TODO
 * VIC
 
 ### Mechanical Ciphers
+
 * Japanese (PURPLE etc.)
 * US
 * Lorenz
@@ -173,6 +181,7 @@ TODO
 * MAGENTA
 * MARS
 * MISTY1 / MISTY2
+* PANAMA
 * S-1
 * SAFER / SAFER+ / SAFER++
 * SC2000
@@ -212,27 +221,70 @@ TODO
 * xmx
 * Zodiac
 
+### Block cipher modes
+
+* Electronic Code Book (ECB) (basically already done)
+* Cipher Block Chaining (CBC)
+* Propagating Cipher Block Chaining (PCBC)
+* Cipher Feedback (CFB)
+* Output Feedback (OFB)
+* Counter (CTR)
+* Authenticated modes? (OCB, EAX, CWC, CCM, GCM, SGCM, XCBC, IACBC)
+
 ### Hashes
 
 * BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
 * CubeHash
+* ECOH
 * FSB
 * Fugue
 * Grøstl
 * HAS-V
 * JH
 * MD6
-* PANAMA
 * RadioGatún
 * Skein
 * Snefru
 * Spectral Hash
 * SWIFFT
 
-## Byte <-> Text
+### Key-Derivation Functions
+
+* Bcrypt
+* HKDF
+* Lyra, Lyra2
+* PBKDF2
+* Scrypt
+
+### Checksums
+
+* SYSV
+
+### Non-cryptographic hashes (uncertain)
+
+* Buzhash
+* CityHash
+* FarmHash
+* FNV
+* Jenkins
+* MurmurHash
+* NHash
+* Pearson
+* PJW, ElfHash
+* SpookyHash
+* SuperFastHash
+* xxHash
+* HighwayHash
+
+### Text representations
+
 * Baudot / ITA-2 / MTK-2 / US TTY
-* EBCDIC
+* Braille
+
+### Byte <-> Text
+
+* More EBCDIC code pages
 * UTF-32
 
 Terminology and conventions

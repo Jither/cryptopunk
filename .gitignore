@@ -11,3 +11,4 @@ references/**/obj/
 *.pyc
 vectors/transforms.js.map
 vectors/transforms.js
+deploy/

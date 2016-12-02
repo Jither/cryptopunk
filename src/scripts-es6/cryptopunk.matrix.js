@@ -37,7 +37,7 @@ function _gaussJordan(matrix, m, startCol)
 	let det = 1;
 	for (let i = 0; i < dim; i++)
 	{
-		let col = (startCol + i) % dim;
+		const col = (startCol + i) % dim;
 		let row = col;
 		// Swap row if current column entry is 0 or has no modular inverse:
 		while (row < dim && (mat[row][col] === 0 || modularInverse(mat[row][col], m) === null))
@@ -46,7 +46,7 @@ function _gaussJordan(matrix, m, startCol)
 			row++;
 		}
 
-		// If we found no appropriate row to swap with, we'll find no inverse:
+		// If we found no appropriate row to swap with, continue to next column:
 		if (row === dim)
 		{
 			return null;
@@ -57,21 +57,25 @@ function _gaussJordan(matrix, m, startCol)
 		{
 			[mat[col], mat[row]] = [mat[row], mat[col]];
 			[inv[col], inv[row]] = [inv[row], inv[col]];
+			// Swapping multiplies determinant with -1
 			det = -det;
 			//console.log("Swapped", col, ":", matrixToString(mat));
 		}
 
-		let cM = mat[col],
+		// cM and cI: *Row* at current column index of matrix and inverse respectively
+		const cM = mat[col],
 			cI = inv[col];
 
 		for (row = 0; row < dim; row++)
 		{
+			// rM and rI: Current row of matrix and inverse respectively
 			const rM = mat[row];
 			const rI = inv[row];
 
+			// If row contains column's identity element, do scalar multiplication with x^-1 mod m
 			if (row === col)
 			{
-				const factor = modularInverse(cM[col], m);
+				const factor = modularInverse(rM[col], m);
 				//console.log(factor);
 				if (factor === null)
 				{
@@ -85,6 +89,7 @@ function _gaussJordan(matrix, m, startCol)
 				det = (det * factor) % m;
 				//console.log("Multiplied (", factor, ")", col, ":", matrixToString(mat));
 			}
+			// For the other rows, do scalar addition of -[current row]
 			else if (rM[col] !== 0)
 			{
 				let factor = modularInverse(cM[col], m);
@@ -92,7 +97,7 @@ function _gaussJordan(matrix, m, startCol)
 				{
 					return null;
 				}
-				factor *= rM[col]
+				factor *= rM[col];
 				//console.log(factor);
 				for (let s = 0; s < dim; s++)
 				{

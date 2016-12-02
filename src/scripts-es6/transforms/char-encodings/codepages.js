@@ -79,19 +79,20 @@ const CODE_PAGES = {
 };
 /* eslint-enable camelcase */
 
-class CodePageToBytesTransform extends Transform
+class BaseCodePageToBytesTransform extends Transform
 {
-	constructor()
+	constructor(codePages, defaultValue, names, values)
 	{
 		super();
+		this.codePages = codePages;
 		this.addInput("string", "String")
 			.addOutput("bytes", "Bytes")
-			.addOption("codepage", "Code page", "iso-8859-1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES });
+			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values: values });
 	}
 
 	transform(str)
 	{
-		const codepage = CODE_PAGES[this.options.codepage];
+		const codepage = this.codePages[this.options.codepage];
 
 		const result = new Uint8Array(str.length);
 		for (let i = 0; i < str.length; i++)
@@ -108,20 +109,21 @@ class CodePageToBytesTransform extends Transform
 	}
 }
 
-class BytesToCodePageTransform extends Transform
+class BaseBytesToCodePageTransform extends Transform
 {
-	constructor()
+	constructor(codePages, defaultValue, names, values)
 	{
 		super();
+		this.codePages = codePages;
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("codepage", "Code page", "iso-8859-1", { type: "select", texts: CODE_PAGE_NAMES, values: CODE_PAGE_VALUES })
+			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values: values })
 			.addOption("stripCC", "Strip control codes", true);
 	}
 
 	transform(bytes)
 	{
-		const codepage = CODE_PAGES[this.options.codepage];
+		const codepage = this.codePages[this.options.codepage];
 
 		let result = "";
 		for (let i = 0; i < bytes.length; i++)
@@ -143,7 +145,25 @@ class BytesToCodePageTransform extends Transform
 	}
 }
 
+class CodePageToBytesTransform extends BaseCodePageToBytesTransform
+{
+	constructor()
+	{
+		super(CODE_PAGES, "iso-8859-1", CODE_PAGE_NAMES, CODE_PAGE_VALUES);
+	}
+}
+
+class BytesToCodePageTransform extends BaseBytesToCodePageTransform
+{
+	constructor()
+	{
+		super(CODE_PAGES, "iso-8859-1", CODE_PAGE_NAMES, CODE_PAGE_VALUES);
+	}
+}
+
 export {
+	BaseCodePageToBytesTransform,
+	BaseBytesToCodePageTransform,
 	BytesToCodePageTransform,
 	CodePageToBytesTransform
 };
