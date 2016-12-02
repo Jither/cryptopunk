@@ -315,6 +315,23 @@ function restoreFormatting(text, source, sourceAlphabet, ignoreCase, textCaseMat
 	return result;
 }
 
+function removeNonAlphabetCharacters(str, alphabet)
+{
+	let result = "";
+	for (let i = 0; i < str.length; i++)
+	{
+		const c = str.charAt(i);
+		if (alphabet.indexOf(c) < 0)
+		{
+			continue;
+		}
+		result += c;
+	}
+	return result;
+}
+
+
+
 export {
 	columnarTransposition,
 	depolybius,
@@ -324,5 +341,6 @@ export {
 	inverseColumnarTransposition,
 	polybius,
 	polybius3,
-	restoreFormatting
+	restoreFormatting,
+	removeNonAlphabetCharacters
 };

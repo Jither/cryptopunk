@@ -1,0 +1,36 @@
+mode    : encrypt-decrypt-text
+encrypt : HillEncryptTransform
+decrypt : HillDecryptTransform
+arg     : a (alphabet)
+k-format: ascii
+p-format: ascii
+c-format: ascii
+a-format: ascii
+
+title   : Wikipedia example
+
+k: GYBNQKURP
+p: act
+c: poh
+
+k: GYBNQKURP
+p: cat
+c: fin
+
+k: DDCF
+p: help
+c: hiat
+
+title    : interactive-maths.com example
+
+k: HILL
+p: short example
+c: apadj tftwlfj
+
+k: BACKUPABC
+p: retreat nowxx
+c: dpqrqev kpqlr
+
+k: ALPHABETA
+p: we are safe
+c: sy ich oler

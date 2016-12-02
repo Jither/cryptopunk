@@ -39,6 +39,22 @@ test("Gauss-Jordan dimension 3", testGaussJordan,
 	17
 );
 
+test("Gauss-Jordan dimension 3", testGaussJordan,
+	[
+		[6, 24, 1],
+		[13, 16, 10],
+		[20, 17, 15]
+
+	],
+	26,
+	[
+		[8, 5, 10],
+		[21, 8, 21],
+		[21, 12, 8]
+	],
+	25
+);
+
 test("Gauss-Jordan dimension 2", testGaussJordan,
 	[
 		[7, 8], 
@@ -63,6 +79,19 @@ test("Gauss-Jordan dimension 2", testGaussJordan,
 		[1, 0]
 	],
 	4
+);
+
+test("Gauss-Jordan dimension 2", testGaussJordan,
+	[
+		[3, 2], 
+		[2, 1]
+	],
+	6,
+	[
+		[5, 2],
+		[2, 3]
+	],
+	5
 );
 
 test("Gauss-Jordan dimension 5", testGaussJordan,

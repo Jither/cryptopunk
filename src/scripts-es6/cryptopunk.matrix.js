@@ -27,30 +27,29 @@ function clone(matrix)
 	return result;
 }
 
-function gaussJordan(matrix, m)
+function _gaussJordan(matrix, m, startCol)
 {
 	const dim = matrix.length;
 
 	const mat = clone(matrix);
+	//console.log("Input:", matrixToString(mat));
 	let inv = getIdentity(dim);
 	let det = 1;
-
-	//console.log("Input:", matrixToString(mat));
-
-	for (let col = 0; col < dim; col++)
+	for (let i = 0; i < dim; i++)
 	{
+		let col = (startCol + i) % dim;
 		let row = col;
 		// Swap row if current column entry is 0 or has no modular inverse:
 		while (row < dim && (mat[row][col] === 0 || modularInverse(mat[row][col], m) === null))
 		{
+			//console.log("modular inverse:", modularInverse(mat[row][col], m));
 			row++;
 		}
 
 		// If we found no appropriate row to swap with, we'll find no inverse:
-		if (row === dim || mat[row][col] === 0)
+		if (row === dim)
 		{
-			inv = null;
-			break;
+			return null;
 		}
 
 		// Do the actual swapping if needed:
@@ -70,24 +69,14 @@ function gaussJordan(matrix, m)
 			const rM = mat[row];
 			const rI = inv[row];
 
-			if (row !== col)
-			{
-				if (rM[col] !== 0)
-				{
-					const factor = modularInverse(cM[col], m) * rM[col];
-					//console.log(factor);
-					for (let s = 0; s < dim; s++)
-					{
-						rM[s] = mod(rM[s] - cM[s] * factor, m);
-						rI[s] = mod(rI[s] - cI[s] * factor, m);
-					}
-					//console.log("Added", col, ":", matrixToString(mat));
-				}
-			}
-			else
+			if (row === col)
 			{
 				const factor = modularInverse(cM[col], m);
 				//console.log(factor);
+				if (factor === null)
+				{
+					return null;
+				}
 				for (let s = 0; s < dim; s++)
 				{
 					rM[s] = (rM[s] * factor) % m;
@@ -96,26 +85,58 @@ function gaussJordan(matrix, m)
 				det = (det * factor) % m;
 				//console.log("Multiplied (", factor, ")", col, ":", matrixToString(mat));
 			}
+			else if (rM[col] !== 0)
+			{
+				let factor = modularInverse(cM[col], m);
+				if (factor === null)
+				{
+					return null;
+				}
+				factor *= rM[col]
+				//console.log(factor);
+				for (let s = 0; s < dim; s++)
+				{
+					rM[s] = mod(rM[s] - cM[s] * factor, m);
+					rI[s] = mod(rI[s] - cI[s] * factor, m);
+				}
+				//console.log("Added", col, ":", matrixToString(mat));
+			}
 		}
 	}
 
-	// TODO: This will only work if we reached Row Echelon Form:
 	if (!isIdentity(mat, dim))
 	{
+		// TODO: This will only work if we reached at least (non-reduced) Row Echelon Form:
 		for (let i = 0; i < dim; i++)
 		{
 			det *= mat[i][i];
 		}
 		inv = null;
 	}
-
 	if (det < 0)
 	{
 		det += m;
 	}
 
+	return { inverse: inv, determinant: det };
+}
+
+function gaussJordan(matrix, m)
+{
+	const dim = matrix.length;
+
+	// Try starting from each column until a solution has been found or all columns have been tried
+	for (let startCol = 0; startCol < dim; startCol++)
+	{
+		const result = _gaussJordan(matrix, m, startCol);
+		if (result !== null)
+		{
+			return result;
+		}
+	}
+
 	return {
-		inverse: inv, determinant: det
+		inverse: null, determinant: null
 	};
 }
 
