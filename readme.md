@@ -106,6 +106,7 @@ Supported
 * UCS-2
 * UTF-8
 * UTF-16
+* UTF-32
 * Binary (numbers and bytestreams)
 * Octal (numbers and bytestreams)
 * Decimal (numbers and bytestreams)
@@ -285,7 +286,7 @@ TODO
 ### Byte <-> Text
 
 * More EBCDIC code pages
-* UTF-32
+* JIS X 0201, JIS X 0208, Shift JIS, ISO-2022-JP, second priority: other JIS encodings
 
 Terminology and conventions
 ---------------------------

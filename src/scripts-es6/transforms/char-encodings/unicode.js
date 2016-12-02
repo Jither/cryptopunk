@@ -323,11 +323,81 @@ class BytesToUtf16Transform extends Transform
 	}
 }
 
+class Utf32ToBytesTransform extends Transform
+{
+	constructor()
+	{
+		super();
+		this.addInput("string", "String")
+			.addOutput("bytes", "Bytes")
+			.addOption("littleEndian", "Little Endian", false);
+	}
+
+	transform(str)
+	{
+		const result = new Uint8Array(str.length * 4);
+		let destIndex = 0;
+		for (let i = 0; i < str.length; i++)
+		{
+			const code = str.codePointAt(i);
+			if (this.options.littleEndian)
+			{
+				result[destIndex++] = code & 0xff;
+				result[destIndex++] = (code >> 8) & 0xff;
+				result[destIndex++] = (code >> 16) & 0xff;
+				result[destIndex++] = code >>> 24;
+			}
+			else
+			{
+				result[destIndex++] = code >>> 24;
+				result[destIndex++] = (code >> 16) & 0xff;
+				result[destIndex++] = (code >> 8) & 0xff;
+				result[destIndex++] = code & 0xff;
+			}
+		}
+		return result;
+	}
+}
+
+class BytesToUtf32Transform extends Transform
+{
+	constructor()
+	{
+		super();
+		this.addInput("bytes", "Bytes")
+			.addOutput("string", "String")
+			.addOption("littleEndian", "Little Endian", false)
+			.addOption("stripCC", "Strip control codes", true);
+	}
+
+	transform(bytes)
+	{
+		let result = "";
+		for (let i = 0; i < bytes.length; i += 4)
+		{
+			const code = this.options.littleEndian ?
+				(bytes[i]      ) | (bytes[i + 1] <<  8) | (bytes[i + 2] << 16) | (bytes[i + 3] << 24) :
+				(bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] <<  8) | (bytes[i + 3]      );
+			
+			result += String.fromCodePoint(code);
+		}
+
+		if (this.options.stripCC)
+		{
+			result = result.replace(RX_CONTROL_CODES, "");
+		}
+
+		return result;
+	}
+}
+
 export {
 	Utf8ToBytesTransform,
 	Ucs2ToBytesTransform,
 	Utf16ToBytesTransform,
+	Utf32ToBytesTransform,
 	BytesToUtf8Transform,
 	BytesToUcs2Transform,
-	BytesToUtf16Transform
+	BytesToUtf16Transform,
+	BytesToUtf32Transform
 };

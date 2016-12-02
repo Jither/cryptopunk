@@ -313,6 +313,7 @@ addPaletteItem(ebcdic.EbcdicToBytesTransform, "EBCDIC", "EBCDIC > Bytes");
 addPaletteItem(unicode.Ucs2ToBytesTransform, "UCS-2", "UCS-2 > Bytes");
 addPaletteItem(unicode.Utf8ToBytesTransform, "UTF-8", "UTF-8 > Bytes");
 addPaletteItem(unicode.Utf16ToBytesTransform, "UTF-16", "UTF-16 > Bytes");
+addPaletteItem(unicode.Utf32ToBytesTransform, "UTF-32", "UTF-32 > Bytes");
 
 addPaletteItem(numbers.BinaryNumbersToBytesTransform, "Binary Numbers", "Binary Numbers > Bytes");
 addPaletteItem(numbers.OctalNumbersToBytesTransform, "Octal Numbers", "Octal Numbers > Bytes");
@@ -336,6 +337,7 @@ addPaletteItem(ebcdic.BytesToEbcdicTransform, "EBCDIC", "Bytes > EBCDIC");
 addPaletteItem(unicode.BytesToUcs2Transform, "UCS-2", "Bytes > UCS-2");
 addPaletteItem(unicode.BytesToUtf8Transform, "UTF-8", "Bytes > UTF-8");
 addPaletteItem(unicode.BytesToUtf16Transform, "UTF-16", "Bytes > UTF-16");
+addPaletteItem(unicode.BytesToUtf32Transform, "UTF-32", "Bytes > UTF-32");
 
 addPaletteItem(numbers.BytesToBinaryNumbersTransform, "Binary Numbers", "Bytes > Binary Numbers");
 addPaletteItem(numbers.BytesToOctalNumbersTransform, "Octal Numbers", "Bytes > Octal Numbers");
