@@ -44,6 +44,17 @@ function createIsoCodePage(charsFrom0xa0)
 	return ASCII_CHARS.concat(ISO_CONTROL_CHARS, arrFrom0xa0);
 }
 
+function createJisCodePage(charsFrom0xa0)
+{
+	const result = createIsoCodePage(charsFrom0xa0);
+	result[0x5c] = "¥";
+	result[0x7e] = "‾";
+	// Note: JIS leaves 0x80, 0x81, 0x84 and 0x99 undefined/reserved.
+	// This, however, is mainly because they were deprecated by the ISO standard.
+	// We leave them in - they're still part of Unicode.
+	return result;
+}
+
 const CODE_PAGE_NAMES = [
 	"ISO-8859-1",
 	"ISO-8859-2",
@@ -51,7 +62,8 @@ const CODE_PAGE_NAMES = [
 	"ISO-8859-4",
 	"ISO-8859-5",
 	"Windows-1252",
-	"Mac OS Roman"
+	"Mac OS Roman",
+	"JIS X 0201/0211"
 ];
 
 // camelcase is not very readable for these identifiers:
@@ -63,7 +75,8 @@ const CODE_PAGE_VALUES = [
 	"iso-8859-4",
 	"iso-8859-5",
 	"windows-1252",
-	"macos-roman"
+	"macos-roman",
+	"jis-x-0201"
 ];
 
 // Space (0x20) indicates non-printable/reserved!!
@@ -75,7 +88,8 @@ const CODE_PAGES = {
 	"iso-8859-5": createIsoCodePage("\xa0ЁЂЃЄЅІЇЈЉЊЋЌ\xadЎЏАБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюя№ёђѓєѕіїјљњћќ§ўџ"),
 	// TODO: ISO-8859-6 - Arabic not that easy to do as literal characters
 	"windows-1252": createWinMacCodePage("€ ‚ƒ„…†‡ˆ‰Š‹Œ Ž  ‘’“”•–—\u02dc™š›œ žŸ\xa0¡¢£¤¥¦§¨©ª«¬\xad®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ"),
-	"macos-roman":  createWinMacCodePage("ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…\xa0ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ") //  = Apple logo - private area
+	"macos-roman":  createWinMacCodePage("ÄÅÇÉÑÖÜáàâäãåçéèêëíìîïñóòôöõúùûü†°¢£§•¶ß®©™´¨≠ÆØ∞±≤≥¥µ∂∑∏π∫ªºΩæø¿¡¬√ƒ≈∆«»…\xa0ÀÃÕŒœ–—“”‘’÷◊ÿŸ⁄€‹›ﬁﬂ‡·‚„‰ÂÊÁËÈÍÎÏÌÓÔÒÚÛÙıˆ˜¯˘˙˚¸˝˛ˇ"), //  = Apple logo - private area
+	"jis-x-0201": createJisCodePage(" ｡｢｣､･ｦｧｨｩｪｫｬｭｮｯｰｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝﾞﾟ                                ")
 };
 /* eslint-enable camelcase */
 
