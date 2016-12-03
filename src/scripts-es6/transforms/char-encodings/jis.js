@@ -84,6 +84,38 @@ const JIS_X0208 = {
 	83: [0x9d5d, 0x9d5e, 0x9d64, 0x9d51, 0x9d50, 0x9d59, 0x9d72, 0x9d89, 0x9d87, 0x9dab, 0x9d6f, 0x9d7a, 0x9d9a, 0x9da4, 0x9da9, 0x9db2, 0x9dc4, 0x9dc1, 0x9dbb, 0x9db8, 0x9dba, 0x9dc6, 0x9dcf, 0x9dc2, 0x9dd9, 0x9dd3, 0x9df8, 0x9de6, 0x9ded, 0x9def, 0x9dfd, 0x9e1a, 0x9e1b, 0x9e1e, 0x9e75, 0x9e79, 0x9e7d, 0x9e81, 0x9e88, 0x9e8b, 0x9e8c, 0x9e92, 0x9e95, 0x9e91, 0x9e9d, 0x9ea5, 0x9ea9, 0x9eb8, 0x9eaa, 0x9ead, 0x9761, 0x9ecc, 0x9ece, 0x9ecf, 0x9ed0, 0x9ed4, 0x9edc, 0x9ede, 0x9edd, 0x9ee0, 0x9ee5, 0x9ee8, 0x9eef, 0x9ef4, 0x9ef6, 0x9ef7, 0x9ef9, 0x9efb, 0x9efc, 0x9efd, 0x9f07, 0x9f08, 0x76b7, 0x9f15, 0x9f21, 0x9f2c, 0x9f3e, 0x9f4a, 0x9f52, 0x9f54, 0x9f63, 0x9f5f, 0x9f60, 0x9f61, 0x9f66, 0x9f67, 0x9f6c, 0x9f6a, 0x9f77, 0x9f72, 0x9f76, 0x9f95, 0x9f9c, 0x9fa0]
 };
 
+let UNICODE_TO_JIS_X0208;
+
+function prepareUnicodeToJis()
+{
+	if (UNICODE_TO_JIS_X0208)
+	{
+		return;
+	}
+
+	UNICODE_TO_JIS_X0208 = {};
+
+	for (const kuIndex in JIS_X0208)
+	{
+		if (!JIS_X0208.hasOwnProperty(kuIndex))
+		{
+			continue;
+		}
+
+		const ku = JIS_X0208[kuIndex];
+		for (let tenIndex = 0; tenIndex < ku.length; tenIndex++)
+		{
+			const codePoint = ku[tenIndex];
+			if (codePoint === null)
+			{
+				continue;
+			}
+			const kuten = (kuIndex << 8) | (tenIndex + 1);
+			UNICODE_TO_JIS_X0208[codePoint] = kuten;
+		}
+	}
+}
+
 class ShiftJisToBytesTransform extends Transform
 {
 	constructor()
@@ -95,7 +127,48 @@ class ShiftJisToBytesTransform extends Transform
 
 	transform(str)
 	{
-		return "Unimplemented";
+		prepareUnicodeToJis();
+		const result = [];
+		for (let i = 0; i < str.length; i++)
+		{
+			const codePoint = str.charCodeAt(i);
+			if (codePoint < 0x80 && codePoint !== 0x5c && codePoint !== 0x7e)
+			{
+				result.push(codePoint);
+			}
+			else if (codePoint === 0xa5)
+			{
+				// Yen
+				result.push(0x5c);
+			}
+			else if (codePoint === 0x203e)
+			{
+				// Overline
+				result.push(0x7e);
+			}
+			else if (codePoint >= 0xff61 && codePoint < 0xffa0)
+			{
+				// Half-width katakana - remap to 0xa1...
+				result.push(codePoint - 0xfec0);
+			}
+			else
+			{
+				const kuten = UNICODE_TO_JIS_X0208[codePoint];
+				if (typeof kuten === "undefined")
+				{
+					const c = str.charAt(i);
+					throw new TransformError(`Character '${c}' doesn't exist in Shift JIS.`);
+				}
+				let hi = kuten >> 8,
+					lo = kuten & 0xff;
+				lo = hi & 0x01 ? (lo < 0x3f ? (lo + 0x3f) : (lo + 0x40)) : lo + 0x9e;
+				hi = hi < 0x3f ? ((hi + 1) >> 1) + 0x80 : ((hi + 1) >> 1) + 0xc0;
+
+				result.push(hi);
+				result.push(lo);
+			}
+		}
+		return Uint8Array.from(result);
 	}
 }
 
@@ -210,7 +283,44 @@ class EucJpToBytesTransform extends Transform
 
 	transform(str)
 	{
-		return "Unimplemented";
+		prepareUnicodeToJis();
+		const result = [];
+		for (let i = 0; i < str.length; i++)
+		{
+			const codePoint = str.charCodeAt(i);
+			if (codePoint < 0x80 && codePoint !== 0x5c)
+			{
+				result.push(codePoint);
+			}
+			else if (codePoint === 0xa5)
+			{
+				// Yen
+				result.push(0x5c);
+			}
+			else if (codePoint >= 0xff61 && codePoint < 0xffa0)
+			{
+				// Half-width katakana - remap to 0x8e 0xa1...0xdf
+				result.push(0x8e)
+				result.push(codePoint - 0xfec0);
+			}
+			else
+			{
+				const kuten = UNICODE_TO_JIS_X0208[codePoint];
+				if (typeof kuten === "undefined")
+				{
+					const c = str.charAt(i);
+					throw new TransformError(`Character '${c}' doesn't exist in EUC-JP.`);
+				}
+				let hi = kuten >> 8,
+					lo = kuten & 0xff;
+				lo = (lo + 0x20) | 0x80;
+				hi = (hi + 0x20) | 0x80;
+
+				result.push(hi);
+				result.push(lo);
+			}
+		}
+		return Uint8Array.from(result);
 	}
 }
 

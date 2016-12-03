@@ -101,8 +101,10 @@ Supported
 ### Byte <-> Text conversions
 
 * ASCII
-* Code pages (ISO-8859, MacOS Roman, Windows 1252...)
+* Code pages (ASCII-based 8-bit character encodings - ISO-8859, MacOS Roman, Windows 1252, JIS X 0201...)
 * EBCDIC
+* Shift JIS
+* EUC-JP
 * UCS-2
 * UTF-8
 * UTF-16
@@ -286,7 +288,7 @@ TODO
 ### Byte <-> Text
 
 * More EBCDIC code pages
-* JIS X 0201, JIS X 0208, Shift JIS, ISO-2022-JP, second priority: other JIS encodings
+* ISO-2022-JP? Second priority: other JIS encodings
 
 Terminology and conventions
 ---------------------------
