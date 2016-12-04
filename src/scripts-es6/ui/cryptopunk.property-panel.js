@@ -150,9 +150,9 @@ class PropertyPanel
 				eleInput = document.createElement("input");
 				eleInput.type = "number";
 				eleInput.value = value;
-				applyFromOptions(eleInput, option, "min");
-				applyFromOptions(eleInput, option, "max");
-				applyFromOptions(eleInput, option, "step");
+				this.applyFromOptions(eleInput, option, "min");
+				this.applyFromOptions(eleInput, option, "max");
+				this.applyFromOptions(eleInput, option, "step");
 				eleInput.addEventListener("input", () => changedCallback(name, parseInt(eleInput.value, 10)));
 				break;
 			case "char":

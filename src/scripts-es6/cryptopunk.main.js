@@ -80,9 +80,6 @@ import * as xxtea from "./transforms/block-ciphers/xxtea";
 
 import * as generators from "./transforms/generators";
 
-import { TransformError } from "./transforms/transforms";
-
-import { ScrollBar } from "./ui/jither.scrollbar";
 import { NodeEditor } from "./ui/jither.nodeeditor";
 import { PropertyPanel } from "./ui/cryptopunk.property-panel";
 import { Palette } from "./ui/cryptopunk.palette";
@@ -104,9 +101,11 @@ function nodeOutputChangedListener(node)
 	propertyPanel.updateOutputs(node);
 }
 
-function paletteItemClickedListener(transformClass, caption)
+function paletteItemClickedListener(item)
 {
-	const controller = new NodeController(editor, caption, new transformClass(), { x: 50, y: 300});
+	const transformClass = item.data;
+	const caption = item.caption;
+	const controller = new NodeController(editor, caption, new transformClass(), { x: 50, y: 300 });
 	controller.nodeOutputChanged.add(nodeOutputChangedListener);
 }
 
@@ -168,10 +167,10 @@ palette.addCategory("Bytes to text")
 	.addItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64")
 	.addItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
 
-palette.addCategory("Writing system to text") // TODO: Better name
+palette.addCategory("Writing system to text")
 	.addItem(morse.MorseToTextTransform, "Morse", "Morse > Text");
 
-palette.addCategory("Text to writing system") // TODO: Better name
+palette.addCategory("Text to writing system")
 	.addItem(morse.TextToMorseTransform, "Morse", "Text > Morse");
 
 palette.addCategory("Checksums")

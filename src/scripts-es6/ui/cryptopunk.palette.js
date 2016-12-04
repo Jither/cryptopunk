@@ -19,10 +19,12 @@ class PaletteCategory
 	{
 		caption = caption || menuCaption;
 		const item = document.createElement("li");
+
 		const btn = document.createElement("a");
 		btn.href = "#";
 		btn.innerText = menuCaption;
-		btn.addEventListener("click", this.itemClicked.bind(this, { caption: caption, data: data }));
+
+		btn.addEventListener("click", this.itemClicked.bind(this, { caption, data }));
 
 		item.appendChild(btn);
 		this.eleList.appendChild(item);
@@ -54,7 +56,7 @@ class Palette
 
 	onItemClicked(item)
 	{
-		this.itemClicked.dispatch(item.data, item.caption);
+		this.itemClicked.dispatch(item);
 	}
 }
 

@@ -1,5 +1,6 @@
 import { Signal } from "../jither.signals";
 import { toVisualControlCodes } from "../cryptopunk.strings";
+import { TransformError } from "../transforms/transforms";
 
 class NodeController
 {
