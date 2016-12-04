@@ -77,438 +77,247 @@ import * as whirlpool from "./transforms/hashes/whirlpool";
 import * as xor from "./transforms/stream-ciphers/xor";
 import * as xtea from "./transforms/block-ciphers/xtea";
 import * as xxtea from "./transforms/block-ciphers/xxtea";
-import * as propertyPanel from "./cryptopunk.property-panel";
 
 import * as generators from "./transforms/generators";
 
 import { TransformError } from "./transforms/transforms";
 
-import { NodeEditor } from "./jither.nodeeditor";
+import { ScrollBar } from "./ui/jither.scrollbar";
+import { NodeEditor } from "./ui/jither.nodeeditor";
+import { PropertyPanel } from "./ui/cryptopunk.property-panel";
+import { Palette } from "./ui/cryptopunk.palette";
+import { NodeController } from "./ui/cryptopunk.node-controller";
 
-import { toVisualControlCodes } from "./cryptopunk.strings";
+const elePalette = document.getElementById("palette");
+const eleNodes = document.getElementById("nodes");
+const eleProperties = document.getElementById("properties");
 
-const elePalette = document.getElementById("palette-nodes");
-let elePaletteCategory;
+const propertyPanel = new PropertyPanel(eleProperties);
+const editor = new NodeEditor(eleNodes);
+const palette = new Palette(elePalette);
 
-const editor = new NodeEditor(document.getElementById("nodes"), document.getElementById("editor-svg"));
+editor.selectedNodeChanged.add(node => propertyPanel.updateProperties(node));
+palette.itemClicked.add(paletteItemClickedListener);
 
-editor.selectedNodeChanged.add(propertyPanel.showProperties);
-
-class TransformNodeController
+function nodeOutputChangedListener(node)
 {
-	constructor(name, transform, options)
-	{
-		this.node = editor.addNode(name);
-		this.transform = transform;
-		this.node.controller = this;
-		this.options = Object.assign({}, transform.defaults);
-		this.inputs = transform.inputs || [];
-		this.outputs = transform.outputs || [];
-
-		let index = 0;
-		this.inputs.forEach(input => {
-			this.node.addInput(transform.inputNames[index])
-				.tags({ type: input })
-				.acceptsConnection(this.acceptsConnection.bind(this));
-			index++;
-		});
-
-		index = 0;
-		this.outputs.forEach(output => {
-			this.node.addOutput(transform.outputNames[index])
-				.tags({ type: output })
-				.acceptsConnection(this.acceptsConnection.bind(this));
-			index++;
-		});
-
-		this.node.moveTo(options.x || 0, options.y || 0);
-
-		this.node.inputValueChanged.add(this.inputValueChangedListener.bind(this));
-
-		this.update();
-	}
-
-	acceptsConnection(socket1, socket2)
-	{
-		return socket1.tags.type === socket2.tags.type;
-	}
-
-	inputsToArgs()
-	{
-		const args = [];
-		let i = 0;
-		this.inputs.forEach(input => {
-			let value = this.node.inputs[i].value;
-			if (value === null)
-			{
-				// Insert empty value rather than null
-				switch (input)
-				{
-					case "string":
-						value = "";
-						break;
-					case "bytes":
-						value = new Uint8Array();
-						// This is to ensure that transforms don't mutate the array
-						// (For development/testing purposes)
-						// Object.freeze(value);
-						break;
-				}
-			}
-			args.push(value);
-			i++;
-		});
-		return args;
-	}
-
-	update()
-	{
-		const args = this.inputsToArgs();
-
-		// TODO: Only apply options that actually changed
-		this.transform.resetOptions();
-		this.transform.setOptions(this.options);
-
-		if (this.transform.transformAsync)
-		{
-			this.doTransformAsync(args);
-		}
-		else
-		{
-			this.doTransform(args);
-		}
-	}
-
-	doTransform(args)
-	{
-		let output;
-		let errorMessage = null;
-		try
-		{
-			output = this.transform.transform(...args);
-		}
-		catch (e)
-		{
-			if (e instanceof TransformError)
-			{
-				errorMessage = e.message;
-				output = null;
-			}
-			else
-			{
-				throw e;
-			}
-		}
-		this.updateOutput(output, errorMessage);
-	}
-
-	doTransformAsync(args)
-	{
-		try
-		{
-			this.transform.transformAsync(...args)
-				.then(output => {
-					this.updateOutput(output);
-				})
-				.catch(e => {
-					if (e instanceof TransformError)
-					{
-						this.updateOutput(null, e.message);
-					}
-					else
-					{
-						throw e;
-					}
-				});
-		}
-		catch (e)
-		{
-			if (e instanceof TransformError)
-			{
-				this.updateOutput(null, e.message);
-			}
-			else
-			{
-				throw e;
-			}
-		}
-	}
-
-	updateOutput(output, errorMessage)
-	{
-		this.node.error = !!errorMessage;
-		this.node.value = output;
-		if (this.node.outputs.length > 0)
-		{
-			this.node.outputs[0].value = output;
-		}
-		if (errorMessage)
-		{
-			this.node.contentElement.innerText = errorMessage;
-		}
-		else
-		{
-			this.node.contentElement.innerText = typeof output === "string" ? toVisualControlCodes(output) : this.toHex(output);
-		}
-		propertyPanel.updateOutputs(this.node);
-	}
-
-	inputValueChangedListener(/*socket, value*/)
-	{
-		this.update();
-	}
-
-	toHex(bytes)
-	{
-		let result = "";
-		for (let i = 0; i < bytes.length; i++)
-		{
-			if (i > 0)
-			{
-				result += " ";
-			}
-
-			result += ("0" + bytes[i].toString(16)).substr(-2);
-		}
-		return result;
-	}
+	propertyPanel.updateOutputs(node);
 }
 
-function addPaletteCategory(caption)
+function paletteItemClickedListener(transformClass, caption)
 {
-	const header = document.createElement("h1");
-	header.innerText = caption;
-	elePalette.appendChild(header);
-
-	elePaletteCategory = document.createElement("ul");
-	elePalette.appendChild(elePaletteCategory);
+	const controller = new NodeController(editor, caption, new transformClass(), { x: 50, y: 300});
+	controller.nodeOutputChanged.add(nodeOutputChangedListener);
 }
 
-function addPaletteItem(transform, menuCaption, caption)
-{
-	caption = caption || menuCaption;
+palette.addCategory("Generators")
+	.addItem(generators.KeyboardInputGenerator, "Keyboard Input")
+	.addItem(generators.KeyedAlphabetGenerator, "Keyed Alphabet")
+	.addItem(generators.NullBytesGenerator, "Null Bytes")
+	.addItem(generators.RandomBytesGenerator, "Random Bytes");
 
-	const item = document.createElement("li");
-	const btn = document.createElement("a");
-	btn.href = "#";
-	btn.innerText = menuCaption;
-	btn.addEventListener("click", e => {
-		e.preventDefault();
-		new TransformNodeController(caption, new transform(), { x: 50, y: 300});
-	});
+palette.addCategory("Text to bytes")
+	.addItem(ascii.AsciiToBytesTransform, "ASCII", "ASCII > Bytes")
+	.addItem(codepages.CodePageToBytesTransform, "Code page", "Code page > Bytes")
+	.addItem(ebcdic.EbcdicToBytesTransform, "EBCDIC", "EBCDIC > Bytes")
+	.addItem(jis.ShiftJisToBytesTransform, "Shift JIS", "Shift JIS > Bytes")
+	.addItem(jis.EucJpToBytesTransform, "EUC-JP", "EUC-JP > Bytes")
+	.addItem(unicode.Ucs2ToBytesTransform, "UCS-2", "UCS-2 > Bytes")
+	.addItem(unicode.Utf8ToBytesTransform, "UTF-8", "UTF-8 > Bytes")
+	.addItem(unicode.Utf16ToBytesTransform, "UTF-16", "UTF-16 > Bytes")
+	.addItem(unicode.Utf32ToBytesTransform, "UTF-32", "UTF-32 > Bytes")
 
-	item.appendChild(btn);
-	elePaletteCategory.appendChild(item);
-}
+	.addItem(numbers.BinaryNumbersToBytesTransform, "Binary Numbers", "Binary Numbers > Bytes")
+	.addItem(numbers.OctalNumbersToBytesTransform, "Octal Numbers", "Octal Numbers > Bytes")
+	.addItem(numbers.DecimalNumbersToBytesTransform, "Decimal Numbers", "Decimal Numbers > Bytes")
+	.addItem(numbers.HexNumbersToBytesTransform, "Hex Numbers", "Hex Numbers > Bytes")
 
-addPaletteCategory("Generators");
-addPaletteItem(generators.KeyboardInputGenerator, "Keyboard Input");
-addPaletteItem(generators.KeyedAlphabetGenerator, "Keyed Alphabet");
-addPaletteItem(generators.NullBytesGenerator, "Null Bytes");
-addPaletteItem(generators.RandomBytesGenerator, "Random Bytes");
+	.addItem(binary.BinaryToBytesTransform, "Binary", "Binary > Bytes")
+	.addItem(baseN.OctalToBytesTransform, "Octal", "Octal > Bytes")
+	.addItem(baseN.DecimalToBytesTransform, "Decimal", "Decimal > Bytes")
+	.addItem(hex.HexToBytesTransform, "Hex", "Hex > Bytes")
 
-addPaletteCategory("Text to bytes");
-addPaletteItem(ascii.AsciiToBytesTransform, "ASCII", "ASCII > Bytes");
-addPaletteItem(codepages.CodePageToBytesTransform, "Code page", "Code page > Bytes");
-addPaletteItem(ebcdic.EbcdicToBytesTransform, "EBCDIC", "EBCDIC > Bytes");
-addPaletteItem(jis.ShiftJisToBytesTransform, "Shift JIS", "Shift JIS > Bytes");
-addPaletteItem(jis.EucJpToBytesTransform, "EUC-JP", "EUC-JP > Bytes");
-addPaletteItem(unicode.Ucs2ToBytesTransform, "UCS-2", "UCS-2 > Bytes");
-addPaletteItem(unicode.Utf8ToBytesTransform, "UTF-8", "UTF-8 > Bytes");
-addPaletteItem(unicode.Utf16ToBytesTransform, "UTF-16", "UTF-16 > Bytes");
-addPaletteItem(unicode.Utf32ToBytesTransform, "UTF-32", "UTF-32 > Bytes");
+	.addItem(baseN.Base32ToBytesTransform, "Base32", "Base32 > Bytes")
+	.addItem(baseN.Base32HexToBytesTransform, "Base32-HEX", "Base32-HEX > Bytes")
+	.addItem(baseN.Base64ToBytesTransform, "Base64", "Base64 > Bytes")
+	.addItem(baseN.Base64UrlToBytesTransform, "Base64 URL", "Base64 URL > Bytes");
 
-addPaletteItem(numbers.BinaryNumbersToBytesTransform, "Binary Numbers", "Binary Numbers > Bytes");
-addPaletteItem(numbers.OctalNumbersToBytesTransform, "Octal Numbers", "Octal Numbers > Bytes");
-addPaletteItem(numbers.DecimalNumbersToBytesTransform, "Decimal Numbers", "Decimal Numbers > Bytes");
-addPaletteItem(numbers.HexNumbersToBytesTransform, "Hex Numbers", "Hex Numbers > Bytes");
+palette.addCategory("Bytes to text")
+	.addItem(ascii.BytesToAsciiTransform, "ASCII", "Bytes > ASCII")
+	.addItem(codepages.BytesToCodePageTransform, "Code page", "Bytes > Code page")
+	.addItem(ebcdic.BytesToEbcdicTransform, "EBCDIC", "Bytes > EBCDIC")
+	.addItem(jis.BytesToShiftJisTransform, "Shift JIS", "Bytes > Shift JIS")
+	.addItem(jis.BytesToEucJpTransform, "EUC-JP", "Bytes > EUC-JP")
+	.addItem(unicode.BytesToUcs2Transform, "UCS-2", "Bytes > UCS-2")
+	.addItem(unicode.BytesToUtf8Transform, "UTF-8", "Bytes > UTF-8")
+	.addItem(unicode.BytesToUtf16Transform, "UTF-16", "Bytes > UTF-16")
+	.addItem(unicode.BytesToUtf32Transform, "UTF-32", "Bytes > UTF-32")
 
-addPaletteItem(binary.BinaryToBytesTransform, "Binary", "Binary > Bytes");
-addPaletteItem(baseN.OctalToBytesTransform, "Octal", "Octal > Bytes");
-addPaletteItem(baseN.DecimalToBytesTransform, "Decimal", "Decimal > Bytes");
-addPaletteItem(hex.HexToBytesTransform, "Hex", "Hex > Bytes");
+	.addItem(numbers.BytesToBinaryNumbersTransform, "Binary Numbers", "Bytes > Binary Numbers")
+	.addItem(numbers.BytesToOctalNumbersTransform, "Octal Numbers", "Bytes > Octal Numbers")
+	.addItem(numbers.BytesToDecimalNumbersTransform, "Decimal Numbers", "Bytes > Decimal Numbers")
+	.addItem(numbers.BytesToHexNumbersTransform, "Hex Numbers", "Bytes > Hex Numbers")
 
-addPaletteItem(baseN.Base32ToBytesTransform, "Base32", "Base32 > Bytes");
-addPaletteItem(baseN.Base32HexToBytesTransform, "Base32-HEX", "Base32-HEX > Bytes");
-addPaletteItem(baseN.Base64ToBytesTransform, "Base64", "Base64 > Bytes");
-addPaletteItem(baseN.Base64UrlToBytesTransform, "Base64 URL", "Base64 URL > Bytes");
+	.addItem(binary.BytesToBinaryTransform, "Binary", "Bytes > Binary")
+	.addItem(baseN.BytesToOctalTransform, "Octal", "Bytes > Octal")
+	.addItem(baseN.BytesToDecimalTransform, "Decimal", "Bytes > Decimal")
+	.addItem(hex.BytesToHexTransform, "Hex", "Bytes > Hex")
 
-addPaletteCategory("Bytes to text");
-addPaletteItem(ascii.BytesToAsciiTransform, "ASCII", "Bytes > ASCII");
-addPaletteItem(codepages.BytesToCodePageTransform, "Code page", "Bytes > Code page");
-addPaletteItem(ebcdic.BytesToEbcdicTransform, "EBCDIC", "Bytes > EBCDIC");
-addPaletteItem(jis.BytesToShiftJisTransform, "Shift JIS", "Bytes > Shift JIS");
-addPaletteItem(jis.BytesToEucJpTransform, "EUC-JP", "Bytes > EUC-JP");
-addPaletteItem(unicode.BytesToUcs2Transform, "UCS-2", "Bytes > UCS-2");
-addPaletteItem(unicode.BytesToUtf8Transform, "UTF-8", "Bytes > UTF-8");
-addPaletteItem(unicode.BytesToUtf16Transform, "UTF-16", "Bytes > UTF-16");
-addPaletteItem(unicode.BytesToUtf32Transform, "UTF-32", "Bytes > UTF-32");
+	.addItem(baseN.BytesToBase32Transform, "Base32", "Bytes > Base32")
+	.addItem(baseN.BytesToBase32HexTransform, "Base32-HEX", "Bytes > Base32-HEX")
+	.addItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64")
+	.addItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
 
-addPaletteItem(numbers.BytesToBinaryNumbersTransform, "Binary Numbers", "Bytes > Binary Numbers");
-addPaletteItem(numbers.BytesToOctalNumbersTransform, "Octal Numbers", "Bytes > Octal Numbers");
-addPaletteItem(numbers.BytesToDecimalNumbersTransform, "Decimal Numbers", "Bytes > Decimal Numbers");
-addPaletteItem(numbers.BytesToHexNumbersTransform, "Hex Numbers", "Bytes > Hex Numbers");
+palette.addCategory("Writing system to text") // TODO: Better name
+	.addItem(morse.MorseToTextTransform, "Morse", "Morse > Text");
 
-addPaletteItem(binary.BytesToBinaryTransform, "Binary", "Bytes > Binary");
-addPaletteItem(baseN.BytesToOctalTransform, "Octal", "Bytes > Octal");
-addPaletteItem(baseN.BytesToDecimalTransform, "Decimal", "Bytes > Decimal");
-addPaletteItem(hex.BytesToHexTransform, "Hex", "Bytes > Hex");
+palette.addCategory("Text to writing system") // TODO: Better name
+	.addItem(morse.TextToMorseTransform, "Morse", "Text > Morse");
 
-addPaletteItem(baseN.BytesToBase32Transform, "Base32", "Bytes > Base32");
-addPaletteItem(baseN.BytesToBase32HexTransform, "Base32-HEX", "Bytes > Base32-HEX");
-addPaletteItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64");
-addPaletteItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
+palette.addCategory("Checksums")
+	.addItem(adler32.Adler32Transform, "Adler-32", "Adler-32")
+	.addItem(bsd.BsdTransform, "BSD", "BSD checksum")
+	.addItem(crc.CrcTransform, "CRC", "CRC")
+	.addItem(fletcher.FletcherTransform, "Fletcher", "Fletcher checksum");
 
-addPaletteCategory("System to text"); // TODO: Better name
-addPaletteItem(morse.MorseToTextTransform, "Morse", "Morse > Text");
+palette.addCategory("Hashes")
+	.addItem(blake.BlakeTransform, "BLAKE", "BLAKE")
+	.addItem(blake2.Blake2Transform, "BLAKE2", "BLAKE2")
+	.addItem(has160.Has160Transform, "HAS-160", "HAS-160")
+	.addItem(haval.HavalTransform, "HAVAL", "HAVAL")
+	.addItem(keccak.KeccakTransform, "Keccak", "Keccak")
+	.addItem(md2.Md2Transform, "MD2", "MD2")
+	.addItem(md4.Md4Transform, "MD4", "MD4")
+	.addItem(md5.Md5Transform, "MD5", "MD5")
+	.addItem(ripemd.RipeMdTransform, "RIPEMD (original)", "RIPEMD (original)")
+	.addItem(ripemdN.RipeMdNTransform, "RIPEMD-N", "RIPEMD-N")
+	.addItem(sha1.Sha0Transform, "SHA-0", "SHA-0")
+	.addItem(sha1.Sha1Transform, "SHA-1", "SHA-1")
+	.addItem(sha2.Sha2Transform, "SHA-2", "SHA-2")
+	.addItem(sha3.Sha3Transform, "SHA-3")
+	.addItem(sha3.ShakeTransform, "SHAKE", "SHAKE")
+	.addItem(tiger.TigerTransform, "Tiger", "Tiger")
+	.addItem(whirlpool.WhirlpoolTransform, "WHIRLPOOL", "WHIRLPOOL");
 
-addPaletteCategory("Text to system"); // TODO: Better name
-addPaletteItem(morse.TextToMorseTransform, "Morse", "Text > Morse");
+palette.addCategory("String manipulation")
+	.addItem(stringManipulation.RemoveCharsTransform, "Remove characters")
+	.addItem(stringManipulation.SimpleTranspositionTransform, "Simple transpositions");
 
-addPaletteCategory("Checksums");
-addPaletteItem(adler32.Adler32Transform, "Adler-32", "Adler-32");
-addPaletteItem(bsd.BsdTransform, "BSD", "BSD checksum");
-addPaletteItem(crc.CrcTransform, "CRC", "CRC");
-addPaletteItem(fletcher.FletcherTransform, "Fletcher", "Fletcher checksum");
+palette.addCategory("Classical two-way")
+	.addItem(rotx.RotXTransform, "ROT-X")
+	.addItem(rotx.Rot5Transform, "ROT-5")
+	.addItem(rotx.Rot13Transform, "ROT-13")
+	.addItem(rotx.Rot18Transform, "ROT-18")
+	.addItem(rotx.Rot47Transform, "ROT-47");
 
-addPaletteCategory("Hashes");
-addPaletteItem(blake.BlakeTransform, "BLAKE", "BLAKE");
-addPaletteItem(blake2.Blake2Transform, "BLAKE2", "BLAKE2");
-addPaletteItem(has160.Has160Transform, "HAS-160", "HAS-160");
-addPaletteItem(haval.HavalTransform, "HAVAL", "HAVAL");
-addPaletteItem(keccak.KeccakTransform, "Keccak", "Keccak");
-addPaletteItem(md2.Md2Transform, "MD2", "MD2");
-addPaletteItem(md4.Md4Transform, "MD4", "MD4");
-addPaletteItem(md5.Md5Transform, "MD5", "MD5");
-addPaletteItem(ripemd.RipeMdTransform, "RIPEMD (original)", "RIPEMD (original)");
-addPaletteItem(ripemdN.RipeMdNTransform, "RIPEMD-N", "RIPEMD-N");
-addPaletteItem(sha1.Sha0Transform, "SHA-0", "SHA-0");
-addPaletteItem(sha1.Sha1Transform, "SHA-1", "SHA-1");
-addPaletteItem(sha2.Sha2Transform, "SHA-2", "SHA-2");
-addPaletteItem(sha3.Sha3Transform, "SHA-3");
-addPaletteItem(sha3.ShakeTransform, "SHAKE", "SHAKE");
-addPaletteItem(tiger.TigerTransform, "Tiger", "Tiger");
-addPaletteItem(whirlpool.WhirlpoolTransform, "WHIRLPOOL", "WHIRLPOOL");
+palette.addCategory("Classical decryption")
+	.addItem(adfgvx.AdfgvxDecryptTransform, "ADFGVX", "ADFGVX Decrypt")
+	.addItem(affine.AffineDecryptTransform, "Affine", "Affine Decrypt")
+	.addItem(bifid.BifidDecryptTransform, "Bifid", "Bifid Decrypt")
+	.addItem(columns.ColumnarTranspositionDecryptTransform, "Columnar Transposition", "Columnar Transposition Decrypt")
+	.addItem(hill.HillDecryptTransform, "Hill", "Hill Decrypt")
+	.addItem(letterNumber.LetterNumberDecryptTransform, "Letter-Number", "Letter-Number Decrypt")
+	.addItem(playfair.PlayfairDecryptTransform, "Playfair", "Playfair Decrypt")
+	.addItem(polybius.PolybiusDecryptTransform, "Polybius", "Polybius Decrypt")
+	.addItem(railfence.RailFenceDecryptTransform, "Rail fence", "Rail fence Decrypt")
+	.addItem(skip.SkipDecryptTransform, "Skip", "Skip Cipher Decrypt")
+	.addItem(trifid.TrifidDecryptTransform, "Trifid", "Trifid Decrypt")
+	.addItem(vigenere.VigenereDecryptTransform, "Vigènere", "Vigènere Decrypt");
 
-addPaletteCategory("String manipulation");
-addPaletteItem(stringManipulation.RemoveCharsTransform, "Remove characters");
-addPaletteItem(stringManipulation.SimpleTranspositionTransform, "Simple transpositions");
+palette.addCategory("Classical encryption")
+	.addItem(adfgvx.AdfgvxEncryptTransform, "ADFGVX", "ADFGVX Encrypt")
+	.addItem(affine.AffineEncryptTransform, "Affine", "Affine Encrypt")
+	.addItem(bifid.BifidEncryptTransform, "Bifid", "Bifid Encrypt")
+	.addItem(columns.ColumnarTranspositionEncryptTransform, "Columnar Transposition", "Columnar Transposition Encrypt")
+	.addItem(hill.HillEncryptTransform, "Hill", "Hill Encrypt")
+	.addItem(letterNumber.LetterNumberEncryptTransform, "Letter-Number", "Letter-Number Encrypt")
+	.addItem(playfair.PlayfairEncryptTransform, "Playfair", "Playfair Encrypt")
+	.addItem(polybius.PolybiusEncryptTransform, "Polybius", "Polybius Encrypt")
+	.addItem(railfence.RailFenceEncryptTransform, "Rail fence", "Rail fence Encrypt")
+	.addItem(substitution.SimpleSubstitutionTransform, "Simple Substitution")
+	.addItem(skip.SkipEncryptTransform, "Skip", "Skip Cipher Encrypt")
+	.addItem(trifid.TrifidEncryptTransform, "Trifid", "Trifid Encrypt")
+	.addItem(vigenere.VigenereEncryptTransform, "Vigènere", "Vigènere Encrypt");
 
-addPaletteCategory("Classical two-way");
-addPaletteItem(rotx.RotXTransform, "ROT-X");
-addPaletteItem(rotx.Rot5Transform, "ROT-5");
-addPaletteItem(rotx.Rot13Transform, "ROT-13");
-addPaletteItem(rotx.Rot18Transform, "ROT-18");
-addPaletteItem(rotx.Rot47Transform, "ROT-47");
+palette.addCategory("Mechanical")
+	.addItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
 
-addPaletteCategory("Classical decryption");
-addPaletteItem(adfgvx.AdfgvxDecryptTransform, "ADFGVX", "ADFGVX Decrypt");
-addPaletteItem(affine.AffineDecryptTransform, "Affine", "Affine Decrypt");
-addPaletteItem(bifid.BifidDecryptTransform, "Bifid", "Bifid Decrypt");
-addPaletteItem(columns.ColumnarTranspositionDecryptTransform, "Columnar Transposition", "Columnar Transposition Decrypt");
-addPaletteItem(hill.HillDecryptTransform, "Hill", "Hill Decrypt");
-addPaletteItem(letterNumber.LetterNumberDecryptTransform, "Letter-Number", "Letter-Number Decrypt");
-addPaletteItem(playfair.PlayfairDecryptTransform, "Playfair", "Playfair Decrypt");
-addPaletteItem(polybius.PolybiusDecryptTransform, "Polybius", "Polybius Decrypt");
-addPaletteItem(railfence.RailFenceDecryptTransform, "Rail fence", "Rail fence Decrypt");
-addPaletteItem(skip.SkipDecryptTransform, "Skip", "Skip Cipher Decrypt");
-addPaletteItem(trifid.TrifidDecryptTransform, "Trifid", "Trifid Decrypt");
-addPaletteItem(vigenere.VigenereDecryptTransform, "Vigènere", "Vigènere Decrypt");
+palette.addCategory("Stream ciphers")
+	.addItem(rc4.Rc4Transform, "RC4")
+	.addItem(xor.XorTransform, "XOR");
 
-addPaletteCategory("Classical encryption");
-addPaletteItem(adfgvx.AdfgvxEncryptTransform, "ADFGVX", "ADFGVX Encrypt");
-addPaletteItem(affine.AffineEncryptTransform, "Affine", "Affine Encrypt");
-addPaletteItem(bifid.BifidEncryptTransform, "Bifid", "Bifid Encrypt");
-addPaletteItem(columns.ColumnarTranspositionEncryptTransform, "Columnar Transposition", "Columnar Transposition Encrypt");
-addPaletteItem(hill.HillEncryptTransform, "Hill", "Hill Encrypt");
-addPaletteItem(letterNumber.LetterNumberEncryptTransform, "Letter-Number", "Letter-Number Encrypt");
-addPaletteItem(playfair.PlayfairEncryptTransform, "Playfair", "Playfair Encrypt");
-addPaletteItem(polybius.PolybiusEncryptTransform, "Polybius", "Polybius Encrypt");
-addPaletteItem(railfence.RailFenceEncryptTransform, "Rail fence", "Rail fence Encrypt");
-addPaletteItem(substitution.SimpleSubstitutionTransform, "Simple Substitution");
-addPaletteItem(skip.SkipEncryptTransform, "Skip", "Skip Cipher Encrypt");
-addPaletteItem(trifid.TrifidEncryptTransform, "Trifid", "Trifid Encrypt");
-addPaletteItem(vigenere.VigenereEncryptTransform, "Vigènere", "Vigènere Encrypt");
+palette.addCategory("Block cipher decryption")
+	.addItem(threeway.ThreeWayDecryptTransform, "3-Way", "3-Way Decrypt")
+	.addItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt")
+//	.addItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt")
+	.addItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt")
+	.addItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt")
+	.addItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt")
+	.addItem(camellia.CamelliaDecryptTransform, "Camellia", "Camellia Decrypt")
+	.addItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt")
+	.addItem(cast256.Cast256DecryptTransform, "CAST-256", "CAST-256 Decrypt")
+	.addItem(des.DesDecryptTransform, "DES", "DES Decrypt")
+	.addItem(ice.IceDecryptTransform, "ICE", "ICE Decrypt")
+	.addItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt")
+	.addItem(khufu.KhafreDecryptTransform, "Khafre", "Khafre Decrypt")
+	.addItem(khufu.KhufuDecryptTransform, "Khufu", "Khufu Decrypt")
+	.addItem(lucifer.LuciferDecryptTransform, "LUCIFER", "LUCIFER Decrypt")
+	.addItem(magma.MagmaDecryptTransform, "Magma (GOST)", "Magma (GOST) Decrypt")
+	.addItem(newdes.NewDesDecryptTransform, "NewDES", "NewDES Decrypt")
+	.addItem(noekeon.NoekeonDecryptTransform, "NOEKEON", "NOEKEON Decrypt")
+	.addItem(present.PresentDecryptTransform, "PRESENT", "PRESENT Decrypt")
+	.addItem(rc2.Rc2DecryptTransform, "RC2", "RC2 Decrypt")
+	.addItem(rc5.Rc5DecryptTransform, "RC5", "RC5 Decrypt")
+	.addItem(rc6.Rc6DecryptTransform, "RC6", "RC6 Decrypt")
+	.addItem(redpike.RedPikeDecryptTransform, "Red Pike", "Red Pike Decrypt")
+	.addItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt")
+	.addItem(serpent.SerpentDecryptTransform, "Serpent", "Serpent Decrypt")
+	.addItem(shark.SharkDecryptTransform, "SHARK", "SHARK Decrypt")
+	.addItem(skipjack.SkipjackDecryptTransform, "Skipjack", "Skipjack Decrypt")
+	.addItem(speck.SpeckDecryptTransform, "Speck", "Speck Decrypt")
+	.addItem(square.SquareDecryptTransform, "SQUARE", "SQUARE Decrypt")
+	.addItem(tea.TeaDecryptTransform, "TEA", "TEA Decrypt")
+	.addItem(threefish.ThreefishDecryptTransform, "Threefish", "Threefish Decrypt")
+	.addItem(treyfer.TreyferDecryptTransform, "Treyfer", "Treyfer Decrypt")
+	.addItem(twofish.TwofishDecryptTransform, "Twofish", "Twofish Decrypt")
+	.addItem(xtea.XTeaDecryptTransform, "XTEA", "XTEA Decrypt")
+	.addItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
+//	.addItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt")
 
-addPaletteCategory("Mechanical");
-addPaletteItem(enigma.EnigmaTransform, "Enigma", "Enigma Machine");
-
-addPaletteCategory("Stream ciphers");
-addPaletteItem(rc4.Rc4Transform, "RC4");
-addPaletteItem(xor.XorTransform, "XOR");
-
-addPaletteCategory("Block cipher decryption");
-addPaletteItem(threeway.ThreeWayDecryptTransform, "3-Way", "3-Way Decrypt");
-addPaletteItem(nativeAes.NativeAesCbcDecryptTransform, "AES (CBC)", "AES (CBC) Decrypt");
-//addPaletteItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt");
-addPaletteItem(nativeAes.NativeAesCtrDecryptTransform, "AES (CTR)", "AES (CTR) Decrypt");
-addPaletteItem(nativeAes.NativeAesGcmDecryptTransform, "AES (GCM)", "AES (GCM) Decrypt");
-addPaletteItem(blowfish.BlowfishDecryptTransform, "Blowfish", "Blowfish Decrypt");
-addPaletteItem(camellia.CamelliaDecryptTransform, "Camellia", "Camellia Decrypt");
-addPaletteItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt");
-addPaletteItem(cast256.Cast256DecryptTransform, "CAST-256", "CAST-256 Decrypt");
-addPaletteItem(des.DesDecryptTransform, "DES", "DES Decrypt");
-addPaletteItem(ice.IceDecryptTransform, "ICE", "ICE Decrypt");
-addPaletteItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt");
-addPaletteItem(khufu.KhafreDecryptTransform, "Khafre", "Khafre Decrypt");
-addPaletteItem(khufu.KhufuDecryptTransform, "Khufu", "Khufu Decrypt");
-addPaletteItem(lucifer.LuciferDecryptTransform, "LUCIFER", "LUCIFER Decrypt");
-addPaletteItem(magma.MagmaDecryptTransform, "Magma (GOST)", "Magma (GOST) Decrypt");
-addPaletteItem(newdes.NewDesDecryptTransform, "NewDES", "NewDES Decrypt");
-addPaletteItem(noekeon.NoekeonDecryptTransform, "NOEKEON", "NOEKEON Decrypt");
-addPaletteItem(present.PresentDecryptTransform, "PRESENT", "PRESENT Decrypt");
-addPaletteItem(rc2.Rc2DecryptTransform, "RC2", "RC2 Decrypt");
-addPaletteItem(rc5.Rc5DecryptTransform, "RC5", "RC5 Decrypt");
-addPaletteItem(rc6.Rc6DecryptTransform, "RC6", "RC6 Decrypt");
-addPaletteItem(redpike.RedPikeDecryptTransform, "Red Pike", "Red Pike Decrypt");
-addPaletteItem(rijndael.RijndaelDecryptTransform, "Rijndael", "Rijndael Decrypt");
-addPaletteItem(serpent.SerpentDecryptTransform, "Serpent", "Serpent Decrypt");
-addPaletteItem(shark.SharkDecryptTransform, "SHARK", "SHARK Decrypt");
-addPaletteItem(skipjack.SkipjackDecryptTransform, "Skipjack", "Skipjack Decrypt");
-addPaletteItem(speck.SpeckDecryptTransform, "Speck", "Speck Decrypt");
-addPaletteItem(square.SquareDecryptTransform, "SQUARE", "SQUARE Decrypt");
-addPaletteItem(tea.TeaDecryptTransform, "TEA", "TEA Decrypt");
-addPaletteItem(threefish.ThreefishDecryptTransform, "Threefish", "Threefish Decrypt");
-addPaletteItem(treyfer.TreyferDecryptTransform, "Treyfer", "Treyfer Decrypt");
-addPaletteItem(twofish.TwofishDecryptTransform, "Twofish", "Twofish Decrypt");
-addPaletteItem(xtea.XTeaDecryptTransform, "XTEA", "XTEA Decrypt");
-addPaletteItem(xxtea.XXTeaDecryptTransform, "XXTEA", "XXTEA Decrypt");
-//addPaletteItem(nativeRsa.NativeRsaOaepDecryptTransform, "RSA (OAEP)", "RSA (OAEP) Decrypt");
-
-addPaletteCategory("Block cipher encryption");
-addPaletteItem(threeway.ThreeWayEncryptTransform, "3-Way", "3-Way Encrypt");
-addPaletteItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) Encrypt");
-//addPaletteItem(nativeAes.NativeAesCfbEncryptTransform, "AES (CFB)", "AES (CFB) Encrypt");
-addPaletteItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt");
-addPaletteItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt");
-addPaletteItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt");
-addPaletteItem(camellia.CamelliaEncryptTransform, "Camellia", "Camellia Encrypt");
-addPaletteItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt");
-addPaletteItem(cast256.Cast256EncryptTransform, "CAST-256", "CAST-256 Encrypt");
-addPaletteItem(des.DesEncryptTransform, "DES", "DES Encrypt");
-addPaletteItem(ice.IceEncryptTransform, "ICE", "ICE Encrypt");
-addPaletteItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt");
-addPaletteItem(khufu.KhafreEncryptTransform, "Khafre", "Khafre Encrypt");
-addPaletteItem(khufu.KhufuEncryptTransform, "Khufu", "Khufu Encrypt");
-addPaletteItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt");
-addPaletteItem(magma.MagmaEncryptTransform, "Magma (GOST)", "Magma (GOST) Encrypt");
-addPaletteItem(newdes.NewDesEncryptTransform, "NewDES", "NewDES Encrypt");
-addPaletteItem(noekeon.NoekeonEncryptTransform, "NOEKEON", "NOEKEON Encrypt");
-addPaletteItem(present.PresentEncryptTransform, "PRESENT", "PRESENT Encrypt");
-addPaletteItem(rc2.Rc2EncryptTransform, "RC2", "RC2 Encrypt");
-addPaletteItem(rc5.Rc5EncryptTransform, "RC5", "RC5 Encrypt");
-addPaletteItem(rc6.Rc6EncryptTransform, "RC6", "RC6 Encrypt");
-addPaletteItem(redpike.RedPikeEncryptTransform, "Red Pike", "Red Pike Encrypt");
-addPaletteItem(rijndael.RijndaelEncryptTransform, "Rijndael", "Rijndael Encrypt");
-addPaletteItem(serpent.SerpentEncryptTransform, "Serpent", "Serpent Encrypt");
-addPaletteItem(shark.SharkEncryptTransform, "SHARK", "SHARK Encrypt");
-addPaletteItem(skipjack.SkipjackEncryptTransform, "Skipjack", "Skipjack Encrypt");
-addPaletteItem(speck.SpeckEncryptTransform, "Speck", "Speck Encrypt");
-addPaletteItem(square.SquareEncryptTransform, "SQUARE", "SQUARE Encrypt");
-addPaletteItem(tea.TeaEncryptTransform, "TEA", "TEA Encrypt");
-addPaletteItem(threefish.ThreefishEncryptTransform, "Threefish", "Threefish Encrypt");
-addPaletteItem(treyfer.TreyferEncryptTransform, "Treyfer", "Treyfer Encrypt");
-addPaletteItem(twofish.TwofishEncryptTransform, "Twofish", "Twofish Encrypt");
-addPaletteItem(xtea.XTeaEncryptTransform, "XTEA", "XTEA Encrypt");
-addPaletteItem(xxtea.XXTeaEncryptTransform, "XXTEA", "XXTEA Encrypt");
-addPaletteItem(nativeRsa.NativeRsaOaepEncryptTransform, "RSA (OAEP)", "RSA (OAEP) Encrypt");
+palette.addCategory("Block cipher encryption")
+	.addItem(threeway.ThreeWayEncryptTransform, "3-Way", "3-Way Encrypt")
+	.addItem(nativeAes.NativeAesCbcEncryptTransform, "AES (CBC)", "AES (CBC) Encrypt")
+//	.addItem(nativeAes.NativeAesCfbEncryptTransform, "AES (CFB)", "AES (CFB) Encrypt")
+	.addItem(nativeAes.NativeAesCtrEncryptTransform, "AES (CTR)", "AES (CTR) Encrypt")
+	.addItem(nativeAes.NativeAesGcmEncryptTransform, "AES (GCM)", "AES (GCM) Encrypt")
+	.addItem(blowfish.BlowfishEncryptTransform, "Blowfish", "Blowfish Encrypt")
+	.addItem(camellia.CamelliaEncryptTransform, "Camellia", "Camellia Encrypt")
+	.addItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt")
+	.addItem(cast256.Cast256EncryptTransform, "CAST-256", "CAST-256 Encrypt")
+	.addItem(des.DesEncryptTransform, "DES", "DES Encrypt")
+	.addItem(ice.IceEncryptTransform, "ICE", "ICE Encrypt")
+	.addItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt")
+	.addItem(khufu.KhafreEncryptTransform, "Khafre", "Khafre Encrypt")
+	.addItem(khufu.KhufuEncryptTransform, "Khufu", "Khufu Encrypt")
+	.addItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt")
+	.addItem(magma.MagmaEncryptTransform, "Magma (GOST)", "Magma (GOST) Encrypt")
+	.addItem(newdes.NewDesEncryptTransform, "NewDES", "NewDES Encrypt")
+	.addItem(noekeon.NoekeonEncryptTransform, "NOEKEON", "NOEKEON Encrypt")
+	.addItem(present.PresentEncryptTransform, "PRESENT", "PRESENT Encrypt")
+	.addItem(rc2.Rc2EncryptTransform, "RC2", "RC2 Encrypt")
+	.addItem(rc5.Rc5EncryptTransform, "RC5", "RC5 Encrypt")
+	.addItem(rc6.Rc6EncryptTransform, "RC6", "RC6 Encrypt")
+	.addItem(redpike.RedPikeEncryptTransform, "Red Pike", "Red Pike Encrypt")
+	.addItem(rijndael.RijndaelEncryptTransform, "Rijndael", "Rijndael Encrypt")
+	.addItem(serpent.SerpentEncryptTransform, "Serpent", "Serpent Encrypt")
+	.addItem(shark.SharkEncryptTransform, "SHARK", "SHARK Encrypt")
+	.addItem(skipjack.SkipjackEncryptTransform, "Skipjack", "Skipjack Encrypt")
+	.addItem(speck.SpeckEncryptTransform, "Speck", "Speck Encrypt")
+	.addItem(square.SquareEncryptTransform, "SQUARE", "SQUARE Encrypt")
+	.addItem(tea.TeaEncryptTransform, "TEA", "TEA Encrypt")
+	.addItem(threefish.ThreefishEncryptTransform, "Threefish", "Threefish Encrypt")
+	.addItem(treyfer.TreyferEncryptTransform, "Treyfer", "Treyfer Encrypt")
+	.addItem(twofish.TwofishEncryptTransform, "Twofish", "Twofish Encrypt")
+	.addItem(xtea.XTeaEncryptTransform, "XTEA", "XTEA Encrypt")
+	.addItem(xxtea.XXTeaEncryptTransform, "XXTEA", "XXTEA Encrypt")
+	.addItem(nativeRsa.NativeRsaOaepEncryptTransform, "RSA (OAEP)", "RSA (OAEP) Encrypt");

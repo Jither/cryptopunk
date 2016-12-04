@@ -101,7 +101,7 @@ class BaseCodePageToBytesTransform extends Transform
 		this.codePages = codePages;
 		this.addInput("string", "String")
 			.addOutput("bytes", "Bytes")
-			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values: values });
+			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values });
 	}
 
 	transform(str)
@@ -131,7 +131,7 @@ class BaseBytesToCodePageTransform extends Transform
 		this.codePages = codePages;
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String")
-			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values: values })
+			.addOption("codepage", "Code page", defaultValue, { type: "select", texts: names, values })
 			.addOption("stripCC", "Strip control codes", true);
 	}
 

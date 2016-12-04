@@ -1,4 +1,4 @@
-import { Signal } from "./jither.signals";
+import { Signal } from "../jither.signals";
 
 const INPUT = "input", OUTPUT = "output";
 
@@ -602,17 +602,6 @@ class Node
 		this.remove();
 	}
 
-	copyClickListener(e)
-	{
-		e.preventDefault();
-		this.copyOutput();
-	}
-
-	copyOutput()
-	{
-
-	}
-
 	update()
 	{
 		this.eleHeader.innerText = this._title || this.name;
@@ -621,11 +610,13 @@ class Node
 
 class NodeEditor
 {
-	constructor(element, svg)
+	constructor(element)
 	{
 		this.element = element;
-		this.svg = svg;
-		this.svg.ns = this.svg.namespaceURI;
+		
+		const svg = this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+		element.appendChild(svg);
+		svg.ns = svg.namespaceURI;
 		this.wiringPath = createPath(svg);
 
 		this.nodes = [];

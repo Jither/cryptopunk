@@ -3,6 +3,7 @@ $text-color 					: #ffffff;
 
 $editor-back-color				: #505050;
 $editor-text-color 				: #f0f0f0;
+$grid-color 					: #585858;
 
 $panel-back-color 				: #303030;
 $panel-text-color				: #ffffff;
@@ -22,8 +23,6 @@ $socket-selected-back-color		: #f0f0f0;
 $socket-hover-border-color 		: #80f040;
 $socket-open-border-color 		: #40a020;
 
-$grid-color 					: #606060;
-
 $node-border-width 				: 2px;
 $socket-border-width 			: $node-border-width;
 $socket-size 					: 10px;
@@ -36,6 +35,14 @@ $standard-font-size 			: 14px;
 $palette-font-size 				: 12px;
 $content-font-size 				: 12px;
 
+@mixin hide-scrollbar()
+{
+	&::-webkit-scrollbar
+	{
+		display: none;
+	}
+}
+
 html, body
 {
 	height: 100%;
@@ -46,14 +53,14 @@ body
 	font: $standard-font-size "Open Sans", Helvetica, Arial, sans-serif;
 	background: $editor-back-color;
 	color: $editor-text-color;
+	display: flex;
+	flex-direction: column;
 }
 
 body, h1, h2, h3, h4, h5, h6, ul, li
 {
 	margin: 0;
 	padding: 0;
-	display: flex;
-	flex-direction: column;
 }
 
 ul
@@ -76,7 +83,7 @@ h1
 
 main
 {
-	flex: 1 0 auto;
+	flex: 1 1 auto;
 	display: flex;
 }
 
@@ -99,25 +106,31 @@ main > section
 
 #palette
 {
-	flex: 1 0 auto;
+	flex: 0 0 200px;
+	overflow-y: auto;
+	@include hide-scrollbar();
 }
 
 #properties
 {
-	flex: 2 0 auto;
+	flex: 0 0 350px;
 }
 
 #nodes
 {
-	flex: 8 0 auto;
+	flex: 1 1 auto;
 	position: relative;
+	background-color: $editor-back-color;
+	background-size: 60px 60px;
+	background-position: 50% 50%;
+	background-image: linear-gradient(to right, $grid-color 1px, transparent 2px), linear-gradient(to bottom, $grid-color 1px, transparent 2px);
+	overflow: hidden;
 
 	svg
 	{
 	  position:absolute;
 	  top:0px;
 	  left:0px;
-	  z-index:-100;
 	  width:100%;
 	  height:100%;
 	}
@@ -135,6 +148,7 @@ main > section
 	background: $node-back-color;
 	color: $node-text-color;
 	position: absolute;
+	z-index: 1;
 
 	&.selected
 	{
@@ -158,7 +172,7 @@ main > section
 		font-size: $standard-font-size;
 		text-align: center;
 		display: block;
-		border-radius: $node-border-radius $node-border-radius 0 0;
+		border-radius: ($node-border-radius - 2) ($node-border-radius - 2) 0 0;
 		background: $node-header-back-color;
 		color: $node-header-text-color;
 		padding-right: $node-close-width;
@@ -335,7 +349,7 @@ main > section
 		font: $content-font-size Consolas;
 	}
 
-	#output-list textarea
+	.output-properties textarea
 	{
 		border: 0;
 		background: #c0c0c0;
