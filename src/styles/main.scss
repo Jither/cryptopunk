@@ -59,10 +59,13 @@ $colors 						:
 
 @mixin hide-scrollbar()
 {
+	// WebKit/Blink:
 	&::-webkit-scrollbar
 	{
 		display: none;
 	}
+	// Edge:
+	-ms-overflow-style: none;
 }
 
 html, body
@@ -105,8 +108,9 @@ h1
 
 main
 {
-	flex: 1 1 auto;
+	flex: 1;
 	display: flex;
+	min-height: 0; // Don't expand to fit content
 }
 
 main > section

@@ -27,15 +27,10 @@ class PropertyPanel
 		this.eleOutputsContainer.innerHTML = "";
 		this.eleNodeTitle.innerHTML = "";
 
-		const headers = this.element.querySelectorAll("h1");
-		const divs = this.element.querySelectorAll(":scope > div");
-
-		divs.forEach(div => { 
-			div.style.display = node ? "block" : "none"; 
-		});
-		headers.forEach(header => {
-			header.style.display = node ? "block" : "none";
-		});
+		for (let i = 0; i < this.element.children.length; i++)
+		{
+			this.element.children[i].style.display = node ? "block" : "none";
+		}
 	}
 
 	updateProperties(node)

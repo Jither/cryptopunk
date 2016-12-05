@@ -558,9 +558,15 @@ class Node
 		}
 		if (this.dragging)
 		{
-			this.element.style.left = this.dragOriginX + dX + "px";
-			this.element.style.top = this.dragOriginY + dY + "px";
-			this.onPositionChanged();
+			if (this.requestedFrame)
+			{
+				window.cancelAnimationFrame(this.requestedFrame);
+			}
+			this.requestedFrame = window.requestAnimationFrame(() => {
+				this.element.style.left = this.dragOriginX + dX + "px";
+				this.element.style.top = this.dragOriginY + dY + "px";
+				this.onPositionChanged();
+			});
 		}
 	}
 
