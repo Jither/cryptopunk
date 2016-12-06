@@ -80,7 +80,7 @@ import * as xxtea from "./transforms/block-ciphers/xxtea";
 
 import * as generators from "./transforms/generators";
 
-import { NodeEditor } from "./ui/jither.nodeeditor";
+import { NodeEditor } from "./ui/jither.node-editor";
 import { PropertyPanel } from "./ui/cryptopunk.property-panel";
 import { Palette } from "./ui/cryptopunk.palette";
 import { NodeController } from "./ui/cryptopunk.node-controller";
