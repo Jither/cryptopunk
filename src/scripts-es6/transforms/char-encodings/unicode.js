@@ -1,7 +1,7 @@
 import { Transform, TransformError } from "../transforms";
 import { RX_CONTROL_CODES } from "../../cryptopunk.strings";
 
-// Returns full 32 bit Unicode code point (based on up to two javascript character (UCS-2))
+// Returns full 32 bit Unicode code point (based on up to two javascript characters (UCS-2))
 function getCodePoint(str, index)
 {
 	let code = str.charCodeAt(index++);
@@ -206,11 +206,18 @@ class BytesToUcs2Transform extends Transform
 	transform(bytes)
 	{
 		let result = "";
+
+		if (bytes.length % 2 !== 0)
+		{
+			this.warn("Input length not a multiple of two bytes. Will be padded with 0's.");
+		}
+
 		for (let i = 0; i < bytes.length; i += 2)
 		{
+			// Padding will take care of itself, because bitwise operators will convert "undefined" to 0
 			const code = this.options.littleEndian ?
-				bytes[i + 1] << 8 | bytes[i] :
-				bytes[i] << 8 | bytes[i + 1];
+				bytes[i + 1] << 8 | bytes[i    ] :
+				bytes[i    ] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
 
@@ -305,12 +312,18 @@ class BytesToUtf16Transform extends Transform
 
 	transform(bytes)
 	{
+		if (bytes.length % 2 !== 0)
+		{
+			this.warn("Input length not a multiple of two bytes. Will be padded with 0's.");
+		}
+
 		let result = "";
 		for (let i = 0; i < bytes.length; i += 2)
 		{
+			// Padding will take care of itself, because bitwise operators will convert "undefined" to 0
 			const code = this.options.littleEndian ?
-				bytes[i + 1] << 8 | bytes[i] :
-				bytes[i] << 8 | bytes[i + 1];
+				bytes[i + 1] << 8 | bytes[i    ] :
+				bytes[i    ] << 8 | bytes[i + 1];
 			result += String.fromCharCode(code);
 		}
 
@@ -372,13 +385,26 @@ class BytesToUtf32Transform extends Transform
 
 	transform(bytes)
 	{
+		if (bytes.length % 4 !== 0)
+		{
+			this.warn("Input length not a multiple of two bytes. Will be padded with 0's.");
+		}
+
 		let result = "";
 		for (let i = 0; i < bytes.length; i += 4)
 		{
-			const code = this.options.littleEndian ?
+			// Padding will take care of itself, because bitwise operators will convert "undefined" to 0
+			let code = this.options.littleEndian ?
 				(bytes[i]      ) | (bytes[i + 1] <<  8) | (bytes[i + 2] << 16) | (bytes[i + 3] << 24) :
 				(bytes[i] << 24) | (bytes[i + 1] << 16) | (bytes[i + 2] <<  8) | (bytes[i + 3]      );
 			
+			// Ensure we don't go beyond highest possible codepoint (fromCodePoint will throw exception)
+			// Note: We convert to unsigned first
+			if ((code >>> 0) > 0x10FFFF)
+			{
+				code = 0xfffd;
+			}
+
 			result += String.fromCodePoint(code);
 		}
 

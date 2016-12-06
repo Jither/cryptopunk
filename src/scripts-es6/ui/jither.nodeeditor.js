@@ -558,6 +558,7 @@ class Node
 		}
 		if (this.dragging)
 		{
+			// TODO: Should animation for all paths be consolidated into a single animation frame request?
 			if (this.requestedFrame)
 			{
 				window.cancelAnimationFrame(this.requestedFrame);

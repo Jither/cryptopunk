@@ -8,6 +8,8 @@ class NodeController
 	{
 		this.node = editor.addNode(name);
 		this.transform = transform;
+		this.transform.warned.add(this.nodeWarnedListener.bind(this));
+
 		this.node.controller = this;
 		this.options = Object.assign({}, transform.defaults);
 		this.inputs = transform.inputs || [];
@@ -167,6 +169,12 @@ class NodeController
 	inputValueChangedListener(/*socket, value*/)
 	{
 		this.update();
+	}
+
+	nodeWarnedListener(message)
+	{
+		// TODO: Proper warning handling (send to property panel, mark node with warning indicator...)
+		console.warn(message);
 	}
 
 	toHex(bytes)

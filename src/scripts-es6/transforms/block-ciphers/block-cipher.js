@@ -23,21 +23,30 @@ class BlockCipherTransform extends Transform
 		return size;
 	}
 
-	transformBlocks(bytes, blockSizeBits, ...rest)
+	transformBlocks(bytes, blockSize, ...rest)
 	{
-		const blockSizeBytes = blockSizeBits / 8;
-		const blockCount = Math.ceil(bytes.length / blockSizeBytes);
+		const blockLength = blockSize / 8;
 
-		const result = new Uint8Array(blockSizeBytes * blockCount);
-
-		for (let offset = 0; offset < result.length; offset += blockSizeBytes)
+		if (this.decrypt)
 		{
-			let block = bytes.subarray(offset, offset + blockSizeBytes);
-			if (block.length < blockSizeBytes)
+			if (bytes.length % blockLength !== 0)
+			{
+				throw new TransformError(`For decryption, message size must be a multiple of the block size (${blockSize} bits/${blockLength} bytes). Was: ${bytes.length} bytes.`);
+			}
+		}
+
+		const blockCount = Math.ceil(bytes.length / blockLength);
+
+		const result = new Uint8Array(blockLength * blockCount);
+
+		for (let offset = 0; offset < result.length; offset += blockLength)
+		{
+			let block = bytes.subarray(offset, offset + blockLength);
+			if (block.length < blockLength)
 			{
 				// Create padded block - pure 0 padding isn't proper padding (non-reversible), but since
 				// we don't know where the output might be used, we can't assume a padding scheme (for now)
-				const paddedBlock = new Uint8Array(blockSizeBytes);
+				const paddedBlock = new Uint8Array(blockLength);
 				paddedBlock.set(block);
 				block = paddedBlock;
 			}

@@ -1,7 +1,11 @@
+import { Signal } from "../jither.signals";
+
 class Transform
 {
 	constructor()
 	{
+		this.warned = new Signal();
+
 		Object.defineProperty(this, "options", {
 			enumerable: true,
 			configurable: false,
@@ -61,6 +65,11 @@ class Transform
 			return "bool";
 		}
 		return null;
+	}
+
+	warn(message)
+	{
+		this.warned.dispatch(message);
 	}
 
 	addOption(name, caption, defaultValue, options)
