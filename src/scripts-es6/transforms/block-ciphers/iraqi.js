@@ -1,5 +1,4 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
 
 // A lot of the original code for this probable hoax is nonsense.
 // That won't stop us, though...
@@ -64,7 +63,7 @@ class IraqiTransform extends BlockCipherTransform
 
 	generateKeyMaterial(keyBytes)
 	{
-		let fixedKey = [
+		const fixedKey = [
 			0x2e, 0xf5, 0x8a, 0x0d, 0xf4, 0xe9, 0xee, 0x9a, 
 			0x8b, 0x1e, 0xf1, 0x5a, 0x2f, 0xcd, 0xab, 0x61, 
 			0xdf, 0xbe, 0x1c, 0x0a, 0xb9, 0x0d, 0x17, 0x89, 
@@ -239,7 +238,7 @@ class IraqiTransform extends BlockCipherTransform
 
 	oneWay(matrix, rndPerm, rndGlob, chaos)
 	{
-		let perms = new Array(16);
+		const perms = new Array(16);
 
 		const result = new Array(16);
 		for (let i = 0; i < 16; i++)

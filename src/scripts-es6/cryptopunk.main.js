@@ -210,6 +210,7 @@ palette.addCategory("Hashes")
 	.addItem(whirlpool.WhirlpoolTransform, "WHIRLPOOL", "WHIRLPOOL");
 
 palette.addCategory("String manipulation")
+	.addItem(stringManipulation.ChangeCaseTransform, "Change case")
 	.addItem(stringManipulation.RemoveCharsTransform, "Remove characters")
 	.addItem(stringManipulation.SimpleTranspositionTransform, "Simple transpositions");
 

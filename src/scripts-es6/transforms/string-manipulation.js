@@ -70,13 +70,58 @@ class RemoveCharsTransform extends Transform
 	}
 }
 
+const CASE_NAMES = [
+	"Uppercase",
+	"Lowercase",
+	"Invert case"
+];
+const CASE_VALUES = [
+	"upper",
+	"lower",
+	"invert"
+];
+
+class ChangeCaseTransform extends Transform
+{
+	constructor()
+	{
+		super();
+		this.addInput("string", "Input")
+			.addOutput("string", "Output")
+			.addOption("case", "Case", "upper", { type: "select", texts: CASE_NAMES, values: CASE_VALUES });
+	}
+
+	transform(str)
+	{
+		let result = "";
+		switch (this.options.case)
+		{
+			case "upper":
+				result = str.toUpperCase();
+				break;
+			case "lower":
+				result = str.toLowerCase();
+				break;
+			case "invert":
+				for (let i = 0; i < str.length; i++)
+				{
+					const c = str.charAt(i);
+					const isLower = (c === c.toLowerCase());
+					result += isLower ? c.toUpperCase() : c.toLowerCase();
+				}
+				break;
+		}
+		return result;
+	}
+}
+
 class SimpleTranspositionTransform extends Transform
 {
 	constructor()
 	{
 		super();
-		this.addInput("string", "String")
-			.addOutput("string", "String")
+		this.addInput("string", "Input")
+			.addOutput("string", "Output")
 			.addOption("reverse", "Reverse", false);
 	}
 
@@ -92,6 +137,7 @@ class SimpleTranspositionTransform extends Transform
 }
 
 export {
+	ChangeCaseTransform,
 	RemoveCharsTransform,
 	SimpleTranspositionTransform
 };
