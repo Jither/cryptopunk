@@ -40,6 +40,14 @@ class NodeController
 		this.update();
 	}
 
+	save()
+	{
+		return {
+			transform: this.transform.constructor.name,
+			options: this.transform.options
+		};
+	}
+
 	acceptsConnection(socket1, socket2)
 	{
 		return socket1.tags.type === socket2.tags.type;

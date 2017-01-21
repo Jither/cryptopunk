@@ -5,6 +5,10 @@ $editor-back-color				: #505050;
 $editor-text-color 				: #f0f0f0;
 $grid-color 					: #585858;
 
+$toolbar-back-color 			: #ffffff;
+$toolbar-text-color 			: #303030;
+$toolbar-hover-color 			: #d0d0d0;
+
 $panel-back-color 				: #303030;
 $panel-text-color				: #ffffff;
 
@@ -104,6 +108,33 @@ h1
 {
 	padding: $half-padding;
 	font-size: 16px;
+}
+
+#toolbar
+{
+	background: $toolbar-back-color;
+	color: $toolbar-text-color;
+
+	li
+	{
+		display: inline-block; // TODO: flex-box
+	}
+
+	a
+	{
+		background: $toolbar-back-color;
+		color: $toolbar-text-color;
+		text-decoration: none;
+		display: block;
+		padding: $standard-padding;
+
+		transition: background-color 0.4s;
+
+		&:hover
+		{
+			background: $toolbar-hover-color;
+		}
+	}
 }
 
 main

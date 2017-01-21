@@ -151,7 +151,7 @@ TODO
 * US
 * Lorenz
 
-### Modern Ciphers
+### Block Ciphers
 
 * 3DES
 * Kuznyechik (GOST R 34.12-2015)
@@ -161,10 +161,9 @@ TODO
 
 #### Second priority
 
-* BaseKing
-* A5/1, A5/2
 * Akelarre
 * Anubis
+* BaseKing
 * CRYPTON (0.5, 1.0)
 * CS-Cipher
 * DEAL
@@ -176,7 +175,6 @@ TODO
 * Grand Cru
 * Hierocrypt
 * IDEA NXT
-* KASUMI
 * KHAZAD
 * LOKI89/91 / LOKI97
 * MacGuffin
@@ -184,17 +182,13 @@ TODO
 * MAGENTA
 * MARS
 * MISTY1 / MISTY2
-* PANAMA
 * S-1
 * SAFER / SAFER+ / SAFER++
 * SC2000
-* Scream
-* SEAL(-3.0)
 * SEED
 * Shacal
 * Shark-A
 * Simon
-* SNOW
 * SPEED
 * Unicorn-A, Unicorn-E
 
@@ -223,6 +217,40 @@ TODO
 * Xenon
 * xmx
 * Zodiac
+
+### Stream Ciphers
+
+* A5/1, A5/2
+* Achterbahn
+* ChaCha
+* E0
+* F-FCSR
+* FISH
+* HC-128 / HC-256
+* ISAAC
+* KASUMI
+* MUGI
+* PANAMA
+* Phelix
+* Pike
+* Py
+* QUAD
+* Rabbit
+* Salsa20
+* Scream
+* SEAL(-3.0)
+* SNOW
+* SOBER, SOBER-128
+* SOSEMANUK
+* VEST
+* VMPC
+* WAKE
+
+### Educational Ciphers
+
+* Cyph0 (Outerbridge)
+* Mini-AES
+* Simplified DES
 
 ### Block cipher modes
 
@@ -254,6 +282,7 @@ TODO
 
 ### Key-Derivation Functions
 
+* Argon2
 * Bcrypt
 * HKDF
 * Lyra, Lyra2

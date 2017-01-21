@@ -88,6 +88,7 @@ class NodeSocket
 {
 	constructor(editor, node, name, type)
 	{
+		this._id = editor._getUniqueSocketId();
 		this.editor = editor;
 		this.node = node;
 		this.name = name;
@@ -613,14 +614,37 @@ class Node
 	{
 		this.eleHeader.innerText = this._title || this.name;
 	}
+
+	save()
+	{
+		const result = {
+			name: this.name,
+			title: this.title,
+			x: this.element.offsetLeft,
+			y: this.element.offsetTop,
+			inputs: this.inputs.map(input => input.output ? input.output._id : null),
+			outputs: this.outputs.map(output => output._id)
+		};
+
+		if (this.controller)
+		{
+			result.controller = this.controller.save();
+		}
+
+		return result;
+	}
 }
 
 class NodeEditor
 {
 	constructor(element)
 	{
+		// Unique ID for each socket in the editor (used for saving connections)
+		// Incremented whenever a socket requests its ID.
+		this._socketId = 1;
+
 		this.element = element;
-		
+
 		const svg = this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		element.appendChild(svg);
 		svg.ns = svg.namespaceURI;
@@ -652,10 +676,23 @@ class NodeEditor
 		node.remove();
 	}
 
+	clear()
+	{
+		for (let i = this.nodes.length - 1; i >= 0; i--)
+		{
+			this.nodes[i].remove();
+		}
+	}
+
 	_removeNode(node)
 	{
 		this.nodes.splice(this.nodes.indexOf(node), 1);
 		this.element.removeChild(node.element);
+	}
+
+	_getUniqueSocketId()
+	{
+		return this._socketId++;
 	}
 
 	socketClicked(socket)
@@ -793,6 +830,14 @@ class NodeEditor
 		}
 
 		this.selectedNodeChanged.dispatch(node);
+	}
+
+	save()
+	{
+		const result = {};
+		result.nodes = this.nodes.map(node => node.save());
+
+		return result;
 	}
 }
 
