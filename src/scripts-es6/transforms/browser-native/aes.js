@@ -71,7 +71,7 @@ class NativeAesBaseTransform extends NativeBaseTransform
 				const msg = error.message || `Message is likely not ${methodName}able in ${mode} mode.`;
 				throw new TransformError(`Error during ${methodName}ion. ${msg}`); 
 			});
-			//.then(result => Array.from(new Uint8Array(result)));
+		//.then(result => Array.from(new Uint8Array(result)));
 	}
 }
 

@@ -1,3 +1,5 @@
+import "../styles/main.scss";
+
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
 import * as ascii from "./transforms/char-encodings/ascii";

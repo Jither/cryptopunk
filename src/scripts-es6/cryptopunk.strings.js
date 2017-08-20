@@ -5,7 +5,7 @@ const RX_CONTROL_CODES = /[\x00-\x08\x0b-\x0c\x0e-\x1f\x7f]/g;
 // Prepares string for use as part of a regular expression
 function escapeForRegex(str)
 {
-	return str.replace(/[.*+?^${}()|[\]\\\/-]/g, "\\$&");
+	return str.replace(/[.*+?^${}()|[\]\\/-]/g, "\\$&");
 }
 
 // Returns true if string has characters appearing more than once, otherwise false
