@@ -149,6 +149,7 @@ palette.addCategory("Text to bytes")
 
 	.addItem(baseN.Base32ToBytesTransform, "Base32", "Base32 > Bytes")
 	.addItem(baseN.Base32HexToBytesTransform, "Base32-HEX", "Base32-HEX > Bytes")
+	.addItem(baseN.Base62ToBytesTransform, "Base62", "Base62 > Bytes")
 	.addItem(baseN.Base64ToBytesTransform, "Base64", "Base64 > Bytes")
 	.addItem(baseN.Base64UrlToBytesTransform, "Base64 URL", "Base64 URL > Bytes");
 
@@ -175,6 +176,7 @@ palette.addCategory("Bytes to text")
 
 	.addItem(baseN.BytesToBase32Transform, "Base32", "Bytes > Base32")
 	.addItem(baseN.BytesToBase32HexTransform, "Base32-HEX", "Bytes > Base32-HEX")
+	.addItem(baseN.BytesToBase62Transform, "Base62", "Bytes > Base62")
 	.addItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64")
 	.addItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
 
@@ -268,6 +270,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(cast128.Cast128DecryptTransform, "CAST-128", "CAST-128 Decrypt")
 	.addItem(cast256.Cast256DecryptTransform, "CAST-256", "CAST-256 Decrypt")
 	.addItem(des.DesDecryptTransform, "DES", "DES Decrypt")
+	.addItem(des.DesXDecryptTransform, "DES-X", "DES-X Decrypt")
 	.addItem(ice.IceDecryptTransform, "ICE", "ICE Decrypt")
 	.addItem(idea.IdeaDecryptTransform, "IDEA", "IDEA Decrypt")
 	.addItem(iraqi.IraqiDecryptTransform, "Iraqi", "Iraqi Decrypt")
@@ -307,6 +310,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(cast128.Cast128EncryptTransform, "CAST-128", "CAST-128 Encrypt")
 	.addItem(cast256.Cast256EncryptTransform, "CAST-256", "CAST-256 Encrypt")
 	.addItem(des.DesEncryptTransform, "DES", "DES Encrypt")
+	.addItem(des.DesXEncryptTransform, "DES-X", "DES-X Encrypt")
 	.addItem(ice.IceEncryptTransform, "ICE", "ICE Encrypt")
 	.addItem(idea.IdeaEncryptTransform, "IDEA", "IDEA Encrypt")
 	.addItem(iraqi.IraqiEncryptTransform, "Iraqi", "Iraqi Encrypt")

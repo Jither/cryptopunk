@@ -285,6 +285,15 @@ class Base32HexToBytesTransform extends BaseNToBytesTransform
 	}
 }
 
+class Base62ToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "=");
+		this.ignoreCase = false;
+	}
+}
+
 class Base64ToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
@@ -321,6 +330,15 @@ class BytesToBase32HexTransform extends BytesToBaseNTransform
 	}
 }
 
+class BytesToBase62Transform extends BytesToBaseNTransform
+{
+	constructor()
+	{
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "=");
+		this.ignoreCase = false;
+	}
+}
+
 class BytesToBase64Transform extends BytesToBaseNTransform
 {
 	constructor()
@@ -348,6 +366,8 @@ export {
 	BytesToBase32Transform,
 	Base32HexToBytesTransform,
 	BytesToBase32HexTransform,
+	Base62ToBytesTransform,
+	BytesToBase62Transform,
 	Base64ToBytesTransform,
 	BytesToBase64Transform,
 	Base64UrlToBytesTransform,

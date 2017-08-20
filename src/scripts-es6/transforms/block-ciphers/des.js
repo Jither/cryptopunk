@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE, checkSize } from "../../cryptopunk.utils";
 
 // The following tables are different from the usual reference tables - all of them count
 // from 0 - i.e. 0 is first bit, 1 is second... A few of them also have other differences, noted below.
@@ -185,7 +185,7 @@ class DesTransform extends BlockCipherTransform
 		this.addOption("checkParity", "Check parity of 64-bit keys", true);
 	}
 
-	transform(bytes, keyBytes)
+	transform(bytes, keyBytes, ...rest)
 	{
 		this.checkKeySize(keyBytes, [56, 64]);
 
@@ -200,7 +200,7 @@ class DesTransform extends BlockCipherTransform
 		
 		const subKeys = this.createSubKeys(keyBytes);
 
-		return this.transformBlocks(bytes, 64, subKeys);
+		return this.transformBlocks(bytes, 64, subKeys, ...rest);
 	}
 
 	transformBlock(block, dest, destOffset, subKeys)
@@ -333,6 +333,51 @@ class DesTransform extends BlockCipherTransform
 	}
 }
 
+class DesXTransform extends DesTransform
+{
+	constructor(decrypt)
+	{
+		super(decrypt);
+		this.addInput("bytes", "Prewhitening Key");
+		this.addInput("bytes", "Postwhitening Key");
+	}
+
+	transform(bytes, keyBytes, prewhitening, postwhitening)
+	{
+		let size = prewhitening.length * 8;
+		let requirement = checkSize(size, 64);
+		if (requirement)
+		{
+			throw new TransformError(`Prewhitening key size must be ${requirement} bits. Was: ${size} bits.`);
+		}
+		size = postwhitening.length * 8;
+		requirement = checkSize(size, 64);
+		if (requirement)
+		{
+			throw new TransformError(`Postwhitening key size must be ${requirement} bits. Was: ${size} bits.`);
+		}
+
+		return super.transform(bytes, keyBytes, prewhitening, postwhitening);
+	}
+
+	transformBlock(block, dest, destOffset, subKeys, prewhitening, postwhitening)
+	{
+		const b = new Uint8Array(block.length);
+		for (let i = 0; i < block.length; i++)
+		{
+			b[i] = block[i] ^ prewhitening[i];
+		}
+		
+		super.transformBlock(b, dest, destOffset, subKeys);
+
+		for (let i = 0; i < block.length; i++)
+		{
+			dest[i] ^= postwhitening[i];
+		}
+	}
+
+}
+
 class DesEncryptTransform extends DesTransform
 {
 	constructor()
@@ -349,7 +394,25 @@ class DesDecryptTransform extends DesTransform
 	}
 }
 
+class DesXEncryptTransform extends DesXTransform
+{
+	constructor()
+	{
+		super(false);
+	}
+}
+
+class DesXDecryptTransform extends DesXTransform
+{
+	constructor()
+	{
+		super(true);
+	}
+}
+
 export {
 	DesEncryptTransform,
-	DesDecryptTransform
+	DesDecryptTransform,
+	DesXEncryptTransform,
+	DesXDecryptTransform
 };
