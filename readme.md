@@ -38,6 +38,7 @@ Supported
 * Camellia
 * CAST-128, CAST-256
 * DES (64 bit with parity or 56 bit without)
+* DES-X
 * ICE
 * IDEA
 * "Iraqi"
@@ -116,6 +117,7 @@ Supported
 * Hexadecimal (numbers and bytestreams)
 * Base32
 * Base32-HEX
+* Base62
 * Base64 (+ URL safe)
 
 
@@ -167,7 +169,6 @@ TODO
 * CRYPTON (0.5, 1.0)
 * CS-Cipher
 * DEAL
-* DES-X
 * DFC / DFCv2-128
 * E2
 * FEAL
