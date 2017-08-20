@@ -182,7 +182,7 @@ class NodeController
 	nodeWarnedListener(message)
 	{
 		// TODO: Proper warning handling (send to property panel, mark node with warning indicator...)
-		console.warn(message);
+		console.warn(message); // eslint-disable-line no-console
 	}
 
 	toHex(bytes)

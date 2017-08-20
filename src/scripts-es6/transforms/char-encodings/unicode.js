@@ -57,7 +57,7 @@ class Utf8ToBytesTransform extends Transform
 		while (i < str.length)
 		{
 			let code;
-			[code, i] = getCodePoint(str, i);
+			[code, i] = getCodePoint(str, i); // eslint-disable-line prefer-const
 
 			if (code <= 0x7f)
 			{
@@ -248,7 +248,7 @@ class Utf16ToBytesTransform extends Transform
 		while (i < str.length)
 		{
 			let code;
-			[code, i] = getCodePoint(str, i);
+			[code, i] = getCodePoint(str, i); // eslint-disable-line prefer-const
 
 			let high, low;
 			if (code <= 0xffff)
@@ -278,20 +278,17 @@ class Utf16ToBytesTransform extends Transform
 					result.push((low & 0xff00) >> 8);
 				}
 			}
+			else if (high === 0)
+			{
+				result.push((low & 0xff00) >> 8);
+				result.push(low & 0xff);
+			}
 			else
 			{
-				if (high === 0)
-				{
-					result.push((low & 0xff00) >> 8);
-					result.push(low & 0xff);
-				}
-				else
-				{
-					result.push((high & 0xff00) >> 8);
-					result.push(high & 0xff);
-					result.push((low & 0xff00) >> 8);
-					result.push(low & 0xff);
-				}
+				result.push((high & 0xff00) >> 8);
+				result.push(high & 0xff);
+				result.push((low & 0xff00) >> 8);
+				result.push(low & 0xff);
 			}
 		}
 		// TODO: Conversion for now - try to get this to work with Uint8Array

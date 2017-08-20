@@ -69,18 +69,17 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 			true, // Extractable - this isn't a security application, but a messing-about application
 			[methodName]
 		)
-		.catch(error => { throw new TransformError(`Error during key import: ${error.message}`); })
-		.then(publicKey => window.crypto.subtle[methodName](
-			methodParams,
-			publicKey,
-			bytes
-		))
-		.catch(error => 
-		{ 
-			const msg = error.message || "Unspecified error";
-			throw new TransformError(`Error during ${methodName}ion. ${msg}`); 
-		});
-		//.then(ciphertext => Array.from(new Uint8Array(ciphertext)));
+			.catch(error => { throw new TransformError(`Error during key import: ${error.message}`); })
+			.then(publicKey => window.crypto.subtle[methodName](
+				methodParams,
+				publicKey,
+				bytes
+			))
+			.catch(error => 
+			{ 
+				const msg = error.message || "Unspecified error";
+				throw new TransformError(`Error during ${methodName}ion. ${msg}`); 
+			});
 	}
 }
 
@@ -88,6 +87,7 @@ class NativeRsaOaepEncryptTransform extends NativeBaseTransform
 // making it really bothersome to build a decryption transform unless we calculate everything
 // ourselves based on p and q. To be done...
 
+/*
 class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 {
 	constructor()
@@ -161,6 +161,7 @@ class NativeRsaOaepDecryptTransform extends NativeBaseTransform
 		//.then(plaintext => Array.from(new Uint8Array(plaintext)));
 	}
 }
+*/
 
 export {
 	NativeRsaOaepEncryptTransform,

@@ -279,7 +279,7 @@ class HavalTransform extends MdHashTransform
 	tailor(state, size)
 	{
 		let temp;
-		let [h0, h1, h2, h3, h4, h5, h6, h7] = state;
+		let [h0, h1, h2, h3, h4, h5, h6, h7] = state; // eslint-disable-line prefer-const
 		switch (size)
 		{
 			case 128:
