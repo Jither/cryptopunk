@@ -117,6 +117,7 @@ Supported
 * Hexadecimal (numbers and bytestreams)
 * Base32
 * Base32-HEX
+* Base58 (Bitcoin, Ripple and Flickr variants)
 * Base62
 * Base64 (+ URL safe)
 

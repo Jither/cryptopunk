@@ -285,6 +285,41 @@ class Base32HexToBytesTransform extends BaseNToBytesTransform
 	}
 }
 
+const BASE58_VARIANT_NAMES = [
+	"Bitcoin",
+	"Ripple",
+	"Flickr"
+];
+
+const BASE58_VARIANT_VALUES = [
+	"bitcoin",
+	"ripple",
+	"flickr"
+];
+
+class Base58ToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		// Dummy, but has the correct size, so that we can simply change this.alphabet for variants
+		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", "=");
+		this.defaults.inferPadding = false;
+		this.addOption("variant", "Variant", "bitcoin", { type: "select", texts: BASE58_VARIANT_NAMES, values: BASE58_VARIANT_VALUES });
+	}
+
+	transform(str)
+	{
+		switch (this.options.variant)
+		{
+			case "bitcoin": this.alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; break;
+			case "ripple": this.alphabet = "rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"; break;
+			case "flickr": this.alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"; break;
+		}
+
+		return super.transform(str);
+	}
+}
+
 class Base62ToBytesTransform extends BaseNToBytesTransform
 {
 	constructor()
@@ -330,6 +365,30 @@ class BytesToBase32HexTransform extends BytesToBaseNTransform
 	}
 }
 
+class BytesToBase58Transform extends BytesToBaseNTransform
+{
+	constructor()
+	{
+		// Dummy, but has the correct size, so that we can simply change this.alphabet for variants
+		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", "=");
+		this.defaults.inferPadding = false;
+		this.addOption("variant", "Variant", "bitcoin", { type: "select", texts: BASE58_VARIANT_NAMES, values: BASE58_VARIANT_VALUES });
+	}
+
+	transform(bytes)
+	{
+		switch (this.options.variant)
+		{
+			case "bitcoin": this.alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; break;
+			case "ipfs": this.alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; break;
+			case "ripple": this.alphabet = "rpshnaf39wBUDNEGHJKLM4PQRST7VWXYZ2bcdeCg65jkm8oFqi1tuvAxyz"; break;
+			case "flickr": this.alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"; break;
+		}
+
+		return super.transform(bytes);
+	}
+}
+
 class BytesToBase62Transform extends BytesToBaseNTransform
 {
 	constructor()
@@ -366,6 +425,8 @@ export {
 	BytesToBase32Transform,
 	Base32HexToBytesTransform,
 	BytesToBase32HexTransform,
+	Base58ToBytesTransform,
+	BytesToBase58Transform,
 	Base62ToBytesTransform,
 	BytesToBase62Transform,
 	Base64ToBytesTransform,

@@ -150,6 +150,7 @@ palette.addCategory("Text to bytes")
 
 	.addItem(baseN.Base32ToBytesTransform, "Base32", "Base32 > Bytes")
 	.addItem(baseN.Base32HexToBytesTransform, "Base32-HEX", "Base32-HEX > Bytes")
+	.addItem(baseN.Base58ToBytesTransform, "Base58", "Base58 > Bytes")
 	.addItem(baseN.Base62ToBytesTransform, "Base62", "Base62 > Bytes")
 	.addItem(baseN.Base64ToBytesTransform, "Base64", "Base64 > Bytes")
 	.addItem(baseN.Base64UrlToBytesTransform, "Base64 URL", "Base64 URL > Bytes");
@@ -177,6 +178,7 @@ palette.addCategory("Bytes to text")
 
 	.addItem(baseN.BytesToBase32Transform, "Base32", "Bytes > Base32")
 	.addItem(baseN.BytesToBase32HexTransform, "Base32-HEX", "Bytes > Base32-HEX")
+	.addItem(baseN.BytesToBase58Transform, "Base58", "Bytes > Base58")
 	.addItem(baseN.BytesToBase62Transform, "Base62", "Bytes > Base62")
 	.addItem(baseN.BytesToBase64Transform, "Base64", "Bytes > Base64")
 	.addItem(baseN.BytesToBase64UrlTransform, "Base64 URL", "Bytes > Base64 URL");
