@@ -1,8 +1,9 @@
 {
   "name": "cryptopunk",
   "version": "0.1.0",
-  "author": "Jimmi Thøgersen <jimmith@gmail.com>",
+  "author": "Jither",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "test": "ava",
     "build": "webpack",

@@ -1,11 +1,16 @@
 CryptoPunk
 ==========
+Node GUI for experimentation with various cryptography-related algorithms - classical and modern.
 
 Disclaimer
 ----------
 The cryptography algorithms included in this software are intended for historical, academic and educational purposes only. They are *not* intended for any kind of security purpose. In other words, do *not* use the code in production software, and do *not* use the output for e.g. secure communication.
 
 The algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled"; code has been refactored into functions even in tight loops; bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
+
+"Pre-alpha"
+-----------
+This "software" is "work in progress" and far from finalized: It's mostly been a testing ground for various algorithms. It *works* but is not a fully fledged user-friendly tool.
 
 Supported
 ---------
@@ -324,4 +329,3 @@ TODO
 Terminology and conventions
 ---------------------------
 Generally, in the source code and UI, the term *size* (e.g. *key size* or *block size*) refers to number of *bits*, while *length* (e.g. *key length* or *block length*) refers to number of *bytes*. That is, a key *size* of 128 corresponds to a key *length* of 16 (128 divided by 8). This may not always follow the terms chosen by individual algorithm authors.
-

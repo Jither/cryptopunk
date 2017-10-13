@@ -6,7 +6,7 @@
   "bin": {
     "victor": "./index.js"
   },
-  "author": "Jimmi Thøgersen <jimmith@gmail.com>",
+  "author": "Jither",
   "license": "MIT",
   "private": true,
   "dependencies": {
