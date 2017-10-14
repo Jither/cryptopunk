@@ -22,5 +22,8 @@
             "scopeName": "source.vectors",
             "path": "./syntaxes/victor.tmLanguage.json"
         }]
+    },
+    "scripts": {
+        "install": "node install"
     }
 }
