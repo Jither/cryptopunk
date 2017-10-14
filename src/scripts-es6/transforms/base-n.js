@@ -23,11 +23,9 @@ class BaseNBaseTransform extends Transform
 
 class BaseNToBytesTransform extends BaseNBaseTransform
 {
-	constructor(alphabet, padChar, discardLeadingZeroes)
+	constructor(alphabet, padChar)
 	{
 		super(alphabet);
-
-		this.discardLeadingZeroes = discardLeadingZeroes;
 
 		this.addInput("string", "String")
 			.addOutput("bytes", "Bytes");
@@ -125,15 +123,7 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 			result[resultPosition--] = value;
 		}
 
-		let resultStart = 0;
 		let resultEnd = result.length;
-		if (this.discardLeadingZeroes)
-		{
-			while (resultStart < result.length && result[resultStart] === 0)
-			{
-				resultStart++;
-			}
-		}
 
 		if (this.usesPadding)
 		{
@@ -141,18 +131,16 @@ class BaseNToBytesTransform extends BaseNBaseTransform
 			resultEnd -= padBytes;
 		}
 
-		return result.subarray(resultStart, resultEnd);
+		return result.subarray(0, resultEnd);
 	}
 }
 
 class BytesToBaseNTransform extends BaseNBaseTransform
 {
-	constructor(alphabet, padChar, discardLeadingZeroes)
+	constructor(alphabet, padChar)
 	{
 		super(alphabet);
 		
-		this.discardLeadingZeroes = discardLeadingZeroes;
-
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "String");
 		
@@ -186,24 +174,24 @@ class BytesToBaseNTransform extends BaseNBaseTransform
 		const byteLength = buffer.length;
 
 		let startIndex = 0;
-		let bitPosition = 0;
+
+		let bitsPosition = 0;
 		while (startIndex < byteLength)
 		{
 			let remainder = 0;
-
 			for (let index = startIndex; index < byteLength; index++)
 			{
 				const dividend = buffer[index] + (remainder * 256);
-				const quotient = Math.floor(dividend / radix);
 				remainder = dividend % radix;
+				const quotient = Math.floor(dividend / radix);
 				buffer[index] = quotient;
 			}
 			result = this.alphabet[remainder] + result;
 
-			bitPosition += this.bitsPerDigit;
-			if (bitPosition >= 8)
+			bitsPosition += this.bitsPerDigit;
+			if (bitsPosition >= 8)
 			{
-				bitPosition -= 8;
+				bitsPosition -= 8;
 				startIndex++;
 			}
 		}
@@ -224,10 +212,6 @@ class BytesToBaseNTransform extends BaseNBaseTransform
 			}
 		}
 
-		if (this.discardLeadingZeroes)
-		{
-			result = result.replace(/^0+/, "");
-		}
 		return result;
 	}
 }
@@ -235,35 +219,75 @@ class BytesToBaseNTransform extends BaseNBaseTransform
 // Non-byte-aligning notations are easier to implement as Base-N.
 // Hex and binary have their own implementations
 
-class OctalToBytesTransform extends BaseNToBytesTransform
+class NumericBaseNToBytesTransform extends BaseNToBytesTransform
 {
-	constructor()
+	constructor(alphabet)
 	{
-		super("01234567", null, true);
+		super(alphabet, null, true);
+	}
+
+	transform(str)
+	{
+		const result = super.transform(str);
+		return this.removeLeadingZeroes(result, str);
+	}
+
+	removeLeadingZeroes(result)
+	{
+		let resultStart = 0;
+		while (resultStart < result.length && result[resultStart] === 0)
+		{
+			resultStart++;
+		}
+
+		return result.subarray(resultStart);
 	}
 }
 
-class BytesToOctalTransform extends BytesToBaseNTransform
+class NumericBytesToBaseNTransform extends BytesToBaseNTransform
 {
-	constructor()
+	constructor(alphabet)
 	{
-		super("01234567", null, true);
+		super(alphabet, null);
+	}
+
+	transform(bytes)
+	{
+		const result = super.transform(bytes);
+		return result.replace(/^0+/, "");
 	}
 }
 
-class DecimalToBytesTransform extends BaseNToBytesTransform
+class OctalToBytesTransform extends NumericBaseNToBytesTransform
 {
 	constructor()
 	{
-		super("0123456789", null, true);
+		super("01234567");
 	}
 }
 
-class BytesToDecimalTransform extends BytesToBaseNTransform
+class BytesToOctalTransform extends NumericBytesToBaseNTransform
 {
 	constructor()
 	{
-		super("0123456789", null, true);
+		super("01234567");
+	}
+
+}
+
+class DecimalToBytesTransform extends NumericBaseNToBytesTransform
+{
+	constructor()
+	{
+		super("0123456789");
+	}
+}
+
+class BytesToDecimalTransform extends NumericBytesToBaseNTransform
+{
+	constructor()
+	{
+		super("0123456789");
 	}
 }
 
@@ -276,7 +300,25 @@ class Base32ToBytesTransform extends BaseNToBytesTransform
 	}
 }
 
+class BytesToBase32Transform extends BytesToBaseNTransform
+{
+	constructor()
+	{
+		super("abcdefghijklmnopqrstuvwxyz234567", "=");
+		this.ignoreCase = true;
+	}
+}
+
 class Base32HexToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		super("0123456789abcdefghijklmnopqrstuv", "=");
+		this.ignoreCase = true;
+	}
+}
+
+class BytesToBase32HexTransform extends BytesToBaseNTransform
 {
 	constructor()
 	{
@@ -302,7 +344,7 @@ class Base58ToBytesTransform extends BaseNToBytesTransform
 	constructor()
 	{
 		// Dummy, but has the correct size, so that we can simply change this.alphabet for variants
-		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", "=");
+		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", null);
 		this.defaults.inferPadding = false;
 		this.addOption("variant", "Variant", "bitcoin", { type: "select", texts: BASE58_VARIANT_NAMES, values: BASE58_VARIANT_VALUES });
 	}
@@ -316,52 +358,42 @@ class Base58ToBytesTransform extends BaseNToBytesTransform
 			case "flickr": this.alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"; break;
 		}
 
-		return super.transform(str);
-	}
-}
+		// Count leading zeroes:
+		const zero = this.alphabet[0];
+		let encodedZeroes = 0;
+		while (encodedZeroes < str.length && str.charAt(encodedZeroes) === zero)
+		{
+			encodedZeroes++;
+		}
 
-class Base62ToBytesTransform extends BaseNToBytesTransform
-{
-	constructor()
-	{
-		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "=");
-		this.ignoreCase = false;
-	}
-}
+		// Don't transform leading zeroes:
+		const result = super.transform(str.substr(encodedZeroes));
 
-class Base64ToBytesTransform extends BaseNToBytesTransform
-{
-	constructor()
-	{
-		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", "=");
-		this.ignoreCase = false;
+		return this.fixLeadingZeroes(result, encodedZeroes);
 	}
-}
 
-class Base64UrlToBytesTransform extends BaseNToBytesTransform
-{
-	constructor()
+	fixLeadingZeroes(result, encodedZeroes)
 	{
-		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", "=");
-		this.ignoreCase = false;
-	}
-}
-
-class BytesToBase32Transform extends BytesToBaseNTransform
-{
-	constructor()
-	{
-		super("abcdefghijklmnopqrstuvwxyz234567", "=");
-		this.ignoreCase = true;
-	}
-}
-
-class BytesToBase32HexTransform extends BytesToBaseNTransform
-{
-	constructor()
-	{
-		super("0123456789abcdefghijklmnopqrstuv", "=");
-		this.ignoreCase = true;
+		// Count leading zeroes in result
+		let zeroes = 0;
+		while (zeroes < result.length && result[zeroes] === 0)
+		{
+			zeroes++;
+		}
+		if (encodedZeroes === 0)
+		{
+			if (zeroes === 0)
+			{
+				// No zeroes to add, none to remove
+				return result;
+			}
+			// Remove leading zeroes from transformation
+			return result.subarray(zeroes);
+		}
+		// Remove leading zeroes from transformation AND add leading zeroes from original base-58 string:
+		const fixedResult = new Uint8Array(result.length - zeroes + encodedZeroes);
+		fixedResult.set(result.subarray(zeroes), encodedZeroes);
+		return fixedResult;
 	}
 }
 
@@ -370,8 +402,7 @@ class BytesToBase58Transform extends BytesToBaseNTransform
 	constructor()
 	{
 		// Dummy, but has the correct size, so that we can simply change this.alphabet for variants
-		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", "=");
-		this.defaults.inferPadding = false;
+		super("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz", null);
 		this.addOption("variant", "Variant", "bitcoin", { type: "select", texts: BASE58_VARIANT_NAMES, values: BASE58_VARIANT_VALUES });
 	}
 
@@ -385,7 +416,36 @@ class BytesToBase58Transform extends BytesToBaseNTransform
 			case "flickr": this.alphabet = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ"; break;
 		}
 
-		return super.transform(bytes);
+		const result = super.transform(bytes);
+
+		return this.removeLeadingZeroes(result, bytes);
+	}
+
+	removeLeadingZeroes(result, bytes)
+	{
+		let zeroes = 0;
+		while (zeroes < bytes.length && bytes[zeroes] === 0)
+		{
+			zeroes++;
+		}
+		
+		const zero = this.alphabet[0];
+		
+		let skip = 0;
+		while (result[skip] === zero)
+		{
+			skip++;
+		}
+		return result.substr(skip - zeroes);
+	}
+}
+
+class Base62ToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		super("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", null);
+		this.ignoreCase = false;
 	}
 }
 
@@ -393,7 +453,16 @@ class BytesToBase62Transform extends BytesToBaseNTransform
 {
 	constructor()
 	{
-		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "=");
+		super("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", null);
+		this.ignoreCase = false;
+	}
+}
+
+class Base64ToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", "=");
 		this.ignoreCase = false;
 	}
 }
@@ -403,6 +472,15 @@ class BytesToBase64Transform extends BytesToBaseNTransform
 	constructor()
 	{
 		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", "=");
+		this.ignoreCase = false;
+	}
+}
+
+class Base64UrlToBytesTransform extends BaseNToBytesTransform
+{
+	constructor()
+	{
+		super("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", "=");
 		this.ignoreCase = false;
 	}
 }

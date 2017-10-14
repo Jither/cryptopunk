@@ -9,7 +9,7 @@
     "build": "webpack",
     "build-benchmarks": "webpack --config webpack.benchmarks.config.js",
     "deploy": "webpack -p",
-    "watch": "webpack --watch",
+    "dev": "webpack --watch",
     "vectors": "webpack --config webpack.vectors.config.js && victor vectors --transforms vectors/transforms.js"
   },
   "devDependencies": {

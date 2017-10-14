@@ -1,0 +1,182 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Victor",
+	"scopeName": "source.vectors",
+	"patterns": [
+		{
+			"include": "#comment"
+		},
+		{
+			"include": "#definition"
+		},
+		{
+			"include": "#arg-declaration"
+		},
+		{
+			"include": "#clear-statement"
+		},
+		{
+			"include": "#title"
+		},
+		{
+			"include": "#mode-assignment"
+		},
+		{
+			"include": "#option-assignment"
+		},
+		{
+			"include": "#format-assignment"
+		},
+		{
+			"include": "#transform"
+		}
+	],
+	"repository": {
+		"comment": {
+			"patterns": [{
+				"begin": "^#.*",
+				"end": "$",
+				"name": "comment.line.number-sign"
+			}]
+		},
+		"definition": {
+			"patterns": [{
+				"begin": "^([a-z])\\s*(:)\\s*",
+				"end": "$",
+				"beginCaptures": {
+					"1": { "name": "variable.parameter" },
+					"2": { "name": "punctuation.separator" }
+				},
+				"patterns": [{ "include": "#value" }]
+			}]
+		},
+		"mode-assignment": {
+			"patterns": [{
+				"begin": "^(mode)\\s*(:)\\s*",
+				"end": "$",
+				"beginCaptures": {
+					"1": { "name": "keyword.other" },
+					"2": { "name": "punctuation.separator" }
+				},
+				"patterns": [{ "include": "#mode" }]
+			}]
+		},
+		"arg-declaration": {
+			"patterns": [{
+				"match": "^(arg)\\s*(:)\\s*(.)(.*)$",
+				"captures": {
+					"1": { "name": "keyword.other" },
+					"2": { "name": "punctuation.separator" },
+					"3": { "name": "variable.parameter" },
+					"4": { "name": "comment.line" }
+				}
+			}]
+		},
+		"clear-statement": {
+			"patterns": [{
+				"match": "^(clear)\\s*(:)\\s*(options|args)\\s*$",
+				"captures": {
+					"1": { "name": "keyword.other" },
+					"2": { "name": "punctuation.separator" },
+					"3": { "name": "keyword.other" }
+				}
+			}]
+		},
+		"title": {
+			"patterns": [{
+				"begin": "^(title)\\s*(:)",
+				"end": "$",
+				"contentName": "string.unquoted",
+				"captures": {
+					"1": { "name": "keyword.other" },
+					"2": { "name": "punctuation.separator" }
+				},
+				"patterns": [{
+					"match": "\\{(?:(key|keybits|msgbits|plaintext|ciphertext|index)|(.*?))\\}",
+					"captures": {
+						"1": { "name": "constant.language" },
+						"2": { "name": "variable.name" }
+					}
+				}]
+			}]
+		},
+		"option-assignment": {
+			"patterns": [{
+				"begin": "^(option)\\s*(:)",
+				"end": "$",
+				"beginCaptures": {
+				  "1": { "name": "keyword.other" },
+				  "2": { "name": "punctuation.separator" }
+				},
+				"patterns": [{ "include": "#option" }]
+			}]
+		},
+		"format-assignment": {
+			"patterns": [{
+				"begin": "^([a-z]-format)\\s*(:)",
+				"end": "$",
+				"beginCaptures":
+				{
+					"1": { "name": "variable.parameter" },
+				  	"2": { "name": "punctuation.separator" }
+				},
+				"patterns": [{ "include": "#format" }]
+			}]
+		},
+		"transform": {
+			"patterns": [{
+				"match": "^(decrypt|encrypt|decode|encode|hash)\\s*(:)\\s*([_a-zA-Z0-9]+)",
+				"captures":
+				{
+				  "1": { "name" : "keyword.other" },
+				  "2": { "name" : "punctuation.separator" },
+				  "3": { "name" : "support.class" }
+				}
+			}]
+		},
+
+		"value": {
+			"patterns": [{
+				"match": "\\\\([bfnrtv]|x[a-zA-Z0-9]{2}|u[a-zA-Z0-9]{4}|u\\{[a-zA-Z0-9]{1,}\\})",
+				"name": "constant.character.escape"
+			},
+			{
+			  "match": "(repeat)\\s+([a-zA-Z0-9]+)\\s*(x)\\s*(\\d+)",
+			  "captures": {
+				  "1": { "name" : "support.function" },
+				  "2": { "name" : "constant.numeric" },
+				  "3": { "name" : "keyword.operator.arithmetic" },
+				  "4": { "name" : "constant.numeric" }
+			  }
+			}]
+		},
+
+		"option": {
+			"patterns": [{
+				"match": "([a-zA-Z_][a-zA-Z0-9_]*)\\s*(=)\\s*(?:(true|false)|([0-9]+)|(.*))\\s*$",
+				"captures":
+				{
+				  "1": { "name": "variable.name" },
+				  "2": { "name": "keyword.operator.assignment" },
+				  "3": { "name": "support.constant" },
+				  "4": { "name": "constant.numeric" },
+				  "5": { "name": "string.unquoted" }
+				}
+			}]
+		},
+
+		"format": {
+			"patterns": [{
+				"match": "(bytes|hex|ascii|utf-8|text)",
+				"name": "constant.language"
+			}]
+		},
+
+		"mode": {
+			"patterns": [{
+				"match": "(encrypt-decrypt-text|encrypt-decrypt|encrypt-text|decrypt-encrypt|decrypt-text|encode-decode-text|encode-text|decode-text|hash)",
+				"name": "constant.language"
+			}]
+		}
+	}
+}

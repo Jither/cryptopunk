@@ -371,3 +371,46 @@ title   : Base64 URL-safe
 t: Pz8_Pj4-
 b: 3f3f3f3e3e3e
 
+#########################################################################################################
+# Base58 Bitcoin
+
+encode : BytesToBase58Transform
+decode : Base58ToBytesTransform
+title  : Base58 Bitcoin
+option : pad = false
+option : variant = bitcoin
+
+# From: https://github.com/bitcoin/bitcoin/blob/master/src/test/data/base58_encode_decode.json
+
+t: 2g
+b: 61
+
+t: a3gV
+b: 626262
+
+t: aPEr
+b: 636363
+
+t: 2cFupjhnEsSn59qHXstmK2ffpLv2
+b: 73696d706c792061206c6f6e6720737472696e67
+
+t: 1NS17iag9jJgTHD1VXjvLCEnZuQ3rJDE9L
+b: 00eb15231dfceb60925886b67d065299925915aeb172c06647
+
+t: ABnLTmg
+b: 516b6fcd0f
+
+t: 3SEo3LWLoPntC
+b: bf4f89001e670274dd 
+
+t: 3EFU7m
+b: 572e4794
+
+t: EJDM8drfXA6uyA
+b: ecac89cad93923c02321
+
+t: Rt5zm
+b: 10c8511e
+
+t: 1111111111
+b: 00000000000000000000
