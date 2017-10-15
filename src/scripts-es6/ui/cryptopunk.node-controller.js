@@ -49,7 +49,9 @@ class NodeController
 	save()
 	{
 		return {
-			transform: this.transform.constructor.name,
+			// We can't use constructor.name - it's mangled when minimizing/uglifying
+			// Instead, we use our own custom ID
+			transform: this.transform.constructor.id,
 			options: this.transform.options
 		};
 	}

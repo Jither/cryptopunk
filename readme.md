@@ -183,6 +183,7 @@ TODO
 * Hierocrypt
 * IDEA NXT
 * KHAZAD
+* Kalyna
 * LOKI89/91 / LOKI97
 * MacGuffin
 * Madryga

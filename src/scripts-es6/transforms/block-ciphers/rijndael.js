@@ -136,7 +136,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		precompute();
 
 		const keySize = keyBytes.length * 8;
-		const blockSizeBytes = blockSize / 8;
+		const blockLength = blockSize / 8;
 
 		let roundCount = this.options.rounds;
 		if (roundCount === 0)
@@ -145,7 +145,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 			roundCount = RECOMMENDED_ROUND_COUNTS[keySize > blockSize ? keySize : blockSize];
 		}
 
-		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount, blockSizeBytes / 4);
+		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount, blockLength / 4);
 
 		return this.transformBlocks(bytes, blockSize, roundKeys);
 	}

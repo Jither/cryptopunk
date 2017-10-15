@@ -15,7 +15,7 @@ class PaletteCategory
 		this.element.appendChild(this.eleList);
 	}
 
-	addItem(data, menuCaption, caption)
+	addItem(data, id, menuCaption, caption)
 	{
 		caption = caption || menuCaption;
 		const item = document.createElement("li");
@@ -26,7 +26,7 @@ class PaletteCategory
 
 		btn.addEventListener("click", this.itemClicked.bind(this, { caption, data }));
 
-		this.palette._addClass(data);
+		this.palette._addClass(id, data);
 
 		item.appendChild(btn);
 		this.eleList.appendChild(item);
@@ -50,14 +50,15 @@ class Palette
 		this.itemClicked = new Signal();
 	}
 
-	_addClass(definition)
+	_addClass(id, definition)
 	{
-		this._classes[definition.name] = definition;
+		definition.id = id;
+		this._classes[id] = definition;
 	}
 
-	getClass(name)
+	getClass(id)
 	{
-		return this._classes[name];
+		return this._classes[id];
 	}
 
 	addCategory(caption)
