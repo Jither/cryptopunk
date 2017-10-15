@@ -1,0 +1,23 @@
+mode    : encrypt-decrypt
+encrypt : KuznyechikEncryptTransform
+decrypt : KuznyechikDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: http://tc26.ru/en/standard/gost/GOST_R_34_12_2015_ENG.pdf / https://tools.ietf.org/html/rfc7801
+
+title: GOST R 34.12–2015
+
+k: 8899aabbccddeeff 0011223344556677 fedcba9876543210 0123456789abcdef
+p: 1122334455667700 ffeeddccbbaa9988
+c: 7f679d90bebc2430 5a468d42b9d4edcd
+
+# From: http://tc26.ru/standard/draft/PR_GOSTR-bch_v4.zip
+# Note: this is identical to VeraCrypt's four 128 bit test vectors - no need to add them
+
+title: GOST R 34.12-2015 source 
+
+k: 8899aabbccddeeff 0011223344556677 fedcba9876543210 0123456789abcdef
+p: 1122334455667700 ffeeddccbbaa9988 0011223344556677 8899aabbcceeff0a 1122334455667788 99aabbcceeff0a00 2233445566778899 aabbcceeff0a0011
+c: 7f679d90bebc2430 5a468d42b9d4edcd b429912c6e0032f9 285452d76718d08b f0ca33549d247cee f3f5a5313bd4b157 d0b09ccde830b9eb 3a02c4c5aa8ada98

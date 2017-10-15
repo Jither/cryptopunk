@@ -27,7 +27,7 @@ b: 01abcd00
 t: 00000001 10101011 11001101 00000000 00000000
 b: 01abcd0000
 
-# None-byte alignment interpreted as missing leading bits
+# Non-byte alignment interpreted as missing leading bits
 t: 1 10101011
 b: 01ab
 
@@ -414,3 +414,20 @@ b: 10c8511e
 
 t: 1111111111
 b: 00000000000000000000
+
+#########################################################################################################
+# Base58 Flickr
+
+encode : BytesToBase58Transform
+decode : Base58ToBytesTransform
+title  : Base58 Flickr
+option : pad = false
+option : variant = flickr
+
+# From: Various - these aren't actually confirmed
+
+t: 4ER
+b: 3039
+
+t: btE6gi4ouzPVVB8vHuuYTz
+b: 54d7f1518dd60dc9c4ec65211730ec0f

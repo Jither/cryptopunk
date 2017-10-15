@@ -48,6 +48,7 @@ Supported
 * IDEA
 * "Iraqi"
 * Khufu, Khafre (both with the actual S-boxes)
+* Kuznyechik (GOST R 34.12-2015)
 * LUCIFER (Sorkin and Outerbridge variants)
 * Magma (GOST 28147-89)
 * NewDES, NewDES-96
@@ -162,7 +163,6 @@ TODO
 ### Block Ciphers
 
 * 3DES
-* Kuznyechik (GOST R 34.12-2015)
 * RC5, RC6 (16/64 bit word sizes)
 * Serpent-0, tnepreS
 * Browser-native RSA decryption

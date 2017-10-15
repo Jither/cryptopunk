@@ -31,6 +31,7 @@ import * as iraqi from "./transforms/block-ciphers/iraqi";
 import * as jis from "./transforms/char-encodings/jis";
 import * as keccak from "./transforms/hashes/keccak";
 import * as khufu from "./transforms/block-ciphers/khufu";
+import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
 import * as letterNumber from "./transforms/classical/letter-number";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
 import * as magma from "./transforms/block-ciphers/magma";
@@ -279,6 +280,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(iraqi.IraqiDecryptTransform, "Iraqi", "Iraqi Decrypt")
 	.addItem(khufu.KhafreDecryptTransform, "Khafre", "Khafre Decrypt")
 	.addItem(khufu.KhufuDecryptTransform, "Khufu", "Khufu Decrypt")
+	.addItem(kuznyechik.KuznyechikDecryptTransform, "Kuznyechik", "Kuznyechik Decrypt")
 	.addItem(lucifer.LuciferDecryptTransform, "LUCIFER", "LUCIFER Decrypt")
 	.addItem(magma.MagmaDecryptTransform, "Magma (GOST)", "Magma (GOST) Decrypt")
 	.addItem(newdes.NewDesDecryptTransform, "NewDES", "NewDES Decrypt")
@@ -319,6 +321,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(iraqi.IraqiEncryptTransform, "Iraqi", "Iraqi Encrypt")
 	.addItem(khufu.KhafreEncryptTransform, "Khafre", "Khafre Encrypt")
 	.addItem(khufu.KhufuEncryptTransform, "Khufu", "Khufu Encrypt")
+	.addItem(kuznyechik.KuznyechikEncryptTransform, "Kuznyechik", "Kuznyechik Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LUCIFER", "LUCIFER Encrypt")
 	.addItem(magma.MagmaEncryptTransform, "Magma (GOST)", "Magma (GOST) Encrypt")
 	.addItem(newdes.NewDesEncryptTransform, "NewDES", "NewDES Encrypt")
