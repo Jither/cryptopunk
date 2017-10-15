@@ -73,6 +73,7 @@ Supported
 ### Stream Ciphers
 
 * RC4 (with discard parameter)
+* Salsa20
 * Simple XOR
 
 ### Hashes
@@ -244,7 +245,6 @@ TODO
 * Py
 * QUAD
 * Rabbit
-* Salsa20
 * Scream
 * SEAL(-3.0)
 * SNOW

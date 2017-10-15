@@ -1,0 +1,19 @@
+mode    : encrypt
+encrypt : Salsa20Transform
+arg     : i (iv)
+k-format: hex
+i-format: hex
+p-format: hex
+c-format: hex
+
+# From: http://www.ecrypt.eu.org/stream/svn/viewcvs.cgi/ecrypt/trunk/submissions/salsa20/full/verified.test-vectors
+
+title   : ECRYPT test vectors
+
+k: 80000000000000000000000000000000
+i: 0000000000000000
+p: repeat 00 x 512
+c: range   0.. 63 = 4dfa5e481da23ea09a31022050859936 da52fcee218005164f267cb65f5cfd7f 2b4f97e0ff16924a52df269515110a07 f9e460bc65ef95da58f740b7d1dbb0aa
+c: range 192..255 = da9c1581f429e0a00f7d67e23b730676 783b262e8eb43a25f55fb90b3e753aef 8c6713ec66c51881111593ccb3e8cb8f 8de124080501eeeb389c4bcb6977cf95
+c: range 256..319 = 7d5789631eb4554400e1e025935dfa7b 3e9039d61bdc58a8697d36815bf1985c efdf7ae112e5bb81e37ecf0616ce7147 fc08a93a367e08631f23c03b00a8da2f
+c: range 448..511 = b375703739daced4dd4059fd71c3c47f c2f9939670fad4a46066adcc6a564578 3308b90ffb72be04a6b147cbe38cc0c3 b9267c296a92a7c69873f9f263be9703

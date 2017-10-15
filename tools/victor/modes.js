@@ -17,6 +17,10 @@ class TestMode
 			const argValue = argValues[argName];
 			if (typeof argValue !== "undefined")
 			{
+				if (argValue.isHexRange)
+				{
+					throw new Error("Directives (e.g. ranges) cannot be used as input arguments.");
+				}
 				args.push(argValues[argName]);
 			}
 		}
@@ -28,6 +32,10 @@ class TestMode
 			const argValue = argValues[argName];
 			if (typeof argValue !== "undefined")
 			{
+				if (argValue.isHexRange)
+				{
+					throw new Error("Directives (e.g. ranges) cannot be used as input arguments.");
+				}
 				args.push(argValues[argName]);
 			}
 		}
@@ -52,6 +60,78 @@ class TestMode
 			}
 		}
 		return null;
+	}
+}
+
+class EncryptMode extends TestMode
+{
+	get args()
+	{
+		return {
+			k: formats.BYTES,
+			p: formats.BYTES,
+			c: formats.BYTES
+		};
+	}
+
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const enc = transforms.encrypt;
+		try
+		{
+			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues);
+			enc.resetOptions();
+			if (options)
+			{
+				enc.setOptions(options);
+			}
+			const encResult = enc.transform.apply(enc, args);
+			result.assertBytesEqual(encResult, argValues.c);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
+	}
+}
+
+class DecryptMode extends TestMode
+{
+	get args()
+	{
+		return {
+			k: formats.BYTES,
+			p: formats.BYTES,
+			c: formats.BYTES
+		};
+	}
+
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const dec = transforms.decrypt;
+		try
+		{
+			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues);
+			dec.resetOptions();
+			if (options)
+			{
+				dec.setOptions(options);
+			}
+			const decResult = dec.transform.apply(dec, args);
+			result.assertBytesEqual(decResult, argValues.p);
+		}
+		catch (e)
+		{
+			result.addError(e);
+		}
+
+		return result;
 	}
 }
 
@@ -449,15 +529,16 @@ class DecodeTextMode extends TestMode
 	}
 }
 
-
 module.exports = {
+	EncryptMode,
+	DecryptMode,
 	EncryptDecryptMode,
 	EncryptDecryptTextMode,
 	EncryptTextMode,
 	DecryptTextMode,
 	DecryptEncryptMode,
-	HashMode,
 	EncodeDecodeTextMode,
 	EncodeTextMode,
-	DecodeTextMode
+	DecodeTextMode,
+	HashMode
 };

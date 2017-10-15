@@ -52,8 +52,31 @@ class TestResult
 		}
 	}
 
+	assertMultiMatch(actual, expected)
+	{
+		let success = true;
+		for (const entry of expected)
+		{
+			switch (entry.directive)
+			{
+				case "range":
+					const actualRange = actual.subarray(entry.from, entry.to + 1);
+					this.assertBytesEqual(actualRange, entry.value);
+					break;
+				default:
+					throw new Error("Unknown multi hex directive");
+			}
+		}
+	}
+
 	assertBytesEqual(actual, expected)
 	{
+		if (expected.isMulti)
+		{
+			this.assertMultiMatch(actual, expected);
+			return;
+		}
+
 		let success = true;
 		if (actual.length !== expected.length)
 		{

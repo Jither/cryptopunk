@@ -148,6 +148,16 @@
 				  "3": { "name" : "keyword.operator.arithmetic" },
 				  "4": { "name" : "constant.numeric" }
 			  }
+			},
+			{
+				"match": "(range)\\s+(\\d+)\\s*(\\.\\.)\\s*(\\d+)\\s*(=)\\s*",
+				"captures": {
+					"1": { "name" : "support.function" },
+					"2": { "name" : "constant.numeric" },
+					"3": { "name" : "keyword.operator" },
+					"4": { "name" : "constant.numeric" },
+					"5": { "name" : "keyword.operator.arithmetic" }
+				}
 			}]
 		},
 
@@ -174,7 +184,7 @@
 
 		"mode": {
 			"patterns": [{
-				"match": "(encrypt-decrypt-text|encrypt-decrypt|encrypt-text|decrypt-encrypt|decrypt-text|encode-decode-text|encode-text|decode-text|hash)",
+				"match": "(encrypt-decrypt-text|encrypt-decrypt|encrypt-text|encrypt|decrypt-encrypt|decrypt-text|decrypt|encode-decode-text|encode-text|decode-text|hash)",
 				"name": "constant.language"
 			}]
 		}

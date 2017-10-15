@@ -7,6 +7,8 @@ const
 	constants = require("./constants");
 
 const TEST_MODES = {
+	"encrypt": modes.EncryptMode,
+	"decrypt": modes.DecryptMode,
 	"encrypt-decrypt": modes.EncryptDecryptMode,
 	"decrypt-encrypt": modes.DecryptEncryptMode,
 	"encrypt-decrypt-text": modes.EncryptDecryptTextMode,
@@ -143,6 +145,15 @@ class VictorExecuter
 
 	parseHexValue(value)
 	{
+		// range 00..63 = afafaf
+		const range = /^range\s+(\d+)\s*\.\.\s*(\d+)\s*=\s*(.*)/i.exec(value);
+		if (range)
+		{
+			const from = parseInt(range[1], 10);
+			const to = parseInt(range[2], 10);
+			const value = this.parseHexValue(range[3]);
+			return { directive: "range", from, to, value };
+		}
 		// repeat AF x 32 => afafafafaf...
 		const repeat = /^repeat\s+([a-z0-f ]+)\s*x\s*(\d+)$/i.exec(value);
 		if (repeat)
@@ -211,6 +222,20 @@ class VictorExecuter
 				break;
 			case formats.HEX:
 				value = this.parseHexValue(value);
+				if (value.directive)
+				{
+					// Directives describe e.g. hex ranges - there can be more than one of those per test,
+					// so add it to an array.
+					let arr = this.args[name];
+					if (arr && !arr.isMulti)
+					{
+						throw new Error(`Cannot add ${value.directive} directive for argument '${name}' when non-directives have already been used.`);
+					}
+					arr = arr || [];
+					arr.push(value);
+					value = arr;
+					value.isMulti = true;
+				}
 				break;
 			default:
 				throw new Error(`Argument '${name}' has no format defined.`);

@@ -57,6 +57,7 @@ import * as rijndael from "./transforms/block-ciphers/rijndael";
 import * as ripemd from "./transforms/hashes/ripemd";
 import * as ripemdN from "./transforms/hashes/ripemd-n";
 import * as rotx from "./transforms/classical/rotx";
+import * as salsa20 from "./transforms/stream-ciphers/salsa20";
 import * as serpent from "./transforms/block-ciphers/serpent";
 import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha2 from "./transforms/hashes/sha-2";
@@ -295,6 +296,7 @@ palette.addCategory("Mechanical")
 
 palette.addCategory("Stream ciphers")
 	.addItem(rc4.Rc4Transform, "Rc4", "RC4")
+	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20")
 	.addItem(xor.XorTransform, "Xor", "XOR");
 
 palette.addCategory("Block cipher decryption")
