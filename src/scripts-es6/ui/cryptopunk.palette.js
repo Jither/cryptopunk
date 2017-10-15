@@ -26,6 +26,8 @@ class PaletteCategory
 
 		btn.addEventListener("click", this.itemClicked.bind(this, { caption, data }));
 
+		this.palette._addClass(data);
+
 		item.appendChild(btn);
 		this.eleList.appendChild(item);
 
@@ -43,8 +45,19 @@ class Palette
 {
 	constructor(element)
 	{
+		this._classes = {};
 		this.element = element;
 		this.itemClicked = new Signal();
+	}
+
+	_addClass(definition)
+	{
+		this._classes[definition.name] = definition;
+	}
+
+	getClass(name)
+	{
+		return this._classes[name];
 	}
 
 	addCategory(caption)

@@ -40,6 +40,12 @@ class NodeController
 		this.update();
 	}
 
+	load(data)
+	{
+		Object.assign(this.options, data.options);
+		this.update();
+	}
+
 	save()
 	{
 		return {

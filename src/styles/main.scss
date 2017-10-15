@@ -114,10 +114,13 @@ h1
 {
 	background: $toolbar-back-color;
 	color: $toolbar-text-color;
+	display: flex;
+	flex-direction: row;
 
 	li
 	{
-		display: inline-block; // TODO: flex-box
+		display: block;
+		flex: 0 1 auto;
 	}
 
 	a

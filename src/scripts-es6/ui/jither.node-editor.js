@@ -832,6 +832,40 @@ class NodeEditor
 		this.selectedNodeChanged.dispatch(node);
 	}
 
+	load(data, nodeCreator)
+	{
+		this.clear();
+
+		const outputs = {};
+
+		// Collect outputs and index by ID:
+		for (const nodeData of data.nodes)
+		{
+			const node = nodeCreator(nodeData.controller, nodeData.title || nodeData.name, nodeData.x, nodeData.y);
+			nodeData.node = node;
+			for (let outputIndex = 0; outputIndex < node.outputs.length; outputIndex++)
+			{
+				const outputId = nodeData.outputs[outputIndex];
+				outputs[outputId] = node.outputs[outputIndex];
+			}
+		}
+
+		// Reconnect inputs to outputs:
+		for (const nodeData of data.nodes)
+		{
+			const node = nodeData.node;
+			for (let inputIndex = 0; inputIndex < node.inputs.length; inputIndex++)
+			{
+				const input = node.inputs[inputIndex];
+				const outputId = nodeData.inputs[inputIndex];
+				if (outputId !== null)
+				{
+					input.connect(outputs[outputId]);
+				}
+			}
+		}
+	}
+
 	save()
 	{
 		const result = {};

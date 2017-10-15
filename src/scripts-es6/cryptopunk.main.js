@@ -100,13 +100,41 @@ const palette = new Palette(elePalette);
 editor.selectedNodeChanged.add(node => propertyPanel.updateProperties(node));
 palette.itemClicked.add(paletteItemClickedListener);
 
-const btnNew = document.getElementById("btn-new");
+const btnNew = document.getElementById("btn-new"),
+	btnLoad = document.getElementById("btn-load"),
+	btnSave = document.getElementById("btn-save");
+
 btnNew.addEventListener("click", newClickedListener);
+btnLoad.addEventListener("click", loadClickedListener);
+btnSave.addEventListener("click", saveClickedListener);
 
 function newClickedListener(e)
 {
 	e.preventDefault();
 	editor.clear();
+}
+
+function loadClickedListener(e)
+{
+	e.preventDefault();
+
+	const json = localStorage.getItem("savedWorkspace");
+	const data = JSON.parse(json);
+	editor.load(data, (controllerData, caption, x, y) =>
+	{
+		const transformClass = palette.getClass(controllerData.transform);
+		const controller = createNode(transformClass, caption, x, y);
+		controller.load(controllerData);
+		return controller.node;
+	});
+}
+
+function saveClickedListener(e)
+{
+	e.preventDefault();
+
+	const data = editor.save();
+	localStorage.setItem("savedWorkspace", JSON.stringify(data));
 }
 
 function nodeOutputChangedListener(node)
@@ -118,8 +146,14 @@ function paletteItemClickedListener(item)
 {
 	const transformClass = item.data;
 	const caption = item.caption;
-	const controller = new NodeController(editor, caption, new transformClass(), { x: 50, y: 300 });
+	createNode(transformClass, caption, 50, 300);
+}
+
+function createNode(transformClass, caption, x, y)
+{
+	const controller = new NodeController(editor, caption, new transformClass(), { x, y });
 	controller.nodeOutputChanged.add(nodeOutputChangedListener);
+	return controller;
 }
 
 palette.addCategory("Generators")
