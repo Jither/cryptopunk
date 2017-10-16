@@ -2,8 +2,9 @@ import { Transform, TransformError } from "../transforms";
 import { bytesToInt32sLE, int32sToBytesLE, checkSize } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
-const SIGMA = [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574]; // "expand 32-byte k" as LE uint32
-const TAU   = [0x61707865, 0x3120646e, 0x79622d36, 0x6b206574]; // "expand 16-byte k" as LE uint32
+const SIGMA   = [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574]; // "expand 32-byte k" as LE uint32
+const TAU     = [0x61707865, 0x3120646e, 0x79622d36, 0x6b206574]; // "expand 16-byte k" as LE uint32
+const UPSILON = [0x61707865, 0x3120646e, 0x79622d30, 0x6b206574]; // "expand 10-byte k" as LE uint32
 
 class Salsa20Transform extends Transform
 {
@@ -14,11 +15,13 @@ class Salsa20Transform extends Transform
 		this.addInput("bytes", "Key");
 		this.addInput("bytes", "IV");
 		this.addOutput("bytes", "Output");
+		this.addOption("rounds", "Rounds", 20, { min: 1 });
 	}
 
 	transform(bytes, keyBytes, ivBytes)
 	{
-		this.checkKeySize(keyBytes, [128, 256]);
+		// Lesser known 80 bit key included (see original Salsa family paper, 4.1)
+		this.checkKeySize(keyBytes, [80, 128, 256]);
 		this.checkIVSize(ivBytes, 64);
 
 		const state = this.setupState(keyBytes, ivBytes);
@@ -50,40 +53,67 @@ class Salsa20Transform extends Transform
 	{
 		const x = new Uint32Array(state);
 
-		for (let i = 20; i > 0; i -= 2)
+		// TODO: Maybe also align with BLAKE and BLAKE2 (ChaCha20)
+		for (let i = 0; i < this.options.rounds; i++)
 		{
-			x[ 4] ^= rol(add(x[ 0],x[12]), 7);
-			x[ 8] ^= rol(add(x[ 4],x[ 0]), 9);
-			x[12] ^= rol(add(x[ 8],x[ 4]),13);
-			x[ 0] ^= rol(add(x[12],x[ 8]),18);
-			x[ 9] ^= rol(add(x[ 5],x[ 1]), 7);
-			x[13] ^= rol(add(x[ 9],x[ 5]), 9);
-			x[ 1] ^= rol(add(x[13],x[ 9]),13);
-			x[ 5] ^= rol(add(x[ 1],x[13]),18);
-			x[14] ^= rol(add(x[10],x[ 6]), 7);
-			x[ 2] ^= rol(add(x[14],x[10]), 9);
-			x[ 6] ^= rol(add(x[ 2],x[14]),13);
-			x[10] ^= rol(add(x[ 6],x[ 2]),18);
-			x[ 3] ^= rol(add(x[15],x[11]), 7);
-			x[ 7] ^= rol(add(x[ 3],x[15]), 9);
-			x[11] ^= rol(add(x[ 7],x[ 3]),13);
-			x[15] ^= rol(add(x[11],x[ 7]),18);
-			x[ 1] ^= rol(add(x[ 0],x[ 3]), 7);
-			x[ 2] ^= rol(add(x[ 1],x[ 0]), 9);
-			x[ 3] ^= rol(add(x[ 2],x[ 1]),13);
-			x[ 0] ^= rol(add(x[ 3],x[ 2]),18);
-			x[ 6] ^= rol(add(x[ 5],x[ 4]), 7);
-			x[ 7] ^= rol(add(x[ 6],x[ 5]), 9);
-			x[ 4] ^= rol(add(x[ 7],x[ 6]),13);
-			x[ 5] ^= rol(add(x[ 4],x[ 7]),18);
-			x[11] ^= rol(add(x[10],x[ 9]), 7);
-			x[ 8] ^= rol(add(x[11],x[10]), 9);
-			x[ 9] ^= rol(add(x[ 8],x[11]),13);
-			x[10] ^= rol(add(x[ 9],x[ 8]),18);
-			x[12] ^= rol(add(x[15],x[14]), 7);
-			x[13] ^= rol(add(x[12],x[15]), 9);
-			x[14] ^= rol(add(x[13],x[12]),13);
-			x[15] ^= rol(add(x[14],x[13]),18);
+			// We look at the 16 words as a matrix:
+			//  0  1  2  3
+			//  4  5  6  7
+			//  8  9 10 11
+			// 12 13 14 15
+			//
+			
+			if (i % 2 === 0)
+			{
+				// Even round:
+				// Add diagonal+0 ( 0) to diagonal-1 (12), rol  7, and xor with diagonal+1 ( 4)
+				// Add diagonal+1 ( 4) to diagonal+0 ( 0), rol  9, and xor with diagonal+2 ( 8)
+				// Add diagonal+2 ( 8) to diagonal+1 ( 4), rol 13, and xor with diagonal+3 (12)
+				// Add diagonal+3 (12) to diagonal+2 ( 8), rol 18, and xor with diagonal+0 ( 0)
+				x[ 4] ^= rol(add(x[ 0],x[12]), 7);
+				x[ 8] ^= rol(add(x[ 4],x[ 0]), 9);
+				x[12] ^= rol(add(x[ 8],x[ 4]),13);
+				x[ 0] ^= rol(add(x[12],x[ 8]),18);
+
+				// Add diagonal+0 ( 5) to diagonal-1 ( 1), rol  7, and xor with diagonal+1 ( 9)
+				x[ 9] ^= rol(add(x[ 5],x[ 1]), 7);
+				x[13] ^= rol(add(x[ 9],x[ 5]), 9);
+				x[ 1] ^= rol(add(x[13],x[ 9]),13);
+				x[ 5] ^= rol(add(x[ 1],x[13]),18);
+				// Add diagonal+0 (10) to diagonal-1 ( 6), rol  7, and xor with diagonal+1 (14)
+				x[14] ^= rol(add(x[10],x[ 6]), 7);
+				x[ 2] ^= rol(add(x[14],x[10]), 9);
+				x[ 6] ^= rol(add(x[ 2],x[14]),13);
+				x[10] ^= rol(add(x[ 6],x[ 2]),18);
+				// Add diagonal+0 (15) to diagonal-1 (11), rol  7, and xor with diagonal+1 ( 3)
+				x[ 3] ^= rol(add(x[15],x[11]), 7);
+				x[ 7] ^= rol(add(x[ 3],x[15]), 9);
+				x[11] ^= rol(add(x[ 7],x[ 3]),13);
+				x[15] ^= rol(add(x[11],x[ 7]),18);
+			}
+			else
+			{
+				// Odd round:
+				// These are the same operations as the even rounds,
+				// except they're working on rows rather than columns. An alternative is to
+				// transpose the matrix between rounds.
+				x[ 1] ^= rol(add(x[ 0],x[ 3]), 7);
+				x[ 2] ^= rol(add(x[ 1],x[ 0]), 9);
+				x[ 3] ^= rol(add(x[ 2],x[ 1]),13);
+				x[ 0] ^= rol(add(x[ 3],x[ 2]),18);
+				x[ 6] ^= rol(add(x[ 5],x[ 4]), 7);
+				x[ 7] ^= rol(add(x[ 6],x[ 5]), 9);
+				x[ 4] ^= rol(add(x[ 7],x[ 6]),13);
+				x[ 5] ^= rol(add(x[ 4],x[ 7]),18);
+				x[11] ^= rol(add(x[10],x[ 9]), 7);
+				x[ 8] ^= rol(add(x[11],x[10]), 9);
+				x[ 9] ^= rol(add(x[ 8],x[11]),13);
+				x[10] ^= rol(add(x[ 9],x[ 8]),18);
+				x[12] ^= rol(add(x[15],x[14]), 7);
+				x[13] ^= rol(add(x[12],x[15]), 9);
+				x[14] ^= rol(add(x[13],x[12]),13);
+				x[15] ^= rol(add(x[14],x[13]),18);
+			}
 		}
 
 		for (let i = 0; i < 16; i++)
@@ -96,20 +126,31 @@ class Salsa20Transform extends Transform
 	
 	setupState(keyBytes, ivBytes)
 	{
+		let constants, k;
+		switch (keyBytes.length)
+		{
+			case 32:
+				constants = SIGMA;
+				k = 4;
+				break;
+			case 16:
+				// 16 byte key is repeated to form 32 byte key
+				constants = TAU;
+				k = 0;
+				break;
+			case 10:
+				// 10 byte key is 0-padded to form 16 byte key
+				const paddedKeyBytes = new Uint8Array(16);
+				paddedKeyBytes.set(keyBytes);
+				keyBytes = paddedKeyBytes;
+				constants = UPSILON;
+				k = 0;
+				break;
+		}
+
 		const state = new Uint32Array(16);
 		const key = bytesToInt32sLE(keyBytes);
 		const iv = bytesToInt32sLE(ivBytes);
-		let constants, k;
-		if (keyBytes.length === 32)
-		{
-			constants = SIGMA;
-			k = 4;
-		}
-		else
-		{
-			constants = TAU;
-			k = 0;
-		}
 
 		state[0] = constants[0];
 		state[1] = key[0];

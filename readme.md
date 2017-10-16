@@ -73,7 +73,7 @@ Supported
 ### Stream Ciphers
 
 * RC4 (with discard parameter)
-* Salsa20
+* Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12, 80, 128 and 256 key sizes)
 * Simple XOR
 
 ### Hashes
