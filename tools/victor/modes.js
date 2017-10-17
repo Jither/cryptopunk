@@ -15,9 +15,9 @@ class TestMode
 		{
 			const argName = knownArgDefinitions[i];
 			const argValue = argValues[argName];
-			if (typeof argValue !== "undefined")
+			if (argValue !== null && argValue !== undefined)
 			{
-				if (argValue.isHexRange)
+				if (argValue.isDirective)
 				{
 					throw new Error("Directives (e.g. ranges) cannot be used as input arguments.");
 				}
@@ -30,9 +30,9 @@ class TestMode
 		{
 			const argName = customArgDefinitions[i];
 			const argValue = argValues[argName];
-			if (typeof argValue !== "undefined")
+			if (argValue !== null && argValue !== undefined)
 			{
-				if (argValue.isHexRange)
+				if (argValue.isDirective)
 				{
 					throw new Error("Directives (e.g. ranges) cannot be used as input arguments.");
 				}
