@@ -15,16 +15,17 @@ class Salsa20Transform extends Transform
 		this.addInput("bytes", "Key");
 		this.addInput("bytes", "IV");
 		this.addOutput("bytes", "Output");
+		this.addOption("xsalsa", "XSalsa20", false);
 		this.addOption("rounds", "Rounds", 20, { min: 1 });
 	}
 
 	transform(bytes, keyBytes, ivBytes)
 	{
 		// Lesser known 80 bit key included (see original Salsa family paper, 4.1)
-		this.checkKeySize(keyBytes, [80, 128, 256]);
-		this.checkIVSize(ivBytes, 64);
+		this.checkKeySize(keyBytes, this.options.xsalsa ? 256 : [80, 128, 256]);
+		this.checkIVSize(ivBytes, this.options.xsalsa ? 192 : 64);
 
-		const state = this.setupState(keyBytes, ivBytes);
+		const state = this.options.xsalsa ? this.setupStateXSalsa(keyBytes, ivBytes) : this.setupState(keyBytes, ivBytes);
 
 		const result = new Uint8Array(bytes.length);
 		const stream = new Uint8Array(64);
@@ -49,10 +50,8 @@ class Salsa20Transform extends Transform
 		return result;
 	}
 
-	fillKeyStream64Bytes(state, stream)
+	salsa(x)
 	{
-		const x = new Uint32Array(state);
-
 		// TODO: Maybe also align with BLAKE and BLAKE2 (ChaCha20)
 		for (let i = 0; i < this.options.rounds; i++)
 		{
@@ -115,6 +114,13 @@ class Salsa20Transform extends Transform
 				x[15] ^= rol(add(x[14],x[13]),18);
 			}
 		}
+	}
+
+	fillKeyStream64Bytes(state, stream)
+	{
+		const x = new Uint32Array(state);
+
+		this.salsa(x);
 
 		for (let i = 0; i < 16; i++)
 		{
@@ -124,6 +130,25 @@ class Salsa20Transform extends Transform
 		int32sToBytesLE(x, stream);
 	}
 	
+	setupStateXSalsa(keyBytes, ivBytes)
+	{
+		const hstate = this.setupState(keyBytes, ivBytes);
+		this.salsa(hstate);
+		
+		const xsalsaKey = new Uint32Array(8);
+		xsalsaKey[0] = hstate[0];
+		xsalsaKey[1] = hstate[5];
+		xsalsaKey[2] = hstate[10];
+		xsalsaKey[3] = hstate[15];
+		xsalsaKey[4] = hstate[6];
+		xsalsaKey[5] = hstate[7];
+		xsalsaKey[6] = hstate[8];
+		xsalsaKey[7] = hstate[9];
+		const xsalsaKeyBytes = int32sToBytesLE(xsalsaKey);
+		// Set up state as new key, and last 8 bytes of nonce/IV:
+		return this.setupState(xsalsaKeyBytes, ivBytes.subarray(16));
+	}
+
 	setupState(keyBytes, ivBytes)
 	{
 		let constants, k;
@@ -160,8 +185,8 @@ class Salsa20Transform extends Transform
 		state[5] = constants[1];
 		state[6] = iv[0];
 		state[7] = iv[1];
-		state[8] = 0;
-		state[9] = 0;
+		state[8] = iv.length > 2 ? iv[2] : 0; // IV length is 192 bits/6 words for XSalsa HSalsa key generation
+		state[9] = iv.length > 2 ? iv[3] : 0; // IV length is 192 bits/6 words for XSalsa HSalsa key generation 
 		state[10] = constants[2];
 		state[11] = key[k + 0];
 		state[12] = key[k + 1];
