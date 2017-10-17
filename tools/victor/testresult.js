@@ -52,6 +52,26 @@ class TestResult
 		}
 	}
 
+	assertXorDigestEquals(actual, expectedDigest)
+	{
+		const actualLength = actual.length;
+		const digestLength = expectedDigest.length;
+
+		if (actualLength % digestLength !== 0)
+		{
+			throw new Error(`Result length (${actualLength}) isn't a multiple of digest length (${digestLength}).`);
+		}
+
+		const rangeCount = actualLength / digestLength;
+		const actualDigest = new Uint8Array(digestLength);
+		for (let i = 0; i < actualLength; i++)
+		{
+			actualDigest[i % digestLength] ^= actual[i];
+		}
+
+		this.assertBytesEqual(actualDigest, expectedDigest);
+	}
+
 	assertMultiMatch(actual, expected)
 	{
 		let success = true;
@@ -62,6 +82,9 @@ class TestResult
 				case "range":
 					const actualRange = actual.subarray(entry.from, entry.to + 1);
 					this.assertBytesEqual(actualRange, entry.value);
+					break;
+				case "xor-digest":
+					this.assertXorDigestEquals(actual, entry.value);
 					break;
 				default:
 					throw new Error("Unknown multi hex directive");

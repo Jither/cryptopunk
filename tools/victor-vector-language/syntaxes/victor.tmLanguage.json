@@ -158,7 +158,15 @@
 					"4": { "name" : "constant.numeric" },
 					"5": { "name" : "keyword.operator.arithmetic" }
 				}
-			}]
+			},
+			{
+				"match": "(xor-digest)\\s*(=)\\s*",
+				"captures": {
+					"1": { "name" : "support.function" },
+					"2": { "name" : "keyword.operator.arithmetic" }
+				}
+			}
+			]
 		},
 
 		"option": {

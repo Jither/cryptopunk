@@ -145,7 +145,7 @@ class VictorExecuter
 
 	parseHexValue(value)
 	{
-		// range 00..63 = afafaf
+		// range 00..63 = afafaf...
 		const range = /^range\s+(\d+)\s*\.\.\s*(\d+)\s*=\s*(.*)/i.exec(value);
 		if (range)
 		{
@@ -154,6 +154,15 @@ class VictorExecuter
 			const value = this.parseHexValue(range[3]);
 			return { directive: "range", from, to, value };
 		}
+
+		// xor-digest = afafaf...
+		const digest = /^xor-digest\s+=\s+(.*)/i.exec(value);
+		if (digest)
+		{
+			const value = this.parseHexValue(digest[1]);
+			return { directive: "xor-digest", value };
+		}
+
 		// repeat AF x 32 => afafafafaf...
 		const repeat = /^repeat\s+([a-z0-f ]+)\s*x\s*(\d+)$/i.exec(value);
 		if (repeat)
