@@ -58,7 +58,7 @@ Supported
 * RC5
 * RC6
 * Red Pike
-* Rijndael (128, 160, 192, 224, 256 key *and* block sizes, variable rounds)
+* Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * Serpent
 * Shark-E
 * Skipjack (including NESSIE variant)
@@ -73,14 +73,14 @@ Supported
 ### Stream Ciphers
 
 * RC4 (with discard parameter)
-* Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12, 80, 128 and 256 key sizes)
+* Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes)
 * Simple XOR
 
 ### Hashes
 
 * BLAKE (224, 256, 384, 512)
 * BLAKE2 (BLAKE2s, BLAKE2b)
-* HAVAL (128, 160, 192, 224, 256, 3-5 passes)
+* HAVAL (128, 160, 192, 224, 256; 3-5 passes)
 * HAS-160
 * Keccak (variable capacity, hash length, suffix)
 * MD2
