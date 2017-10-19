@@ -80,6 +80,14 @@ class Transform
 		return this;
 	}
 
+	removeOption(name)
+	{
+		delete this.optionDefinitions[name];
+		delete this.defaults[name];
+		delete this.options[name];
+		return this;
+	}
+
 	addInput(type, name)
 	{
 		this.inputs.push(type);

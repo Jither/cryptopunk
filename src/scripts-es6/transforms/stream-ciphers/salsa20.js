@@ -17,6 +17,8 @@ class Salsa20Transform extends Transform
 		this.addOutput("bytes", "Output");
 		this.addOption("xsalsa", "XSalsa20", false);
 		this.addOption("rounds", "Rounds", 20, { min: 1 });
+
+		this.core = this.salsa;
 	}
 
 	transform(bytes, keyBytes, ivBytes)
@@ -27,6 +29,11 @@ class Salsa20Transform extends Transform
 
 		const state = this.options.xsalsa ? this.setupStateXSalsa(keyBytes, ivBytes) : this.setupState(keyBytes, ivBytes);
 
+		return this._transform(bytes, state);
+	}
+
+	_transform(bytes, state)
+	{
 		const result = new Uint8Array(bytes.length);
 		const stream = new Uint8Array(64);
 
@@ -120,7 +127,7 @@ class Salsa20Transform extends Transform
 	{
 		const x = new Uint32Array(state);
 
-		this.salsa(x);
+		this.core(x);
 
 		for (let i = 0; i < 16; i++)
 		{
@@ -133,20 +140,20 @@ class Salsa20Transform extends Transform
 	setupStateXSalsa(keyBytes, ivBytes)
 	{
 		const hstate = this.setupState(keyBytes, ivBytes);
-		this.salsa(hstate);
+		this.core(hstate);
 		
-		const xsalsaKey = new Uint32Array(8);
-		xsalsaKey[0] = hstate[0];
-		xsalsaKey[1] = hstate[5];
-		xsalsaKey[2] = hstate[10];
-		xsalsaKey[3] = hstate[15];
-		xsalsaKey[4] = hstate[6];
-		xsalsaKey[5] = hstate[7];
-		xsalsaKey[6] = hstate[8];
-		xsalsaKey[7] = hstate[9];
-		const xsalsaKeyBytes = int32sToBytesLE(xsalsaKey);
+		const xKey = new Uint32Array(8);
+		xKey[0] = hstate[0];
+		xKey[1] = hstate[5];
+		xKey[2] = hstate[10];
+		xKey[3] = hstate[15];
+		xKey[4] = hstate[6];
+		xKey[5] = hstate[7];
+		xKey[6] = hstate[8];
+		xKey[7] = hstate[9];
+		const xKeyBytes = int32sToBytesLE(xKey);
 		// Set up state as new key, and last 8 bytes of nonce/IV:
-		return this.setupState(xsalsaKeyBytes, ivBytes.subarray(16));
+		return this.setupState(xKeyBytes, ivBytes.subarray(16));
 	}
 
 	setupState(keyBytes, ivBytes)
@@ -221,5 +228,6 @@ class Salsa20Transform extends Transform
 }
 
 export {
-	Salsa20Transform
+	Salsa20Transform,
+	SIGMA, TAU, UPSILON
 };

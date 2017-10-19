@@ -72,8 +72,9 @@ Supported
 
 ### Stream Ciphers
 
+* ChaCha (variable rounds; 80, 128 and 256 key sizes) and XChaCha
 * RC4 (with discard parameter)
-* Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes)
+* Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes) and XSalsa20
 * Simple XOR
 
 ### Hashes
@@ -231,7 +232,6 @@ TODO
 
 * A5/1, A5/2
 * Achterbahn
-* ChaCha
 * E0
 * F-FCSR
 * FISH
@@ -278,14 +278,17 @@ TODO
 * ECOH
 * FSB
 * Fugue
+* GOST R 34.11-94
 * Grøstl
 * HAS-V
 * JH
+* Kangaroo Twelve
 * MD6
 * RadioGatún
 * Skein
 * Snefru
 * Spectral Hash
+* Streebog (GOST 34.11-2012)
 * SWIFFT
 
 ### Key-Derivation Functions

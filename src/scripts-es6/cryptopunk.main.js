@@ -14,6 +14,7 @@ import * as bsd from "./transforms/checksums/bsd";
 import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
+import * as chacha from "./transforms/stream-ciphers/chacha";
 import * as codepages from "./transforms/char-encodings/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as crc from "./transforms/checksums/crc";
@@ -296,7 +297,8 @@ palette.addCategory("Mechanical")
 
 palette.addCategory("Stream ciphers")
 	.addItem(rc4.Rc4Transform, "Rc4", "RC4")
-	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20")
+	.addItem(chacha.ChaChaTransform, "ChaCha", "ChaCha / XChaCha", "ChaCha")
+	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20 / XSalsa20", "Salsa20")
 	.addItem(xor.XorTransform, "Xor", "XOR");
 
 palette.addCategory("Block cipher decryption")
