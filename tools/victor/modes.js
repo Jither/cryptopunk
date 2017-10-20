@@ -43,19 +43,23 @@ class TestMode
 		return args;
 	}
 
-	checkSkip(settings, message)
+	checkSkip(settings, args)
 	{
 		if (settings.skipLong)
 		{
-			if (message)
+			for (const key in args)
 			{
-				if (message.skip)
+				const value = args[key];
+				if (value)
 				{
-					return `message length > ${constants.FAST_MAX_BYTE_LENGTH}`;
-				}
-				if (message.length >  constants.FAST_MAX_BYTE_LENGTH)
-				{
-					return `message length ${length} > ${constants.FAST_MAX_BYTE_LENGTH}`;
+					if (value.skip)
+					{
+						return `${key} length > ${constants.FAST_MAX_BYTE_LENGTH}`;
+					}
+					if (value.length > constants.FAST_MAX_BYTE_LENGTH)
+					{
+						return `${key} length ${value.length} > ${constants.FAST_MAX_BYTE_LENGTH}`;
+					}
 				}
 			}
 		}
@@ -78,7 +82,7 @@ class EncryptMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.p);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -120,7 +124,7 @@ class DecryptMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.c);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -129,12 +133,6 @@ class DecryptMode extends TestMode
 		const dec = transforms.decrypt;
 		try
 		{
-			const skipReason = this.checkSkip(settings, argValues.c);
-			if (skipReason)
-			{
-				return result.skip(skipReason);
-			}
-	
 			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues);
 			dec.resetOptions();
 			if (options)
@@ -168,7 +166,7 @@ class EncryptDecryptMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.p);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -177,12 +175,6 @@ class EncryptDecryptMode extends TestMode
 		const enc = transforms.encrypt;
 		try
 		{
-			const skipReason = this.checkSkip(settings, argValues.p);
-			if (skipReason)
-			{
-				return result.skip(skipReason);
-			}
-	
 			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues);
 			enc.resetOptions();
 			if (options)
@@ -233,7 +225,7 @@ class EncryptDecryptTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.p);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -292,7 +284,7 @@ class DecryptEncryptMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.c);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -351,7 +343,7 @@ class EncryptTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.p);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -393,7 +385,7 @@ class DecryptTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.c);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -434,7 +426,7 @@ class HashMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.m);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -475,7 +467,7 @@ class EncodeDecodeTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.b);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -533,7 +525,7 @@ class EncodeTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.b);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
@@ -574,7 +566,7 @@ class DecodeTextMode extends TestMode
 	{
 		const result = new TestResult();
 
-		const skipReason = this.checkSkip(settings, argValues.t);
+		const skipReason = this.checkSkip(settings, argValues);
 		if (skipReason)
 		{
 			return result.skip(skipReason);
