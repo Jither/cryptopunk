@@ -83,6 +83,7 @@ Supported
 * BLAKE2 (BLAKE2s, BLAKE2b)
 * HAVAL (128, 160, 192, 224, 256; 3-5 passes)
 * HAS-160
+* Kangaroo Twelve / Marsupilami Fourteen
 * Keccak (variable capacity, hash length, suffix)
 * MD2
 * MD4
@@ -282,7 +283,6 @@ TODO
 * Grøstl
 * HAS-V
 * JH
-* Kangaroo Twelve
 * MD6
 * RadioGatún
 * Skein
