@@ -59,7 +59,7 @@ function testFile(filePath, reporter, transformClasses, options)
 		return Promise.resolve();
 	}
 
-	const executer = new VictorExecuter(fileName, reporter, transformClasses, { fast: options.fast });
+	const executer = new VictorExecuter(fileName, reporter, transformClasses, { skipLong: options.skipLong });
 	return new Promise((resolve, reject) => {
 		// Yeah, we're loading the entire file before processing, because
 		// otherwise we'd have to wait for the file to close to get the

@@ -21,6 +21,7 @@ class Reporter
 	{
 		this.verbose = verbose;
 		this.testCount = 0;
+		this.skipCount = 0;
 		this.failCount = 0;
 		this.passCount = 0;
 		this.errorCount = 0;

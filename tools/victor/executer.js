@@ -202,7 +202,7 @@ class VictorExecuter
 		const hex = repeat[1];
 		const count = parseInt(repeat[2], 10);
 		
-		if (this.settings.fast && (count * hex.length / 2) > constants.FAST_MAX_BYTE_LENGTH)
+		if (this.settings.skipLong && (count * hex.length / 2) > constants.FAST_MAX_BYTE_LENGTH)
 		{
 			return { skip: true };
 		}
@@ -214,7 +214,7 @@ class VictorExecuter
 	{
 		const count = parseInt(runlength[1], 10);
 		
-		if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
+		if (this.settings.skipLong && count > constants.FAST_MAX_BYTE_LENGTH)
 		{
 			return { skip: true };
 		}
@@ -233,7 +233,7 @@ class VictorExecuter
 		const hex2 = pattern[2];
 		const count = parseInt(pattern[3], 10);
 
-		if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
+		if (this.settings.skipLong && count > constants.FAST_MAX_BYTE_LENGTH)
 		{
 			return { skip: true };
 		}
