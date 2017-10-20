@@ -149,54 +149,115 @@ class VictorExecuter
 		const range = /^range\s+(\d+)\s*\.\.\s*(\d+)\s*=\s*(.*)/i.exec(value);
 		if (range)
 		{
-			const from = parseInt(range[1], 10);
-			const to = parseInt(range[2], 10);
-			const value = this.parseHexValue(range[3]);
-			return { directive: "range", from, to, value };
+			return this.parseRange(range);
 		}
 
 		// xor-digest = afafaf...
 		const digest = /^xor-digest\s+=\s+(.*)/i.exec(value);
 		if (digest)
 		{
-			const value = this.parseHexValue(digest[1]);
-			return { directive: "xor-digest", value };
+			return this.parseDigest(digest);
 		}
 
-		// repeat AF x 32 => afafafafaf...
-		const repeat = /^repeat\s+([a-z0-f ]+)\s*x\s*(\d+)$/i.exec(value);
+		// repeat AF x 32 => af af af af af...
+		const repeat = /^repeat\s+([a-f0-9 ]+)\s*x\s*(\d+)$/i.exec(value);
 		if (repeat)
 		{
-			const hex = repeat[1];
-			const count = parseInt(repeat[2], 10);
-			
-			if (this.settings.fast && (count * hex.length / 2) > constants.FAST_MAX_BYTE_LENGTH)
-			{
-				return { skip: true };
-			}
-			
-			return utils.hexToBytes(hex.repeat(count));
+			return this.parseRepeat(repeat);
 		}
+
+		// pattern 03..05 x 5 => 03 04 05 03 04
+		const pattern = /^pattern\s+([a-f0-9]{2})\s*\.\.\s*([a-f0-9]{2})\s*x\s*(\d+)$/i.exec(value);
+		if (pattern)
+		{
+			return this.parsePattern(pattern);
+		}
+
 		// runlength x 32 => 000102030405060708090a0b0c0d0e0f1011121314...
 		const runlength = /^runlength\s+x\s*(\d+)$/i.exec(value);
 		if (runlength)
 		{
-			const count = parseInt(runlength[1], 10);
-
-			if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
-			{
-				return { skip: true };
-			}
-			
-			const result = new Uint8Array(count);
-			for (let i = 0; i < result.length; i++)
-			{
-				result[i] = i & 0xff;
-			}
-			return result;
+			return this.parseRunLength(runlength);
 		}
 
 		return utils.hexToBytes(value);
+	}
+
+	parseDigest(digest)
+	{
+		const value = this.parseHexValue(digest[1]);
+		return { directive: "xor-digest", value };
+	}
+
+	parseRange(range)
+	{
+		const from = parseInt(range[1], 10);
+		const to = parseInt(range[2], 10);
+		const value = this.parseHexValue(range[3]);
+		return { directive: "range", from, to, value };
+	}
+
+	parseRepeat(repeat)
+	{
+		const hex = repeat[1];
+		const count = parseInt(repeat[2], 10);
+		
+		if (this.settings.fast && (count * hex.length / 2) > constants.FAST_MAX_BYTE_LENGTH)
+		{
+			return { skip: true };
+		}
+		
+		return utils.hexToBytes(hex.repeat(count));
+	}
+
+	parseRunLength(runlength)
+	{
+		const count = parseInt(runlength[1], 10);
+		
+		if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
+		{
+			return { skip: true };
+		}
+		
+		const result = new Uint8Array(count);
+		for (let i = 0; i < result.length; i++)
+		{
+			result[i] = i & 0xff;
+		}
+		return result;
+	}
+
+	parsePattern(pattern)
+	{
+		const hex1 = pattern[1];
+		const hex2 = pattern[2];
+		const count = parseInt(pattern[3], 10);
+
+		if (this.settings.fast && count > constants.FAST_MAX_BYTE_LENGTH)
+		{
+			return { skip: true };
+		}
+
+		const start = parseInt(hex1, 16);
+		const end = parseInt(hex2, 16);
+
+		if (start > end)
+		{
+			throw new Error(`Pattern start (${hex1}) must be <= pattern end (${hex2}).`);
+		}
+
+		const result = new Uint8Array(count);
+		let value = start;
+		for (let i = 0; i < result.length; i++)
+		{
+			result[i] = value++;
+			if (value > end)
+			{
+				value = start;
+			}
+		}
+
+		return result;
 	}
 
 	assignTransform(name, className)

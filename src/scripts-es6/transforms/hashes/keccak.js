@@ -2,6 +2,8 @@ import { HashTransform } from "./hash";
 import { TransformError } from "../transforms";
 import { and64, not64, rol64, xor64 } from "../../cryptopunk.bitarith";
 
+const MAX_ROUNDS = 24;
+
 function readLane(state, x, y)
 {
 	const position = (x + 5 * y) * 8;
@@ -67,27 +69,22 @@ class KeccakBaseTransform extends HashTransform
 		super();
 	}
 
-	lfsr86540(lfsr)
+	permute(state, rounds)
 	{
-		const result = (lfsr[0] & 0x01) !== 0;
-		if ((lfsr[0] & 0x80) !== 0)
-		{
-			lfsr[0] = (lfsr[0] << 1) ^ 0x71;
-		}
-		else
-		{
-			lfsr[0] <<= 1;
-		}
-		return result;
-	}
+		let R = 1;
 
-	permute(state)
-	{
-		// Array just to pass it by reference
-		const lfsrState = [ 0x01 ];
-
-		for (let round = 0; round < 24; round++)
+		for (let round = 0; round < MAX_ROUNDS; round++)
 		{
+			// If we have less than 24 rounds, it's the initial rounds that will be skipped:
+			if (round < MAX_ROUNDS - rounds)
+			{
+				for (let j = 0; j < 7; j++)
+				{
+					R = ((R << 1) ^ ((R >> 7) * 0x71)) % 256;
+				}
+				continue;
+			}
+
 			// Step θ
 			const C = new Array(5);
 			for (let x = 0; x < 5; x++)
@@ -134,9 +131,10 @@ class KeccakBaseTransform extends HashTransform
 			// Step ι
 			for (let j = 0; j < 7; j++)
 			{
-				const bitPosition = (1 << j) - 1;
-				if (this.lfsr86540(lfsrState))
+				R = ((R << 1) ^ ((R >> 7) * 0x71)) % 256;
+				if (R & 0x02)
 				{
+					const bitPosition = (1 << j) - 1;
 					xorLane(state, 0, 0, rol64({ lo: 1, hi: 0 }, bitPosition));
 				}
 			}
@@ -167,12 +165,14 @@ class KeccakBaseTransform extends HashTransform
 
 		const rate = 1600 - capacity;
 		const rateInBytes = rate / 8;
-		// Combine suffix and padding start bit.
+		// Delimited suffix is suffix + padding start bit.
 		// Reading lsb to msb (as in the spec):
+		// - Original Keccak (0x00) becomes     1 (0x01)
 		// - SHA-3's      01 (0x02) becomes   011 (0x06)
 		// - SHAKE's    1111 (0x0f) becomes 11111 (0x1f)
-		// - Original Keccak (0x00) becomes     1 (0x01)
-		const suffixAndPaddingStart = append1bit(this.options.suffix);
+		const delimitedSuffix = this.options.delimitedSuffix;
+
+		const rounds = this.options.rounds;
 
 		const state = new Uint8Array(200);
 
@@ -193,7 +193,7 @@ class KeccakBaseTransform extends HashTransform
 
 			if (blockSize === rateInBytes)
 			{
-				this.permute(state);
+				this.permute(state, rounds);
 				blockSize = 0;
 			}
 		}
@@ -204,18 +204,18 @@ class KeccakBaseTransform extends HashTransform
 		// there's no point in creating a padded block and XOR'ing it into state. We've already absorbed
 		// the remainder of the message above. So we'll just XOR the start and end padding bytes into
 		// the state at the correct positions.
-		state[blockSize] ^= suffixAndPaddingStart;
+		state[blockSize] ^= delimitedSuffix;
 
 		// If the suffix + starting 1-bit end up filling the block, we need another block of
 		// 0 bits before the ending 1-bit. Once again, no point in creating and XOR'ing a block of 0 bits,
 		// but we do need to permute the state.
-		if (((suffixAndPaddingStart & 0x80) !== 0) && (blockSize === rateInBytes - 1))
+		if (((delimitedSuffix & 0x80) !== 0) && (blockSize === rateInBytes - 1))
 		{
-			this.permute(state);
+			this.permute(state, rounds);
 		}
 		// Padding end bit at last byte position of block.
 		state[rateInBytes - 1] ^= 0x80;
-		this.permute(state);
+		this.permute(state, rounds);
 
 		// Squeeze state out into output
 		let remainingOutput = size / 8;
@@ -231,7 +231,7 @@ class KeccakBaseTransform extends HashTransform
 
 			if (remainingOutput > 0)
 			{
-				this.permute(state);
+				this.permute(state, rounds);
 			}
 		}
 
@@ -243,11 +243,12 @@ class KeccakTransform extends KeccakBaseTransform
 {
 	constructor()
 	{
-		super(1024, 512, 0x01);
+		super();
 		this
 			.addOption("capacity", "Capacity", 1024, { min: 8, max: 1592, step: 8 })
 			.addOption("size", "Size", 512, { min: 0, step: 8 })
-			.addOption("suffix", "Suffix", 0x00, { min: 0, max: 255 });
+			.addOption("delimitedSuffix", "Delimited Suffix", 0x01, { min: 0, max: 255 }) // Delimited suffix (lsb) |1
+			.addOption("rounds", "Rounds", 24);
 	}
 }
 

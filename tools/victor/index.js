@@ -53,6 +53,12 @@ function parseData(lines, executer)
 function testFile(filePath, reporter, transformClasses, options)
 {
 	const fileName = path.basename(filePath, ".vectors");
+	if (options.filter && fileName !== options.filter)
+	{
+		// Skip file not in filter
+		return Promise.resolve();
+	}
+
 	const executer = new VictorExecuter(fileName, reporter, transformClasses, { fast: options.fast });
 	return new Promise((resolve, reject) => {
 		// Yeah, we're loading the entire file before processing, because
@@ -104,7 +110,8 @@ commander
 	.arguments("<folder or file>")
 	.option("-t, --transforms <path>", "Javascript exposing transforms")
 	.option("-v, --verbose", "Verbose output")
-	.option("-f, --fast", "Exclude long vectors")
+	.option("-s, --skip-long", "Exclude long vectors")
+	.option("-f, --filter <name>", "Only run specified file")
 	.action((path, options) => {
 		const transformClasses = loadTransforms(options.transforms);
 		const reporter = new Reporter(options.verbose);

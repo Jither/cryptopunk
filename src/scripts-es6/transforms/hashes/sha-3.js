@@ -23,7 +23,7 @@ class Sha3Transform extends KeccakBaseTransform
 	transform(bytes)
 	{
 		// TODO: Handle in optionsChanged instead (when implemented)
-		const keccakOptions = { suffix: 0x02 }; // Suffix 01 (lsb first)
+		const keccakOptions = { delimitedSuffix: 0x06 }; // Delimited Suffix 01|1 (lsb first)
 
 		switch (this.options.variant)
 		{
@@ -61,7 +61,7 @@ class ShakeTransform extends KeccakBaseTransform
 	transform(bytes)
 	{
 		// TODO: Handle in optionsChanged instead (when implemented)
-		const keccakOptions = { suffix: 0x0f, size: this.options.size }; // Suffix 1111
+		const keccakOptions = { delimitedSuffix: 0x1f, size: this.options.size }; // Delimited Suffix 1111|1
 
 		switch (this.options.variant)
 		{

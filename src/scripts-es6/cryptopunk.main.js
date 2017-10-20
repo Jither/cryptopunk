@@ -30,6 +30,7 @@ import * as ice from "./transforms/block-ciphers/ice";
 import * as idea from "./transforms/block-ciphers/idea";
 import * as iraqi from "./transforms/block-ciphers/iraqi";
 import * as jis from "./transforms/char-encodings/jis";
+import * as k12 from "./transforms/hashes/kangaroo-twelve";
 import * as keccak from "./transforms/hashes/keccak";
 import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
@@ -237,6 +238,7 @@ palette.addCategory("Hashes")
 	.addItem(blake2.Blake2Transform, "Blake2", "BLAKE2", "BLAKE2")
 	.addItem(has160.Has160Transform, "Has160", "HAS-160", "HAS-160")
 	.addItem(haval.HavalTransform, "Haval", "HAVAL", "HAVAL")
+	.addItem(k12.KangarooTwelveTransform, "KangarooTwelve", "Kangaroo Twelve")
 	.addItem(keccak.KeccakTransform, "Keccak", "Keccak", "Keccak")
 	.addItem(md2.Md2Transform, "Md2", "MD2", "MD2")
 	.addItem(md4.Md4Transform, "Md4", "MD4", "MD4")
