@@ -1,5 +1,6 @@
 import { Transform } from "./transforms";
 import { removeWhiteSpace } from "../cryptopunk.strings";
+import { HexToBytesTransform } from "./hex";
 
 class KeyboardInputGenerator extends Transform
 {
@@ -13,6 +14,24 @@ class KeyboardInputGenerator extends Transform
 	transform()
 	{
 		return this.options.input;
+	}
+}
+
+// Just a simple wrapper around HexToBytesTransform
+class HexInputGenerator extends Transform
+{
+	constructor()
+	{
+		super();
+		this.addOutput("bytes", "Bytes")
+			.addOption("input", "Input", "");
+
+		this.hexToBytesTransform = new HexToBytesTransform();
+	}
+
+	transform()
+	{
+		return this.hexToBytesTransform.transform(this.options.input);
 	}
 }
 
@@ -98,6 +117,7 @@ class KeyedAlphabetGenerator extends Transform
 
 export {
 	KeyboardInputGenerator,
+	HexInputGenerator,
 	KeyedAlphabetGenerator,
 	RandomBytesGenerator,
 	NullBytesGenerator

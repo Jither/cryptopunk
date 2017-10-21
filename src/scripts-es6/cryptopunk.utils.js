@@ -328,16 +328,86 @@ function intToByteArray(num)
 	return result;
 }
 
+// Read variable length words to byte array
+function readNWord(bytes, index, length)
+{
+	if (length <= 4)
+	{
+		// Word fits in 32-bit
+		let result = 0;
+		for (let b = 0; b < length; b++)
+		{
+			result <<= 8;
+			result |= bytes[index++];
+		}
+		return result;
+	}
+	else
+	{
+		// Word requires 64-bit JS nastiness
+		let lo = 0, hi = 0;
+		for (let b = 4; b < length; b++)
+		{
+			hi <<= 8;
+			hi |= bytes[index++];
+		}
+		for (let b = 0; b < 4; b++)
+		{
+			lo <<= 8;
+			lo |= bytes[index++];
+		}
+		return { hi, lo };
+	}
+}
+
+// Write variable length words to byte array
+function writeNWord(bytes, index, word, length)
+{
+	// Writing "backwards" (from end of destination to start) is easier.
+	if (length <= 4)
+	{
+		let i = index + length - 1;
+		while (i >= index)
+		{
+			bytes[i--] = word & 0xff;
+			word >>>= 8;
+		}
+	}
+	else
+	{
+		// Backwards writing means lo word written first, hi word last.
+		let lo = word.lo;
+		let hi = word.hi;
+		let i = index + length - 1;
+		const loIndex = index + length - 4;
+		while (i >= loIndex)
+		{
+			bytes[i--] = lo & 0xff;
+			lo >>>= 8;
+		}
+		while (i >= index)
+		{
+			bytes[i--] = hi & 0xff;
+			hi >>>= 8;
+		}
+	}
+}
+
 function checkSize(size, requiredSize)
 {
 	if (Array.isArray(requiredSize))
 	{
 		if (requiredSize.indexOf(size) < 0)
 		{
-			let requirement = requiredSize.slice(0, -1).join(", ");
-			if (requirement.length > 1)
+			let requirement;
+			if (requiredSize.length > 1)
 			{
+				requirement = requiredSize.slice(0, -1).join(", ");
 				requirement += " or " + requiredSize[requiredSize.length - 1];
+			}
+			else
+			{
+				requirement = requiredSize[0].toString();
 			}
 			return requirement;
 		}
@@ -442,6 +512,9 @@ export {
 	int32sToHex,
 	int64ToHex,
 	int64sToHex,
+
+	readNWord,
+	writeNWord,
 
 	cipherTest
 };

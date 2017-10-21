@@ -69,10 +69,12 @@ class KangarooTwelveTransform extends KeccakBaseTransform
 	{
 		const encodedLength = this.rightEncode(inputChunks.length - 1);
 		const combinedLength = 
-			8192 + 8 +
-			((inputChunks.length - 1) * keccakOptions.capacity / 8) +
-			encodedLength.length +
-			2;
+			8192 + // First chunk
+			8 + // Chunk split
+			((inputChunks.length - 1) * keccakOptions.capacity / 8) + // Hash of remaining chunks
+			encodedLength.length + // Right encoded length
+			2; // Suffix
+
 		const combined = new Uint8Array(combinedLength);
 		
 		combined.set(inputChunks[0]);

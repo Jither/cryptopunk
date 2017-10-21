@@ -61,6 +61,7 @@ Supported
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * Serpent
 * Shark-E
+* Simon
 * Skipjack (including NESSIE variant)
 * Speck
 * SQUARE
@@ -199,7 +200,6 @@ TODO
 * SEED
 * Shacal
 * Shark-A
-* Simon
 * SPEED
 * Unicorn-A, Unicorn-E
 

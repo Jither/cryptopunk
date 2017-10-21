@@ -65,6 +65,7 @@ import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha2 from "./transforms/hashes/sha-2";
 import * as sha3 from "./transforms/hashes/sha-3";
 import * as shark from "./transforms/block-ciphers/shark";
+import * as simon from "./transforms/block-ciphers/simon";
 import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as speck from "./transforms/block-ciphers/speck";
@@ -161,6 +162,7 @@ function createNode(transformClass, caption, x, y)
 
 palette.addCategory("Generators")
 	.addItem(generators.KeyboardInputGenerator, "KeyboardInput", "Keyboard Input")
+	.addItem(generators.HexInputGenerator, "HexInput", "Hex Input")
 	.addItem(generators.KeyedAlphabetGenerator, "KeyedAlphabet", "Keyed Alphabet")
 	.addItem(generators.NullBytesGenerator, "NullBytes", "Null Bytes")
 	.addItem(generators.RandomBytesGenerator, "RandomBytes", "Random Bytes");
@@ -333,6 +335,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(rijndael.RijndaelDecryptTransform, "RijndaelDecrypt", "Rijndael", "Rijndael Decrypt")
 	.addItem(serpent.SerpentDecryptTransform, "SerpentDecrypt", "Serpent", "Serpent Decrypt")
 	.addItem(shark.SharkDecryptTransform, "SharkDecrypt", "SHARK", "SHARK Decrypt")
+	.addItem(simon.SimonDecryptTransform, "SimonDecrypt", "Simon", "Simon Decrypt")
 	.addItem(skipjack.SkipjackDecryptTransform, "SkipjackDecrypt", "Skipjack", "Skipjack Decrypt")
 	.addItem(speck.SpeckDecryptTransform, "SpeckDecrypt", "Speck", "Speck Decrypt")
 	.addItem(square.SquareDecryptTransform, "SquareDecrypt", "SQUARE", "SQUARE Decrypt")
@@ -375,6 +378,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(serpent.SerpentEncryptTransform, "SerpentEncrypt", "Serpent", "Serpent Encrypt")
 	.addItem(shark.SharkEncryptTransform, "SharkEncrypt", "SHARK", "SHARK Encrypt")
 	.addItem(skipjack.SkipjackEncryptTransform, "SkipjackEncrypt", "Skipjack", "Skipjack Encrypt")
+	.addItem(simon.SimonEncryptTransform, "SimonEncrypt", "Simon", "Simon Encrypt")
 	.addItem(speck.SpeckEncryptTransform, "SpeckEncrypt", "Speck", "Speck Encrypt")
 	.addItem(square.SquareEncryptTransform, "SquareEncrypt", "SQUARE", "SQUARE Encrypt")
 	.addItem(tea.TeaEncryptTransform, "TeaEncrypt", "TEA", "TEA Encrypt")

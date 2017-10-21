@@ -48,20 +48,6 @@ function xorLane(state, x, y, value)
 	state[position + 7] ^= (value.hi >>> 24) & 0xff;
 }
 
-function append1bit(byte)
-{
-	let i = 0;
-	while (i < 8)
-	{
-		if ((byte >>> i) === 0)
-		{
-			break;
-		}
-		i++;
-	}
-	return byte | (1 << i);
-}
-
 class KeccakBaseTransform extends HashTransform
 {
 	constructor()

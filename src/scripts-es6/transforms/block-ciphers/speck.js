@@ -1,6 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { TransformError } from "../transforms";
-import { checkSize } from "../../cryptopunk.utils";
+import { checkSize, readNWord, writeNWord } from "../../cryptopunk.utils";
 import { add, add64, sub64, xor64, rol64, ror64, rol48, ror48 } from "../../cryptopunk.bitarith";
 
 const BLOCK_SIZES = [
@@ -32,69 +32,6 @@ const MASKS = {
 	24: 0xffffff,
 	32: 0xffffffff
 };
-
-function readWord(bytes, index, length)
-{
-	if (length <= 4)
-	{
-		// Word fits in 32-bit
-		let result = 0;
-		for (let b = 0; b < length; b++)
-		{
-			result <<= 8;
-			result |= bytes[index++];
-		}
-		return result;
-	}
-	else
-	{
-		// Word requires 64-bit JS nastiness
-		let lo = 0, hi = 0;
-		for (let b = 4; b < length; b++)
-		{
-			hi <<= 8;
-			hi |= bytes[index++];
-		}
-		for (let b = 0; b < 4; b++)
-		{
-			lo <<= 8;
-			lo |= bytes[index++];
-		}
-		return { hi, lo };
-	}
-}
-
-function writeWord(bytes, index, word, length)
-{
-	// Writing "backwards" (from end of destination to start) is easier.
-	if (length <= 4)
-	{
-		let i = index + length - 1;
-		while (i >= index)
-		{
-			bytes[i--] = word & 0xff;
-			word >>>= 8;
-		}
-	}
-	else
-	{
-		// Backwards writing means lo word written first, hi word last.
-		let lo = word.lo;
-		let hi = word.hi;
-		let i = index + length - 1;
-		const loIndex = index + length - 4;
-		while (i >= loIndex)
-		{
-			bytes[i--] = lo & 0xff;
-			lo >>>= 8;
-		}
-		while (i >= index)
-		{
-			bytes[i--] = hi & 0xff;
-			hi >>>= 8;
-		}
-	}
-}
 
 function R(x, y, k, wordSize, rotA, rotB)
 {
@@ -197,12 +134,12 @@ class SpeckTransform extends BlockCipherTransform
 
 		const k = new Array(rounds);
 
-		k[0] = readWord(keyBytes, wordLength * (wordCount - 1), wordLength);
+		k[0] = readNWord(keyBytes, wordLength * (wordCount - 1), wordLength);
 
 		const l = new Array(wordCount);
 		for (let i = 0; i < wordCount - 1; i++)
 		{
-			l[i] = readWord(keyBytes, (wordCount - i - 2) * wordLength, wordLength);
+			l[i] = readNWord(keyBytes, (wordCount - i - 2) * wordLength, wordLength);
 		}
 
 		// Choose R implementation based on word size (>32 = 64 bit version)
@@ -238,8 +175,8 @@ class SpeckTransform extends BlockCipherTransform
 	{
 		const wordLength = block.length / 2;
 		// Split into two halves. These may be 24-64 bits (3-8 bytes) depending on block size
-		let x = readWord(block, 0, wordLength);
-		let y = readWord(block, wordLength, wordLength);
+		let x = readNWord(block, 0, wordLength);
+		let y = readNWord(block, wordLength, wordLength);
 
 		const wordSize = wordLength * 8;
 
@@ -272,8 +209,8 @@ class SpeckTransform extends BlockCipherTransform
 			}
 		}
 
-		writeWord(dest, destOffset, x, wordLength);
-		writeWord(dest, destOffset + wordLength, y, wordLength);
+		writeNWord(dest, destOffset, x, wordLength);
+		writeNWord(dest, destOffset + wordLength, y, wordLength);
 	}
 }
 
