@@ -301,6 +301,8 @@ main > section
 		margin-bottom: $half-padding;
 		background: #ffffff;
 
+		transition: opacity 0.2s, border-color 0.2s;
+	
 		&.empty
 		{
 			background: $socket-back-color;
@@ -342,6 +344,11 @@ main > section
 			{
 				border-color: $socket-hover-border-color;
 			}
+		}
+
+		&:not(.target):not(.selected)
+		{
+			opacity: 0;
 		}
 	}
 }
