@@ -358,6 +358,17 @@ function mirror(value, bits)
 	return result;
 }
 
+// Parity of 32 bit word: Sum of bits mod 2
+function parity32(x)
+{
+	x ^= x >>> 16;
+	x ^= x >>> 8;
+	x ^= x >>> 4;
+	x ^= x >>> 2;
+	x ^= x >>> 1;
+	return x & 1;
+}
+
 export {
 	add,
 	add64,
@@ -366,6 +377,7 @@ export {
 	mul64,
 	not64,
 	or64,
+	parity32,
 	rol,
 	rol16,
 	rol24,

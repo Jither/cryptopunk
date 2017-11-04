@@ -166,10 +166,19 @@ class NodeController
 	{
 		this.node.error = !!errorMessage;
 		this.node.value = output;
-		if (this.node.outputs.length > 0)
+
+		if (Array.isArray(output))
+		{
+			for (let i = 0; i < output.length; i++)
+			{
+				this.node.outputs[i].value = output[i];
+			}
+		}
+		else
 		{
 			this.node.outputs[0].value = output;
 		}
+
 		if (errorMessage)
 		{
 			this.node.contentElement.innerText = errorMessage;

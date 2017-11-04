@@ -14,7 +14,7 @@ class RedPikeTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 64);
+		this.checkBytesSize("Key", keyBytes, 64);
 
 		const keys = this.generateSubKeys(keyBytes);
 

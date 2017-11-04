@@ -121,7 +121,7 @@ class NoekeonTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 128);
+		this.checkBytesSize("Key", keyBytes, 128);
 
 		precompute();
 		const key = this.generateWorkingKey(keyBytes, this.options.mode);

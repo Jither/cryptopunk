@@ -176,7 +176,7 @@ class KuznyechikBaseTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, KEY_SIZE);
+		this.checkBytesSize("Key", keyBytes, KEY_SIZE);
 		
 		precompute();
 

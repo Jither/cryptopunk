@@ -223,7 +223,7 @@ class BlowfishTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, { min: 8, max: 448 });
+		this.checkBytesSize("Key", keyBytes, { min: 8, max: 448 });
 
 		const subKeys = this.createSubKeys(keyBytes);
 		return this.transformBlocks(bytes, 64, subKeys);

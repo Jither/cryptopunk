@@ -532,7 +532,7 @@ class SerpentTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, { min: 1, max: 256 });
+		this.checkBytesSize("Key", keyBytes, { min: 1, max: 256 });
 
 		const subKeys = this.generateSubKeys(keyBytes);
 

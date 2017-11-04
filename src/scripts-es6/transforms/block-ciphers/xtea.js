@@ -25,7 +25,7 @@ class XTeaTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 128);
+		this.checkBytesSize("Key", keyBytes, 128);
 
 		this.bytesToInt32s = this.options.endianness === "BE" ? bytesToInt32sBE : bytesToInt32sLE;
 		this.int32sToBytes = this.options.endianness === "BE" ? int32sToBytesBE : int32sToBytesLE;

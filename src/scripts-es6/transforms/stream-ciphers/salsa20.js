@@ -1,4 +1,5 @@
-import { Transform, TransformError } from "../transforms";
+import { TransformError } from "../transforms";
+import { StreamCipherTransform } from "./stream-cipher";
 import { bytesToInt32sLE, int32sToBytesLE, checkSize } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -6,7 +7,7 @@ const SIGMA   = [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574]; // "expand 32-
 const TAU     = [0x61707865, 0x3120646e, 0x79622d36, 0x6b206574]; // "expand 16-byte k" as LE uint32
 const UPSILON = [0x61707865, 0x3120646e, 0x79622d30, 0x6b206574]; // "expand 10-byte k" as LE uint32
 
-class Salsa20Transform extends Transform
+class Salsa20Transform extends StreamCipherTransform
 {
 	constructor()
 	{
@@ -24,8 +25,8 @@ class Salsa20Transform extends Transform
 	transform(bytes, keyBytes, ivBytes)
 	{
 		// Lesser known 80 bit key included (see original Salsa family paper, 4.1)
-		this.checkKeySize(keyBytes, this.options.xsalsa ? 256 : [80, 128, 256]);
-		this.checkIVSize(ivBytes, this.options.xsalsa ? 192 : 64);
+		this.checkBytesSize("Key", keyBytes, this.options.xsalsa ? 256 : [80, 128, 256]);
+		this.checkBytesSize("IV", ivBytes, this.options.xsalsa ? 192 : 64);
 
 		const state = this.options.xsalsa ? this.setupStateXSalsa(keyBytes, ivBytes) : this.setupState(keyBytes, ivBytes);
 
@@ -202,17 +203,6 @@ class Salsa20Transform extends Transform
 		state[15] = constants[3];
 
 		return state;
-	}
-
-	checkKeySize(keyBytes, requiredSize)
-	{
-		const size = keyBytes.length * 8;
-		const requirement = checkSize(size, requiredSize);
-		if (requirement)
-		{
-			throw new TransformError(`Key size must be ${requirement} bits. Was: ${size} bits.`);
-		}
-		return size;
 	}
 
 	checkIVSize(ivBytes, requiredSize)

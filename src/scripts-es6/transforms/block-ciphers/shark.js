@@ -115,7 +115,7 @@ class SharkTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 128);
+		this.checkBytesSize("Key", keyBytes, 128);
 
 		precompute();
 

@@ -153,7 +153,7 @@ class MagmaTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 256);
+		this.checkBytesSize("Key", keyBytes, 256);
 
 		const subKeys = this.generateSubKeys(keyBytes);
 

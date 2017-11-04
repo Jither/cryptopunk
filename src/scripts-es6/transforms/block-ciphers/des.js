@@ -1,6 +1,6 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE, checkSize } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 
 // The following tables are different from the usual reference tables - all of them count
 // from 0 - i.e. 0 is first bit, 1 is second... A few of them also have other differences, noted below.
@@ -187,7 +187,7 @@ class DesTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes, ...rest)
 	{
-		this.checkKeySize(keyBytes, [56, 64]);
+		this.checkBytesSize("Key", keyBytes, [56, 64]);
 
 		if (keyBytes.length === 8)
 		{
@@ -344,18 +344,8 @@ class DesXTransform extends DesTransform
 
 	transform(bytes, keyBytes, prewhitening, postwhitening)
 	{
-		let size = prewhitening.length * 8;
-		let requirement = checkSize(size, 64);
-		if (requirement)
-		{
-			throw new TransformError(`Prewhitening key size must be ${requirement} bits. Was: ${size} bits.`);
-		}
-		size = postwhitening.length * 8;
-		requirement = checkSize(size, 64);
-		if (requirement)
-		{
-			throw new TransformError(`Postwhitening key size must be ${requirement} bits. Was: ${size} bits.`);
-		}
+		this.checkBytesSize("Prewhitening key", prewhitening, 64);
+		this.checkBytesSize("Postwhitening key", postwhitening, 64);
 
 		return super.transform(bytes, keyBytes, prewhitening, postwhitening);
 	}

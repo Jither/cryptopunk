@@ -57,7 +57,7 @@ class LuciferTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 128);
+		this.checkBytesSize("Key", keyBytes, 128);
 
 		return this.transformBlocks(bytes, 128, keyBytes, this.options.variant);
 	}

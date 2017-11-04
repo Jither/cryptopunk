@@ -166,7 +166,7 @@ class CamelliaTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, [128, 192, 256]);
+		this.checkBytesSize("Key", keyBytes, [128, 192, 256]);
 
 		precompute();
 

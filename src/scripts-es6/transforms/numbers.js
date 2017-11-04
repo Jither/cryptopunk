@@ -118,7 +118,7 @@ class BytesToNumbersTransform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "Numbers")
-			.addOption("unit", "Unit", "byte", { type: "select", values: UNIT_NAMES })
+			.addOption("unit", "Unit", "byte", { type: "select", values: UNIT_NAMES, texts: UNIT_NAMES })
 			.addOption("pad", "Pad", true)
 			.addOption("separator", "Separator", " ");
 	}

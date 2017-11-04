@@ -250,7 +250,7 @@ class Cast256Transform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, [128, 160, 192, 224, 256]);
+		this.checkBytesSize("Key", keyBytes, [128, 160, 192, 224, 256]);
 		const subKeys = this.generateSubKeys(keyBytes);
 
 		return this.transformBlocks(bytes, 128, subKeys);

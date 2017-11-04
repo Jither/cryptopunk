@@ -205,9 +205,11 @@ class SimonTransform extends BlockCipherTransform
 		{
 			throw new TransformError(`Block size must be ${requirement} bits. Was: ${blockSize} bits.`);
 		}
+		
 		const validKeySizes = KEY_SIZES_BY_BLOCK_SIZE[blockSize];
-		const keySize = this.checkKeySize(keyBytes, validKeySizes);
+		const keySize = this.checkBytesSize("Key", keyBytes, validKeySizes);
 		const keySizeIndex = validKeySizes.indexOf(keySize);
+		
 		// Round count and z is based on block size and key size:
 		const rounds = ROUNDS_BY_BLOCK_AND_KEY_SIZE[blockSize][keySizeIndex];
 		const z = Z_BY_BLOCK_AND_KEY_SIZE[blockSize][keySizeIndex];

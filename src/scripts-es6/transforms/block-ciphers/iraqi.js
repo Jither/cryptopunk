@@ -256,7 +256,7 @@ class IraqiTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 160);
+		this.checkBytesSize("Key", keyBytes, 160);
 
 		const keyMaterial = this.generateKeyMaterial(keyBytes);
 

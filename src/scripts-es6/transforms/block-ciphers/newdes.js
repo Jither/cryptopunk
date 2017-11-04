@@ -100,7 +100,7 @@ class NewDesTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 120);
+		this.checkBytesSize("Key", keyBytes, 120);
 
 		precompute();
 		const keys = this.generateSubKeys(keyBytes);

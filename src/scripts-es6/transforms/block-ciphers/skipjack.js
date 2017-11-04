@@ -62,7 +62,7 @@ class SkipjackTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 80);
+		this.checkBytesSize("Key", keyBytes, 80);
 		return this.transformBlocks(bytes, 64, keyBytes, this.options.variant);
 	}
 }

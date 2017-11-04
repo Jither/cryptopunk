@@ -123,7 +123,7 @@ class RijndaelBaseTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, KEY_SIZES);
+		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
 
 		const blockSize = this.options.blockSize;
 		const requirement = checkSize(blockSize, BLOCK_SIZES);

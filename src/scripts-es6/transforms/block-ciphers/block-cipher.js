@@ -12,13 +12,13 @@ class BlockCipherTransform extends Transform
 			.addOutput("bytes", decrypt ? "Plaintext" : "Ciphertext");
 	}
 
-	checkKeySize(keyBytes, requiredSize)
+	checkBytesSize(name, bytes, requiredSize)
 	{
-		const size = keyBytes.length * 8;
+		const size = bytes.length * 8;
 		const requirement = checkSize(size, requiredSize);
 		if (requirement)
 		{
-			throw new TransformError(`Key size must be ${requirement} bits. Was: ${size} bits.`);
+			throw new TransformError(`${name} size must be ${requirement} bits. Was: ${size} bits.`);
 		}
 		return size;
 	}

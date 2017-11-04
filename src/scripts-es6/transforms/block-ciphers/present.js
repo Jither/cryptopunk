@@ -23,7 +23,7 @@ class PresentTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, [80, 128]);
+		this.checkBytesSize("Key", keyBytes, [80, 128]);
 
 		const subKeys = keyBytes.length === 10 ? this.generateSubKeys80(keyBytes) : this.generateSubKeys128(keyBytes);
 		return this.transformBlocks(bytes, 64, subKeys);

@@ -166,7 +166,7 @@ class IceTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, (this.options.level || 1) * 64);
+		this.checkBytesSize("Key", keyBytes, (this.options.level || 1) * 64);
 
 		const subKeys = this.generateSubKeys(keyBytes, this.options.level);
 

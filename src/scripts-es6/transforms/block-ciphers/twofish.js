@@ -252,7 +252,7 @@ class TwofishTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		const keySize = this.checkKeySize(keyBytes, [128, 192, 256]);
+		const keySize = this.checkBytesSize("Key", keyBytes, [128, 192, 256]);
 		precompute();
 		const [sboxKeys, subKeys] = this.generateSubKeys(keyBytes, keySize);
 		return this.transformBlocks(bytes, 128, subKeys, sboxKeys, keySize);

@@ -1,5 +1,6 @@
 import "../styles/main.scss";
 
+import * as a51 from "./transforms/stream-ciphers/a5-1";
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
 import * as ascii from "./transforms/char-encodings/ascii";
@@ -70,7 +71,7 @@ import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as speck from "./transforms/block-ciphers/speck";
 import * as square from "./transforms/block-ciphers/square";
-import * as stringManipulation from "./transforms/string-manipulation";
+import * as stringManipulation from "./transforms/tools/string-manipulation";
 import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
 import * as threefish from "./transforms/block-ciphers/threefish";
@@ -300,6 +301,7 @@ palette.addCategory("Mechanical")
 	.addItem(enigma.EnigmaTransform, "Enigma", "Enigma", "Enigma Machine");
 
 palette.addCategory("Stream ciphers")
+	.addItem(a51.A51Transform, "A51", "A5/1")
 	.addItem(rc4.Rc4Transform, "Rc4", "RC4")
 	.addItem(chacha.ChaChaTransform, "ChaCha", "ChaCha / XChaCha", "ChaCha")
 	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20 / XSalsa20", "Salsa20")

@@ -116,12 +116,7 @@ class ThreefishTransform extends BlockCipherTransform
 			throw new TransformError(`Key size must be ${keyRequirement} bits (same as block size). Was: ${keySize} bits.`);
 		}
 		
-		const tweakSize = tweakBytes.length * 8;
-		const tweakRequirement = checkSize(tweakSize, 128);
-		if (tweakRequirement)
-		{
-			throw new TransformError(`Tweak size must be ${tweakRequirement} bits. Was ${tweakSize} bits.`);
-		}
+		this.checkBytesSize("Tweak", tweakBytes, 128);
 
 		const rounds = ROUNDS_BY_BLOCK_SIZE[blockSize];
 

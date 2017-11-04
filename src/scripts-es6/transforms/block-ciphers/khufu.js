@@ -293,7 +293,7 @@ class KhufuTransform extends BlockCipherTransform
 
 	generateKeyMaterial(keyBytes, rounds)
 	{
-		this.checkKeySize(keyBytes, 512);
+		this.checkBytesSize("Key", keyBytes, 512);
 		
 		const sboxCount = rounds / 8;
 		const keyWords = bytesToInt32sBE(keyBytes);
@@ -383,7 +383,7 @@ class KhafreTransform extends KhufuTransform
 
 	generateKeyMaterial(keyBytes, rounds)
 	{
-		this.checkKeySize(keyBytes, { min: 64 });
+		this.checkBytesSize("Key", keyBytes, { min: 64 });
 		
 		const keyLength = keyBytes.length;
 

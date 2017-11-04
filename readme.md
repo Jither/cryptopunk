@@ -73,6 +73,7 @@ Supported
 
 ### Stream Ciphers
 
+* A5/1
 * ChaCha (variable rounds; 80, 128 and 256 key sizes) and XChaCha
 * RC4 (with discard parameter)
 * Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes) and XSalsa20
@@ -231,7 +232,7 @@ TODO
 
 ### Stream Ciphers
 
-* A5/1, A5/2
+* A5/2
 * Achterbahn
 * E0
 * F-FCSR

@@ -97,7 +97,7 @@ class Rc2Transform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, { min: 8, max: 1024 });
+		this.checkBytesSize("Key", keyBytes, { min: 8, max: 1024 });
 		const requirement = checkSize(this.options.effectiveKeySize, { min: 1, max: 1024 });
 		if (requirement)
 		{

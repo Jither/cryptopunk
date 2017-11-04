@@ -82,7 +82,7 @@ class ThreeWayTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkKeySize(keyBytes, 96);
+		this.checkBytesSize("Key", keyBytes, 96);
 
 		const roundConstants = this.generateRoundConstants();
 		const keys = this.generateKeys(keyBytes);

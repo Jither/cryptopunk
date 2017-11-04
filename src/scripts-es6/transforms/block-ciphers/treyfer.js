@@ -1,6 +1,4 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { checkSize } from "../../cryptopunk.utils";
 
 const ROUNDS = 32;
 
@@ -34,15 +32,11 @@ class TreyferTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes, sboxBytes)
 	{
-		this.checkKeySize(keyBytes, 64);
+		this.checkBytesSize("Key", keyBytes, 64);
 
 		if (sboxBytes && sboxBytes.length > 0)
 		{
-			const requirement = checkSize(sboxBytes.length, 256);
-			if (requirement)
-			{
-				throw new TransformError(`S-box must be ${requirement} bytes. Was: ${sboxBytes.length} bytes.`);
-			}
+			this.checkBytesSize("S-box", sboxBytes, 256);
 		}
 		else
 		{
