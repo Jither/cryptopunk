@@ -1,6 +1,6 @@
 import "../styles/main.scss";
 
-import * as a51 from "./transforms/stream-ciphers/a5-1";
+import * as a5 from "./transforms/stream-ciphers/a5";
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
 import * as ascii from "./transforms/char-encodings/ascii";
@@ -301,7 +301,8 @@ palette.addCategory("Mechanical")
 	.addItem(enigma.EnigmaTransform, "Enigma", "Enigma", "Enigma Machine");
 
 palette.addCategory("Stream ciphers")
-	.addItem(a51.A51Transform, "A51", "A5/1")
+	.addItem(a5.A51Transform, "A51", "A5/1")
+	.addItem(a5.A52Transform, "A52", "A5/2")
 	.addItem(rc4.Rc4Transform, "Rc4", "RC4")
 	.addItem(chacha.ChaChaTransform, "ChaCha", "ChaCha / XChaCha", "ChaCha")
 	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20 / XSalsa20", "Salsa20")

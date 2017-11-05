@@ -1,0 +1,38 @@
+mode    : encrypt-decrypt
+encrypt : A51Transform
+decrypt : A51Transform
+arg     : f (frame number)
+k-format: hex
+f-format: hex
+p-format: hex
+c-format: hex
+
+# From https://cryptome.org/gsm-a512.htm
+# Cipher is set to align each stream segment on bytes. This means that 114 bits will take exactly 15 bytes
+# This allows us to separately test uplink and downlink segments (separated by additional spaces below)
+
+option  : byteAlign = true
+
+k: 12 23 45 67 89 ab cd ef
+f: 00 01 34
+p: repeat 00 x 30
+c: 53 4e aa 58 2f e8 15 1a b6 e1 85 5a 72 8c 00   24 fd 35 a3 5d 5f b6 52 6d 32 f9 06 df 1a c0
+
+encrypt : A52Transform
+decrypt : A52Transform
+arg     : f (frame number)
+k-format: hex
+f-format: hex
+p-format: hex
+c-format: hex
+
+# From https://cryptome.org/gsm-a512.htm
+# Cipher is set to align each stream segment on bytes. This means that 114 bits will take exactly 15 bytes
+# This allows us to separately test uplink and downlink segments (separated by additional spaces below)
+
+option  : byteAlign = true
+
+k: 00 fc ff ff ff ff ff ff
+f: 00 00 21
+p: repeat 00 x 30
+c: f4 51 2c ac 13 59 37 64 46 0b 72 2d ad d5 00   48 00 d4 32 8e 16 a1 4d cd 7b 97 22 26 51 00

@@ -40,7 +40,6 @@ import * as rc5 from "./transforms/block-ciphers/rc5";
 import * as rc6 from "./transforms/block-ciphers/rc6";
 import * as redpike from "./transforms/block-ciphers/red-pike";
 import * as rijndael from "./transforms/block-ciphers/rijndael";
-import * as salsa20 from "./transforms/stream-ciphers/salsa20";
 import * as serpent from "./transforms/block-ciphers/serpent";
 import * as shark from "./transforms/block-ciphers/shark";
 import * as simon from "./transforms/block-ciphers/simon";
@@ -55,7 +54,9 @@ import * as twofish from "./transforms/block-ciphers/twofish";
 import * as xtea from "./transforms/block-ciphers/xtea";
 import * as xxtea from "./transforms/block-ciphers/xxtea";
 
+import * as a5 from "./transforms/stream-ciphers/a5";
 import * as rc4 from "./transforms/stream-ciphers/rc4";
+import * as salsa20 from "./transforms/stream-ciphers/salsa20";
 import * as xor from "./transforms/stream-ciphers/xor";
 
 import * as blake256 from "./transforms/hashes/blake256";
@@ -147,7 +148,6 @@ addTransformsFrom(rc5);
 addTransformsFrom(rc6);
 addTransformsFrom(redpike);
 addTransformsFrom(rijndael);
-addTransformsFrom(salsa20);
 addTransformsFrom(serpent);
 addTransformsFrom(shark);
 addTransformsFrom(simon);
@@ -162,7 +162,9 @@ addTransformsFrom(twofish);
 addTransformsFrom(xtea);
 addTransformsFrom(xxtea);
 
+addTransformsFrom(a5);
 addTransformsFrom(rc4);
+addTransformsFrom(salsa20);
 addTransformsFrom(xor);
 
 addTransformsFrom(blake256);
