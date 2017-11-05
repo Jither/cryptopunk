@@ -37,6 +37,7 @@ import * as keccak from "./transforms/hashes/keccak";
 import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
 import * as letterNumber from "./transforms/classical/letter-number";
+import * as loki from "./transforms/block-ciphers/loki";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
 import * as madryga from "./transforms/block-ciphers/madryga";
 import * as magma from "./transforms/block-ciphers/magma";
@@ -329,6 +330,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(khufu.KhafreDecryptTransform, "KhafreDecrypt", "Khafre", "Khafre Decrypt")
 	.addItem(khufu.KhufuDecryptTransform, "KhufuDecrypt", "Khufu", "Khufu Decrypt")
 	.addItem(kuznyechik.KuznyechikDecryptTransform, "KuznyechikDecrypt", "Kuznyechik", "Kuznyechik Decrypt")
+	.addItem(loki.LokiDecryptTransform, "LokiDecrypt", "LOKI", "LOKI Decrypt")
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
 	.addItem(madryga.MadrygaDecryptTransform, "MadrygaDecrypt", "Madryga", "Madryga Decrypt")
 	.addItem(magma.MagmaDecryptTransform, "MagmaDecrypt", "Magma (GOST)", "Magma (GOST) Decrypt")
@@ -373,6 +375,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(khufu.KhafreEncryptTransform, "KhafreEncrypt", "Khafre", "Khafre Encrypt")
 	.addItem(khufu.KhufuEncryptTransform, "KhufuEncrypt", "Khufu", "Khufu Encrypt")
 	.addItem(kuznyechik.KuznyechikEncryptTransform, "KuznyechikEncrypt", "Kuznyechik", "Kuznyechik Encrypt")
+	.addItem(loki.LokiEncryptTransform, "LokiEncrypt", "LOKI", "LOKI Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
 	.addItem(madryga.MadrygaEncryptTransform, "MadrygaEncrypt", "Madryga", "Madryga Encrypt")
 	.addItem(magma.MagmaEncryptTransform, "MagmaEncrypt", "Magma (GOST)", "Magma (GOST) Encrypt")

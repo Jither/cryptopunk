@@ -50,6 +50,7 @@ Supported
 * "Iraqi"
 * Khufu, Khafre (both with the actual S-boxes)
 * Kuznyechik (GOST R 34.12-2015)
+* LOKI89/91
 * LUCIFER (Sorkin and Outerbridge variants)
 * Madryga
 * Magma (GOST 28147-89)
@@ -190,7 +191,7 @@ TODO
 * IDEA NXT
 * KHAZAD
 * Kalyna
-* LOKI89/91 / LOKI97
+* LOKI97
 * MacGuffin
 * MAGENTA
 * MARS
