@@ -22,6 +22,7 @@ import * as crc from "./transforms/checksums/crc";
 import * as des from "./transforms/block-ciphers/des";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as enigma from "./transforms/mechanical/enigma";
+import * as feal from "./transforms/block-ciphers/feal";
 import * as fletcher from "./transforms/checksums/fletcher";
 import * as has160 from "./transforms/hashes/has-160";
 import * as haval from "./transforms/hashes/haval";
@@ -37,6 +38,7 @@ import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
 import * as letterNumber from "./transforms/classical/letter-number";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
+import * as madryga from "./transforms/block-ciphers/madryga";
 import * as magma from "./transforms/block-ciphers/magma";
 import * as md2 from "./transforms/hashes/md2";
 import * as md4 from "./transforms/hashes/md4";
@@ -320,6 +322,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(cast256.Cast256DecryptTransform, "Cast256Decrypt", "CAST-256", "CAST-256 Decrypt")
 	.addItem(des.DesDecryptTransform, "DesDecrypt", "DES", "DES Decrypt")
 	.addItem(des.DesXDecryptTransform, "DesXDecrypt", "DES-X", "DES-X Decrypt")
+	.addItem(feal.FealDecryptTransform, "FealDecrypt", "FEAL", "FEAL Decrypt")
 	.addItem(ice.IceDecryptTransform, "IceDecrypt", "ICE", "ICE Decrypt")
 	.addItem(idea.IdeaDecryptTransform, "IdeaDecrypt", "IDEA", "IDEA Decrypt")
 	.addItem(iraqi.IraqiDecryptTransform, "IraqiDecrypt", "Iraqi", "Iraqi Decrypt")
@@ -327,6 +330,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(khufu.KhufuDecryptTransform, "KhufuDecrypt", "Khufu", "Khufu Decrypt")
 	.addItem(kuznyechik.KuznyechikDecryptTransform, "KuznyechikDecrypt", "Kuznyechik", "Kuznyechik Decrypt")
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
+	.addItem(madryga.MadrygaDecryptTransform, "MadrygaDecrypt", "Madryga", "Madryga Decrypt")
 	.addItem(magma.MagmaDecryptTransform, "MagmaDecrypt", "Magma (GOST)", "Magma (GOST) Decrypt")
 	.addItem(newdes.NewDesDecryptTransform, "NewDesDecrypt", "NewDES", "NewDES Decrypt")
 	.addItem(noekeon.NoekeonDecryptTransform, "NoekeonDecrypt", "NOEKEON", "NOEKEON Decrypt")
@@ -362,6 +366,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(cast256.Cast256EncryptTransform, "Cast256Encrypt", "CAST-256", "CAST-256 Encrypt")
 	.addItem(des.DesEncryptTransform, "DesEncrypt", "DES", "DES Encrypt")
 	.addItem(des.DesXEncryptTransform, "DesXEncrypt", "DES-X", "DES-X Encrypt")
+	.addItem(feal.FealEncryptTransform, "FealEncrypt", "FEAL", "FEAL Encrypt")
 	.addItem(ice.IceEncryptTransform, "IceEncrypt", "ICE", "ICE Encrypt")
 	.addItem(idea.IdeaEncryptTransform, "IdeaEncrypt", "IDEA", "IDEA Encrypt")
 	.addItem(iraqi.IraqiEncryptTransform, "IraqiEncrypt", "Iraqi", "Iraqi Encrypt")
@@ -369,6 +374,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(khufu.KhufuEncryptTransform, "KhufuEncrypt", "Khufu", "Khufu Encrypt")
 	.addItem(kuznyechik.KuznyechikEncryptTransform, "KuznyechikEncrypt", "Kuznyechik", "Kuznyechik Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
+	.addItem(madryga.MadrygaEncryptTransform, "MadrygaEncrypt", "Madryga", "Madryga Encrypt")
 	.addItem(magma.MagmaEncryptTransform, "MagmaEncrypt", "Magma (GOST)", "Magma (GOST) Encrypt")
 	.addItem(newdes.NewDesEncryptTransform, "NewDesEncrypt", "NewDES", "NewDES Encrypt")
 	.addItem(noekeon.NoekeonEncryptTransform, "NoekeonEncrypt", "NOEKEON", "NOEKEON Encrypt")

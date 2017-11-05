@@ -1,3 +1,5 @@
+import { gcd } from "./cryptopunk.math";
+
 const ONE_64 = { hi: 0, lo: 1 };
 const ZERO_64 = { hi: 0, lo: 0 };
 
@@ -187,6 +189,102 @@ function or64(...terms)
 	return result;
 }
 
+function rorBytes(bytes, count)
+{
+	if (count === 0)
+	{
+		return;
+	}
+
+	const byteCount = Math.floor(count / 8);
+	const bitCount = count % 8;
+	const length = bytes.length;
+	
+	if (byteCount > 0)
+	{
+		// Juggling algorithm for inplace shifting of bytes
+		const setCount = gcd(byteCount, length);
+
+		for (let start = 0; start < setCount; start++)
+		{
+			let dest = start;
+			const temp = bytes[start];
+
+			for (;;)
+			{
+				// dest - count will obviously be negative for dest < count
+				// Add length to get positive modulo (as opposed to remainder)
+				const source = (dest - byteCount + length) % length;
+				if (source === start)
+				{
+					bytes[dest] = temp;
+					break;
+				}
+				bytes[dest] = bytes[source];
+				dest = source;
+			}
+		}
+	}
+
+	if (bitCount > 0)
+	{
+		const temp = bytes[length - 1];
+		for (let dest = length - 1; dest >= 0; dest--)
+		{
+			const source = dest - 1;
+			const val = source < 0 ? temp : bytes[source];
+			bytes[dest] = ((bytes[dest] >>> bitCount) | val << (8 - bitCount)) & 0xff;
+		}
+	}
+}
+
+function rolBytes(bytes, count)
+{
+	if (count === 0)
+	{
+		return;
+	}
+
+	const byteCount = Math.floor(count / 8);
+	const bitCount = count % 8;
+	const length = bytes.length;
+	
+	if (byteCount > 0)
+	{
+		// Juggling algorithm for inplace shifting of bytes
+		const setCount = gcd(byteCount, length);
+
+		for (let start = 0; start < setCount; start++)
+		{
+			let dest = start;
+			const temp = bytes[start];
+
+			for (;;)
+			{
+				const source = (dest + byteCount) % length;
+				if (source === start)
+				{
+					bytes[dest] = temp;
+					break;
+				}
+				bytes[dest] = bytes[source];
+				dest = source;
+			}
+		}
+	}
+
+	if (bitCount > 0)
+	{
+		const temp = bytes[0];
+		for (let dest = 0; dest < length; dest++)
+		{
+			const source = dest + 1;
+			const val = source >= length ? temp : bytes[source];
+			bytes[dest] = ((bytes[dest] << bitCount) | val >> (8 - bitCount)) & 0xff;
+		}
+	}
+}
+
 function rol64(val, count)
 {
 	const result = {};
@@ -347,6 +445,24 @@ function xor64(...terms)
 	return result;
 }
 
+function xorBytes(dest, ...terms)
+{
+	const destLength = dest.length;
+
+	for (let i = 0; i < terms.length; i++)
+	{
+		const term = terms[i];
+		if (term.length !== destLength)
+		{
+			throw new Error("Can only xor byte arrays with same length");
+		}
+		for (let j = 0; j < term.length; j++)
+		{
+			dest[j] ^= term[j];
+		}
+	}
+}
+
 function mirror(value, bits)
 {
 	let result = 0;
@@ -383,15 +499,18 @@ export {
 	rol24,
 	rol48,
 	rol64,
+	rolBytes,
 	ror,
 	ror16,
 	ror24,
 	ror48,
 	ror64,
+	rorBytes,
 	shl64,
 	shr64,
 	sub64,
 	xor64,
+	xorBytes,
 	mirror,
 	ONE_64,
 	ZERO_64

@@ -44,12 +44,14 @@ Supported
 * CAST-128, CAST-256
 * DES (64 bit with parity or 56 bit without)
 * DES-X
+* FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
 * ICE
 * IDEA
 * "Iraqi"
 * Khufu, Khafre (both with the actual S-boxes)
 * Kuznyechik (GOST R 34.12-2015)
 * LUCIFER (Sorkin and Outerbridge variants)
+* Madryga
 * Magma (GOST 28147-89)
 * NewDES, NewDES-96
 * NOEKEON
@@ -182,7 +184,6 @@ TODO
 * DEAL
 * DFC / DFCv2-128
 * E2
-* FEAL
 * FROG
 * Grand Cru
 * Hierocrypt
@@ -191,7 +192,6 @@ TODO
 * Kalyna
 * LOKI89/91 / LOKI97
 * MacGuffin
-* Madryga
 * MAGENTA
 * MARS
 * MISTY1 / MISTY2
@@ -241,7 +241,7 @@ TODO
 * KASUMI
 * MUGI
 * PANAMA
-* Phelix
+* Helix / Phelix
 * Pike
 * Py
 * QUAD
