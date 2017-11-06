@@ -1,3 +1,4 @@
+// Output byte array as list of hexadecimal byte values
 function bytesToHex(bytes)
 {
 	let result = "";
@@ -14,6 +15,28 @@ function bytesToHex(bytes)
 		const b = bytes[i];
 		const octet = ("0" + b.toString(16)).substr(-2);
 		result += octet;
+	}
+	return result;
+}
+
+// Output byte array as list of decimal byte values
+// Sometimes useful for comparison to specs that don't use hex (e.g. SAFER)
+function bytesToDec(bytes)
+{
+	let result = "";
+	if (!bytes)
+	{
+		return result;
+	}
+
+	for (let i = 0; i < bytes.length; i++)
+	{
+		if (i > 0)
+		{
+			result += " ";
+		}
+		const b = bytes[i];
+		result += ("  " + b.toString(10)).substr(-3);
 	}
 	return result;
 }
@@ -490,6 +513,7 @@ function cipherTest(encTransformClass, decTransformClass, plainHex, keyHex, expe
 export {
 	asciiToBytes,
 	bytesToHex,
+	bytesToDec,
 	bytesToInt16sBE,
 	bytesToInt16sLE,
 	bytesToInt32sBE,

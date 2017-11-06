@@ -1,6 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
-import { ror, rol } from "../../cryptopunk.bitarith";
+import { rol } from "../../cryptopunk.bitarith";
 
 const VARIANT_VALUES = [
 	"loki89",
@@ -25,7 +25,7 @@ const P = [
 const SFN_GEN = [375, 379, 391, 395, 397, 415, 419, 425, 433, 445, 451, 463, 471, 477, 487, 499, 0];
 const SFN_EXP = [ 31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31, 0];
 
-function mul8(a, b, gen)
+function mul8(a, b, mod)
 {
 	let product = 0;
 
@@ -38,7 +38,7 @@ function mul8(a, b, gen)
 		a <<= 1;
 		if (a >= 256)
 		{
-			a ^= gen;
+			a ^= mod;
 		}
 
 		b >>= 1;
@@ -47,7 +47,7 @@ function mul8(a, b, gen)
 	return product;
 }
 
-function exp8(base, exponent, gen)
+function exp8(base, exponent, mod)
 {
 	let accum = base;
 	let result = 1;
@@ -61,10 +61,10 @@ function exp8(base, exponent, gen)
 	{
 		if (exponent & 0x1)
 		{
-			result = mul8(result, accum, gen);
+			result = mul8(result, accum, mod);
 		}
 		exponent >>>= 1;
-		accum = mul8(accum, accum, gen);
+		accum = mul8(accum, accum, mod);
 	}
 	return result;
 }
@@ -169,7 +169,7 @@ class LokiTransform extends BlockCipherTransform
 				}
 				break;
 			case "loki91":
-			 	// No pre-whitening in LOKI91
+				// No pre-whitening in LOKI91
 				result[0] = 0;
 				result[1] = 0;
 				for (let i = 2; i < keyCount - 2; i += 4)

@@ -8,6 +8,7 @@
     "test": "ava",
     "build": "webpack",
     "build-benchmarks": "webpack --config webpack.benchmarks.config.js",
+    "build-vectors": "webpack --config webpack.vectors.config.js",
     "deploy": "webpack -p",
     "dev": "webpack --watch",
     "sandbox": "webpack --watch --config webpack.sandbox.config.js",

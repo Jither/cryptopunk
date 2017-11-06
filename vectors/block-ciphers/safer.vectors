@@ -1,0 +1,96 @@
+mode    : encrypt-decrypt
+encrypt : SaferEncryptTransform
+decrypt : SaferDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+title   : SAFER K-64
+
+# From: SAFER K-64: A Byte-Oriented Block-Ciphering Algorithm
+
+option  : variant = K
+option  : rounds = 6
+
+k: 00 00 00 00 00 00 00 00
+p: 01 02 03 04 05 06 07 08
+c: 7d 28 03 86 33 b9 2e b4
+
+k: 01 02 03 04 05 06 07 08
+p: 00 00 00 00 00 00 00 00
+c: 5a b2 7f 72 14 a3 3a e1
+
+k: 08 07 06 05 04 03 02 01
+p: 01 02 03 04 05 06 07 08
+c: c8 f2 9c dd 87 78 3e d9
+
+k: 00 00 00 00 00 00 00 00
+p: 00 00 00 00 00 00 00 00
+c: 03 28 08 c9 0e e7 ab 7f
+
+title   : SAFER K-128
+
+# From: SAFER K-64: One Year Later
+# (Plaintext and ciphertext aren't included in this paper, but were guessed and
+# extrapolated respectively from implementation matching the intermediate values)
+
+option  : variant = K
+option  : rounds = 12
+
+k: 08 07 06 05 04 03 02 01 08 07 06 05 04 03 02 01
+p: 01 02 03 04 05 06 07 08
+c: dd 35 84 a3 1f fb 5b bb
+
+k: 01 02 03 04 05 06 07 08 08 07 06 05 04 03 02 01
+p: 00 00 00 00 00 00 00 00
+c: 12 89 03 2c b3 b9 5d e6
+
+title   : SAFER SK-128
+
+# From: SAFER Toolkit (safer.V1.2.tar.Z) - SAFER_SK.txt
+
+option  : variant = SK
+option  : rounds = 10
+
+k: 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 01
+p: 01 02 03 04 05 06 07 08
+c: 41 4c 54 5a b6 99 4a f7
+
+k: 01 02 03 04 05 06 07 08 00 00 00 00 00 00 00 00
+p: 01 02 03 04 05 06 07 08
+c: ff 78 11 e4 b3 a7 2e 71
+
+k: 00 00 00 00 00 00 00 00 01 02 03 04 05 06 07 08
+p: 01 02 03 04 05 06 07 08
+c: 49 c9 9d 98 a5 bc 59 08
+
+title   : SAFER SK-64
+
+# From: Extrapolated from SK-128 vectors - if left and right part of key are the same,
+# it's equivalent to SK-64
+
+option  : variant = SK
+option  : rounds = 10
+
+k: 00 00 00 00 00 00 00 01
+p: 01 02 03 04 05 06 07 08
+c: 41 4c 54 5a b6 99 4a f7
+
+title   : SAFER SK-40
+
+# From: SAFER Toolkit (safer.V1.2.tar.Z) - SAFER_40.txt
+
+option  : variant = SK
+option  : rounds = 5
+
+k: e7 10 00 08 00
+p: 01 02 03 04 05 06 07 08
+c: 42 de 78 23 8a f5 d0 53
+
+k: 40 08 20 10 87
+p: 08 07 06 05 04 03 02 01
+c: 13 0a 71 9a 74 6e b1 8f
+
+k: 87 28 20 30 40
+p: 01 02 03 04 04 03 02 01
+c: 8b 5d 0a b6 63 13 b8 e9

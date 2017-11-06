@@ -62,6 +62,7 @@ Supported
 * RC6
 * Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
+* SAFER (K-64, K-128, SK-40, SK-64, SK-128; variable rounds)
 * Serpent
 * Shark-E
 * Simon
@@ -197,7 +198,7 @@ TODO
 * MARS
 * MISTY1 / MISTY2
 * S-1
-* SAFER / SAFER+ / SAFER++
+* SAFER+ / SAFER++
 * SC2000
 * SEED
 * Shacal
@@ -209,6 +210,7 @@ TODO
 
 * ARIA
 * BassOmatic
+* Chiasmus?
 * Diamond2
 * FEA-M
 * HPC-1 / HPC-2
