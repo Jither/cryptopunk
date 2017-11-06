@@ -50,6 +50,7 @@ import * as nativeRsa from "./transforms/browser-native/rsa";
 import * as newdes from "./transforms/block-ciphers/newdes";
 import * as noekeon from "./transforms/block-ciphers/noekeon";
 import * as numbers from "./transforms/numbers";
+import * as padding from "./transforms/tools/padding";
 import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as present from "./transforms/block-ciphers/present";
@@ -264,6 +265,10 @@ palette.addCategory("String manipulation")
 	.addItem(stringManipulation.ChangeCaseTransform, "ChangeCase", "Change case")
 	.addItem(stringManipulation.RemoveCharsTransform, "RemoveChars", "Remove characters")
 	.addItem(stringManipulation.SimpleTranspositionTransform, "SimpleTransposition", "Simple transpositions");
+
+palette.addCategory("Bytes manipulation")
+	.addItem(padding.PaddingAddTransform, "PaddingAdd", "Add Padding")
+	.addItem(padding.PaddingRemoveTransform, "PaddingRemove", "Remove Padding");
 
 palette.addCategory("Classical two-way")
 	.addItem(rotx.RotXTransform, "RotX", "ROT-X")

@@ -136,6 +136,11 @@ Supported
 * Base62
 * Base64 (+ URL safe)
 
+### Tools
+* Change string case (upper, lower, invert)
+* Remove characters (whitespace, newlines, character classes, specific characters)
+* Simple string transpositions (reverse text)
+* Add/remove binary padding (zero, bit, ANSI X.923, ISO 10126, PKCS#7)
 
 TODO
 ----
