@@ -4,9 +4,15 @@ Node GUI for experimentation with various cryptography-related algorithms - clas
 
 Disclaimer
 ----------
-The cryptography algorithms included in this software are intended for historical, academic and educational purposes only. They are *not* intended for any kind of security purpose. In other words, do *not* use the code in production software, and do *not* use the output for e.g. secure communication.
+__The cryptography algorithms included in this software are intended for historical, academic and educational purposes only. They are *not* intended for any kind of security purpose. In other words, do *not* use the code in production software, and do *not* use the output for e.g. secure communication.__
 
-The algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled"; code has been refactored into functions even in tight loops; bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
+If you need *reasons* not to use this for actual security purposes, there are plenty:
+
+* A huge percentage of the implemented algorithms are considered weak or broken.
+* Even if the code is accurate, there will be an abundance of side-channel vulnerabilities.
+* Because this is intended for education, security best practices aren't enforced - from block cipher modes to key choice.
+
+Also, the algorithms are not optimized in any way - on the contrary: most have been *de-optimized* in order to aid readability. Unrolled loops in reference sources have been "re-rolled"; code has been refactored into functions even in tight loops; bit arithmetic errs on the side of readability rather than efficiency; etc. As such, most will be wildly inefficient compared to other implementations. The goal post is simply "real time results on a modest spec PC for relatively limited input sizes".
 
 "Pre-alpha"
 -----------
