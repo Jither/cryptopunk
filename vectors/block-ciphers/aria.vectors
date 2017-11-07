@@ -1,0 +1,22 @@
+mode    : encrypt-decrypt
+encrypt : AriaEncryptTransform
+decrypt : AriaDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: https://tools.ietf.org/html/rfc5794
+
+title: RFC-5794 test vector
+
+k: 000102030405060708090a0b0c0d0e0f
+p: 00112233445566778899aabbccddeeff
+c: d718fbd6ab644c739da95f3be6451778
+
+k: 000102030405060708090a0b0c0d0e0f1011121314151617
+p: 00112233445566778899aabbccddeeff
+c: 26449c1805dbe7aa25a468ce263a9e79
+
+k: 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+p: 00112233445566778899aabbccddeeff
+c: f92bd7c79fb72e2f2b8f80c1972d24fc

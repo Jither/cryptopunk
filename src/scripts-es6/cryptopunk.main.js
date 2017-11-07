@@ -3,6 +3,7 @@ import "../styles/main.scss";
 import * as a5 from "./transforms/stream-ciphers/a5";
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
+import * as aria from "./transforms/block-ciphers/aria";
 import * as ascii from "./transforms/char-encodings/ascii";
 import * as adfgvx from "./transforms/classical/adfgvx";
 import * as baseN from "./transforms/base-n";
@@ -323,6 +324,7 @@ palette.addCategory("Block cipher decryption")
 //	.addItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt")
 	.addItem(nativeAes.NativeAesCtrDecryptTransform, "NativeAesCtrDecrypt", "AES (CTR)", "AES (CTR) Decrypt")
 	.addItem(nativeAes.NativeAesGcmDecryptTransform, "NativeAesGcmDecrypt", "AES (GCM)", "AES (GCM) Decrypt")
+	.addItem(aria.AriaDecryptTransform, "AriaDecrypt", "ARIA", "ARIA Decrypt")
 	.addItem(blowfish.BlowfishDecryptTransform, "BlowfishDecrypt", "Blowfish", "Blowfish Decrypt")
 	.addItem(camellia.CamelliaDecryptTransform, "CamelliaDecrypt", "Camellia", "Camellia Decrypt")
 	.addItem(cast128.Cast128DecryptTransform, "Cast128Decrypt", "CAST-128", "CAST-128 Decrypt")
@@ -369,6 +371,7 @@ palette.addCategory("Block cipher encryption")
 //	.addItem(nativeAes.NativeAesCfbEncryptTransform, "AES (CFB)", "AES (CFB) Encrypt")
 	.addItem(nativeAes.NativeAesCtrEncryptTransform, "NativeAesCtrEncrypt", "AES (CTR)", "AES (CTR) Encrypt")
 	.addItem(nativeAes.NativeAesGcmEncryptTransform, "NativeAesGcmEncrypt", "AES (GCM)", "AES (GCM) Encrypt")
+	.addItem(aria.AriaEncryptTransform, "AriaEncrypt", "ARIA", "ARIA Encrypt")
 	.addItem(blowfish.BlowfishEncryptTransform, "BlowfishEncrypt", "Blowfish", "Blowfish Encrypt")
 	.addItem(camellia.CamelliaEncryptTransform, "CamelliaEncrypt", "Camellia", "Camellia Encrypt")
 	.addItem(cast128.Cast128EncryptTransform, "Cast128Encrypt", "CAST-128", "CAST-128 Encrypt")

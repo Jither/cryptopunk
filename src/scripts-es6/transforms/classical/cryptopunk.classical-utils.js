@@ -107,7 +107,7 @@ function getLetterSortPermutation(word, alphabet)
 }
 
 // Returns an array of coordinates [y,x] / [row, column] of message placed into Polybius square using alphabet.
-// If a string of indices are supplied (e.g. "ABCDE"), an array of strings (e.g. "BC") will be returned instead.
+// If a string of index characters are supplied (e.g. "ABCDE"), an array of strings (e.g. "BC") will be returned instead.
 function polybius(message, alphabet, indices)
 {
 	const width = indices ? indices.length : Math.ceil(Math.sqrt(alphabet.length));

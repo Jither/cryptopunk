@@ -45,6 +45,7 @@ Supported
 ### Block Ciphers
 
 * 3-Way
+* ARIA (128, 192 and 256 key sizes; variable rounds)
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
@@ -219,7 +220,6 @@ TODO
 
 #### Third priority
 
-* ARIA
 * BassOmatic
 * Chiasmus?
 * Diamond2

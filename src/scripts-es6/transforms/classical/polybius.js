@@ -27,7 +27,7 @@ class PolybiusTransform extends Transform
 			alphabet = "abcdefghjklmnopqrstuvwxyz";
 		}
 
-		if (!this.options.ignoreCase)
+		if (this.options.ignoreCase)
 		{
 			message = message.toUpperCase();
 			alphabet = alphabet.toUpperCase();
@@ -42,7 +42,8 @@ class PolybiusEncryptTransform extends PolybiusTransform
 	constructor()
 	{
 		super();
-		this.addOption("separator", "Separator", " ", { type: "short-string" });
+		this.addOption("separator", "Separator", " ", { type: "short-string" })
+			.addOption("skipUnknown", "Skip non-alphabet characters", true);
 	}
 
 	_transform(plaintext, alphabet)
@@ -54,12 +55,22 @@ class PolybiusEncryptTransform extends PolybiusTransform
 		const coords = polybius(plaintext, alphabet);
 		for (let i = 0; i < coords.length; i++)
 		{
+			const coord = coords[i];
+			if (coord === null)
+			{
+				if (this.options.skipUnknown)
+				{
+					continue;
+				}
+				throw new TransformError(`Non-alphabet character(s) found.`);
+			}
+			
 			if (i > 0)
 			{
 				result += separator;
 			}
 			// Polybius indices are 1-based
-			result += String(coords[i][0] + 1) + (coords[i][1] + 1);
+			result += String(coord[0] + 1) + (coord[1] + 1);
 		}
 
 		return result;
