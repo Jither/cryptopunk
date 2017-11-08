@@ -35,17 +35,19 @@ function add(...terms)
 		throw new Error("Cannot add() a single term");
 	}
 
-	let lo = 0, hi = 0;
+	let result = 0;
 
 	for (let i = 0; i < len; i++)
 	{
-		const term = terms[i];
-		lo += term & 0xffff;
-		hi += (term >> 16) + (lo >> 16);
-		lo = lo & 0xffff;
-		hi = hi & 0xffff;
+		result += terms[i];
 	}
-	return (hi << 16) | lo;
+
+	return result & 0xffffffff;
+}
+
+function sub(a, b)
+{
+	return (a - b) & 0xffffffff;
 }
 
 function mul(a, b)
@@ -508,6 +510,7 @@ export {
 	rorBytes,
 	shl64,
 	shr64,
+	sub,
 	sub64,
 	xor64,
 	xorBytes,

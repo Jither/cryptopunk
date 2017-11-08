@@ -71,6 +71,7 @@ Supported
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * SAFER (K-64, K-128, SK-40, SK-64, SK-128; variable rounds)
 * Serpent
+* SHACAL ("SHACAL-0", SHACAL-1, SHACAL-2)
 * Shark-E
 * Simon
 * Skipjack (including NESSIE variant)
@@ -213,13 +214,13 @@ TODO
 * SAFER+ / SAFER++
 * SC2000
 * SEED
-* Shacal
 * Shark-A
 * SPEED
 * Unicorn-A, Unicorn-E
 
 #### Third priority
 
+* ARIA 0.8/0.9? (If vectors can be found)
 * BassOmatic
 * Chiasmus?
 * Diamond2

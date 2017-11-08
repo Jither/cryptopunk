@@ -71,6 +71,7 @@ import * as serpent from "./transforms/block-ciphers/serpent";
 import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha2 from "./transforms/hashes/sha-2";
 import * as sha3 from "./transforms/hashes/sha-3";
+import * as shacal from "./transforms/block-ciphers/shacal";
 import * as shark from "./transforms/block-ciphers/shark";
 import * as simon from "./transforms/block-ciphers/simon";
 import * as skip from "./transforms/classical/skip";
@@ -352,6 +353,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(rijndael.RijndaelDecryptTransform, "RijndaelDecrypt", "Rijndael", "Rijndael Decrypt")
 	.addItem(safer.SaferDecryptTransform, "SaferDecrypt", "SAFER", "SAFER Decrypt")
 	.addItem(serpent.SerpentDecryptTransform, "SerpentDecrypt", "Serpent", "Serpent Decrypt")
+	.addItem(shacal.ShacalDecryptTransform, "ShacalDecrypt", "SHACAL", "SHACAL Decrypt")
 	.addItem(shark.SharkDecryptTransform, "SharkDecrypt", "SHARK", "SHARK Decrypt")
 	.addItem(simon.SimonDecryptTransform, "SimonDecrypt", "Simon", "Simon Decrypt")
 	.addItem(skipjack.SkipjackDecryptTransform, "SkipjackDecrypt", "Skipjack", "Skipjack Decrypt")
@@ -399,6 +401,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(rijndael.RijndaelEncryptTransform, "RijndaelEncrypt", "Rijndael", "Rijndael Encrypt")
 	.addItem(safer.SaferEncryptTransform, "SaferEncrypt", "SAFER", "SAFER Encrypt")
 	.addItem(serpent.SerpentEncryptTransform, "SerpentEncrypt", "Serpent", "Serpent Encrypt")
+	.addItem(shacal.ShacalEncryptTransform, "ShacalEncrypt", "SHACAL", "SHACAL Encrypt")
 	.addItem(shark.SharkEncryptTransform, "SharkEncrypt", "SHARK", "SHARK Encrypt")
 	.addItem(skipjack.SkipjackEncryptTransform, "SkipjackEncrypt", "Skipjack", "Skipjack Encrypt")
 	.addItem(simon.SimonEncryptTransform, "SimonEncrypt", "Simon", "Simon Encrypt")
