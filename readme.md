@@ -28,6 +28,7 @@ Supported
 * AMSCO (with customizable cutting sequence)
 * Bifid
 * Columnar transposition
+* CONDI
 * Hill Cipher
 * Letter-Number (a = 1, b = 2, c = 3...)
 * Playfair
@@ -162,7 +163,6 @@ TODO
 * Beaufort (= Vigenère + Atbash)
 * Cadenius
 * Chaocipher
-* Condi
 * DRYAD
 * Dvorak encoding?
 * Four-square

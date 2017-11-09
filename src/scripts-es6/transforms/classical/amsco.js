@@ -65,8 +65,6 @@ class AmscoDecryptTransform extends Transform
 			lengths[i] = [];
 		}
 
-		// Prepared for different cuts than 1-2/2-1.
-		// Create a matrix of the lengths of each cell
 		let count = str.length;
 		let cutsIndex = 0;
 		let columnIndex = 0;
@@ -101,6 +99,7 @@ class AmscoDecryptTransform extends Transform
 		columnOrder = normalizePermutation(columnOrder);
 		columnOrder = invertPermutation(columnOrder);
 
+		// Create a matrix of the lengths of each cell
 		const lengths = this.generateLengthsTable(str, cuts, columnCount);
 
 		const rowCount = lengths[0].length;
@@ -110,9 +109,12 @@ class AmscoDecryptTransform extends Transform
 			rows[i] = [];
 		}
 
+		// Go through matrix in (original) column order, cutting the ciphertext
+		// into parts of the length indicated by each cell
 		let strIndex = 0;
 		for (let columnIndex = 0; columnIndex < columnCount; columnIndex++)
 		{
+			// Get original (un-transposed) column:
 			const index = columnOrder[columnIndex];
 			const lens = lengths[index];
 			for (let rowIndex = 0; rowIndex < lens.length; rowIndex++)

@@ -1,0 +1,25 @@
+mode    : encrypt-decrypt-text
+encrypt : CondiEncryptTransform
+decrypt : CondiDecryptTransform
+arg     : a (alphabet)
+a-format: ascii
+c-format: ascii
+p-format: ascii
+
+# From: http://www.cryptogram.org/downloads/aca.info/ciphers/Condi.pdf
+# ... but it actually has a typo, it seems. The given ciphertext has "ALL" converted to GMG.
+# N at the end of "CAN" converts to C, and defines a shift of 5.
+# So, A should be shifted by 5, resulting in "C", not "G".
+
+option  : startShift = 25
+
+a: STRANGEBCDFHIJKLMOPQUVWXYZ
+p: OURS IS A VERY GREEN PASTIME THE WIDE VARIETY OF CIPHERS WE USE CAN ALL BE SOLVED WITH PENCIL AND PAPER.
+c: MIXA JJ N ZRDT NCDJH XWNRKAX CJP ADWM RZELQCS MR QVGNPDA XA TVB LIC CQG XK BPBHRM EDKJ NZHJVR QCK RWWZD.
+
+# From: https://sites.google.com/site/bionspot/condi-ciphers
+
+option  : startShift = 10
+a: CRYPTOGAMBDEFHIJKLNQSUVWXZ
+p: ON THE FIRST DAY I GOT LOST.
+c: JX WNZ XRKVZ JND L UFD VWCZ.

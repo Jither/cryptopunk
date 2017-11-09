@@ -20,6 +20,7 @@ import * as cast256 from "./transforms/block-ciphers/cast-256";
 import * as chacha from "./transforms/stream-ciphers/chacha";
 import * as codepages from "./transforms/char-encodings/codepages";
 import * as columns from "./transforms/classical/columns";
+import * as condi from "./transforms/classical/condi";
 import * as crc from "./transforms/checksums/crc";
 import * as des from "./transforms/block-ciphers/des";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
@@ -286,6 +287,7 @@ palette.addCategory("Classical decryption")
 	.addItem(amsco.AmscoDecryptTransform, "AmscoDecrypt", "AMSCO", "AMSCO Decrypt")
 	.addItem(bifid.BifidDecryptTransform, "BifidDecrypt", "Bifid", "Bifid Decrypt")
 	.addItem(columns.ColumnarTranspositionDecryptTransform, "ColumnarTranspositionDecrypt", "Columnar Transposition", "Columnar Transposition Decrypt")
+	.addItem(condi.CondiDecryptTransform, "CondiDecrypt", "CONDI", "CONDI Decrypt")
 	.addItem(hill.HillDecryptTransform, "HillDecrypt", "Hill", "Hill Decrypt")
 	.addItem(letterNumber.LetterNumberDecryptTransform, "LetterNumberDecrypt", "Letter-Number", "Letter-Number Decrypt")
 	.addItem(playfair.PlayfairDecryptTransform, "PlayfairDecrypt", "Playfair", "Playfair Decrypt")
@@ -301,6 +303,7 @@ palette.addCategory("Classical encryption")
 	.addItem(amsco.AmscoEncryptTransform, "AmscoEncrypt", "AMSCO", "AMSCO Encrypt")
 	.addItem(bifid.BifidEncryptTransform, "BifidEncrypt", "Bifid", "Bifid Encrypt")
 	.addItem(columns.ColumnarTranspositionEncryptTransform, "ColumnarTranspositionEncrypt", "Columnar Transposition", "Columnar Transposition Encrypt")
+	.addItem(condi.CondiEncryptTransform, "CondiEncrypt", "CONDI", "CONDI Encrypt")
 	.addItem(hill.HillEncryptTransform, "HillEncrypt", "Hill", "Hill Encrypt")
 	.addItem(letterNumber.LetterNumberEncryptTransform, "LetterNumberEncrypt", "Letter-Number", "Letter-Number Encrypt")
 	.addItem(playfair.PlayfairEncryptTransform, "PlayfairEncrypt", "Playfair", "Playfair Encrypt")
