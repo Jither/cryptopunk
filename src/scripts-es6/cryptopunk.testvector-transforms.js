@@ -7,6 +7,7 @@ import * as hex from "./transforms/hex";
 
 import * as adfgvx from "./transforms/classical/adfgvx";
 import * as affine from "./transforms/classical/affine";
+import * as amsco from "./transforms/classical/amsco";
 import * as bifid from "./transforms/classical/bifid";
 import * as letterNumber from "./transforms/classical/letter-number";
 import * as playfair from "./transforms/classical/playfair";
@@ -121,6 +122,7 @@ addTransformsFrom(hex);
 
 addTransformsFrom(adfgvx);
 addTransformsFrom(affine);
+addTransformsFrom(amsco);
 addTransformsFrom(bifid);
 addTransformsFrom(hill);
 addTransformsFrom(letterNumber);
