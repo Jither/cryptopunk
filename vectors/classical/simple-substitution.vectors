@@ -30,11 +30,13 @@ c: 1234abc?
 
 title   : Case-sensitive
 option  : ignoreCase = false
+# Note: Text case of output doesn't matter here, because the *substitution* alphabet doesn't have characters in multiple cases
+# This means that the "formatted" option will cause the ciphertext to be upper case, because "DCBA" in the plaintext is.
 
 a: ABCDabcd
 s: dcba4321
 p: abcdDCBA
-c: 4321abcd
+c: 4321ABCD
 
 title   : Substitution with non-alphabet characters
 option  : ignoreCase = true

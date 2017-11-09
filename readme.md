@@ -25,6 +25,7 @@ Supported
 
 * ADFGVX / ADFGX (with support for custom headers)
 * Affine
+* AMSCO (with customizable cutting sequence)
 * Bifid
 * Columnar transposition
 * Hill Cipher
@@ -156,7 +157,6 @@ TODO
 ### Classical Ciphers
 
 * Alberti?
-* AMSCO
 * Bacon
 * Bazeries
 * Beaufort (= Vigenère + Atbash)

@@ -1,7 +1,12 @@
-// Applies columnar transposition to string. Column order is a "standard" permutation array.
+// Applies columnar transposition to string or array (of strings).
+// If string, a character goes into each column.
+// If array, an array item goes into each column
+// Column order is a "standard" permutation array.
 // That is, index 0 indicates where the first column should move to.
-function columnarTransposition(str, columnOrder)
+function columnarTransposition(strOrArray, columnOrder)
 {
+	columnOrder = normalizePermutation(columnOrder);
+
 	const columnCount = columnOrder.length;
 	const columns = new Array(columnCount);
 
@@ -11,11 +16,11 @@ function columnarTransposition(str, columnOrder)
 	}
 
 	let columnIndex = 0;
-	for (let i = 0; i < str.length; i++)
+	for (let i = 0; i < strOrArray.length; i++)
 	{
 		const index = columnOrder[columnIndex];
 		const column = columns[index];
-		const c = str.charAt(i);
+		const c = strOrArray[i];
 		column.push(c);
 
 		columnIndex++;
@@ -35,23 +40,27 @@ function columnarTransposition(str, columnOrder)
 	return result;
 }
 
-// Applies inverse columnar transposition to string. Column order is a "standard permutation array"
+// Applies inverse columnar transposition to string or array.
+// If string, a character goes into each column.
+// If array, an array item goes into each column.
+// Column order is a "standard permutation array"
 // as originally applied (e.g. during encryption). That is, index 0 indicates where the first 
 // column was moved to.
 // In other words, given the same parameters, this function will reverse the actions of
 // columnarTransposition().
-function inverseColumnarTransposition(str, columnOrder)
+function inverseColumnarTransposition(strOrArray, columnOrder)
 {
+	columnOrder = normalizePermutation(columnOrder);
 	columnOrder = invertPermutation(columnOrder);
 
 	const columnCount = columnOrder.length;
-	let longColumns = str.length % columnCount;
+	let longColumns = strOrArray.length % columnCount;
 	if (longColumns === 0)
 	{
 		longColumns = columnCount;
 	}
 
-	const rowCount = Math.ceil(str.length / columnCount);
+	const rowCount = Math.ceil(strOrArray.length / columnCount);
 	const rows = new Array(rowCount);
 	for (let i = 0; i < rowCount; i++)
 	{
@@ -65,7 +74,7 @@ function inverseColumnarTransposition(str, columnOrder)
 		const lettersInColumn = index < longColumns ? rowCount : rowCount - 1;
 		for (let rowIndex = 0; rowIndex < rowCount; rowIndex++)
 		{
-			rows[rowIndex][index] = rowIndex >= lettersInColumn ? "" : str.charAt(letterIndex++);
+			rows[rowIndex][index] = rowIndex >= lettersInColumn ? "" : strOrArray[letterIndex++];
 		}
 	}
 
@@ -76,6 +85,19 @@ function inverseColumnarTransposition(str, columnOrder)
 	}
 
 	return result;
+}
+
+// Normalizes a list of integers to a 0-based permutation array with no gaps
+// E.g. 1,7,3,2,5 => 0,4,2,1,3
+function normalizePermutation(order)
+{
+	const sorter = new Array(order.length);
+	for (let i = 0; i < sorter.length; i++)
+	{
+		sorter[i] = i;
+	}
+	const perm = sorter.sort((a, b) => order[a] - order[b]);
+	return invertPermutation(perm);
 }
 
 // Inverts a permutation array. That is, swaps index and value so that the resulting array will define the
@@ -100,10 +122,9 @@ function getLetterSortPermutation(word, alphabet)
 	const order = new Array(word.length);
 	for (let i = 0; i < word.length; i++)
 	{
-		order[i] = i;
+		order[i] = alphabet.indexOf(word.charAt(i));
 	}
-	const perm = order.sort((a,b) => alphabet.indexOf(word.charAt(a)) - alphabet.indexOf(word.charAt(b)));
-	return invertPermutation(perm);
+	return normalizePermutation(order);
 }
 
 // Returns an array of coordinates [y,x] / [row, column] of message placed into Polybius square using alphabet.
@@ -339,6 +360,8 @@ export {
 	getLetterSortPermutation,
 	hasDualCaseCharacters,
 	inverseColumnarTransposition,
+	invertPermutation,
+	normalizePermutation,
 	polybius,
 	polybius3,
 	restoreFormatting,

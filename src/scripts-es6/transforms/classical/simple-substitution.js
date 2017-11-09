@@ -37,6 +37,7 @@ class SimpleSubstitutionTransform extends Transform
 		{
 			const c = str.charAt(i);
 			const index = alphabet.indexOf(c);
+			// Skip any characters not in alphabet entirely (they may be reinstated by restoreFormatting)
 			if (index < 0)
 			{
 				continue;

@@ -3,6 +3,7 @@ import "../styles/main.scss";
 import * as a5 from "./transforms/stream-ciphers/a5";
 import * as adler32 from "./transforms/checksums/adler-32";
 import * as affine from "./transforms/classical/affine";
+import * as amsco from "./transforms/classical/amsco";
 import * as aria from "./transforms/block-ciphers/aria";
 import * as ascii from "./transforms/char-encodings/ascii";
 import * as adfgvx from "./transforms/classical/adfgvx";
@@ -282,6 +283,7 @@ palette.addCategory("Classical two-way")
 palette.addCategory("Classical decryption")
 	.addItem(adfgvx.AdfgvxDecryptTransform, "AdfgvxDecrypt", "ADFGVX", "ADFGVX Decrypt")
 	.addItem(affine.AffineDecryptTransform, "AffineDecrypt", "Affine", "Affine Decrypt")
+	.addItem(amsco.AmscoDecryptTransform, "AmscoDecrypt", "AMSCO", "AMSCO Decrypt")
 	.addItem(bifid.BifidDecryptTransform, "BifidDecrypt", "Bifid", "Bifid Decrypt")
 	.addItem(columns.ColumnarTranspositionDecryptTransform, "ColumnarTranspositionDecrypt", "Columnar Transposition", "Columnar Transposition Decrypt")
 	.addItem(hill.HillDecryptTransform, "HillDecrypt", "Hill", "Hill Decrypt")
@@ -296,6 +298,7 @@ palette.addCategory("Classical decryption")
 palette.addCategory("Classical encryption")
 	.addItem(adfgvx.AdfgvxEncryptTransform, "AdfgvxEncrypt", "ADFGVX", "ADFGVX Encrypt")
 	.addItem(affine.AffineEncryptTransform, "AffineEncrypt", "Affine", "Affine Encrypt")
+	.addItem(amsco.AmscoEncryptTransform, "AmscoEncrypt", "AMSCO", "AMSCO Encrypt")
 	.addItem(bifid.BifidEncryptTransform, "BifidEncrypt", "Bifid", "Bifid Encrypt")
 	.addItem(columns.ColumnarTranspositionEncryptTransform, "ColumnarTranspositionEncrypt", "Columnar Transposition", "Columnar Transposition Encrypt")
 	.addItem(hill.HillEncryptTransform, "HillEncrypt", "Hill", "Hill Encrypt")
