@@ -14,6 +14,7 @@ import * as blake from "./transforms/hashes/blake";
 import * as blake2 from "./transforms/hashes/blake2";
 import * as blowfish from "./transforms/block-ciphers/blowfish";
 import * as bsd from "./transforms/checksums/bsd";
+import * as bytesManipulation from "./transforms/tools/bytes-manipulation";
 import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
@@ -27,6 +28,7 @@ import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as enigma from "./transforms/mechanical/enigma";
 import * as feal from "./transforms/block-ciphers/feal";
 import * as fletcher from "./transforms/checksums/fletcher";
+import * as frog from "./transforms/block-ciphers/frog";
 import * as has160 from "./transforms/hashes/has-160";
 import * as haval from "./transforms/hashes/haval";
 import * as hex from "./transforms/hex";
@@ -272,7 +274,8 @@ palette.addCategory("String manipulation")
 
 palette.addCategory("Bytes manipulation")
 	.addItem(padding.PaddingAddTransform, "PaddingAdd", "Add Padding")
-	.addItem(padding.PaddingRemoveTransform, "PaddingRemove", "Remove Padding");
+	.addItem(padding.PaddingRemoveTransform, "PaddingRemove", "Remove Padding")
+	.addItem(bytesManipulation.SimpleBytesTranspositionTransform, "SimpleBytesTransposition", "Simple transpositions");
 
 palette.addCategory("Classical two-way")
 	.addItem(rotx.RotXTransform, "RotX", "ROT-X")
@@ -339,6 +342,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(des.DesDecryptTransform, "DesDecrypt", "DES", "DES Decrypt")
 	.addItem(des.DesXDecryptTransform, "DesXDecrypt", "DES-X", "DES-X Decrypt")
 	.addItem(feal.FealDecryptTransform, "FealDecrypt", "FEAL", "FEAL Decrypt")
+	.addItem(frog.FrogDecryptTransform, "FrogDecrypt", "FROG", "FROG Decrypt")
 	.addItem(ice.IceDecryptTransform, "IceDecrypt", "ICE", "ICE Decrypt")
 	.addItem(idea.IdeaDecryptTransform, "IdeaDecrypt", "IDEA", "IDEA Decrypt")
 	.addItem(iraqi.IraqiDecryptTransform, "IraqiDecrypt", "Iraqi", "Iraqi Decrypt")
@@ -387,6 +391,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(des.DesEncryptTransform, "DesEncrypt", "DES", "DES Encrypt")
 	.addItem(des.DesXEncryptTransform, "DesXEncrypt", "DES-X", "DES-X Encrypt")
 	.addItem(feal.FealEncryptTransform, "FealEncrypt", "FEAL", "FEAL Encrypt")
+	.addItem(frog.FrogEncryptTransform, "FrogEncrypt", "FROG", "FROG Encrypt")
 	.addItem(ice.IceEncryptTransform, "IceEncrypt", "ICE", "ICE Encrypt")
 	.addItem(idea.IdeaEncryptTransform, "IdeaEncrypt", "IDEA", "IDEA Encrypt")
 	.addItem(iraqi.IraqiEncryptTransform, "IraqiEncrypt", "Iraqi", "Iraqi Encrypt")

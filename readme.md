@@ -54,6 +54,7 @@ Supported
 * DES (64 bit with parity or 56 bit without)
 * DES-X
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
+* FROG (40-1000 bit key sizes; 64-1024 bit block sizes; variable rounds)
 * ICE
 * IDEA
 * "Iraqi"
@@ -171,6 +172,7 @@ TODO
 * Keyword Cipher (based on caesar)
 * Myszkowski
 * Null
+* RC-4 Pen & Paper (https://crypto.anarres.info/2016/rc4_pencilandpaper)
 * Straddling Checkerboard
 * Tap Code
 * Two-square
@@ -199,7 +201,6 @@ TODO
 * DEAL
 * DFC / DFCv2-128
 * E2
-* FROG
 * Grand Cru
 * Hierocrypt
 * IDEA NXT
