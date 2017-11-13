@@ -64,6 +64,7 @@ Supported
 * LUCIFER (Sorkin and Outerbridge variants)
 * Madryga
 * Magma (GOST 28147-89)
+* MARS (original AES submission and 2nd round tweak; 128-448 bit key sizes)
 * NewDES, NewDES-96
 * NOEKEON
 * PRESENT
@@ -209,7 +210,6 @@ TODO
 * LOKI97
 * MacGuffin
 * MAGENTA
-* MARS
 * MISTY1 / MISTY2
 * S-1
 * SAFER+ / SAFER++

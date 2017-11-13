@@ -46,6 +46,7 @@ import * as loki from "./transforms/block-ciphers/loki";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
 import * as madryga from "./transforms/block-ciphers/madryga";
 import * as magma from "./transforms/block-ciphers/magma";
+import * as mars from "./transforms/block-ciphers/mars";
 import * as md2 from "./transforms/hashes/md2";
 import * as md4 from "./transforms/hashes/md4";
 import * as md5 from "./transforms/hashes/md5";
@@ -353,6 +354,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
 	.addItem(madryga.MadrygaDecryptTransform, "MadrygaDecrypt", "Madryga", "Madryga Decrypt")
 	.addItem(magma.MagmaDecryptTransform, "MagmaDecrypt", "Magma (GOST)", "Magma (GOST) Decrypt")
+	.addItem(mars.MarsDecryptTransform, "MarsDecrypt", "MARS", "MARS Decrypt")
 	.addItem(newdes.NewDesDecryptTransform, "NewDesDecrypt", "NewDES", "NewDES Decrypt")
 	.addItem(noekeon.NoekeonDecryptTransform, "NoekeonDecrypt", "NOEKEON", "NOEKEON Decrypt")
 	.addItem(present.PresentDecryptTransform, "PresentDecrypt", "PRESENT", "PRESENT Decrypt")
@@ -402,6 +404,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
 	.addItem(madryga.MadrygaEncryptTransform, "MadrygaEncrypt", "Madryga", "Madryga Encrypt")
 	.addItem(magma.MagmaEncryptTransform, "MagmaEncrypt", "Magma (GOST)", "Magma (GOST) Encrypt")
+	.addItem(mars.MarsEncryptTransform, "MarsEncrypt", "MARS", "MARS Encrypt")
 	.addItem(newdes.NewDesEncryptTransform, "NewDesEncrypt", "NewDES", "NewDES Encrypt")
 	.addItem(noekeon.NoekeonEncryptTransform, "NoekeonEncrypt", "NOEKEON", "NOEKEON Encrypt")
 	.addItem(present.PresentEncryptTransform, "PresentEncrypt", "PRESENT", "PRESENT Encrypt")
