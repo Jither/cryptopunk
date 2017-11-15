@@ -3,14 +3,14 @@ import { removeWhiteSpace } from "../cryptopunk.strings";
 
 const UNIT_NAMES = [
 	"byte (8 bits)",
-	"short (16 bits)",
-	"int (32 bits)"
+	"word (16 bits)",
+	"dword (32 bits)"
 ];
 
 const UNIT_VALUES = [
 	"byte",
-	"short",
-	"int"
+	"word",
+	"dword"
 ];
 
 class NumbersToBytesTransform extends Transform
@@ -40,9 +40,9 @@ class NumbersToBytesTransform extends Transform
 		{
 			case "byte":
 				return 255;
-			case "short":
+			case "word":
 				return 65535;
-			case "int":
+			case "dword":
 				return 4294967295;
 			default:
 				throw new TransformError(`Unknown unit: ${unit}`);
@@ -69,8 +69,8 @@ class NumbersToBytesTransform extends Transform
 		switch (unit)
 		{
 			case "byte": byteLength = numbers.length; break;
-			case "short": byteLength = numbers.length * 2; break;
-			case "int": byteLength = numbers.length * 4; break;
+			case "word": byteLength = numbers.length * 2; break;
+			case "dword": byteLength = numbers.length * 4; break;
 
 		}
 		const result = new Uint8Array(byteLength);
@@ -94,11 +94,11 @@ class NumbersToBytesTransform extends Transform
 				case "byte":
 					result[destIndex++] = value;
 					break;
-				case "short":
+				case "word":
 					result[destIndex++] = (value >> 8) & 0xff;
 					result[destIndex++] = value & 0xff;
 					break;
-				case "int":
+				case "dword":
 					result[destIndex++] = (value >> 24) & 0xff;
 					result[destIndex++] = (value >> 16) & 0xff;
 					result[destIndex++] = (value >> 8) & 0xff;
@@ -141,8 +141,8 @@ class BytesToNumbersTransform extends Transform
 		switch (unit)
 		{
 			case "byte": break;
-			case "short": byteCount = 2; break;
-			case "int": byteCount = 4; break;
+			case "word": byteCount = 2; break;
+			case "dword": byteCount = 4; break;
 			default: throw new TransformError(`Unknown unit: ${unit}`);
 		}
 
@@ -225,8 +225,8 @@ class BytesToBinaryNumbersTransform extends BytesToNumbersTransform
 		this.base = 2;
 		this.padding = {
 			byte: "0".repeat(8),
-			short: "0".repeat(16),
-			int: "0".repeat(32)
+			word: "0".repeat(16),
+			dword: "0".repeat(32)
 		};
 	}
 }
@@ -239,8 +239,8 @@ class BytesToOctalNumbersTransform extends BytesToNumbersTransform
 		this.base = 8;
 		this.padding = {
 			byte: "0".repeat(3),
-			short: "0".repeat(6),
-			int: "0".repeat(11)
+			word: "0".repeat(6),
+			dword: "0".repeat(11)
 		};
 	}
 }
@@ -253,8 +253,8 @@ class BytesToDecimalNumbersTransform extends BytesToNumbersTransform
 		this.base = 10;
 		this.padding = {
 			byte: "0".repeat(3),
-			short: "0".repeat(5),
-			int: "0".repeat(10)
+			word: "0".repeat(5),
+			dword: "0".repeat(10)
 		};
 	}
 }
@@ -267,8 +267,8 @@ class BytesToHexNumbersTransform extends BytesToNumbersTransform
 		this.base = 16;
 		this.padding = {
 			byte: "0".repeat(2),
-			short: "0".repeat(4),
-			int: "0".repeat(8)
+			word: "0".repeat(4),
+			dword: "0".repeat(8)
 		};
 	}
 }

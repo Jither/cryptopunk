@@ -61,13 +61,23 @@ $colors 						:
 	blue-grey	#607d8b
 	;
 
-@mixin hide-scrollbar()
+@mixin minimal-scrollbar()
 {
 	// WebKit/Blink:
 	&::-webkit-scrollbar
 	{
-		display: none;
+		width: 6px;
+		background: #282828;
+		//width: 5px;
 	}
+
+	&::-webkit-scrollbar-thumb
+	{
+		background: #606060;
+		border-radius: 4px;
+	}
+
+	
 	// Edge:
 	-ms-overflow-style: none;
 }
@@ -168,7 +178,7 @@ main > section
 {
 	flex: 0 0 200px;
 	overflow-y: auto;
-	@include hide-scrollbar();
+	@include minimal-scrollbar();
 }
 
 #properties

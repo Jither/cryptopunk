@@ -25,6 +25,7 @@ import * as condi from "./transforms/classical/condi";
 import * as crc from "./transforms/checksums/crc";
 import * as des from "./transforms/block-ciphers/des";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
+import * as endianness from "./transforms/tools/endianness";
 import * as enigma from "./transforms/mechanical/enigma";
 import * as feal from "./transforms/block-ciphers/feal";
 import * as fletcher from "./transforms/checksums/fletcher";
@@ -276,6 +277,7 @@ palette.addCategory("String manipulation")
 palette.addCategory("Bytes manipulation")
 	.addItem(padding.PaddingAddTransform, "PaddingAdd", "Add Padding")
 	.addItem(padding.PaddingRemoveTransform, "PaddingRemove", "Remove Padding")
+	.addItem(endianness.EndiannessTransform, "Endianness", "Endianness")
 	.addItem(bytesManipulation.SimpleBytesTranspositionTransform, "SimpleBytesTransposition", "Simple transpositions");
 
 palette.addCategory("Classical two-way")
