@@ -71,7 +71,6 @@ class NumbersToBytesTransform extends Transform
 			case "byte": byteLength = numbers.length; break;
 			case "word": byteLength = numbers.length * 2; break;
 			case "dword": byteLength = numbers.length * 4; break;
-
 		}
 		const result = new Uint8Array(byteLength);
 
@@ -118,7 +117,7 @@ class BytesToNumbersTransform extends Transform
 		super();
 		this.addInput("bytes", "Bytes")
 			.addOutput("string", "Numbers")
-			.addOption("unit", "Unit", "byte", { type: "select", values: UNIT_NAMES, texts: UNIT_NAMES })
+			.addOption("unit", "Unit", "byte", { type: "select", values: UNIT_VALUES, texts: UNIT_NAMES })
 			.addOption("pad", "Pad", true)
 			.addOption("separator", "Separator", " ");
 	}
