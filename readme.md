@@ -99,6 +99,7 @@ Supported
 
 * BLAKE (224, 256, 384, 512)
 * BLAKE2 (BLAKE2s, BLAKE2b)
+* CubeHash (variable i, r, b, f, h)
 * HAVAL (128, 160, 192, 224, 256; 3-5 passes)
 * HAS-160
 * Kangaroo Twelve / Marsupilami Fourteen
@@ -153,6 +154,7 @@ Supported
 * Remove characters (whitespace, newlines, character classes, specific characters)
 * Simple string transpositions (reverse text)
 * Add/remove binary padding (zero, bit, ANSI X.923, ISO 10126, PKCS#7)
+* Endianness (invert endianness for words, dwords, qwords, dqwords and tribytes)
 
 TODO
 ----
@@ -291,7 +293,6 @@ TODO
 
 * BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
-* CubeHash
 * ECOH
 * FSB
 * Fugue

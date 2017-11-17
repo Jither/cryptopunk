@@ -23,6 +23,7 @@ import * as codepages from "./transforms/char-encodings/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as condi from "./transforms/classical/condi";
 import * as crc from "./transforms/checksums/crc";
+import * as cubehash from "./transforms/hashes/cubehash";
 import * as des from "./transforms/block-ciphers/des";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as endianness from "./transforms/tools/endianness";
@@ -252,6 +253,7 @@ palette.addCategory("Checksums")
 palette.addCategory("Hashes")
 	.addItem(blake.BlakeTransform, "Blake", "BLAKE", "BLAKE")
 	.addItem(blake2.Blake2Transform, "Blake2", "BLAKE2", "BLAKE2")
+	.addItem(cubehash.CubeHashTransform, "CubeHash", "CubeHash", "CubeHash")
 	.addItem(has160.Has160Transform, "Has160", "HAS-160", "HAS-160")
 	.addItem(haval.HavalTransform, "Haval", "HAVAL", "HAVAL")
 	.addItem(k12.KangarooTwelveTransform, "KangarooTwelve", "Kangaroo Twelve")
