@@ -38,6 +38,7 @@ import * as hill from "./transforms/classical/hill";
 import * as ice from "./transforms/block-ciphers/ice";
 import * as idea from "./transforms/block-ciphers/idea";
 import * as iraqi from "./transforms/block-ciphers/iraqi";
+import * as jh from "./transforms/hashes/jh";
 import * as jis from "./transforms/char-encodings/jis";
 import * as k12 from "./transforms/hashes/kangaroo-twelve";
 import * as keccak from "./transforms/hashes/keccak";
@@ -256,6 +257,7 @@ palette.addCategory("Hashes")
 	.addItem(cubehash.CubeHashTransform, "CubeHash", "CubeHash", "CubeHash")
 	.addItem(has160.Has160Transform, "Has160", "HAS-160", "HAS-160")
 	.addItem(haval.HavalTransform, "Haval", "HAVAL", "HAVAL")
+	.addItem(jh.JhTransform, "Jh", "JH", "JH")
 	.addItem(k12.KangarooTwelveTransform, "KangarooTwelve", "Kangaroo Twelve")
 	.addItem(keccak.KeccakTransform, "Keccak", "Keccak", "Keccak")
 	.addItem(md2.Md2Transform, "Md2", "MD2", "MD2")

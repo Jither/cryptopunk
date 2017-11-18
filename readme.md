@@ -102,6 +102,7 @@ Supported
 * CubeHash (variable i, r, b, f, h)
 * HAVAL (128, 160, 192, 224, 256; 3-5 passes)
 * HAS-160
+* JH (224, 256, 384, 512; 35.5 and 42 round variants)
 * Kangaroo Twelve / Marsupilami Fourteen
 * Keccak (variable capacity, hash length, suffix)
 * MD2
@@ -299,7 +300,6 @@ TODO
 * GOST R 34.11-94
 * Grøstl
 * HAS-V
-* JH
 * MD6
 * RadioGatún
 * Skein
