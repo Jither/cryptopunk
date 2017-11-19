@@ -3,6 +3,7 @@ import { TransformError } from "../transforms";
 import { bytesToInt32sBE, checkSize } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
 import { ror } from "../../cryptopunk.bitarith";
+import { getRijndaelMulTable, getRijndaelSboxes } from "../shared/rijndael";
 
 // Pure implementation of Rijndael (AES) allowing
 // experimentation without modes of operation etc.
@@ -25,17 +26,14 @@ const RECOMMENDED_ROUND_COUNTS = {
 	256: 14
 };
 
-
 const ROUND_CONSTANTS = [
 	0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1b, 0x36, 0x6c, 0xd8, 0xab, 0x4d, 0x9a, 
 	0x2f, 0x5e, 0xbc, 0x63, 0xc6, 0x97, 0x35, 0x6a, 0xd4, 0xb3, 0x7d, 0xfa, 0xef, 0xc5, 0x91, 0x39, 
 	0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a
 ];
 
-// Substitution box
-const S_BOX = [];
-// Inverse Substitution box
-const SI_BOX = [];
+// Substitution box and Inverse Substitution boxes:
+let S_BOX, SI_BOX;
 // Precalculated MixColumns lookup tables (Rijndael finite field arithmetic)
 const ENC_T1 = [], ENC_T2 = [], ENC_T3 = [], ENC_T4 = [];
 // Precalculated InvMixColumns lookup tables (Rijndael finite field arithmetic)
@@ -44,7 +42,7 @@ const DEC_T5 = [], DEC_T6 = [], DEC_T7 = [], DEC_T8 = [];
 // Precalculates s-boxes and transformation tables
 function precompute()
 {
-	if (S_BOX.length > 0)
+	if (S_BOX)
 	{
 		// Already calculated
 		return;
@@ -53,43 +51,14 @@ function precompute()
 	const
 		encTables = [ENC_T1, ENC_T2, ENC_T3, ENC_T4], 
 		decTables = [DEC_T5, DEC_T6, DEC_T7, DEC_T8];
-	
-	const
-		a2    = [], // Map of a -> a*{02} in Rijndael field
-		a3inv = []; // Map of a*{03} -> a in Rijndael field
+
+	[S_BOX, SI_BOX] = getRijndaelSboxes();
+
+	// Compute MixColumns and InvMixColumns lookups
+	const a2 = getRijndaelMulTable(2);
 	for (let x = 0; x < 256; x++)
 	{
-		let x2 = x << 1;
-		if (x2 & 0x100)
-		{
-			// 0x11b = Rijndael polynomial (x^8 + x^4 + x^3 + x + 1 = {100011011} = {0x11b})
-			x2 ^= 0x11b;
-		} 
-		a2[x] = x2;
-
-		a3inv[x2 ^ x] = x;
-	}
-
-	// For each iteration, n:
-	// - x will be {03}**n
-	// - xInv will be 1/x
-	// (both in Rijndael field)
-	// {03} is a generator for the Rijndael field, meaning we'll get through all values, 0-255
-	let x = 0, xInv = 0;
-	while (!S_BOX[x])
-	{
-		// Compute S-box. The following is equivalent to:
-		// xInv XOR ROL(xInv, 1) XOR ROL(xInv, 2) XOR ROL(xInv, 3) XOR ROL(xInv, 4) XOR 0x63
-		// We simply shift left (into high byte) rather than rotating, and combine the high byte
-		// with the low byte afterwards. Then XOR by 0x63
-		let s = xInv ^ (xInv << 1) ^ (xInv << 2) ^ (xInv << 3) ^ (xInv << 4);
-		s = (s >> 8) ^ (s & 0xff) ^	0x63;
-
-		S_BOX[x] = s;
-		// The Inverse S-box is simply a reverse lookup table:
-		SI_BOX[s] = x;
-
-		// Compute MixColumns and InvMixColumns lookups
+		const s = S_BOX[x];
 		const x2 = a2[x];
 		const x4 = a2[x2];
 		const x8 = a2[x4];
@@ -106,9 +75,6 @@ function precompute()
 			encTables[i][x] = tEnc;
 			decTables[i][s] = tDec;
 		}
-		// Get next x (i.e. {03}*x) and xInv:
-		x ^= x2 || 1;
-		xInv = a3inv[xInv] || 1;
 	}
 }
 
