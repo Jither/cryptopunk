@@ -8,7 +8,16 @@ const SIZE_NAMES = ["128 bits", "256 bits"];
 
 const SHIFT_TABLE = [16, 8, 16, 24];
 
-const SBOXES = getMerkleStandardSboxes(16);
+let SBOXES;
+
+function precompute()
+{
+	if (SBOXES)
+	{
+		return;
+	}
+	SBOXES = getMerkleStandardSboxes(16)	
+}
 
 class SnefruTransform extends MdHashTransform
 {
@@ -24,6 +33,8 @@ class SnefruTransform extends MdHashTransform
 
 	transform(bytes)
 	{
+		precompute();
+		
 		const outputLength = this.options.size / 32;
 		const state = new Uint32Array(outputLength);
 

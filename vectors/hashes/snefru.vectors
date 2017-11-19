@@ -166,3 +166,16 @@ h: c2242249 1187baaa 94725400 08dffd5b 38f01557 9f3f2390 50969991 fdc1a810
 
 m: The theory of quantum electrodynamics has now lasted for\nmore than fifty years, and has been tested more and more\naccurately over a wider and wider range of conditions.\nAt the present time I can proudly say that there is no\nsignificant difference between experiment and theory!\n\nJust to give you an idea of how the theory has been put\nthrough the wringer, I'll give you some recent numbers:\nexperiments have Dirac's number at 1.00115965221 (with\nan uncertainty of about five times as much). To give you\na feeling for the accuracy of these numbers, it comes\nout something like this:  If you were to measure the\ndistance from Los Angeles to New York to this accuracy,\nit would be exact to the thickness of a human hair.\nThat's how delicately quantum electrodynamics has, in the\npast fifty years, been checked -- both theoretically and\nexperimentally.\n
 h: d4303702 d63e71d5 e4eacdef 86877057 6563d8c0 dec0d7d1 cb7ad00f 39b6296a
+
+# From: First collisions found by Eli Biham (post by Merkle to sci.crypt, 1990-04-19)
+
+m-format: hex
+
+option  : rounds = 2
+option  : size = 128
+
+m: 3f e1 5e 26 23 b7 c0 30 c7 08 99 99 90 ef c4 8f a0 4d 87 ee 16 49 33 92 00 04 60 85 00 00 34 15 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+h: c8ff5e2c 8f9cf7c7 f08ddaa7 e4f9b44e
+
+m: 3f e1 5e 26 23 b7 c0 30 c7 08 99 99 90 ef c4 8f a9 a0 9f ee d7 4a f7 ae 09 6c 78 85 c1 9e f0 29 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+h: c8ff5e2c 8f9cf7c7 f08ddaa7 e4f9b44e
