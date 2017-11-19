@@ -549,7 +549,6 @@ function getMerkleStandardSboxes(count)
 			}
 		}
 	}
-	console.log(rand.position);
 	
 	return boxes;
 }

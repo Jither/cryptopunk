@@ -117,17 +117,17 @@ class MdHashTransform extends HashTransform
 		let paddingLength;
 		if (!this.paddingAlwaysAddsBlock)
 		{
-			// Snefru, JH
-			paddingLength = (blockLength - this.suffixLength) - (length % blockLength);
-		}
-		else
-		{
 			// MD4 and most later algorithms
-			paddingLength = (blockLength - this.suffixLength) + ((blockLength - length) % blockLength);
+			paddingLength = (blockLength - this.suffixLength) - (length % blockLength);
 			if (paddingLength <= 0)
 			{
 				paddingLength += blockLength;
 			}
+		}
+		else
+		{
+			// Snefru, JH
+			paddingLength = (blockLength - this.suffixLength) + ((blockLength - length) % blockLength);
 		}
 
 		const result = new Uint8Array(length + paddingLength + this.suffixLength);
