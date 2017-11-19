@@ -1,6 +1,6 @@
 import { MdHashTransform } from "./hash";
 import { ror } from "../../cryptopunk.bitarith";
-import { int32sToBytesBE, bytesToInt32sBE, int32sToHex } from "../../cryptopunk.utils";
+import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
 import { getMerkleStandardSboxes } from "../shared/rand";
 
 const SIZE_VALUES = [128, 256];
@@ -16,7 +16,7 @@ function precompute()
 	{
 		return;
 	}
-	SBOXES = getMerkleStandardSboxes(16)	
+	SBOXES = getMerkleStandardSboxes(16);
 }
 
 class SnefruTransform extends MdHashTransform
@@ -34,7 +34,7 @@ class SnefruTransform extends MdHashTransform
 	transform(bytes)
 	{
 		precompute();
-		
+
 		const outputLength = this.options.size / 32;
 		const state = new Uint32Array(outputLength);
 
@@ -54,7 +54,7 @@ class SnefruTransform extends MdHashTransform
 		
 		for (let r = 0; r < this.options.rounds; r++)
 		{
-			let sboxGroup = 2 * r;
+			const sboxGroup = 2 * r;
 			for (let b = 0; b < 4; b++)
 			{
 				for (let i = 0; i < x.length; i++)

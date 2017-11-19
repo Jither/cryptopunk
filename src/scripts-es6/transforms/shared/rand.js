@@ -1,6 +1,6 @@
 // The first 9600 five-digit numbers in "A Million Random Digits with 100,000 Normal Deviates" (1955)
-// Used by e.g. Merkle's Khufu, Khafre and Snefru, 9600 numbers are enough to generate 16 "standard S-boxes" using
-// Merkle's permutation method (47956 digits required = 9592 numbers).
+// Used by e.g. Merkle's Khufu, Khafre and Snefru, as well as FROG.
+// 9600 numbers are enough to generate 16 "standard S-boxes" using Merkle's permutation method (47956 digits required = 9592 numbers).
 const RAND = `
 10097 32533 76520 13586 34673 54876 80959 09117 39292 74945 37542 04805 64894 74296 24805 24037 20636 10402 00822 91665
 08422 68953 19645 09303 23209 02560 15953 34764 35080 33606 99019 02529 09376 70715 38311 31165 88676 74397 04436 27659
@@ -512,6 +512,13 @@ class RandProvider
 	digit()
 	{
 		return RAND.charCodeAt(this.position++) - 0x30;
+	}
+
+	number()
+	{
+		const result = RAND.substr(this.position, 5);
+		this.position += 5;
+		return result;
 	}
 }
 
