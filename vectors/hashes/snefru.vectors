@@ -1,0 +1,168 @@
+mode    : hash
+hash    : SnefruTransform
+m-format: ascii
+h-format: hex
+
+title   : Snefru2-{size}, rounds={rounds}
+
+option  : size = 128
+option  : rounds = 8
+
+# Note that Ralph Merkle's original vectors indeed include the carriage return character in the message
+
+# From: snefru.c (v2.5a)
+
+m: \n
+h: d9fcb317 1c097fbb a8c8f12a a0906bad
+
+m: 1\n
+h: 44ec420c e99c1f62 feb66c53 c24ae453
+
+m: 12\n
+h: 7182051a a852ef6f ba4b6c9c 9b79b317
+
+m: 123\n
+h: bc3a50af 82bf56d6 a64732bc 7b050a93
+
+m: 1234\n
+h: c5b8a049 85a8eadf b4331a89 88752b77
+
+m: 12345\n
+h: d559a2b6 2f6f4411 1324f852 08723707
+
+m: 123456\n
+h: 6cfb5e8f 1da02bd1 67b01e48 16686c30
+
+m: 1234567\n
+h: 29aa4832 5f275a8a 7a01ba15 43c54ba5
+
+m: 12345678\n
+h: be862a6b 68b7df88 7ebe0031 9cbc4a47
+
+m: 123456789\n
+h: 6103721c cd8ad565 d68e90b0 f8906163
+
+# From: testSnefru / correctSnefruOutput (v2.5a)
+
+m: The theory of quantum electrodynamics has now lasted for\nmore than fifty years, and has been tested more and more\naccurately over a wider and wider range of conditions.\nAt the present time I can proudly say that there is no\nsignificant difference between experiment and theory!\n\nJust to give you an idea of how the theory has been put\nthrough the wringer, I'll give you some recent numbers:\nexperiments have Dirac's number at 1.00115965221 (with\nan uncertainty of about five times as much). To give you\na feeling for the accuracy of these numbers, it comes\nout something like this:  If you were to measure the\ndistance from Los Angeles to New York to this accuracy,\nit would be exact to the thickness of a human hair.\nThat's how delicately quantum electrodynamics has, in the\npast fifty years, been checked -- both theoretically and\nexperimentally.\n
+h: 56ab6bb2 1a7a0789 2d62cb03 c41dde6d
+
+option  : size = 256
+option  : rounds = 8
+
+# From: snefru.c (v2.5a)
+
+m: \n
+h: 2e02687f 0d45d5b9 b50cb68c 3f33e684 3d618a1a ca2d0689 3d3eb4e3 026b5732
+
+m: 1\n
+h: bfea4a05 a2a2ef15 c736d114 598a20b9 d9bd4d66 b661e6b0 5ecf6a77 37bdc58c
+
+m: 12\n
+h: ac677d69 761ade3f 189c7aef 106d5fe7 392d324e 19cc76d5 db4a2c05 f2cc2cc5
+
+m: 123\n
+h: 061c76aa 1db4a22c 0e42945e 26c48499 b5400162 e08c640b e05d3c00 7c44793d
+
+m: 1234\n
+h: 1e87fe1d 9c927e9e 24be85e3 cc733598 73541640 a6261793 ce5a9749 53113f5e
+
+m: 12345\n
+h: 1b59927d 85a9349a 87796620 fe2ff401 a06a7ba4 8794498e bab978ef c3a68912
+
+m: 123456\n
+h: 28e9d9bc 35032b68 faeda881 01ecb252 4317e9da 111b0e3e 70941072 12d9cf72
+
+m: 1234567\n
+h: f7fff4ee 74fd1b8d 6b3267f8 4e47e007 f029d13b 8af7e37e 34d13b46 9b8f248f
+
+m: 12345678\n
+h: ee7d64b0 102b2205 e9892661 3b200185 559d08be 6ad787da 717c9687 44e11af3
+
+m: 123456789\n
+h: 4ca72639 e40e9ab9 c0c3f523 c4449b39 11632d37 4c124d77 02192ec2 e4e0b7a3
+
+# From: testSnefru256 / correctSnefruOutput256 (v2.5a)
+
+m: The theory of quantum electrodynamics has now lasted for\nmore than fifty years, and has been tested more and more\naccurately over a wider and wider range of conditions.\nAt the present time I can proudly say that there is no\nsignificant difference between experiment and theory!\n\nJust to give you an idea of how the theory has been put\nthrough the wringer, I'll give you some recent numbers:\nexperiments have Dirac's number at 1.00115965221 (with\nan uncertainty of about five times as much). To give you\na feeling for the accuracy of these numbers, it comes\nout something like this:  If you were to measure the\ndistance from Los Angeles to New York to this accuracy,\nit would be exact to the thickness of a human hair.\nThat's how delicately quantum electrodynamics has, in the\npast fifty years, been checked -- both theoretically and\nexperimentally.\n
+h: 5e8a32ed 1998b611 f5f09696 0c65e820 da93a9a4 24d27151 30c1e454 83f1839c
+
+option  : size = 128
+option  : rounds = 2
+
+# From: snefru.c (v2.0)
+
+m: \n
+h: 13af7619 ab98d4b5 f5e0a9e6 b26b5452
+
+m: 1\n
+h: 578c83f8 8fe1f6a8 c119d2ba 3a9256c2
+
+m: 12\n
+h: 255468d4 b4bd985b 696a7313 6027fc80
+
+m: 123\n
+h: f5339a52 9c4dafc5 34fe3f0d 7a66baf7
+
+m: 1234\n
+h: 2645ff86 9a6c0ec6 5c49c20d d9050165
+
+m: 12345\n
+h: 387d2929 8ed52ece 88e64f38 fe4fdb11
+
+m: 123456\n
+h: f29f8915 d23a0e02 838cc2e2 75f5dfe7
+
+m: 1234567\n
+h: 4fb0f76e 9af16a2d 61844b9c e833e18f
+
+m: 12345678\n
+h: aacc56fc 85910fef e81fc697 6b061f4e
+
+m: 123456789\n
+h: e6997849 44ed68a1 c762ea1e 90c77967
+
+# From: testSnefru / correctSnefruOutput (v2.0)
+
+m: The theory of quantum electrodynamics has now lasted for\nmore than fifty years, and has been tested more and more\naccurately over a wider and wider range of conditions.\nAt the present time I can proudly say that there is no\nsignificant difference between experiment and theory!\n\nJust to give you an idea of how the theory has been put\nthrough the wringer, I'll give you some recent numbers:\nexperiments have Dirac's number at 1.00115965221 (with\nan uncertainty of about five times as much). To give you\na feeling for the accuracy of these numbers, it comes\nout something like this:  If you were to measure the\ndistance from Los Angeles to New York to this accuracy,\nit would be exact to the thickness of a human hair.\nThat's how delicately quantum electrodynamics has, in the\npast fifty years, been checked -- both theoretically and\nexperimentally.\n
+h: ef84019e ff25cfb6 142452df 77180806
+
+option  : size = 256
+option  : rounds = 4
+
+# From: snefru.c (v2.0)
+
+m: \n
+h: 6c504351 ce7f4b7a 93adb29a f9781ff9 2150f157 fee18661 eef511a3 0fc83ddf
+
+m: 1\n
+h: 65d657f8 85ad8b4a b35999cc 3ded8b82 7cf71fa4 25424750 35778910 d6c2e320
+
+m: 12\n
+h: 7636f3d1 af139cf9 58f46f99 66221282 a444732a 7de59da5 d3481c6b bd6e7092
+
+m: 123\n
+h: cd3c7163 5b14c7c2 c24be864 4baab592 b8ab5b99 91ee5ee5 b3cf7a7f c6426ad7
+
+m: 1234\n
+h: 9ba783a1 290cb21e fe196a02 3286ece5 49394c75 1ddd607e 5d67c4dc 549c62eb
+
+m: 12345\n
+h: c9680da8 ef00d2f8 4459a8e9 b50ada71 c63cae6f dcb6f774 f6998783 30a4a1f4
+
+m: 123456\n
+h: 7656d389 f980bbe8 94152abe c6dc5f16 faf21c60 3b8f5098 861acf3c c059467b
+
+m: 1234567\n
+h: d96eb599 8377bb1d 74a02a2f 00ac9a85 3175250e 4796af36 36609747 372bba80
+
+m: 12345678\n
+h: b7818f09 2118e98a 140af09a 6cca4e6f 1eba88e7 52c20174 653637c9 d628f33f
+
+m: 123456789\n
+h: c2242249 1187baaa 94725400 08dffd5b 38f01557 9f3f2390 50969991 fdc1a810
+
+# From: testSnefru256 / correctSnefruOutput256 (v2.0)
+
+m: The theory of quantum electrodynamics has now lasted for\nmore than fifty years, and has been tested more and more\naccurately over a wider and wider range of conditions.\nAt the present time I can proudly say that there is no\nsignificant difference between experiment and theory!\n\nJust to give you an idea of how the theory has been put\nthrough the wringer, I'll give you some recent numbers:\nexperiments have Dirac's number at 1.00115965221 (with\nan uncertainty of about five times as much). To give you\na feeling for the accuracy of these numbers, it comes\nout something like this:  If you were to measure the\ndistance from Los Angeles to New York to this accuracy,\nit would be exact to the thickness of a human hair.\nThat's how delicately quantum electrodynamics has, in the\npast fifty years, been checked -- both theoretically and\nexperimentally.\n
+h: d4303702 d63e71d5 e4eacdef 86877057 6563d8c0 dec0d7d1 cb7ad00f 39b6296a

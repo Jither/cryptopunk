@@ -84,6 +84,7 @@ import * as shark from "./transforms/block-ciphers/shark";
 import * as simon from "./transforms/block-ciphers/simon";
 import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
+import * as snefru from "./transforms/hashes/snefru";
 import * as speck from "./transforms/block-ciphers/speck";
 import * as square from "./transforms/block-ciphers/square";
 import * as stringManipulation from "./transforms/tools/string-manipulation";
@@ -270,6 +271,7 @@ palette.addCategory("Hashes")
 	.addItem(sha2.Sha2Transform, "Sha2", "SHA-2", "SHA-2")
 	.addItem(sha3.Sha3Transform, "Sha3", "SHA-3")
 	.addItem(sha3.ShakeTransform, "Shake", "SHAKE", "SHAKE")
+	.addItem(snefru.SnefruTransform, "Snefru", "Snefru", "Snefru")
 	.addItem(tiger.TigerTransform, "Tiger", "Tiger", "Tiger")
 	.addItem(whirlpool.WhirlpoolTransform, "Whirlpool", "WHIRLPOOL", "WHIRLPOOL");
 

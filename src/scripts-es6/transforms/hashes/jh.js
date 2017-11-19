@@ -216,6 +216,8 @@ class JhTransform extends MdHashTransform
 	constructor()
 	{
 		super(512, "BE", 16);
+		this.paddingAlwaysAddsBlock = true;
+		
 		this.addOption("variant", "Variant", "JH42", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES })
 			.addOption("size", "Size", 256, { type: "select", values: SIZE_VALUES, texts: SIZE_NAMES });
 	}
@@ -252,29 +254,6 @@ class JhTransform extends MdHashTransform
 		F8(ZERO_BUFFER, state, this.options.variant);
 
 		return state;
-	}
-
-	// Slightly different padding from MD:
-	// Padding length (including 1-bit) : 512 - 128 + ((512 - L) % 512)
-	// rather than                      : 512 - 128 - (L % 512) (+ 512 if <= 0)
-	// In other words, rather than adding at least 1 bit (+ suffix = 129), we're adding at least 384 (+ suffix = 512)
-	padBlock(block, messageLength, ...rest)
-	{
-		const blockLength = this.blockLength;
-
-		const length = block.length;
-		const paddingLength = (blockLength - this.suffixLength) + ((blockLength - length) % blockLength);
-
-		const result = new Uint8Array(length + paddingLength + this.suffixLength);
-
-		// Copy message bytes to padded block:
-		result.set(block);
-		// Add "1-bit":
-		result[length] = this.paddingStartBit;
-
-		this.writeSuffix(result, length + paddingLength, messageLength, ...rest);
-
-		return result;
 	}
 }
 

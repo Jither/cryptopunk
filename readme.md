@@ -115,6 +115,7 @@ Supported
 * SHA-2 (128, 192, 256, 512, 512/224, 512/256 - as well as any non-approved 512/t for byte sized t)
 * SHA-3 (128, 192, 256, 512)
 * SHAKE (128, 256)
+* Snefru (2.0; 128, 256; variable rounds)
 * Tiger / Tiger2
 * WHIRLPOOL (0, T, final)
 
@@ -303,7 +304,7 @@ TODO
 * MD6
 * RadioGatún
 * Skein
-* Snefru
+* Snefru 1.0?
 * Spectral Hash
 * Streebog (GOST 34.11-2012)
 * SWIFFT
