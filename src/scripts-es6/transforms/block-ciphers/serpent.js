@@ -6,6 +6,18 @@ import { rol, ror } from "../../cryptopunk.bitarith";
 const GOLDEN_RATIO = 0x9e3779b9;
 const ROUNDS = 32;
 
+const VARIANT_VALUES = [
+	"serpent",
+	"tnepres",
+	"serpent-0"
+];
+
+const VARIANT_NAMES = [
+	"Serpent",
+	"Tnepres",
+	"Serpent-0"
+];
+
 // The sboxX methods are an algorithmic optimization of DES-like S-boxes for nibble substitution.
 // Those, in turn are derived from the original DES S-boxes and the key
 // "sboxesforserpent" (lower 4 bits of each ASCII letter). The non-optimized
@@ -471,10 +483,13 @@ class SerpentTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
+		this.addOption("variant", "Variant", "serpent", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES });
 	}
 
 	generateSubKeys(keyBytes)
 	{
+		keyBytes = this.tnepresize(keyBytes);
+
 		const keyLength = keyBytes.length;
 		let lIndex = Math.floor(keyLength / 4);
 		const wholeKeyWordBytes = lIndex * 4;
@@ -538,6 +553,22 @@ class SerpentTransform extends BlockCipherTransform
 
 		return this.transformBlocks(bytes, 128, subKeys);
 	}
+
+	tnepresize(bytes, inplace)
+	{
+		// The "Tnepres" variant is an implementation that takes the AES competition test vectors at face value
+		// - those are actually byte reversed output.
+		// So, here we reverse any input bytes (key and blocks) as well as output blocks.
+		// Note that input blocks are reversed *including padding* (this is the same as other implementations
+		// - where padding is usually applied before entering the cipher itself)
+		if (this.options.variant === "tnepres")
+		{
+			// Don't mutate the original block unless we asked to (for output)!
+			bytes = inplace ? bytes : Uint8Array.from(bytes);
+			bytes.reverse();
+		}
+		return bytes;
+	}
 }
 
 class SerpentEncryptTransform extends SerpentTransform
@@ -549,6 +580,8 @@ class SerpentEncryptTransform extends SerpentTransform
 
 	transformBlock(block, dest, destOffset, subKeys)
 	{
+		block = this.tnepresize(block);
+
 		const v = bytesToInt32sLE(block);
 
 		for (let r = 0; r < ROUNDS; r++)
@@ -574,7 +607,9 @@ class SerpentEncryptTransform extends SerpentTransform
 			}
 		}
 
-		dest.set(int32sToBytesLE(v), destOffset);
+		const result = this.tnepresize(int32sToBytesLE(v), true);
+
+		dest.set(result, destOffset);
 	}
 }
 
@@ -589,6 +624,8 @@ class SerpentDecryptTransform extends SerpentTransform
 	// inverse rotation (linear transformation) and inverse sboxes
 	transformBlock(block, dest, destOffset, subKeys)
 	{
+		block = this.tnepresize(block);
+
 		const v = bytesToInt32sLE(block);
 
 		for (let r = ROUNDS - 1; r >= 0; r--)
@@ -615,7 +652,9 @@ class SerpentDecryptTransform extends SerpentTransform
 			}
 		}
 
-		dest.set(int32sToBytesLE(v), destOffset);
+		const result = this.tnepresize(int32sToBytesLE(v), true);
+
+		dest.set(result, destOffset);
 	}
 }
 

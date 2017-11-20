@@ -74,7 +74,7 @@ Supported
 * Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * SAFER (K-64, K-128, SK-40, SK-64, SK-128; variable rounds)
-* Serpent
+* Serpent (including tnepreS)
 * SHACAL ("SHACAL-0", SHACAL-1, SHACAL-2)
 * Shark-E
 * Simon
@@ -194,7 +194,7 @@ TODO
 
 * 3DES
 * RC5, RC6 (16/64 bit word sizes)
-* Serpent-0, tnepreS
+* Serpent-0
 * Browser-native RSA decryption
 
 #### Second priority

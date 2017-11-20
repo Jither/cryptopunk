@@ -1,9 +1,9 @@
 import { MdHashTransform } from "./hash";
 import { getRijndaelSboxes } from "../shared/rijndael";
 import { xorBytes } from "../../cryptopunk.bitarith";
-import { int32ToBytesBE, bytesToHex } from "../../cryptopunk.utils";
+import { int32ToBytesBE } from "../../cryptopunk.utils";
 
-// TODO: Optimize - way too many allocations here
+// TODO: Consider optimizing by getting rid of 2-dimensional arrays
 
 let SBOX;
 
