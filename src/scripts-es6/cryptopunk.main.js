@@ -31,6 +31,7 @@ import * as enigma from "./transforms/mechanical/enigma";
 import * as feal from "./transforms/block-ciphers/feal";
 import * as fletcher from "./transforms/checksums/fletcher";
 import * as frog from "./transforms/block-ciphers/frog";
+import * as grøstl from "./transforms/hashes/grøstl";
 import * as has160 from "./transforms/hashes/has-160";
 import * as haval from "./transforms/hashes/haval";
 import * as hex from "./transforms/hex";
@@ -256,6 +257,7 @@ palette.addCategory("Hashes")
 	.addItem(blake.BlakeTransform, "Blake", "BLAKE", "BLAKE")
 	.addItem(blake2.Blake2Transform, "Blake2", "BLAKE2", "BLAKE2")
 	.addItem(cubehash.CubeHashTransform, "CubeHash", "CubeHash", "CubeHash")
+	.addItem(grøstl.GrøstlTransform, "Grøstl", "Grøstl", "Grøstl")
 	.addItem(has160.Has160Transform, "Has160", "HAS-160", "HAS-160")
 	.addItem(haval.HavalTransform, "Haval", "HAVAL", "HAVAL")
 	.addItem(jh.JhTransform, "Jh", "JH", "JH")

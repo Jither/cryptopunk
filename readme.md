@@ -100,6 +100,7 @@ Supported
 * BLAKE (224, 256, 384, 512)
 * BLAKE2 (BLAKE2s, BLAKE2b)
 * CubeHash (variable i, r, b, f, h)
+* Grøstl (Grøstl-0 and tweaked versions)
 * HAVAL (128, 160, 192, 224, 256; 3-5 passes)
 * HAS-160
 * JH (224, 256, 384, 512; 35.5 and 42 round variants)
@@ -299,7 +300,6 @@ TODO
 * FSB
 * Fugue
 * GOST R 34.11-94
-* Grøstl
 * HAS-V
 * MD6
 * RadioGatún
