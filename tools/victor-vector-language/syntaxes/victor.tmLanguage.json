@@ -125,7 +125,7 @@
 		},
 		"transform": {
 			"patterns": [{
-				"match": "^(decrypt|encrypt|decode|encode|hash)\\s*(:)\\s*([_a-zA-Z0-9]+)",
+				"match": "^(decrypt|encrypt|decode|encode|hash)\\s*(:)\\s*([_a-zæøåA-ZÆØÅ0-9]+)",
 				"captures":
 				{
 				  "1": { "name" : "keyword.other" },
