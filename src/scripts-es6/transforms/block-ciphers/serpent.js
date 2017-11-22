@@ -14,7 +14,7 @@ const VARIANT_VALUES = [
 
 const VARIANT_NAMES = [
 	"Serpent",
-	"Tnepres",
+	"tnepreS",
 	"Serpent-0"
 ];
 

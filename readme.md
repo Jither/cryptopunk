@@ -91,6 +91,7 @@ Supported
 
 * A5/1, A5/2
 * ChaCha (variable rounds; 80, 128 and 256 key sizes) and XChaCha
+* Rabbit
 * RC4 (with discard parameter)
 * Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes) and XSalsa20
 * Simple XOR
@@ -266,7 +267,6 @@ TODO
 * Pike
 * Py
 * QUAD
-* Rabbit
 * Scream
 * SEAL(-3.0)
 * SNOW

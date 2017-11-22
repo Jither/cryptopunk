@@ -64,6 +64,7 @@ import * as xtea from "./transforms/block-ciphers/xtea";
 import * as xxtea from "./transforms/block-ciphers/xxtea";
 
 import * as a5 from "./transforms/stream-ciphers/a5";
+import * as rabbit from "./transforms/stream-ciphers/rabbit";
 import * as rc4 from "./transforms/stream-ciphers/rc4";
 import * as salsa20 from "./transforms/stream-ciphers/salsa20";
 import * as xor from "./transforms/stream-ciphers/xor";
@@ -202,6 +203,7 @@ addTransformsFrom(k12);
 addTransformsFrom(md2);
 addTransformsFrom(md4);
 addTransformsFrom(md5);
+addTransformsFrom(rabbit);
 addTransformsFrom(ripemd);
 addTransformsFrom(ripemd128);
 addTransformsFrom(ripemd160);

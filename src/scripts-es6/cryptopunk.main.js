@@ -64,6 +64,7 @@ import * as padding from "./transforms/tools/padding";
 import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as present from "./transforms/block-ciphers/present";
+import * as rabbit from "./transforms/stream-ciphers/rabbit";
 import * as railfence from "./transforms/classical/railfence";
 import * as rc2 from "./transforms/block-ciphers/rc2";
 import * as rc4 from "./transforms/stream-ciphers/rc4";
@@ -336,6 +337,7 @@ palette.addCategory("Stream ciphers")
 	.addItem(a5.A52Transform, "A52", "A5/2")
 	.addItem(rc4.Rc4Transform, "Rc4", "RC4")
 	.addItem(chacha.ChaChaTransform, "ChaCha", "ChaCha / XChaCha", "ChaCha")
+	.addItem(rabbit.RabbitTransform, "Rabbit", "Rabbit", "Rabbit")
 	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20 / XSalsa20", "Salsa20")
 	.addItem(xor.XorTransform, "Xor", "XOR");
 
