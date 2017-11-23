@@ -21,6 +21,7 @@ import * as vigenere from "./transforms/classical/vigenere";
 
 import * as enigma from "./transforms/mechanical/enigma";
 
+import * as anubis from "./transforms/block-ciphers/anubis";
 import * as aria from "./transforms/block-ciphers/aria";
 import * as blowfish from "./transforms/block-ciphers/blowfish";
 import * as camellia from "./transforms/block-ciphers/camellia";
@@ -144,6 +145,7 @@ addTransformsFrom(vigenere);
 
 addTransformsFrom(enigma);
 
+addTransformsFrom(anubis);
 addTransformsFrom(aria);
 addTransformsFrom(blowfish);
 addTransformsFrom(camellia);

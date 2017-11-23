@@ -47,6 +47,7 @@ Supported
 ### Block Ciphers
 
 * 3-Way
+* Anubis (128, 160, 192, 224, 256, 288 and 320 key sizes; Anubis-0 and tweak variants)
 * ARIA (128, 192 and 256 key sizes; variable rounds)
 * Blowfish
 * Camellia
@@ -201,7 +202,6 @@ TODO
 #### Second priority
 
 * Akelarre
-* Anubis
 * BaseKing
 * CRYPTON (0.5, 1.0)
 * CS-Cipher
@@ -296,8 +296,10 @@ TODO
 
 * BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
+* DHA-256
 * ECOH
 * FSB
+* FORK-256
 * Fugue
 * GOST R 34.11-94
 * HAS-V
