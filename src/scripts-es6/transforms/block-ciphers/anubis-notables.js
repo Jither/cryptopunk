@@ -1,5 +1,8 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { bytesToInt32sBE, int32sToBytesBE, bytesToHex } from "../../cryptopunk.utils";
+import { xorBytes } from "../../cryptopunk.bitarith";
+
+// TODO: UNFINISHED
 
 const KEY_SIZES = [128, 160, 192, 224, 256, 288, 320];
 
@@ -62,21 +65,65 @@ const S_BOXES = {
 const TABLES = {};
 
 // Multiplies x by 2, 4, 6 - in GF(2^8) field
-function gfMul(x)
+function gfMul(x, y)
 {
-	let x2 = x << 1;
-	if (x2 >= 0x100)
-	{
-		x2 ^= 0x11d;
-	}
-	let x4 = x2 << 1;
-	if (x4 >= 0x100)
-	{
-		x4 ^= 0x11d;
-	}
-	const x6 = x4 ^ x2;
+	let x2, x4, x8;
 
-	return [x2, x4, x6];
+	switch (y)
+	{
+		case 1:
+			return x;
+		case 2:
+			x2 = x << 1;
+			if (x2 >= 0x100)
+			{
+				x2 ^= 0x11d;
+			}
+			return x2;
+		case 4:
+			x2 = x << 1;
+			if (x2 >= 0x100)
+			{
+				x2 ^= 0x11d;
+			}
+			x4 = x2 << 1;
+			if (x4 >= 0x100)
+			{
+				x4 ^= 0x11d;
+			}
+			return x4;
+		case 6:
+			x2 = x << 1;
+			if (x2 >= 0x100)
+			{
+				x2 ^= 0x11d;
+			}
+			x4 = x2 << 1;
+			if (x4 >= 0x100)
+			{
+				x2 ^= 0x11d;
+			}
+			return x4 ^ x2;
+		case 8:
+			x2 = x << 1;
+			if (x2 >= 0x100)
+			{
+				x2 ^= 0x11d;
+			}
+			x4 = x2 << 1;
+			if (x4 >= 0x100)
+			{
+				x4 ^= 0x11d;
+			}
+			x8 = x4 << 1;
+			if (x8 >= 0x100)
+			{
+				x8 ^= 0x11d;
+			}
+			return x8;
+		default:
+			throw new Error(`Unsupported y: ${y}`);
+	}
 }
 
 // TODO: Remove transformation tables (do transformations directly in cipher)
@@ -125,6 +172,88 @@ function precompute(variant)
 	return TABLES[variant];
 }
 
+// Nonlinear layer γ
+function gamma(state, sbox)
+{
+	// Substitute using S-box:
+	for (let i = 0; i < state.length; i++)
+	{
+		state[i] = sbox[state[i]];
+	}
+}
+
+// Cyclical permutation π
+function pi(state, rows)
+{
+	// 00 01 02 03
+	// 04 05 06 07
+	// 08 09 10 11
+	// 12 13 14 15
+	// 16 17 18 19
+	// 20 21 22 23
+	// ...
+
+	const temp = new Uint8Array(state.length);
+
+	// Rotate each column, j, down by j positions
+	for (let col = 0; col < 4; col++)
+	{
+		for (let row = 0; row < rows; row++)
+		{
+			const source = row * rows + col;
+			const dest = ((row + col) % rows) * rows + col;
+			temp[dest] = state[source];
+		}
+	}
+	state.set(temp);
+}
+
+// Transposition τ
+function tau(state)
+{
+	// Transpose matrix:
+	// 0 1 2 3
+	// 4 5 6 7
+	// 8 9 a b
+	// c d e f
+	[state[1], state[4]] = [state[4], state[1]];
+	[state[2], state[8]] = [state[8], state[2]];
+	[state[3], state[12]] = [state[12], state[3]];
+	[state[6], state[9]] = [state[9], state[6]];
+	[state[7], state[13]] = [state[13], state[7]];
+	[state[11], state[14]] = [state[14], state[11]];
+}
+
+// Key extraction ω
+function omega(state, rows)
+{
+	for (let row = 0; row < rows; row++)
+	{
+		// TODO
+	}
+}
+
+const MULTIPLIERS = [
+	1, 2, 4, 6,
+	2, 1, 6, 4,
+	4, 6, 1, 2,
+	6, 4, 2, 1
+];
+
+// Linear diffusion θ
+function theta(state)
+{
+	// Multiply (in GF(2^8)) by:
+	// [01 02 04 06]
+	// [02 01 06 04]
+	// [04 06 01 02]
+	// [06 04 02 01]
+	for (let i = 0; i < state.length; i++)
+	{
+		state[i] = gfMul(state[i], MULTIPLIERS[i]);
+	}
+}
+
 class AnubisBaseTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
@@ -138,120 +267,96 @@ class AnubisBaseTransform extends BlockCipherTransform
 		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
 
 		// Precalculate tables (once, stored for later use)
-		const tables = precompute(this.options.variant);
+		//const tables = precompute(this.options.variant);
 
-		const roundKeys = this.prepareRoundKeys(keyBytes, tables);
+		const roundKeys = this.prepareRoundKeys(keyBytes);
 
-		return this.transformBlocks(bytes, 128, roundKeys, tables);
+		return this.transformBlocks(bytes, 128, roundKeys);
 	}
 
-	prepareRoundKeys(keyBytes, tables)
+	prepareRoundKeys(keyBytes)
 	{
-		const [T0, T1, T2, T3, T4, T5] = tables;
+		const sbox = S_BOXES[this.options.variant];
+		const rows = keyBytes.length / 4;
 
-		const keyWordCount = keyBytes.length / 4;
-		const kappa = bytesToInt32sBE(keyBytes);
-		const inter = new Uint32Array(keyWordCount);
+		const rounds = 8 + rows;
 
-		const rounds = 8 + keyWordCount;
-
-		const roundKeys = new Array(rounds + 1);
-
-		const k = new Uint32Array(4);
-		for (let r = 0;  r < roundKeys.length; r++)
+		const k = new Array(rounds + 1);
+		k[0] = Uint8Array.from(keyBytes);
+		
+		console.log("k0:", bytesToHex(k[0]));
+		// Key evolutions ψ[cr]
+		for (let r = 1; r < k.length; r++)
 		{
-			const kappaN = kappa[keyWordCount - 1];
-			for (let i = 0; i < 4; i++)
+			k[r] = Uint8Array.from(k[r - 1]);
+			console.log("k", r, ":", bytesToHex(k[r]));
+			// Nonlinear layer γ
+			gamma(k[r], sbox);
+			console.log("k", r, "after gamma:", bytesToHex(k[r]));
+			// Cyclical permutation π
+			pi(k[r], rows);
+			console.log("k", r, "after pi:", bytesToHex(k[r]));
+			// Linear diffusion θ
+			theta(k[r]);
+			console.log("k", r, "after theta:", bytesToHex(k[r]));
+			// Key addition σ[cr]
+			for (let j = 0; j < k[0].length; j++)
 			{
-				k[i] = T4[(kappaN >>> (24 - i * 8)) & 0xff];
+				const cr = sbox[4 * (r - 1) + j];
+				k[r][j] ^= cr;
 			}
-
-			for (let j = keyWordCount - 2; j >= 0; j--)
-			{
-				for (let i = 0; i < 4; i++)
-				{
-					const ki = k[i];
-					k[i] = T4[(kappa[j] >>> (24 - i * 8)) & 0xff] ^
-						(T5[ ki >>> 24        ] & 0xff000000) ^
-						(T5[(ki >>> 16) & 0xff] & 0x00ff0000) ^
-						(T5[(ki >>>  8) & 0xff] & 0x0000ff00) ^
-						(T5[(ki       ) & 0xff] & 0x000000ff);
-				}
-			}
-
-			roundKeys[r] = Uint32Array.from(k);
-
-			for (let i = 0; i < keyWordCount; i++)
-			{
-				inter[i] =
-					T0[(kappa[i] >>> 24)       ] ^
-					T1[(kappa[(keyWordCount + i - 1) % keyWordCount] >>> 16) & 0xff] ^
-					T2[(kappa[(keyWordCount + i - 2) % keyWordCount] >>>  8) & 0xff] ^
-					T3[(kappa[(keyWordCount + i - 3) % keyWordCount]       ) & 0xff];
-			}
-
-			kappa[0] =
-				(T0[4 * r    ] & 0xff000000) ^
-				(T1[4 * r + 1] & 0x00ff0000) ^
-				(T2[4 * r + 2] & 0x0000ff00) ^
-				(T3[4 * r + 3] & 0x000000ff) ^
-				inter[0];
-			
-			for (let i = 1; i < keyWordCount; i++)
-			{
-				kappa[i] = inter[i];
-			}
+			console.log("k", r, "after sigma:", bytesToHex(k[r]));
+		}
+		
+		// Key selections φ
+		for (let r = 0; r < k.length; r++)
+		{
+			// Nonlinear layer γ
+			gamma(k[r], sbox);
+			console.log("K", r, "after gamma:", bytesToHex(k[r]));
+			// Key extraction ω
+			omega(k[r], rows);
+			console.log("K", r, "after omega:", bytesToHex(k[r]));
+			// Transposition τ
+			tau(k[r]);
+			console.log("K", r, "after tau:", bytesToHex(k[r]));
 		}
 
-		return roundKeys;
+		return k;
 	}
 
-	transformBlock(block, dest, destOffset, roundKeys, tables)
+	transformBlock(block, dest, destOffset, roundKeys)
 	{
-		const [T0, T1, T2, T3] = tables;
-
-		const state = bytesToInt32sBE(block);
-		const inter = new Uint32Array(state.length);
+		const state = Uint8Array.from(block);
+		const sbox = S_BOXES[this.options.variant];
 
 		const rounds = roundKeys.length - 1;
 
-		for (let i = 0; i < 4; i++)
-		{
-			state[i] ^= roundKeys[0][i];
-		}
+		// Key addition σ[K0]
+		xorBytes(state, roundKeys[0]);
 
 		// N-1 rounds:
 		for (let r = 1; r < rounds; r++)
 		{
-			for (let i = 0; i < 4; i++)
-			{
-				const shift = 24 - (i * 8);
-				inter[i] = 
-					T0[(state[0] >>> shift) & 0xff] ^
-					T1[(state[1] >>> shift) & 0xff] ^
-					T2[(state[2] >>> shift) & 0xff] ^
-					T3[(state[3] >>> shift) & 0xff] ^
-					roundKeys[r][i];
-			}
-			for (let i = 0; i < 4; i++)
-			{
-				state[i] = inter[i];
-			}
+			// Nonlinear layer γ
+			gamma(state, sbox);
+			// Transposition τ
+			tau(state);
+			// Linear diffusion θ
+			theta(state);
+			// Key addition σ[Kr]
+			xorBytes(state, roundKeys[r]);
 		}
 
 		// Last round:
-		for (let i = 0; i < 4; i++)
-		{
-			const shift = 24 - (i * 8);
-			inter[i] = 
-				(T0[(state[0] >>> shift) & 0xff] & 0xff000000) ^
-				(T1[(state[1] >>> shift) & 0xff] & 0x00ff0000) ^
-				(T2[(state[2] >>> shift) & 0xff] & 0x0000ff00) ^
-				(T3[(state[3] >>> shift) & 0xff] & 0x000000ff) ^
-				roundKeys[rounds][i];
-		}
+		// Nonlinear layer γ
+		gamma(state, sbox);
+		// Transposition τ
+		tau(state);
+		// Key addition σ[KR]
+		xorBytes(state, roundKeys[rounds]);
 
-		dest.set(int32sToBytesBE(inter), destOffset);
+		dest.set(int32sToBytesBE(state), destOffset);
 	}
 }
 

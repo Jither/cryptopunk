@@ -75,7 +75,7 @@ function mod(n, m)
 }
 
 // Finds the multplicative inverse of a mod m
-function modularInverse(a, m)
+function modInv(a, m)
 {
 	if (a == null || m == null)
 	{
@@ -113,5 +113,5 @@ export {
 	isPerfectCube,
 	isPerfectSquare,
 	mod,
-	modularInverse
+	modInv
 };

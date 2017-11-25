@@ -67,6 +67,7 @@ Supported
 * Magma (GOST 28147-89)
 * MARS (original AES submission and 2nd round tweak; 128-448 bit key sizes)
 * NewDES, NewDES-96
+* Nimbus
 * NOEKEON
 * PRESENT
 * RC2
@@ -211,6 +212,7 @@ TODO
 * Grand Cru
 * Hierocrypt
 * IDEA NXT
+* KASUMI
 * KHAZAD
 * Kalyna
 * LOKI97
@@ -238,7 +240,6 @@ TODO
 * MMB
 * MULTI2
 * New Data Seal
-* Nimbus
 * NUSH
 * Rainbow
 * Q
@@ -260,7 +261,6 @@ TODO
 * FISH
 * HC-128 / HC-256
 * ISAAC
-* KASUMI
 * MUGI
 * PANAMA
 * Helix / Phelix

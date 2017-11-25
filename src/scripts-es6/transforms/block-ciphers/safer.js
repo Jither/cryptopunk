@@ -61,49 +61,49 @@ function precompute()
 function mix1(a, key)
 {
 	a[0] ^= key[0];
-	a[1] = (a[1] + key[1]);
-	a[2] = (a[2] + key[2]);
+	a[1] += key[1];
+	a[2] += key[2];
 	a[3] ^= key[3];
 	a[4] ^= key[4];
-	a[5] = (a[5] + key[5]);
-	a[6] = (a[6] + key[6]);
+	a[5] += key[5];
+	a[6] += key[6];
 	a[7] ^= key[7];
 }
 
 function mix2(a, key)
 {
-	a[0] = (a[0] + key[0]);
+	a[0] += key[0];
 	a[1] ^= key[1];
 	a[2] ^= key[2];
-	a[3] = (a[3] + key[3]);
-	a[4] = (a[4] + key[4]);
+	a[3] += key[3];
+	a[4] += key[4];
 	a[5] ^= key[5];
 	a[6] ^= key[6];
-	a[7] = (a[7] + key[7]);
+	a[7] += key[7];
 }
 
 function unmix1(a, key)
 {
 	a[0] ^= key[0];
-	a[1] = (a[1] - key[1]);
-	a[2] = (a[2] - key[2]);
+	a[1] -= key[1];
+	a[2] -= key[2];
 	a[3] ^= key[3];
 	a[4] ^= key[4];
-	a[5] = (a[5] - key[5]);
-	a[6] = (a[6] - key[6]);
+	a[5] -= key[5];
+	a[6] -= key[6];
 	a[7] ^= key[7];
 }
 
 function unmix2(a, key)
 {
-	a[0] = (a[0] - key[0]);
+	a[0] -= key[0];
 	a[1] ^= key[1];
 	a[2] ^= key[2];
-	a[3] = (a[3] - key[3]);
-	a[4] = (a[4] - key[4]);
+	a[3] -= key[3];
+	a[4] -= key[4];
 	a[5] ^= key[5];
 	a[6] ^= key[6];
-	a[7] = (a[7] - key[7]);
+	a[7] -= key[7];
 }
 
 function pht(a, i1, i2)

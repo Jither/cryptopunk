@@ -1,6 +1,7 @@
 import { gcd } from "./cryptopunk.math";
 
 const ONE_64 = { hi: 0, lo: 1 };
+const TWO_64 = { hi: 0, lo: 2 };
 const ZERO_64 = { hi: 0, lo: 0 };
 
 function rol16(val, count)
@@ -476,6 +477,46 @@ function mirror(value, bits)
 	return result;
 }
 
+function mirror64(value)
+{
+	return {
+		hi: mirror(value.lo, 32),
+		lo: mirror(value.hi, 32)
+	};
+}
+
+// Calculates modular multiplicative inverse mod 2^32
+// Using method derived from Newton's method
+function modInv32(a)
+{
+	let u = (2 - a) & 0xffffffff;
+	let i = (a - 1) & 0xffffffff;
+	// 4 iterations needed for 32 bits precision:
+	for (let r = 0; r < 4; r++)
+	{
+		i = mul(i, i);
+		u = mul(u, i + 1);
+	}
+	return u;
+}
+
+// Calculates modular multiplicative inverse mod 2^64
+// a: 64-bit
+function modInv64(a)
+{
+	let u = sub64(TWO_64, a);
+	let i = sub64(a, ONE_64);
+	// 5 iterations needed for 64 (really 96) bits precision:
+	for (let r = 0; r < 5; r++)
+	{
+		i = mul64(i, i);
+		u = mul64(u, add64(i, ONE_64));
+	}
+	return u;
+}
+
+
+
 // Parity of 32 bit word: Sum of bits mod 2
 function parity32(x)
 {
@@ -491,6 +532,8 @@ export {
 	add,
 	add64,
 	and64,
+	modInv32,
+	modInv64,
 	mul,
 	mul64,
 	not64,
@@ -515,6 +558,8 @@ export {
 	xor64,
 	xorBytes,
 	mirror,
+	mirror64,
 	ONE_64,
+	TWO_64,
 	ZERO_64
 };

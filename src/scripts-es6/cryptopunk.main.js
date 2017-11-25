@@ -44,6 +44,7 @@ import * as jh from "./transforms/hashes/jh";
 import * as jis from "./transforms/char-encodings/jis";
 import * as k12 from "./transforms/hashes/kangaroo-twelve";
 import * as keccak from "./transforms/hashes/keccak";
+import * as khazad from "./transforms/block-ciphers/khazad";
 import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
 import * as letterNumber from "./transforms/classical/letter-number";
@@ -59,6 +60,7 @@ import * as morse from "./transforms/char-encodings/morse";
 import * as nativeAes from "./transforms/browser-native/aes";
 import * as nativeRsa from "./transforms/browser-native/rsa";
 import * as newdes from "./transforms/block-ciphers/newdes";
+import * as nimbus from "./transforms/block-ciphers/nimbus";
 import * as noekeon from "./transforms/block-ciphers/noekeon";
 import * as numbers from "./transforms/numbers";
 import * as padding from "./transforms/tools/padding";
@@ -361,6 +363,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(ice.IceDecryptTransform, "IceDecrypt", "ICE", "ICE Decrypt")
 	.addItem(idea.IdeaDecryptTransform, "IdeaDecrypt", "IDEA", "IDEA Decrypt")
 	.addItem(iraqi.IraqiDecryptTransform, "IraqiDecrypt", "Iraqi", "Iraqi Decrypt")
+	.addItem(khazad.KhazadDecryptTransform, "KhazadDecrypt", "KHAZAD", "KHAZAD Decrypt")
 	.addItem(khufu.KhafreDecryptTransform, "KhafreDecrypt", "Khafre", "Khafre Decrypt")
 	.addItem(khufu.KhufuDecryptTransform, "KhufuDecrypt", "Khufu", "Khufu Decrypt")
 	.addItem(kuznyechik.KuznyechikDecryptTransform, "KuznyechikDecrypt", "Kuznyechik", "Kuznyechik Decrypt")
@@ -370,6 +373,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(magma.MagmaDecryptTransform, "MagmaDecrypt", "Magma (GOST)", "Magma (GOST) Decrypt")
 	.addItem(mars.MarsDecryptTransform, "MarsDecrypt", "MARS", "MARS Decrypt")
 	.addItem(newdes.NewDesDecryptTransform, "NewDesDecrypt", "NewDES", "NewDES Decrypt")
+	.addItem(nimbus.NimbusDecryptTransform, "NimbusDecrypt", "Nimbus", "Nimbus Decrypt")
 	.addItem(noekeon.NoekeonDecryptTransform, "NoekeonDecrypt", "NOEKEON", "NOEKEON Decrypt")
 	.addItem(present.PresentDecryptTransform, "PresentDecrypt", "PRESENT", "PRESENT Decrypt")
 	.addItem(rc2.Rc2DecryptTransform, "Rc2Decrypt", "RC2", "RC2 Decrypt")
@@ -412,6 +416,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(ice.IceEncryptTransform, "IceEncrypt", "ICE", "ICE Encrypt")
 	.addItem(idea.IdeaEncryptTransform, "IdeaEncrypt", "IDEA", "IDEA Encrypt")
 	.addItem(iraqi.IraqiEncryptTransform, "IraqiEncrypt", "Iraqi", "Iraqi Encrypt")
+	.addItem(khazad.KhazadEncryptTransform, "KhazadEncrypt", "KHAZAD", "KHAZAD Encrypt")
 	.addItem(khufu.KhafreEncryptTransform, "KhafreEncrypt", "Khafre", "Khafre Encrypt")
 	.addItem(khufu.KhufuEncryptTransform, "KhufuEncrypt", "Khufu", "Khufu Encrypt")
 	.addItem(kuznyechik.KuznyechikEncryptTransform, "KuznyechikEncrypt", "Kuznyechik", "Kuznyechik Encrypt")
@@ -421,6 +426,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(magma.MagmaEncryptTransform, "MagmaEncrypt", "Magma (GOST)", "Magma (GOST) Encrypt")
 	.addItem(mars.MarsEncryptTransform, "MarsEncrypt", "MARS", "MARS Encrypt")
 	.addItem(newdes.NewDesEncryptTransform, "NewDesEncrypt", "NewDES", "NewDES Encrypt")
+	.addItem(nimbus.NimbusEncryptTransform, "NimbusEncrypt", "Nimbus", "Nimbus Encrypt")
 	.addItem(noekeon.NoekeonEncryptTransform, "NoekeonEncrypt", "NOEKEON", "NOEKEON Encrypt")
 	.addItem(present.PresentEncryptTransform, "PresentEncrypt", "PRESENT", "PRESENT Encrypt")
 	.addItem(rc2.Rc2EncryptTransform, "Rc2Encrypt", "RC2", "RC2 Encrypt")

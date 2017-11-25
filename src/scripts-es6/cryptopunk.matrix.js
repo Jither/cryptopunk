@@ -1,4 +1,4 @@
-import { mod, modularInverse } from "./cryptopunk.math";
+import { mod, modInv } from "./cryptopunk.math";
 
 function isIdentity(matrix, dim)
 {
@@ -40,7 +40,7 @@ function _gaussJordan(matrix, m, startCol)
 		const col = (startCol + i) % dim;
 		let row = col;
 		// Swap row if current column entry is 0 or has no modular inverse:
-		while (row < dim && (mat[row][col] === 0 || modularInverse(mat[row][col], m) === null))
+		while (row < dim && (mat[row][col] === 0 || modInv(mat[row][col], m) === null))
 		{
 			//console.log("modular inverse:", modularInverse(mat[row][col], m));
 			row++;
@@ -75,7 +75,7 @@ function _gaussJordan(matrix, m, startCol)
 			// If row contains column's identity element, do scalar multiplication with x^-1 mod m
 			if (row === col)
 			{
-				const factor = modularInverse(rM[col], m);
+				const factor = modInv(rM[col], m);
 				//console.log(factor);
 				if (factor === null)
 				{
@@ -92,7 +92,7 @@ function _gaussJordan(matrix, m, startCol)
 			// For the other rows, do scalar addition of -[current row]
 			else if (rM[col] !== 0)
 			{
-				let factor = modularInverse(cM[col], m);
+				let factor = modInv(cM[col], m);
 				if (factor === null)
 				{
 					return null;
