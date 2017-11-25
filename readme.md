@@ -47,12 +47,12 @@ Supported
 ### Block Ciphers
 
 * 3-Way
-* Akelarre
 * Anubis (128, 160, 192, 224, 256, 288 and 320 key sizes; Anubis-0 and tweak variants)
 * ARIA (128, 192 and 256 key sizes; variable rounds)
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
+* CS-Cipher
 * DES (64 bit with parity or 56 bit without)
 * DES-X
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
@@ -205,7 +205,6 @@ TODO
 
 * BaseKing
 * CRYPTON (0.5, 1.0)
-* CS-Cipher
 * DEAL
 * DFC / DFCv2-128
 * E2
@@ -229,6 +228,7 @@ TODO
 
 #### Third priority
 
+* Akelarre
 * ARIA 0.8/0.9? (If vectors can be found)
 * BassOmatic
 * Chiasmus?

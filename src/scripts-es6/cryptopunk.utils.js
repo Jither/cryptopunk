@@ -168,34 +168,30 @@ function bytesToInt16sLE(bytes)
 	return result;
 }
 
-function bytesToInt32sBE(bytes)
+function bytesToInt32sBE(bytes, dest)
 {
 	// TODO: Uint32Array - but make sure it's big endian
-	const result = [];
+	const result = dest || [];
 	for (let i = 0; i < bytes.length; i += 4)
 	{
-		result.push(
-			(bytes[i]     << 24) |
+		result[i / 4] = (bytes[i] << 24) |
 			(bytes[i + 1] << 16) |
-			(bytes[i + 2] <<  8) |
-			(bytes[i + 3])
-		);
+			(bytes[i + 2] << 8) |
+			(bytes[i + 3]);
 	}
 	return result;
 }
 
-function bytesToInt32sLE(bytes)
+function bytesToInt32sLE(bytes, dest)
 {
 	// TODO: Uint32Array - but make sure it's little endian
-	const result = [];
+	const result = dest || [];
 	for (let i = 0; i < bytes.length; i += 4)
 	{
-		result.push(
-			(bytes[i]          ) |
+		result[i / 4] = (bytes[i]          ) |
 			(bytes[i + 1] <<  8) |
 			(bytes[i + 2] << 16) |
-			(bytes[i + 3] << 24)
-		);
+			(bytes[i + 3] << 24);
 	}
 	return result;
 }
@@ -459,6 +455,14 @@ function checkSize(size, requiredSize)
 	else if (size !== requiredSize)
 	{
 		return requiredSize.toString();
+	}
+
+	if (requiredSize.step)
+	{
+		if (size % requiredSize.step !== 0)
+		{
+			return `divisible by ${requiredSize.step}`;
+		}
 	}
 
 	return null;
