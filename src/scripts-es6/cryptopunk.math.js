@@ -106,6 +106,45 @@ function modInv(a, m)
 	return t;
 }
 
+function modSquare(a, m)
+{
+	let bits = a,
+		sum = a,
+		carry = 0,
+		result = 0;
+
+	while (bits !== 0)
+	{
+		if (bits & 1)
+		{
+			const partial = (result + sum) >>> 0;
+			if (partial < result || partial < sum)
+			{
+				carry = 1;
+			}
+			result = partial;
+			while (result > m || carry)
+			{
+				result = (result - m) >>> 0;
+				carry = 0;
+			}
+		}
+		if (sum & 0x80000000)
+		{
+			carry = 1;
+		}
+		sum <<= 1;
+
+		while (sum > m || carry)
+		{
+			sum -= m;
+			carry = 0;
+		}
+		bits >>>= 1;
+	}
+	return result;
+}
+
 export {
 	isCoPrime,
 	gcd,
@@ -113,5 +152,6 @@ export {
 	isPerfectCube,
 	isPerfectSquare,
 	mod,
-	modInv
+	modInv,
+	modSquare
 };

@@ -20,8 +20,6 @@ const S_BOXES = {
 	"khazad": S_BOX
 };
 
-const ROUNDS = 8;
-
 const TABLESlo = {};
 const TABLEShi = {};
 
@@ -122,8 +120,8 @@ class KhazadBaseTransform extends BlockCipherTransform
 	constructor(decrypt)
 	{
 		super(decrypt);
+		this.addOption("variant", "Variant", "khazad", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES });
 		throw new TransformError("Not implemented");
-		//this.addOption("variant", "Variant", "khazad", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES });
 	}
 
 	transform(bytes, keyBytes)
