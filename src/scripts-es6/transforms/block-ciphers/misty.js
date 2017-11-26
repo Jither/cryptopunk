@@ -1,5 +1,16 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sBE, int32sToBytesBE, bytesToInt16sBE } from "../../cryptopunk.utils";
+import { TransformError } from "../transforms";
+
+const VARIANT_VALUES = [
+	"misty1",
+	"misty2"
+];
+
+const VARIANT_NAMES = [
+	"MISTY1",
+	"MISTY2"
+];
 
 const S_BOX_7 = [
 	0x1b, 0x32, 0x33, 0x5a, 0x3b, 0x10, 0x17, 0x54, 0x5b, 0x1a, 0x72, 0x73, 0x6b, 0x2c, 0x66, 0x49,
@@ -104,22 +115,37 @@ class MistyBaseTransform extends BlockCipherTransform
 		// "In both MISTY1 and MISTY2, for the sake of flexibility of their security level,
 		// the number of rounds n of level 1 (see figure 4) is variable on condition that n
 		// is a multiple of four"
-		this.addOption("rounds", "Rounds", 8, { min: 4, step: 4 });
+		
+		// 0 here means "recommended" (8 for MISTY1, 12 for MISTY2)
+		this.addOption("rounds", "Rounds", 0, { min: 0, step: 4 });
+		this.addOption("variant", "Variant", "misty1", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES });
 	}
 
 	transform(bytes, keyBytes)
 	{
+		let rounds = this.options.rounds;
+
+		switch (this.options.variant)
+		{
+			case "misty1":
+				this.transformBlock = this.transformBlock1;
+				rounds = rounds || 8;
+				break;
+			case "misty2":
+				this.transformBlock = this.transformBlock2;
+				rounds = rounds || 12;
+				break;
+		}
 		this.checkBytesSize("Key", keyBytes, 128);
 
 		const subKeys = this.generateSubKeys(keyBytes);
-		const roundKeys = this.arrangeRoundKeys(subKeys);
-		return this.transformBlocks(bytes, 64, roundKeys);
+		const roundKeys = this.arrangeRoundKeys(subKeys, rounds);
+		return this.transformBlocks(bytes, 64, roundKeys, rounds);
 	}
 
-	transformBlock(block, dest, destOffset, keys)
+	// MISTY1
+	transformBlock1(block, dest, destOffset, keys, rounds)
 	{
-		const rounds = this.options.rounds;
-
 		let [l, r] = bytesToInt32sBE(block);
 		
 		const KL = keys.kl,	KO = keys.ko, KI = keys.ki;
@@ -146,7 +172,50 @@ class MistyBaseTransform extends BlockCipherTransform
 		dest.set(int32sToBytesBE([l, r]), destOffset);
 	}
 
-	arrangeRoundKeys(keys)
+	// MISTY2
+	// TODO: I *think* this is right... We have no test vectors to test it
+	transformBlock2(block, dest, destOffset, keys, rounds)
+	{
+		let [l, r] = bytesToInt32sBE(block);
+		
+		const KL = keys.kl,	KO = keys.ko, KI = keys.ki;
+		let kl = 0,	ko = 0,	ki = 0;
+
+		for (let i = 0; i < rounds; i++)
+		{
+			if (i % 4 === 0)
+			{
+				// Round 0, 4, ...
+				l = this.FL(l, KL[kl++]);
+				r = this.FL(r, KL[kl++]);
+			}
+
+			// Round 0, 1, 2, 3, ...
+			l = FO(l, KO[ko++], KI[ki++]);
+			
+			if (i % 2 === 0)
+			{
+				// Round 0, 2, 4, ...
+				l ^= this.FL(r, KL[kl++]);
+			}
+			else
+			{
+				// Round 1, 3, 5, ...
+				l ^= r;
+			}
+			
+			[l, r] = [r, l];
+		}
+
+		l = this.FL(l, KL[kl++]);
+		r = this.FL(r, KL[kl++]);
+		
+		[l, r] = [r, l];
+		
+		dest.set(int32sToBytesBE([l, r]), destOffset);
+	}
+
+	arrangeRoundKeys(keys, rounds)
 	{
 		// MISTY's key schedule includes three key types (KL, KI, KO), each of which is picked starting from its own
 		// offset in the user key or derived key set.
@@ -155,8 +224,6 @@ class MistyBaseTransform extends BlockCipherTransform
 		// This makes the actual encryption function much more readable, and potentially increases actual
 		// encryption performance with the same key, by replacing a lot of addition and modulo
 		// operations during encryption with simple increments. It also makes decryption much simpler - see below.
-		const rounds = this.options.rounds;
-
 		const { userKeys, derivedKeys } = keys;
 		
 		const ko = [];
@@ -225,13 +292,19 @@ class MistyDecryptTransform extends MistyBaseTransform
 		this.FL = FLinv;
 	}
 
-	arrangeRoundKeys(subKeys)
+	arrangeRoundKeys(subKeys, rounds)
 	{
-		const keys = super.arrangeRoundKeys(subKeys);
+		const keys = super.arrangeRoundKeys(subKeys, rounds);
 		keys.ko.reverse();
 		keys.ki.reverse();
 		keys.kl.reverse();
 		return keys;
+	}
+
+	transformBlock2(/*block, dest, destOffset, keys, rounds*/)
+	{
+		// TODO: Implement MISTY2 decryption
+		throw new TransformError("MISTY2 decryption not yet implemented.");
 	}
 }
 

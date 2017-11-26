@@ -60,6 +60,7 @@ Supported
 * ICE
 * IDEA
 * "Iraqi"
+* KASUMI (variable rounds)
 * Khufu, Khafre (both with the actual S-boxes)
 * Kuznyechik (GOST R 34.12-2015)
 * LOKI89/91
@@ -212,7 +213,6 @@ TODO
 * Grand Cru
 * Hierocrypt
 * IDEA NXT
-* KASUMI
 * KHAZAD
 * Kalyna
 * LOKI97
