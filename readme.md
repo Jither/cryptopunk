@@ -67,6 +67,7 @@ Supported
 * Madryga
 * Magma (GOST 28147-89)
 * MARS (original AES submission and 2nd round tweak; 128-448 bit key sizes)
+* MISTY1 (variable rounds)
 * NewDES, NewDES-96
 * Nimbus
 * NOEKEON
@@ -217,7 +218,7 @@ TODO
 * LOKI97
 * MacGuffin
 * MAGENTA
-* MISTY1 / MISTY2
+* MISTY2
 * S-1
 * SAFER+ / SAFER++
 * SC2000
@@ -232,6 +233,7 @@ TODO
 * ARIA 0.8/0.9? (If vectors can be found)
 * BassOmatic
 * Chiasmus?
+* CS2-Cipher
 * Diamond2
 * FEA-M
 * HPC-1 / HPC-2

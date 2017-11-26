@@ -1,3 +1,4 @@
+import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt16sBE, bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { rolBytes } from "../../cryptopunk.bitarith";
