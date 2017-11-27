@@ -1,5 +1,6 @@
-mode    : encrypt-text
-encrypt : RotXTransform
+mode    : encrypt-decrypt-text
+encrypt : RotXEncryptTransform
+decrypt : RotXDecryptTransform
 arg     : a (alphabet)
 a-format: ascii
 c-format: ascii
@@ -23,18 +24,11 @@ option  : x = 30
 p: ABCxyz
 c: EFGbcd
 
-option  : decrypt = true
-option  : x = 3
-p: DEFabc
-c: ABCxyz
-
-option  : decrypt = true
-option  : x = 30
-p: EFGbcd
-c: ABCxyz
+# The remaining methods are two-way, so encrypt and decrypt are the same transform
 
 title   : ROT-5 test vector
 encrypt : Rot5Transform
+decrypt : Rot5Transform
 clear   : options
 
 p: 4815162342
@@ -42,6 +36,7 @@ c: 9360617897
 
 title   : ROT-47 test vector
 encrypt : Rot47Transform
+decrypt : Rot47Transform
 clear   : options
 
 p: https://www.whoismrrobot.com
@@ -52,6 +47,7 @@ c: %96 "F:4< qC@H? u@I yF>AD ~G6C %96 {2KJ s@8]
 
 title   : ROT-13 test vector
 encrypt : Rot13Transform
+decrypt : Rot13Transform
 clear   : options
 
 p: Why did the chicken cross the road? Gb trg gb gur bgure fvqr!

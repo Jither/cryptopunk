@@ -4,9 +4,12 @@ import { restoreFormatting, hasDualCaseCharacters } from "./cryptopunk.classical
 
 class RotXBaseTransform extends Transform
 {
-	constructor()
+	// The decrypt parameter is optional for base classes - it's only needed for non-symmetrical ROT variations
+	constructor(decrypt)
 	{
 		super();
+		this.decrypt = decrypt;
+
 		this.addInput("string", "Input")
 			.addOutput("string", "Output");
 	}
@@ -16,7 +19,7 @@ class RotXBaseTransform extends Transform
 		const alphabetLength = alphabet.length;
 
 		let x = this.options.x;
-		if (this.options.decrypt)
+		if (this.decrypt)
 		{
 			x = -x;
 		}
@@ -53,19 +56,34 @@ class RotXBaseTransform extends Transform
 
 class RotXTransform extends RotXBaseTransform
 {
-	constructor()
+	constructor(decrypt)
 	{
-		super();
+		super(decrypt);
 		this.addInput("string", "Alphabet")
 			.addOption("x", "X", 13)
 			.addOption("ignoreCase", "Ignore case", true)
-			.addOption("formatted", "Formatted", true)
-			.addOption("decrypt", "Decrypt", false);
+			.addOption("formatted", "Formatted", true);
 	}
 
 	transform(str, alphabet)
 	{
 		return super.transform(str, alphabet || "abcdefghijklmnopqrstuvwxyz");
+	}
+}
+
+class RotXEncryptTransform extends RotXTransform
+{
+	constructor()
+	{
+		super(false);
+	}
+}
+
+class RotXDecryptTransform extends RotXTransform
+{
+	constructor()
+	{
+		super(true);
 	}
 }
 
@@ -185,7 +203,8 @@ class Rot47Transform extends RotXBaseTransform
 }
 
 export {
-	RotXTransform,
+	RotXEncryptTransform,
+	RotXDecryptTransform,
 	Rot5Transform,
 	Rot13Transform,
 	Rot18Transform,
