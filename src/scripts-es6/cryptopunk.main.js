@@ -332,7 +332,7 @@ palette.addCategory("Classical encryption")
 	.addItem(polybius.PolybiusEncryptTransform, "PolybiusEncrypt", "Polybius", "Polybius Encrypt")
 	.addItem(railfence.RailFenceEncryptTransform, "RailFenceEncrypt", "Rail fence", "Rail fence Encrypt")
 	.addItem(rotx.RotXEncryptTransform, "RotXEnDecrypt", "ROT-X", "ROT-X Encrypt")
-	.addItem(substitution.SimpleSubstitutionTransform, "SimpleSubstitutionEncrypt", "Simple Substitution")
+	.addItem(substitution.SimpleSubstitutionTransform, "SimpleSubstitution", "Simple Substitution")
 	.addItem(skip.SkipEncryptTransform, "SkipEncrypt", "Skip", "Skip Cipher Encrypt")
 	.addItem(trifid.TrifidEncryptTransform, "TrifidEncrypt", "Trifid", "Trifid Encrypt")
 	.addItem(vigenere.VigenereEncryptTransform, "VigenereEncrypt", "Vigènere", "Vigènere Encrypt");
