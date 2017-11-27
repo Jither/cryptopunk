@@ -365,8 +365,70 @@ class DesXTransform extends DesTransform
 			dest[i] ^= postwhitening[i];
 		}
 	}
-
 }
+
+class TripleDesTransform extends BlockCipherTransform
+{
+	constructor(decrypt)
+	{
+		super(decrypt);
+		this.addOption("checkParity", "Check parity of 64-bit keys", true);
+		this.dec = new DesTransform(true);
+		this.enc = new DesTransform(false);
+	}
+
+	transform(bytes, keyBytes)
+	{
+		// Allow 2 or 3 times 56 or 64 bits:
+		this.checkBytesSize("Key", keyBytes, [112, 128, 168, 192]);
+
+		this.enc.setOption("checkParity", this.options.checkParity);
+		this.dec.setOption("checkParity", this.options.checkParity);
+		
+		const keyLength = keyBytes.length;
+		let key1, key2, key3;
+		switch (keyLength)
+		{
+			case 14: // Two keys, no parity
+				key1 = keyBytes.subarray(0, 7);
+				key2 = keyBytes.subarray(7, 14);
+				key3 = key1;
+				break;
+			case 16: // Two keys, parity
+				key1 = keyBytes.subarray(0, 8);
+				key2 = keyBytes.subarray(8, 16);
+				key3 = key1;
+				break;
+			case 21: // Three keys, no parity
+				key1 = keyBytes.subarray(0, 7);
+				key2 = keyBytes.subarray(7, 14);
+				key3 = keyBytes.subarray(14, 21);
+				break;
+			case 24: // Three keys, parity
+				key1 = keyBytes.subarray(0, 8);
+				key2 = keyBytes.subarray(8, 16);
+				key3 = keyBytes.subarray(16, 24);
+				break;
+		}
+
+		let result;
+		if (!this.decrypt)
+		{
+			result = this.enc.transform(bytes, key1);
+			result = this.dec.transform(result, key2);
+			result = this.enc.transform(result, key3);
+		}
+		else
+		{
+			result = this.dec.transform(bytes, key3);
+			result = this.enc.transform(result, key2);
+			result = this.dec.transform(result, key1);
+		}
+
+		return result;
+	}
+}
+
 
 class DesEncryptTransform extends DesTransform
 {
@@ -400,9 +462,27 @@ class DesXDecryptTransform extends DesXTransform
 	}
 }
 
+class TripleDesEncryptTransform extends TripleDesTransform
+{
+	constructor()
+	{
+		super(false);
+	}
+}
+
+class TripleDesDecryptTransform extends TripleDesTransform
+{
+	constructor()
+	{
+		super(true);
+	}
+}
+
 export {
 	DesEncryptTransform,
 	DesDecryptTransform,
 	DesXEncryptTransform,
-	DesXDecryptTransform
+	DesXDecryptTransform,
+	TripleDesEncryptTransform,
+	TripleDesDecryptTransform
 };

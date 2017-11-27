@@ -349,6 +349,7 @@ palette.addCategory("Stream ciphers")
 	.addItem(xor.XorTransform, "Xor", "XOR");
 
 palette.addCategory("Block cipher decryption")
+	.addItem(des.TripleDesDecryptTransform, "3DesDecrypt", "3DES", "3DES Decrypt")
 	.addItem(threeway.ThreeWayDecryptTransform, "ThreeWayDecrypt", "3-Way", "3-Way Decrypt")
 	.addItem(anubis.AnubisDecryptTransform, "AnubisDecrypt", "Anubis", "Anubis Decrypt")
 	.addItem(aria.AriaDecryptTransform, "AriaDecrypt", "ARIA", "ARIA Decrypt")
@@ -399,6 +400,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(xxtea.XXTeaDecryptTransform, "XXTeaDecrypt", "XXTEA", "XXTEA Decrypt");
 
 palette.addCategory("Block cipher encryption")
+	.addItem(des.TripleDesEncryptTransform, "3DesEncrypt", "3DES", "3DES Encrypt")
 	.addItem(threeway.ThreeWayEncryptTransform, "ThreeWayEncrypt", "3-Way", "3-Way Encrypt")
 	.addItem(anubis.AnubisEncryptTransform, "AnubisEncrypt", "Anubis", "Anubis Encrypt")
 	.addItem(aria.AriaEncryptTransform, "AriaEncrypt", "ARIA", "ARIA Encrypt")

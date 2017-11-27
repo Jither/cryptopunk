@@ -46,6 +46,7 @@ Supported
 
 ### Block Ciphers
 
+* 3DES
 * 3-Way
 * Anubis (128, 160, 192, 224, 256, 288 and 320 key sizes; Anubis-0 and tweak variants)
 * ARIA (128, 192 and 256 key sizes; variable rounds)
@@ -198,7 +199,6 @@ TODO
 
 ### Block Ciphers
 
-* 3DES
 * RC5, RC6 (16/64 bit word sizes)
 * Serpent-0
 * Browser-native RSA decryption
