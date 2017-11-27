@@ -185,6 +185,10 @@ class NodeController
 		}
 		else
 		{
+			if (output == null)
+			{
+				throw new Error("Node input received no value");
+			}
 			this.node.contentElement.innerText = typeof output === "string" ? toVisualControlCodes(output) : this.toHex(output);
 		}
 

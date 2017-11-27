@@ -113,7 +113,9 @@ class FrogTransform extends BlockCipherTransform
 		}
 
 		const blockLength = this.options.blockSize / 8;
-		const cacheKey = `${CACHE_PREFIX}_${bytesToHex(keyBytes)}_${this.decrypt ? "dec" : "enc" }_${blockLength}_${this.options.rounds}`;
+		const keyHex = bytesToHex(keyBytes);
+		const direction = this.decrypt ? "dec" : "enc";
+		const cacheKey = `${CACHE_PREFIX}_${keyHex}_${direction}_${blockLength}_${this.options.rounds}`;
 		const keys = cache.getOrAdd(cacheKey, () => 
 			this.generateKeys(keyBytes, blockLength, this.options.rounds)
 		);

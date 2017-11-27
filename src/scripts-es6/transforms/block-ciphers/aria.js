@@ -182,7 +182,7 @@ class AriaTransform extends BlockCipherTransform
 
 		const direction = this.decrypt ? "dec" : "enc";
 		const keyHex = bytesToHex(keyBytes);
-		const cacheKey = `${CACHE_PREFIX}_${direction}_${keyHex}_${rounds}`;
+		const cacheKey = `${CACHE_PREFIX}_${keyHex}_${direction}_${rounds}`;
 
 		const keys = cache.getOrAdd(cacheKey,
 			() => this.generateKeys(keyBytes, rounds)

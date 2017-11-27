@@ -27,6 +27,7 @@ import * as condi from "./transforms/classical/condi";
 import * as crc from "./transforms/checksums/crc";
 import * as csCipher from "./transforms/block-ciphers/cs-cipher";
 import * as cubehash from "./transforms/hashes/cubehash";
+import * as deal from "./transforms/block-ciphers/deal";
 import * as des from "./transforms/block-ciphers/des";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as endianness from "./transforms/tools/endianness";
@@ -359,6 +360,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(cast128.Cast128DecryptTransform, "Cast128Decrypt", "CAST-128", "CAST-128 Decrypt")
 	.addItem(cast256.Cast256DecryptTransform, "Cast256Decrypt", "CAST-256", "CAST-256 Decrypt")
 	.addItem(csCipher.CsCipherDecryptTransform, "CsCipherDecrypt", "CS-Cipher", "CS-Cipher Decrypt")
+	.addItem(deal.DealDecryptTransform, "DealDecrypt", "DEAL", "DEAL Decrypt")
 	.addItem(des.DesDecryptTransform, "DesDecrypt", "DES", "DES Decrypt")
 	.addItem(des.DesXDecryptTransform, "DesXDecrypt", "DES-X", "DES-X Decrypt")
 	.addItem(feal.FealDecryptTransform, "FealDecrypt", "FEAL", "FEAL Decrypt")
@@ -410,6 +412,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(cast128.Cast128EncryptTransform, "Cast128Encrypt", "CAST-128", "CAST-128 Encrypt")
 	.addItem(cast256.Cast256EncryptTransform, "Cast256Encrypt", "CAST-256", "CAST-256 Encrypt")
 	.addItem(csCipher.CsCipherEncryptTransform, "CsCipherEncrypt", "CS-Cipher", "CS-Cipher Encrypt")
+	.addItem(deal.DealEncryptTransform, "DealEncrypt", "DEAL", "DEAL Encrypt")
 	.addItem(des.DesEncryptTransform, "DesEncrypt", "DES", "DES Encrypt")
 	.addItem(des.DesXEncryptTransform, "DesXEncrypt", "DES-X", "DES-X Encrypt")
 	.addItem(feal.FealEncryptTransform, "FealEncrypt", "FEAL", "FEAL Encrypt")

@@ -54,6 +54,7 @@ Supported
 * Camellia
 * CAST-128, CAST-256
 * CS-Cipher
+* DEAL
 * DES (64 bit with parity or 56 bit without)
 * DES-X
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
@@ -207,7 +208,6 @@ TODO
 
 * BaseKing
 * CRYPTON (0.5, 1.0)
-* DEAL
 * DFC / DFCv2-128
 * E2
 * Grand Cru
