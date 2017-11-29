@@ -5,6 +5,45 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+option  : variant = v2
+
+# From: DFCv2 paper (https://link.springer.com/content/pdf/10.1007%2F3-540-44983-3_5.pdf)
+
+k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+p: 00000000 00000000 00000000 00000000
+c: 1ba5af95 aba096ed 5b6c9750 2fe7efa2
+
+k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+p: 1ba5af95 aba096ed 5b6c9750 2fe7efa2
+c: 0f36105c 1302d52a e47d6d42 dfaaf5c7
+
+k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+p: 0f36105c 1302d52a e47d6d42 dfaaf5c7
+c: bb58f671 54c59d52 fefb03a8 74c138c5
+
+k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+p: bb58f671 54c59d52 fefb03a8 74c138c5
+c: acc4cf76 6505c09f 5ffe10d5 b021d66c
+
+# TODO: Figure out a Victor syntax for these
+# k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+# p: 00000000 00000000 00000000 00000000
+# c: iterations 8 = 62395cc6 ba7bf158 f78b5897 04a1db59
+
+# k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+# p: 00000000 00000000 00000000 00000000
+# c: iterations 16 = 387c4222 c61f5e69 7946e251 eb40031a
+
+# k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+# p: 00000000 00000000 00000000 00000000
+# c: iterations 32 = 4ab38d66 16247c2a efbe6cde 4d302a86
+
+# k: 86d1bf27 5b9b241d eb64749a 47dfdfb9 6632c3eb 061b6472 bbf84c26 144e49c2
+# p: 00000000 00000000 00000000 00000000
+# c: iterations 64 = ee043b7d a8610c46 3e282198 c93887b4
+
+option  : variant = v1
+
 # From: http://www-08.nist.gov/encryption/aes/round1/testvals/dfc-vals.zip - ecb_vk.txt
 
 title   : NIST Variable Key KAT, KEYSIZE={keybits} #{index}

@@ -67,7 +67,7 @@ class TestMode
 	}
 }
 
-class EncryptMode extends TestMode
+class CipherMode extends TestMode
 {
 	get args()
 	{
@@ -77,59 +77,9 @@ class EncryptMode extends TestMode
 			c: formats.BYTES
 		};
 	}
-
-	execute(transforms, customArgDefinitions, argValues, options, settings)
+	
+	decrypt(transforms, customArgDefinitions, argValues, options, result)
 	{
-		const result = new TestResult();
-
-		const skipReason = this.checkSkip(settings, argValues);
-		if (skipReason)
-		{
-			return result.skip(skipReason);
-		}
-
-		const enc = transforms.encrypt;
-		try
-		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues);
-			enc.resetOptions();
-			if (options)
-			{
-				enc.setOptions(options);
-			}
-			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.c);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
-
-		return result;
-	}
-}
-
-class DecryptMode extends TestMode
-{
-	get args()
-	{
-		return {
-			k: formats.BYTES,
-			p: formats.BYTES,
-			c: formats.BYTES
-		};
-	}
-
-	execute(transforms, customArgDefinitions, argValues, options, settings)
-	{
-		const result = new TestResult();
-
-		const skipReason = this.checkSkip(settings, argValues);
-		if (skipReason)
-		{
-			return result.skip(skipReason);
-		}
-
 		const dec = transforms.decrypt;
 		try
 		{
@@ -146,32 +96,10 @@ class DecryptMode extends TestMode
 		{
 			result.addError(e);
 		}
-
-		return result;
-	}
-}
-
-class EncryptDecryptMode extends TestMode
-{
-	get args()
-	{
-		return {
-			k: formats.BYTES,
-			p: formats.BYTES,
-			c: formats.BYTES
-		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options, settings)
+	encrypt(transforms, customArgDefinitions, argValues, options, result)
 	{
-		const result = new TestResult();
-
-		const skipReason = this.checkSkip(settings, argValues);
-		if (skipReason)
-		{
-			return result.skip(skipReason);
-		}
-
 		const enc = transforms.encrypt;
 		try
 		{
@@ -188,29 +116,86 @@ class EncryptDecryptMode extends TestMode
 		{
 			result.addError(e);
 		}
+	}
+}
 
-		const dec = transforms.decrypt;
-		try
+class EncryptMode extends CipherMode
+{
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const skipReason = this.checkSkip(settings, argValues);
+		if (skipReason)
 		{
-			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues);
-			dec.resetOptions();
-			if (options)
-			{
-				dec.setOptions(options);
-			}
-			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.p);
+			return result.skip(skipReason);
 		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+
+		this.encrypt(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}
 }
 
-class EncryptDecryptTextMode extends TestMode
+class DecryptMode extends CipherMode
+{
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const skipReason = this.checkSkip(settings, argValues);
+		if (skipReason)
+		{
+			return result.skip(skipReason);
+		}
+
+		this.decrypt(transforms, customArgDefinitions, argValues, options, result);
+
+		return result;
+	}
+}
+
+class EncryptDecryptMode extends CipherMode
+{
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const skipReason = this.checkSkip(settings, argValues);
+		if (skipReason)
+		{
+			return result.skip(skipReason);
+		}
+
+		this.encrypt(transforms, customArgDefinitions, argValues, options, result);
+
+		this.decrypt(transforms, customArgDefinitions, argValues, options, result);
+
+		return result;
+	}
+}
+
+class DecryptEncryptMode extends CipherMode
+{
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const skipReason = this.checkSkip(settings, argValues);
+		if (skipReason)
+		{
+			return result.skip(skipReason);
+		}
+
+		this.decrypt(transforms, customArgDefinitions, argValues, options, result);
+
+		this.encrypt(transforms, customArgDefinitions, argValues, options, result);
+
+		return result;
+	}
+}
+
+class TextCipherMode extends TestMode
 {
 	get args()
 	{
@@ -221,16 +206,8 @@ class EncryptDecryptTextMode extends TestMode
 		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options, settings)
+	encrypt(transforms, customArgDefinitions, argValues, options, result)
 	{
-		const result = new TestResult();
-
-		const skipReason = this.checkSkip(settings, argValues);
-		if (skipReason)
-		{
-			return result.skip(skipReason);
-		}
-
 		const enc = transforms.encrypt;
 		try
 		{
@@ -247,7 +224,10 @@ class EncryptDecryptTextMode extends TestMode
 		{
 			result.addError(e);
 		}
+	}
 
+	decrypt(transforms, customArgDefinitions, argValues, options, result)
+	{
 		const dec = transforms.decrypt;
 		try
 		{
@@ -264,22 +244,11 @@ class EncryptDecryptTextMode extends TestMode
 		{
 			result.addError(e);
 		}
-
-		return result;
 	}
 }
 
-class DecryptEncryptMode extends TestMode
+class EncryptDecryptTextMode extends TextCipherMode
 {
-	get args()
-	{
-		return {
-			k: formats.BYTES,
-			p: formats.BYTES,
-			c: formats.BYTES
-		};
-	}
-
 	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new TestResult();
@@ -290,55 +259,16 @@ class DecryptEncryptMode extends TestMode
 			return result.skip(skipReason);
 		}
 
-		const dec = transforms.decrypt;
-		try
-		{
-			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues);
-			dec.resetOptions();
-			if (options)
-			{
-				dec.setOptions(options);
-			}
-			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.p);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+		this.encrypt(transforms, customArgDefinitions, argValues, options, result);
 
-		const enc = transforms.encrypt;
-		try
-		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues);
-			enc.resetOptions();
-			if (options)
-			{
-				enc.setOptions(options);
-			}
-			const encResult = enc.transform.apply(enc, args);
-			result.assertBytesEqual(encResult, argValues.c);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+		this.decrypt(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}
 }
 
-class EncryptTextMode extends TestMode
+class EncryptTextMode extends TextCipherMode
 {
-	get args()
-	{
-		return {
-			k: formats.TEXT,
-			p: formats.TEXT,
-			c: formats.TEXT
-		};
-	}
-
 	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new TestResult();
@@ -349,38 +279,14 @@ class EncryptTextMode extends TestMode
 			return result.skip(skipReason);
 		}
 
-		const enc = transforms.encrypt;
-		try
-		{
-			const args = this.makeArguments(["p", "k"], customArgDefinitions, argValues);
-			enc.resetOptions();
-			if (options)
-			{
-				enc.setOptions(options);
-			}
-			const encResult = enc.transform.apply(enc, args);
-			result.assertTextsEqual(encResult, argValues.c);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+		this.encrypt(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}
 }
 
-class DecryptTextMode extends TestMode
+class DecryptTextMode extends TextCipherMode
 {
-	get args()
-	{
-		return {
-			k: formats.TEXT,
-			p: formats.TEXT,
-			c: formats.TEXT
-		};
-	}
-
 	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new TestResult();
@@ -391,22 +297,7 @@ class DecryptTextMode extends TestMode
 			return result.skip(skipReason);
 		}
 
-		const dec = transforms.decrypt;
-		try
-		{
-			const args = this.makeArguments(["c", "k"], customArgDefinitions, argValues);
-			dec.resetOptions();
-			if (options)
-			{
-				dec.setOptions(options);
-			}
-			const decResult = dec.transform.apply(dec, args);
-			result.assertTextsEqual(decResult, argValues.p);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+		this.decrypt(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}
@@ -453,7 +344,7 @@ class HashMode extends TestMode
 	}
 }
 
-class EncodeDecodeTextMode extends TestMode
+class EncoderMode extends TestMode
 {
 	get args()
 	{
@@ -463,16 +354,8 @@ class EncodeDecodeTextMode extends TestMode
 		};
 	}
 
-	execute(transforms, customArgDefinitions, argValues, options, settings)
+	encode(transforms, customArgDefinitions, argValues, options, result)
 	{
-		const result = new TestResult();
-
-		const skipReason = this.checkSkip(settings, argValues);
-		if (skipReason)
-		{
-			return result.skip(skipReason);
-		}
-
 		const enc = transforms.encode;
 		try
 		{
@@ -489,7 +372,10 @@ class EncodeDecodeTextMode extends TestMode
 		{
 			result.addError(e);
 		}
+	}
 
+	decode(transforms, customArgDefinitions, argValues, options, result)
+	{
 		const dec = transforms.decode;
 		try
 		{
@@ -506,21 +392,11 @@ class EncodeDecodeTextMode extends TestMode
 		{
 			result.addError(e);
 		}
-
-		return result;
 	}
 }
 
-class EncodeTextMode extends TestMode
+class EncodeDecodeTextMode extends EncoderMode
 {
-	get args()
-	{
-		return {
-			t: formats.TEXT,
-			b: formats.BYTES
-		};
-	}
-
 	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new TestResult();
@@ -531,37 +407,16 @@ class EncodeTextMode extends TestMode
 			return result.skip(skipReason);
 		}
 
-		const enc = transforms.encode;
-		try
-		{
-			const args = this.makeArguments(["b"], customArgDefinitions, argValues);
-			enc.resetOptions();
-			if (options)
-			{
-				enc.setOptions(options);
-			}
-			const encResult = enc.transform.apply(enc, args);
-			result.assertTextsEqual(encResult, argValues.t);
-		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+		this.encode(transforms, customArgDefinitions, argValues, options, result);
+
+		this.decode(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}
 }
 
-class DecodeTextMode extends TestMode
+class EncodeTextMode extends EncoderMode
 {
-	get args()
-	{
-		return {
-			t: formats.TEXT,
-			b: formats.BYTES
-		};
-	}
-
 	execute(transforms, customArgDefinitions, argValues, options, settings)
 	{
 		const result = new TestResult();
@@ -572,22 +427,25 @@ class DecodeTextMode extends TestMode
 			return result.skip(skipReason);
 		}
 
-		const dec = transforms.decode;
-		try
+		this.encode(transforms, customArgDefinitions, argValues, options, result);
+
+		return result;
+	}
+}
+
+class DecodeTextMode extends EncoderMode
+{
+	execute(transforms, customArgDefinitions, argValues, options, settings)
+	{
+		const result = new TestResult();
+
+		const skipReason = this.checkSkip(settings, argValues);
+		if (skipReason)
 		{
-			const args = this.makeArguments(["t"], customArgDefinitions, argValues);
-			dec.resetOptions();
-			if (options)
-			{
-				dec.setOptions(options);
-			}
-			const decResult = dec.transform.apply(dec, args);
-			result.assertBytesEqual(decResult, argValues.b);
+			return result.skip(skipReason);
 		}
-		catch (e)
-		{
-			result.addError(e);
-		}
+
+		this.decode(transforms, customArgDefinitions, argValues, options, result);
 
 		return result;
 	}

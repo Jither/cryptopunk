@@ -1052,6 +1052,37 @@ function bigint(value, radix = 10)
 	return value;
 }
 
+bigint.fromInt32sBE = function(...rest)
+{
+	if (Array.isArray(rest[0]))
+	{
+		rest = rest[0];
+	}
+	const value = [];
+
+	let part = 0;
+	let partBytes = 0;
+	for (let i = rest.length - 1; i >= 0; i--)
+	{
+		let word = rest[i];
+		for (let j = 0; j < 4; j++)
+		{
+			part |= (word & 0xff) << (partBytes * 8);
+			word >>>= 8;
+			partBytes++;
+			if (partBytes === 3)
+			{
+				value.push(part);
+				part = 0;
+				partBytes = 0;
+			}
+		}
+	}
+	value.push(part);
+
+	return new BigInteger(trimArray(Uint32Array.from(value)));
+};
+
 function parseString(value, radix)
 {
 	value = value.replace(/[.,_ ]/g, "");

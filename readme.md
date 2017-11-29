@@ -57,7 +57,7 @@ Supported
 * DEAL
 * DES (64 bit with parity or 56 bit without)
 * DES-X
-* DFC
+* DFC, DFCv2 (128 bit block size)
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
 * FROG (40-1000 bit key sizes; 64-1024 bit block sizes; variable rounds)
 * ICE
@@ -209,7 +209,6 @@ TODO
 
 * BaseKing
 * CRYPTON (0.5, 1.0)
-* DFCv2-128
 * E2
 * Grand Cru
 * Hierocrypt
