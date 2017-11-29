@@ -5,6 +5,12 @@ k-format: hex
 p-format: hex
 c-format: hex
 
+# From http://www.users.zetnet.co.uk/hopwood/crypto/scan/cs.html#IDEA (SCAN entry)
+
+k: 00000000000000000000000000000000
+p: 0000000000000000
+c: 0001000100000000
+
 # From: https://www.cosic.esat.kuleuven.be/nessie/testvectors/bc/idea/Idea-128-64.verified.test-vectors
 
 title: NESSIE Set 1

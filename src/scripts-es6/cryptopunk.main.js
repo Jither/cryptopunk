@@ -29,6 +29,7 @@ import * as csCipher from "./transforms/block-ciphers/cs-cipher";
 import * as cubehash from "./transforms/hashes/cubehash";
 import * as deal from "./transforms/block-ciphers/deal";
 import * as des from "./transforms/block-ciphers/des";
+import * as dfc from "./transforms/block-ciphers/dfc";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as endianness from "./transforms/tools/endianness";
 import * as enigma from "./transforms/mechanical/enigma";
@@ -363,6 +364,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(deal.DealDecryptTransform, "DealDecrypt", "DEAL", "DEAL Decrypt")
 	.addItem(des.DesDecryptTransform, "DesDecrypt", "DES", "DES Decrypt")
 	.addItem(des.DesXDecryptTransform, "DesXDecrypt", "DES-X", "DES-X Decrypt")
+	.addItem(dfc.DfcDecryptTransform, "DfcDecryptTransform", "DFC", "DFC Decrypt")
 	.addItem(feal.FealDecryptTransform, "FealDecrypt", "FEAL", "FEAL Decrypt")
 	.addItem(frog.FrogDecryptTransform, "FrogDecrypt", "FROG", "FROG Decrypt")
 	.addItem(ice.IceDecryptTransform, "IceDecrypt", "ICE", "ICE Decrypt")
@@ -415,6 +417,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(deal.DealEncryptTransform, "DealEncrypt", "DEAL", "DEAL Encrypt")
 	.addItem(des.DesEncryptTransform, "DesEncrypt", "DES", "DES Encrypt")
 	.addItem(des.DesXEncryptTransform, "DesXEncrypt", "DES-X", "DES-X Encrypt")
+	.addItem(dfc.DfcEncryptTransform, "DfcEncryptTransform", "DFC", "DFC Encrypt")
 	.addItem(feal.FealEncryptTransform, "FealEncrypt", "FEAL", "FEAL Encrypt")
 	.addItem(frog.FrogEncryptTransform, "FrogEncrypt", "FROG", "FROG Encrypt")
 	.addItem(ice.IceEncryptTransform, "IceEncrypt", "ICE", "ICE Encrypt")

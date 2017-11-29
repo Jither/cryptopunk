@@ -98,8 +98,12 @@ function int32sToHex(ints)
 	return result;
 }
 
-function int64ToHex(int)
+function int64ToHex(int, noSeparator)
 {
+	if (noSeparator)
+	{
+		return int32ToHex(int.hi) + int32ToHex(int.lo);
+	}
 	return int32ToHex(int.hi) + "-" + int32ToHex(int.lo);
 }
 

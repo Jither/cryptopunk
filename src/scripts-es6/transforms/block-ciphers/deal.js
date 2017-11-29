@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { DesEncryptTransform, DesDecryptTransform } from "./des";
+import { DesEncryptTransform } from "./des";
 import { xorBytes } from "../../cryptopunk.bitarith";
 import cache from "../../cryptopunk.cache";
 import { bytesToHex } from "../../cryptopunk.utils";
