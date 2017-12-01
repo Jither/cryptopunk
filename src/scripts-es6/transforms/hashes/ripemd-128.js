@@ -1,19 +1,20 @@
-import { MdHashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform } from "./hash";
+import { ROOTS, INIT } from "../shared/constants";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
 // RIPEMD-160 vs 128: Last constant, left and right are simply left out
 const K_LEFT = [
 	0x00000000,
-	CONSTANTS.SQRT2_DIV4,
-	CONSTANTS.SQRT3_DIV4,
-	CONSTANTS.SQRT5_DIV4
+	ROOTS.SQRT2_DIV4,
+	ROOTS.SQRT3_DIV4,
+	ROOTS.SQRT5_DIV4
 ];
 
 const K_RIGHT = [
-	CONSTANTS.CBRT2_DIV4,
-	CONSTANTS.CBRT3_DIV4,
-	CONSTANTS.CBRT5_DIV4,
+	ROOTS.CBRT2_DIV4,
+	ROOTS.CBRT3_DIV4,
+	ROOTS.CBRT5_DIV4,
 	0x00000000
 ];
 
@@ -85,15 +86,15 @@ class RipeMd128Transform extends MdHashTransform
 	getIV()
 	{
 		return [
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10,
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10,
 			// Same:
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10
 		];
 	}
 
@@ -189,15 +190,15 @@ class RipeMd256Transform extends RipeMd128Transform
 	getIV()
 	{
 		return [
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10,
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10,
 
-			CONSTANTS.INIT_1_76,
-			CONSTANTS.INIT_2_FE,
-			CONSTANTS.INIT_3_89,
-			CONSTANTS.INIT_4_01,
+			INIT._1_76,
+			INIT._2_FE,
+			INIT._3_89,
+			INIT._4_01,
 		];
 	}
 }

@@ -1,4 +1,5 @@
-import { HashTransform, CONSTANTS } from "./hash";
+import { HashTransform } from "./hash";
+import { ROOTS } from "../shared/constants";
 import { TransformError } from "../transforms";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
@@ -49,14 +50,14 @@ class Blake2sTransform extends HashTransform
 	{
 		// Same constants as SHA-256
 		return [
-			CONSTANTS.SQRT2, 
-			CONSTANTS.SQRT3, 
-			CONSTANTS.SQRT5, 
-			CONSTANTS.SQRT7, 
-			CONSTANTS.SQRT11, 
-			CONSTANTS.SQRT13, 
-			CONSTANTS.SQRT17, 
-			CONSTANTS.SQRT19
+			ROOTS.SQRT2, 
+			ROOTS.SQRT3, 
+			ROOTS.SQRT5, 
+			ROOTS.SQRT7, 
+			ROOTS.SQRT11, 
+			ROOTS.SQRT13, 
+			ROOTS.SQRT17, 
+			ROOTS.SQRT19
 		];
 	}
 

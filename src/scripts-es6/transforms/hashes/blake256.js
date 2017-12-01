@@ -1,4 +1,5 @@
-import { MdHashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform } from "./hash";
+import { ROOTS } from "../shared/constants";
 import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
 import { add, ror } from "../../cryptopunk.bitarith";
 import { SIGMA } from "./blake_shared";
@@ -36,14 +37,14 @@ class Blake256Transform extends MdHashTransform
 	{
 		// Same constants as SHA-256
 		return [
-			CONSTANTS.SQRT2, 
-			CONSTANTS.SQRT3, 
-			CONSTANTS.SQRT5, 
-			CONSTANTS.SQRT7, 
-			CONSTANTS.SQRT11, 
-			CONSTANTS.SQRT13, 
-			CONSTANTS.SQRT17, 
-			CONSTANTS.SQRT19
+			ROOTS.SQRT2, 
+			ROOTS.SQRT3, 
+			ROOTS.SQRT5, 
+			ROOTS.SQRT7, 
+			ROOTS.SQRT11, 
+			ROOTS.SQRT13, 
+			ROOTS.SQRT17, 
+			ROOTS.SQRT19
 		];
 	}
 
@@ -153,14 +154,14 @@ class Blake224Transform extends Blake256Transform
 	{
 		// Same constants as SHA-224
 		return [
-			CONSTANTS.SQRT23,
-			CONSTANTS.SQRT29,
-			CONSTANTS.SQRT31,
-			CONSTANTS.SQRT37,
-			CONSTANTS.SQRT41,
-			CONSTANTS.SQRT43,
-			CONSTANTS.SQRT47,
-			CONSTANTS.SQRT53
+			ROOTS.SQRT23,
+			ROOTS.SQRT29,
+			ROOTS.SQRT31,
+			ROOTS.SQRT37,
+			ROOTS.SQRT41,
+			ROOTS.SQRT43,
+			ROOTS.SQRT47,
+			ROOTS.SQRT53
 		];
 	}
 }

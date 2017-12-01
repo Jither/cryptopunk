@@ -2,6 +2,26 @@ import { BlockCipherTransform } from "./block-cipher";
 
 const ROUNDS = 8;
 
+function add(a, b)
+{
+	return (a + b) & 0xffff;
+}
+
+function addInv(x)
+{
+	return (0x10000 - x) & 0xffff;
+}
+
+function mul(a, b)
+{
+	const r = a * b;
+	if (r === 0)
+	{
+		return (1 - a - b) & 0xffff;
+	}
+	return (r % 0x10001) & 0xffff;
+}
+
 function mulInv(x)
 {
 	if (x <= 1)
@@ -29,26 +49,6 @@ function mulInv(x)
 	}
 }
 
-function add(a, b)
-{
-	return (a + b) & 0xffff;
-}
-
-function addInv(x)
-{
-	return (0x10000 - x) & 0xffff;
-}
-
-function mul(a, b)
-{
-	const r = a * b;
-	if (r === 0)
-	{
-		return (1 - a - b) & 0xffff;
-	}
-	return (r % 0x10001) & 0xffff;
-}
-
 class IdeaTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
@@ -61,11 +61,6 @@ class IdeaTransform extends BlockCipherTransform
 		this.checkBytesSize("Key", keyBytes, 128);
 
 		let subKeys = this.generateSubKeys(keyBytes);
-
-		if (this.decrypt)
-		{
-			subKeys = this.invertSubKeys(subKeys);
-		}
 
 		return this.transformBlocks(bytes, 64, subKeys);
 	}
@@ -111,32 +106,6 @@ class IdeaTransform extends BlockCipherTransform
 		dest[destIndex++] = r3 & 0xff;
 	}
 
-	invertSubKeys(subKeys)
-	{
-		const result = [];
-		let p = 0;
-		let i = ROUNDS * 6;
-		result[i + 0] = mulInv(subKeys[p++]);
-		result[i + 1] = addInv(subKeys[p++]);
-		result[i + 2] = addInv(subKeys[p++]);
-		result[i + 3] = mulInv(subKeys[p++]);
-
-		for (let r = ROUNDS - 1; r >= 0; r--)
-		{
-			i = r * 6;
-			const m = r > 0 ? 2 : 1;
-			const n = r > 0 ? 1 : 2;
-			result[i + 4] = subKeys[p++];
-			result[i + 5] = subKeys[p++];
-			result[i    ] = mulInv(subKeys[p++]);
-			result[i + m] = addInv(subKeys[p++]);
-			result[i + n] = addInv(subKeys[p++]);
-			result[i + 3] = mulInv(subKeys[p++]);
-		}
-
-		return result;
-	}
-
 	generateSubKeys(keyBytes)
 	{
 		const result = new Array(ROUNDS * 6 + 4);
@@ -167,6 +136,38 @@ class IdeaDecryptTransform extends IdeaTransform
 	constructor()
 	{
 		super(true);
+	}
+
+	generateSubKeys(keyBytes)
+	{
+		const subKeys = super.generateSubKeys(keyBytes);
+		return this.invertSubKeys(subKeys);
+	}
+
+	invertSubKeys(subKeys)
+	{
+		const result = [];
+		let p = 0;
+		let i = ROUNDS * 6;
+		result[i + 0] = mulInv(subKeys[p++]);
+		result[i + 1] = addInv(subKeys[p++]);
+		result[i + 2] = addInv(subKeys[p++]);
+		result[i + 3] = mulInv(subKeys[p++]);
+
+		for (let r = ROUNDS - 1; r >= 0; r--)
+		{
+			i = r * 6;
+			const m = r > 0 ? 2 : 1;
+			const n = r > 0 ? 1 : 2;
+			result[i + 4] = subKeys[p++];
+			result[i + 5] = subKeys[p++];
+			result[i    ] = mulInv(subKeys[p++]);
+			result[i + m] = addInv(subKeys[p++]);
+			result[i + n] = addInv(subKeys[p++]);
+			result[i + 3] = mulInv(subKeys[p++]);
+		}
+
+		return result;
 	}
 }
 

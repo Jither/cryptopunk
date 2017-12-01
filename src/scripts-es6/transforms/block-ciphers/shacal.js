@@ -2,7 +2,7 @@ import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { add, rol, ror, sub } from "../../cryptopunk.bitarith";
-import { CONSTANTS } from "../hashes/hash";
+import { ROOTS, INIT } from "../shared/constants";
 
 // SHACAL is SHA-1 and SHA-2 hash functions used for encryption.
 // For completion's sake, although not part of the specification, SHA-0 ("SHACAL-0") is included.
@@ -17,10 +17,10 @@ const VARIANT_VALUES = [
 ];
 
 const K_SHA1 = [
-	CONSTANTS.SQRT2_DIV4,
-	CONSTANTS.SQRT3_DIV4,
-	CONSTANTS.SQRT5_DIV4,
-	CONSTANTS.SQRT10_DIV4
+	ROOTS.SQRT2_DIV4,
+	ROOTS.SQRT3_DIV4,
+	ROOTS.SQRT5_DIV4,
+	ROOTS.SQRT10_DIV4
 ];
 
 const K_SHA2 = [

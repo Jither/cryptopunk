@@ -1,17 +1,18 @@
-import { MdHashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform } from "./hash";
+import { ROOTS, INIT } from "../shared/constants";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
 const K_LEFT = [
 	0x00000000,
-	CONSTANTS.SQRT2_DIV4,
-	CONSTANTS.SQRT3_DIV4
+	ROOTS.SQRT2_DIV4,
+	ROOTS.SQRT3_DIV4
 ];
 
 const K_RIGHT = [
-	CONSTANTS.CBRT2_DIV4,
+	ROOTS.CBRT2_DIV4,
 	0x00000000,
-	CONSTANTS.CBRT3_DIV4
+	ROOTS.CBRT3_DIV4
 ];
 
 const R = [
@@ -58,10 +59,10 @@ class RipeMdTransform extends MdHashTransform
 	transform(bytes)
 	{
 		const state = [
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10
 		];
 
 		this.transformBlocks(bytes, state);

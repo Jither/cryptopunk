@@ -1,4 +1,5 @@
-import { MdHashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform } from "./hash";
+import { ROOTS, INIT } from "../shared/constants";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -7,9 +8,9 @@ import { add, rol } from "../../cryptopunk.bitarith";
 // HAS-160 vs SHA-1: slightly different round constants (basically "shifted 1 right")
 const K = [
 	0x00000000,
-	CONSTANTS.SQRT2_DIV4,
-	CONSTANTS.SQRT3_DIV4,
-	CONSTANTS.SQRT5_DIV4
+	ROOTS.SQRT2_DIV4,
+	ROOTS.SQRT3_DIV4,
+	ROOTS.SQRT5_DIV4
 ];
 
 function f(a, b, c, d, e, x, t, rot)
@@ -79,11 +80,11 @@ class Has160Transform extends MdHashTransform
 	transform(bytes)
 	{
 		const state = [
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10,
-			CONSTANTS.INIT_5_C3
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10,
+			INIT._5_C3
 		];
 
 		this.transformBlocks(bytes, state);
