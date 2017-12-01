@@ -1,4 +1,5 @@
-import { MdHashTransform, CONSTANTS } from "./hash";
+import { MdHashTransform } from "./hash";
+import { ROOTS, INIT } from "../shared/constants";
 import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
@@ -26,12 +27,12 @@ function f(a, b, c, d, x, s)
 
 function g(a, b, c, d, x, s)
 {
-	return addrol((b & c) | (b & d) | (c & d), a, x, s, CONSTANTS.SQRT2_DIV4);
+	return addrol((b & c) | (b & d) | (c & d), a, x, s, ROOTS.SQRT2_DIV4);
 }
 
 function h(a, b, c, d, x, s)
 {
-	return addrol(b ^ c ^ d, a, x, s, CONSTANTS.SQRT3_DIV4);
+	return addrol(b ^ c ^ d, a, x, s, ROOTS.SQRT3_DIV4);
 }
 
 const OPS = [f, g, h];
@@ -46,10 +47,10 @@ class Md4Transform extends MdHashTransform
 	transform(bytes)
 	{
 		const state = [
-			CONSTANTS.INIT_1_67,
-			CONSTANTS.INIT_2_EF,
-			CONSTANTS.INIT_3_98,
-			CONSTANTS.INIT_4_10
+			INIT._1_67,
+			INIT._2_EF,
+			INIT._3_98,
+			INIT._4_10
 		];
 
 		this.transformBlocks(bytes, state);

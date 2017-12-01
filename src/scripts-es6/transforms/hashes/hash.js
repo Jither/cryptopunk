@@ -1,50 +1,5 @@
 import { Transform, TransformError } from "../transforms";
 
-const CONSTANTS = {
-	SQRT2_DIV4:  0x5a827999, // 2^^30 * SQRT(2)
-	SQRT3_DIV4:  0x6ed9eba1, // 2^^30 * SQRT(3)
-	SQRT5_DIV4:  0x8f1bbcdc, // 2^^30 * SQRT(5)
-	SQRT7_DIV4:  0xa953fd4e, // 2^^30 * SQRT(7)
-	SQRT10_DIV4: 0xca62c1d6, // 2^^30 * SQRT(10)
-
-	// First 32 bits of the fractions of the first 8 prime numbers:
-	SQRT2:       0x6a09e667, // 2^^32 * SQRT(FRAC(2))
-	SQRT3:       0xbb67ae85, 
-	SQRT5:       0x3c6ef372, 
-	SQRT7:       0xa54ff53a, 
-	SQRT11:      0x510e527f, 
-	SQRT13:      0x9b05688c, 
-	SQRT17:      0x1f83d9ab,
-	SQRT19:      0x5be0cd19,
-
-	// First 32 bits of the fractions of the 9th to 16th prime numbers:
-	SQRT23:      0xc1059ed8, // 2^^32 * SQRT(FRAC(23))
-	SQRT29:      0x367cd507, 
-	SQRT31: 	 0x3070dd17, 
-	SQRT37:      0xf70e5939,
-	SQRT41:      0xffc00b31, 
-	SQRT43:      0x68581511, 
-	SQRT47:      0x64f98fa7, 
-	SQRT53:      0xbefa4fa4,
-
-	CBRT2_DIV4:  0x50a28be6, // 2^^30 * CBRT(2)
-	CBRT3_DIV4:  0x5c4dd124, // 2^^30 * CBRT(3)
-	CBRT5_DIV4:  0x6d703ef3, // 2^^30 * CBRT(5)
-	CBRT7_DIV4:  0x7a6d76e9, // 2^^30 * CBRT(7)
-
-	INIT_1_67 :  0x67452301, // Little Endian 01234567
-	INIT_2_EF :  0xefcdab89, // Little Endian 89abcdef
-	INIT_3_98 :  0x98badcfe, // Little Endian fedcba98
-	INIT_4_10 :  0x10325476, // Little Endian 76543210
-	INIT_5_C3 :  0xc3d2e1f0, // cdef 3210 interleaved
-
-	INIT_1_76 :  0x76543210, // Big Endian version of INIT_4
-	INIT_2_FE :  0xfedcba98, // Big Endian version of INIT_3
-	INIT_3_89 :  0x89abcdef, // Big Endian version of INIT_2
-	INIT_4_01 :  0x01234567, // Big Endian version of INIT_1
-	INIT_5_3C :  0x3c2d1e0f  // Nibbles switched version of INIT_5
-};
-
 class HashTransform extends Transform
 {
 	constructor()
@@ -189,6 +144,5 @@ class MdHashTransform extends HashTransform
 
 export {
 	MdHashTransform,
-	HashTransform,
-	CONSTANTS
+	HashTransform
 };
