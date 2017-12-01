@@ -56,6 +56,7 @@ import * as letterNumber from "./transforms/classical/letter-number";
 import * as loki from "./transforms/block-ciphers/loki";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
 import * as madryga from "./transforms/block-ciphers/madryga";
+import * as magenta from "./transforms/block-ciphers/magenta";
 import * as magma from "./transforms/block-ciphers/magma";
 import * as mars from "./transforms/block-ciphers/mars";
 import * as md2 from "./transforms/hashes/md2";
@@ -377,6 +378,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(loki.LokiDecryptTransform, "LokiDecrypt", "LOKI", "LOKI Decrypt")
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
 	.addItem(madryga.MadrygaDecryptTransform, "MadrygaDecrypt", "Madryga", "Madryga Decrypt")
+	.addItem(magenta.MagentaDecryptTransform, "MagentaDecrypt", "MAGENTA", "MAGENTA Decrypt")
 	.addItem(magma.MagmaDecryptTransform, "MagmaDecrypt", "Magma (GOST)", "Magma (GOST) Decrypt")
 	.addItem(mars.MarsDecryptTransform, "MarsDecrypt", "MARS", "MARS Decrypt")
 	.addItem(misty.MistyDecryptTransform, "MistyDecrypt", "MISTY", "MISTY Decrypt")
@@ -430,6 +432,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(loki.LokiEncryptTransform, "LokiEncrypt", "LOKI", "LOKI Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
 	.addItem(madryga.MadrygaEncryptTransform, "MadrygaEncrypt", "Madryga", "Madryga Encrypt")
+	.addItem(magenta.MagentaEncryptTransform, "MagentaEncrypt", "MAGENTA", "MAGENTA Encrypt")
 	.addItem(magma.MagmaEncryptTransform, "MagmaEncrypt", "Magma (GOST)", "Magma (GOST) Encrypt")
 	.addItem(mars.MarsEncryptTransform, "MarsEncrypt", "MARS", "MARS Encrypt")
 	.addItem(misty.MistyEncryptTransform, "MistyEncrypt", "MISTY", "MISTY Encrypt")

@@ -69,6 +69,7 @@ Supported
 * LOKI89/91
 * LUCIFER (Sorkin and Outerbridge variants)
 * Madryga
+* MAGENTA
 * Magma (GOST 28147-89)
 * MARS (original AES submission and 2nd round tweak; 128-448 bit key sizes)
 * MISTY1 (variable rounds)
@@ -217,7 +218,6 @@ TODO
 * Kalyna
 * LOKI97
 * MacGuffin
-* MAGENTA
 * MISTY2
 * S-1
 * SAFER+ / SAFER++
