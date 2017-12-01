@@ -54,6 +54,7 @@ import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
 import * as letterNumber from "./transforms/classical/letter-number";
 import * as loki from "./transforms/block-ciphers/loki";
+import * as loki97 from "./transforms/block-ciphers/loki97";
 import * as lucifer from "./transforms/block-ciphers/lucifer";
 import * as madryga from "./transforms/block-ciphers/madryga";
 import * as magenta from "./transforms/block-ciphers/magenta";
@@ -376,6 +377,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(khufu.KhufuDecryptTransform, "KhufuDecrypt", "Khufu", "Khufu Decrypt")
 	.addItem(kuznyechik.KuznyechikDecryptTransform, "KuznyechikDecrypt", "Kuznyechik", "Kuznyechik Decrypt")
 	.addItem(loki.LokiDecryptTransform, "LokiDecrypt", "LOKI", "LOKI Decrypt")
+	.addItem(loki97.Loki97DecryptTransform, "Loki97Decrypt", "LOKI97", "LOKI97 Decrypt")	
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
 	.addItem(madryga.MadrygaDecryptTransform, "MadrygaDecrypt", "Madryga", "Madryga Decrypt")
 	.addItem(magenta.MagentaDecryptTransform, "MagentaDecrypt", "MAGENTA", "MAGENTA Decrypt")
@@ -430,6 +432,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(khufu.KhufuEncryptTransform, "KhufuEncrypt", "Khufu", "Khufu Encrypt")
 	.addItem(kuznyechik.KuznyechikEncryptTransform, "KuznyechikEncrypt", "Kuznyechik", "Kuznyechik Encrypt")
 	.addItem(loki.LokiEncryptTransform, "LokiEncrypt", "LOKI", "LOKI Encrypt")
+	.addItem(loki97.Loki97EncryptTransform, "Loki97Encrypt", "LOKI97", "LOKI97 Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
 	.addItem(madryga.MadrygaEncryptTransform, "MadrygaEncrypt", "Madryga", "Madryga Encrypt")
 	.addItem(magenta.MagentaEncryptTransform, "MagentaEncrypt", "MAGENTA", "MAGENTA Encrypt")

@@ -67,6 +67,7 @@ Supported
 * Khufu, Khafre (both with the actual S-boxes)
 * Kuznyechik (GOST R 34.12-2015)
 * LOKI89/91
+* LOKI97
 * LUCIFER (Sorkin and Outerbridge variants)
 * Madryga
 * MAGENTA
@@ -216,7 +217,6 @@ TODO
 * IDEA NXT
 * KHAZAD
 * Kalyna
-* LOKI97
 * MacGuffin
 * MISTY2
 * S-1
