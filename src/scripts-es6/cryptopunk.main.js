@@ -99,6 +99,7 @@ import * as skip from "./transforms/classical/skip";
 import * as skipjack from "./transforms/block-ciphers/skipjack";
 import * as snefru from "./transforms/hashes/snefru";
 import * as speck from "./transforms/block-ciphers/speck";
+import * as speed from "./transforms/block-ciphers/speed";
 import * as square from "./transforms/block-ciphers/square";
 import * as stringManipulation from "./transforms/tools/string-manipulation";
 import * as substitution from "./transforms/classical/simple-substitution";
@@ -400,6 +401,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(simon.SimonDecryptTransform, "SimonDecrypt", "Simon", "Simon Decrypt")
 	.addItem(skipjack.SkipjackDecryptTransform, "SkipjackDecrypt", "Skipjack", "Skipjack Decrypt")
 	.addItem(speck.SpeckDecryptTransform, "SpeckDecrypt", "Speck", "Speck Decrypt")
+	.addItem(speed.SpeedDecryptTransform, "SpeedDecrypt", "SPEED", "SPEED Decrypt")
 	.addItem(square.SquareDecryptTransform, "SquareDecrypt", "SQUARE", "SQUARE Decrypt")
 	.addItem(tea.TeaDecryptTransform, "TeaDecrypt", "TEA", "TEA Decrypt")
 	.addItem(threefish.ThreefishDecryptTransform, "ThreefishDecrypt", "Threefish", "Threefish Decrypt")
@@ -455,6 +457,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(skipjack.SkipjackEncryptTransform, "SkipjackEncrypt", "Skipjack", "Skipjack Encrypt")
 	.addItem(simon.SimonEncryptTransform, "SimonEncrypt", "Simon", "Simon Encrypt")
 	.addItem(speck.SpeckEncryptTransform, "SpeckEncrypt", "Speck", "Speck Encrypt")
+	.addItem(speed.SpeedEncryptTransform, "SpeedEncrypt", "SPEED", "SPEED Encrypt")
 	.addItem(square.SquareEncryptTransform, "SquareEncrypt", "SQUARE", "SQUARE Encrypt")
 	.addItem(tea.TeaEncryptTransform, "TeaEncrypt", "TEA", "TEA Encrypt")
 	.addItem(threefish.ThreefishEncryptTransform, "ThreefishEncrypt", "Threefish", "Threefish Encrypt")

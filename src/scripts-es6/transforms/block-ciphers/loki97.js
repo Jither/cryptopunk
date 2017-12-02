@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt64sBE, int64sToBytesBE, bytesToHex } from "../../cryptopunk.utils";
+import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
 import { xor64, add64, mul64, shr64, or64, ZERO_64, sub64 } from "../../cryptopunk.bitarith";
 
 // (SQRT(5) - 1) * 2^63

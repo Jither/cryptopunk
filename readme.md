@@ -90,6 +90,7 @@ Supported
 * Simon
 * Skipjack (including NESSIE variant)
 * Speck
+* SPEED (64, 128 and 256 bit block sizes; 48-256 bit key sizes; variable rounds)
 * SQUARE
 * TEA, XTEA, Block TEA, XXTEA (big and little endian variants)
 * Threefish (1.1, 1.2 and 1.3 variants)
@@ -224,7 +225,6 @@ TODO
 * SC2000
 * SEED
 * Shark-A
-* SPEED
 * Unicorn-A, Unicorn-E
 
 #### Third priority
