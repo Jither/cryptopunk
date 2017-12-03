@@ -154,14 +154,14 @@ class Blake224Transform extends Blake256Transform
 	{
 		// Same constants as SHA-224
 		return [
-			ROOTS.SQRT23,
-			ROOTS.SQRT29,
-			ROOTS.SQRT31,
-			ROOTS.SQRT37,
-			ROOTS.SQRT41,
-			ROOTS.SQRT43,
-			ROOTS.SQRT47,
-			ROOTS.SQRT53
+			ROOTS.SQRT23_2,
+			ROOTS.SQRT29_2,
+			ROOTS.SQRT31_2,
+			ROOTS.SQRT37_2,
+			ROOTS.SQRT41_2,
+			ROOTS.SQRT43_2,
+			ROOTS.SQRT47_2,
+			ROOTS.SQRT53_2
 		];
 	}
 }

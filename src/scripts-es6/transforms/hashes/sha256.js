@@ -109,7 +109,7 @@ class Sha224Transform extends Sha256Transform
 	getIV()
 	{
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
-		// For SHA-224: The first 32 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.
+		// For SHA-224: The *second* 32 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.
 		return [
 			ROOTS.SQRT23,
 			ROOTS.SQRT29,

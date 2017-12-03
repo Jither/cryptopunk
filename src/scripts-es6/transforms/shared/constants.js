@@ -36,16 +36,17 @@ export const ROOTS = {
 	SQRT13      : 0x9b05688c, 
 	SQRT17      : 0x1f83d9ab,
 	SQRT19      : 0x5be0cd19,
+	SQRT23 		: 0xcbbb9d5d,
 
-	// First 32 bits of the fractions of the square roots of the 9th to 16th prime numbers:
-	SQRT23      : 0xc1059ed8, // 2^32 * SQRT(FRAC(23))
-	SQRT29      : 0x367cd507, 
-	SQRT31      : 0x3070dd17, 
-	SQRT37      : 0xf70e5939,
-	SQRT41      : 0xffc00b31, 
-	SQRT43      : 0x68581511, 
-	SQRT47      : 0x64f98fa7, 
-	SQRT53      : 0xbefa4fa4,
+	// *Second* 32 bits of the fractions of the square roots of the 9th to 16th prime numbers:
+	SQRT23_2    : 0xc1059ed8, // 2^64 * SQRT(FRAC(23)) % 2^32
+	SQRT29_2    : 0x367cd507, 
+	SQRT31_2    : 0x3070dd17, 
+	SQRT37_2    : 0xf70e5939,
+	SQRT41_2    : 0xffc00b31, 
+	SQRT43_2    : 0x68581511, 
+	SQRT47_2    : 0x64f98fa7, 
+	SQRT53_2    : 0xbefa4fa4,
 
 	// First 32 bits of the fractions of the cube roots of the first 4 prime numbers
 	CBRT2_DIV4  :  0x50a28be6, // 2^30 * CBRT(2)

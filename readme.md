@@ -53,6 +53,7 @@ Supported
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
+* Crypton (0.5)
 * CS-Cipher
 * DEAL
 * DES (64 bit with parity or 56 bit without)
@@ -211,7 +212,7 @@ TODO
 #### Second priority
 
 * BaseKing
-* CRYPTON (0.5, 1.0)
+* CRYPTON 1.0
 * E2
 * Grand Cru
 * Hierocrypt
