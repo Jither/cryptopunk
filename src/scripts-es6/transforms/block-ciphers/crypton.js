@@ -1,6 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { ROOTS } from "../shared/constants";
-import { bytesToInt32sLE, int32sToBytesLE, bytesToHex, int32sToHex } from "../../cryptopunk.utils";
+import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { rol } from "../../cryptopunk.bitarith";
 
 const VARIANT_VALUES = [

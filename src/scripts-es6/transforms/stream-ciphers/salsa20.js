@@ -1,6 +1,5 @@
-import { TransformError } from "../transforms";
 import { StreamCipherTransform } from "./stream-cipher";
-import { bytesToInt32sLE, int32sToBytesLE, checkSize } from "../../cryptopunk.utils";
+import { bytesToInt32sLE, int32sToBytesLE } from "../../cryptopunk.utils";
 import { add, rol } from "../../cryptopunk.bitarith";
 
 const SIGMA   = [0x61707865, 0x3320646e, 0x79622d32, 0x6b206574]; // "expand 32-byte k" as LE uint32
@@ -203,17 +202,6 @@ class Salsa20Transform extends StreamCipherTransform
 		state[15] = constants[3];
 
 		return state;
-	}
-
-	checkIVSize(ivBytes, requiredSize)
-	{
-		const size = ivBytes.length * 8;
-		const requirement = checkSize(size, requiredSize);
-		if (requirement)
-		{
-			throw new TransformError(`IV size must be ${requirement} bits. Was: ${size} bits.`);
-		}
-		return size;
 	}
 }
 

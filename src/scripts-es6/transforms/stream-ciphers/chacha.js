@@ -26,8 +26,8 @@ class ChaChaTransform extends Salsa20Transform
 	transform(bytes, keyBytes, ivBytes)
 	{
 		// Lesser known 80 bit key included (see original Salsa family paper, 4.1)
-		this.checkKeySize(keyBytes, this.options.xchacha ? 256 : [80, 128, 256]);
-		this.checkIVSize(ivBytes, this.options.xchacha ? 192 : 64);
+		this.checkBytesSize("Key", keyBytes, this.options.xchacha ? 256 : [80, 128, 256]);
+		this.checkBytesSize("IV", ivBytes, this.options.xchacha ? 192 : 64);
 
 		const state = this.options.xchacha ? this.setupStateXChaCha(keyBytes, ivBytes) : this.setupStateChaCha(keyBytes, ivBytes);
 

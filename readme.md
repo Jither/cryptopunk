@@ -53,7 +53,7 @@ Supported
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
-* Crypton (0.5)
+* Crypton (0.5; 1.0 uncertain correctness)
 * CS-Cipher
 * DEAL
 * DES (64 bit with parity or 56 bit without)
@@ -207,12 +207,10 @@ TODO
 
 * RC5, RC6 (16/64 bit word sizes)
 * Serpent-0
-* Browser-native RSA decryption
 
 #### Second priority
 
 * BaseKing
-* CRYPTON 1.0
 * E2
 * Grand Cru
 * Hierocrypt
@@ -278,6 +276,14 @@ TODO
 * VEST
 * VMPC
 * WAKE
+
+### Asymmetric Cryptography
+* Browser-native RSA
+* RSA (with small keys)
+* DSA
+* DH
+* Elliptic Curve schemes
+* etc.
 
 ### Educational Ciphers
 
