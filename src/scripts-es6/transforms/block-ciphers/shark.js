@@ -1,7 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { int32sToBytesBE } from "../../cryptopunk.utils";
-import { gfLog2Tables } from "../../cryptopunk.math";
 import { SBOX_ENC, SBOX_DEC} from "./shark-square_shared";
+import { gfLog2Tables256 } from "../../cryptopunk.galois";
 
 const ROUNDS = 6;
 const ROUND_KEYS = ROUNDS + 1;
@@ -31,7 +31,20 @@ const G_INV = [
 ];
 
 let CBOX_ENC, CBOX_DEC;
-let LOG, ALOG;
+let LOG2, EXP2;
+
+// TODO: Find a nice way to move this into cryptopunk.galois
+// Not using GF multiply lookup tables here, since a and b are arbitrary values
+// Instead, we use the fact that:
+// a * b = 2^(log2(a) + log2(b))
+function gfMul(a, b)
+{
+	if (a === 0 || b === 0)
+	{
+		return 0;
+	}
+	return EXP2[(LOG2[a] + LOG2[b]) % 255];
+}
 
 function precomputeCboxes(cboxes, sbox, g)
 {
@@ -48,12 +61,12 @@ function precomputeCboxes(cboxes, sbox, g)
 				for (let k = 0; k < 4; k++)
 				{
 					cboxHi <<= 8;
-					cboxHi |= gfMultiply(sboxValue, g[k * 8 + i]);
+					cboxHi |= gfMul(sboxValue, g[k * 8 + i]);
 				}
 				for (let k = 4; k < 8; k++)
 				{
 					cboxLo <<= 8;
-					cboxLo |= gfMultiply(sboxValue, g[k * 8 + i]);
+					cboxLo |= gfMul(sboxValue, g[k * 8 + i]);
 				}
 			}
 			cbox[j * 2] = cboxHi;
@@ -65,12 +78,12 @@ function precomputeCboxes(cboxes, sbox, g)
 // Same as SQUARE (except OFFSETS not used)
 function precompute()
 {
-	if (LOG)
+	if (LOG2)
 	{
 		return;
 	}
 
-	[LOG, ALOG] = gfLog2Tables(0x1f5);
+	[LOG2, EXP2] = gfLog2Tables256(0x1f5);
 
 	// Since the C-boxes are rather huge, we calculate them here, rather than
 	// storing them in the JS
@@ -79,15 +92,6 @@ function precompute()
 
 	precomputeCboxes(CBOX_ENC, SBOX_ENC, G);
 	precomputeCboxes(CBOX_DEC, SBOX_DEC, G_INV);
-}
-
-function gfMultiply(a, b)
-{
-	if (a === 0 || b === 0)
-	{
-		return 0;
-	}
-	return ALOG[(LOG[a] + LOG[b]) % 255];
 }
 
 function transformKey(a)
@@ -99,7 +103,7 @@ function transformKey(a)
 	{
 		for (let j = 0; j < 8; j++)
 		{
-			t[i] ^= gfMultiply(G_INV[i * 8 + j], a[j]);
+			t[i] ^= gfMul(G_INV[i * 8 + j], a[j]);
 		}
 	}
 

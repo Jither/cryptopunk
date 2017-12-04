@@ -1,5 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt16sBE, bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { gfMul } from "../../cryptopunk.galois";
 
 const ROUNDS_PER_LEVEL = 16;
 
@@ -35,29 +36,7 @@ const KEY_ROTATION = [
 
 let SBOX_1, SBOX_2, SBOX_3, SBOX_4;
 
-function gfMultiply(a, b, m)
-{
-	let result = 0;
-
-	while (b)
-	{
-		if (b & 1)
-		{
-			result ^= a;
-		}
-
-		a <<= 1;
-		b >>= 1;
-
-		if (a >= 255)
-		{
-			a ^= m;
-		}
-	}
-
-	return result;
-}
-
+// TODO: Consider using a * b = 2^(log2(a) + log2(b)) for this
 function gfPow7(b, m)
 {
 	if (b === 0)
@@ -65,10 +44,10 @@ function gfPow7(b, m)
 		return 0;
 	}
 
-	let x = gfMultiply(b, b, m);
-	x = gfMultiply(b, x, m);
-	x = gfMultiply(x, x, m);
-	x = gfMultiply(b, x, m);
+	let x = gfMul(b, b, m);
+	x = gfMul(b, x, m);
+	x = gfMul(x, x, m);
+	x = gfMul(b, x, m);
 	return x;
 }
 

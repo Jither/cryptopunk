@@ -111,14 +111,14 @@ class Sha224Transform extends Sha256Transform
 		// The one main difference between SHA-256 and SHA-224 is the initial hash values
 		// For SHA-224: The *second* 32 bits of the fractional parts of the square roots of the 9th through 16th prime numbers.
 		return [
-			ROOTS.SQRT23,
-			ROOTS.SQRT29,
-			ROOTS.SQRT31,
-			ROOTS.SQRT37,
-			ROOTS.SQRT41,
-			ROOTS.SQRT43,
-			ROOTS.SQRT47,
-			ROOTS.SQRT53
+			ROOTS.SQRT23_2,
+			ROOTS.SQRT29_2,
+			ROOTS.SQRT31_2,
+			ROOTS.SQRT37_2,
+			ROOTS.SQRT41_2,
+			ROOTS.SQRT43_2,
+			ROOTS.SQRT47_2,
+			ROOTS.SQRT53_2
 		];
 	}
 }

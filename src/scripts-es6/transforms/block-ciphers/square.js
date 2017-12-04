@@ -1,8 +1,8 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
 import { rol, ror } from "../../cryptopunk.bitarith";
-import { gfLog2Tables } from "../../cryptopunk.math";
 import { SBOX_ENC, SBOX_DEC } from "./shark-square_shared";
+import { gfLog2Tables256 } from "../../cryptopunk.galois";
 
 const ROUNDS = 8;
 const ROUND_KEYS = ROUNDS + 1;
@@ -148,33 +148,37 @@ const T_DEC = [
 	0x8ccaa2fe, 0x9ed1b5e3, 0x1fea76a4, 0x73b004ea
 ];
 
-let LOG, ALOG, OFFSETS;
+let LOG2, EXP2, OFFSETS;
+
+// TODO: Find a nice way to move this into cryptopunk.galois
+// Not using GF multiply lookup tables here, since a and b are arbitrary values
+// Instead, we use the fact that:
+// a * b = 2^(log2(a) + log2(b))
+function gfMul(a, b)
+{
+	if (a === 0 || b === 0)
+	{
+		return 0;
+	}
+	return EXP2[(LOG2[a] + LOG2[b]) % 255];
+}
 
 function precompute()
 {
-	if (LOG)
+	if (LOG2)
 	{
 		return;
 	}
 
-	[LOG, ALOG] = gfLog2Tables(0x1f5);
+	[LOG2, EXP2] = gfLog2Tables256(0x1f5);
 
 	OFFSETS = new Array(ROUNDS);
 
 	OFFSETS[0] = 1;
 	for (let i = 1; i < ROUNDS; i++)
 	{
-		OFFSETS[i] = gfMultiply(2, OFFSETS[i - 1]);
+		OFFSETS[i] = gfMul(2, OFFSETS[i - 1]);
 	}
-}
-
-function gfMultiply(a, b)
-{
-	if (a === 0 || b === 0)
-	{
-		return 0;
-	}
-	return ALOG[(LOG[a] + LOG[b]) % 255];
 }
 
 function transform(input, output)
@@ -198,7 +202,7 @@ function transform(input, output)
 			b[i * 4 + j] = 0;
 			for (let t = 0; t < 4; t++)
 			{
-				b[i * 4 + j] ^= gfMultiply(a[i * 4 + t], G[t * 4 + j]);
+				b[i * 4 + j] ^= gfMul(a[i * 4 + t], G[t * 4 + j]);
 			}
 		}
 	}

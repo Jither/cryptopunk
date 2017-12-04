@@ -1,20 +1,20 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { gfLog2Tables } from "../../cryptopunk.math";
 import { xorBytes } from "../../cryptopunk.bitarith";
+import { gfExp2Table256 } from "../../cryptopunk.galois";
 
 // TODO: Cleanup
 
-let EXP;
+let EXP2;
 
 function precompute()
 {
-	if (EXP)
+	if (EXP2)
 	{
 		return;
 	}
 
-	[, EXP] = gfLog2Tables(0x165);
-	EXP[255] = 0;
+	EXP2 = gfExp2Table256(0x165);
+	EXP2[255] = 0;
 }
 
 // Π function
@@ -24,8 +24,8 @@ function pi(x, y)
 	{
 		const xi = x[i];
 		const xi8 = x[i + 8];
-		y[i * 2    ] = EXP[xi  ^ EXP[xi8]];
-		y[i * 2 + 1] = EXP[xi8 ^ EXP[xi ]];
+		y[i * 2    ] = EXP2[xi  ^ EXP2[xi8]];
+		y[i * 2 + 1] = EXP2[xi8 ^ EXP2[xi ]];
 	}
 }
 

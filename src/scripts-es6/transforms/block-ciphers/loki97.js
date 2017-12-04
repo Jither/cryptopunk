@@ -1,6 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { bytesToInt64sBE, int64sToBytesBE } from "../../cryptopunk.utils";
 import { xor64, add64, mul64, shr64, or64, ZERO_64, sub64 } from "../../cryptopunk.bitarith";
+import { gfMul } from "../../cryptopunk.galois";
 
 // (SQRT(5) - 1) * 2^63
 const DELTA = { hi: 0x9e3779b9, lo: 0x7f4a7c15 };
@@ -15,27 +16,8 @@ const MASK_13 = 0b1111111111111;
 
 let SBOX_1, SBOX_2, PERM;
 
-// returns a*b mod p in GF(size)
-function gfMul(a, b, p, size)
-{
-	let result = 0;
-	while (b !== 0)
-	{
-		if ((b & 1) !== 0)
-		{
-			result ^= a;
-		}
-		a <<= 1;
-		if (a >= size)
-		{
-			a ^= p;
-		}
-		b >>>= 1;
-	}
-	return result;
-}
-
 // Returns b^3 mod p in GF(size)
+// We're not using lookups or a * b = 2^(log2(a) + log2(b)) here, because b, size and modulo are arbitrary
 function gfExp3(b, p, size)
 {
 	if (b === 0)

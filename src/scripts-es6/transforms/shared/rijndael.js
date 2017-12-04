@@ -1,30 +1,27 @@
-const MUL2 = []; // Map of a -> a*{02} in Rijndael field
-const MUL3 = []; // Map of a -> a*{03} in Rijndael field
-const INV3 = []; // Map of a*{03} -> a in Rijndael field
+import { gfMulTable } from "../../cryptopunk.galois";
+
+let MUL2; // Map of a -> a*{02} in Rijndael field
+let MUL3; // Map of a -> a*{03} in Rijndael field
+let INV3; // Map of a*{03} -> a in Rijndael field
 
 const S_BOX = [];
 const SI_BOX = [];
 
 function generateMulTables()
 {
-	for (let x = 0; x < 256; x++)
+	// 0x11b = Rijndael polynomial (x^8 + x^4 + x^3 + x + 1 = {100011011} = {0x11b})
+	MUL2 = gfMulTable(2, 0x11b);
+	MUL3 = gfMulTable(3, 0x11b);
+	INV3 = [];
+	for (let i = 0; i < 256; i++)
 	{
-		let x2 = x << 1;
-		if (x2 & 0x100)
-		{
-			// 0x11b = Rijndael polynomial (x^8 + x^4 + x^3 + x + 1 = {100011011} = {0x11b})
-			x2 ^= 0x11b;
-		}
-		const x3 = x2 ^ x;
-		MUL2[x] = x2;
-		MUL3[x] = x3;
-		INV3[x3] = x;
+		INV3[MUL3[i]] = i;
 	}
 }
 
 function generateRijndaelSboxes()
 {
-	if (MUL3.length === 0)
+	if (!MUL3)
 	{
 		generateMulTables();
 	}
@@ -64,6 +61,10 @@ function getRijndaelSboxes()
 
 function getRijndaelMulTable(multiplicand)
 {
+	if (!MUL3)
+	{
+		generateMulTables();
+	}
 	switch (multiplicand)
 	{
 		case 2: return MUL2;

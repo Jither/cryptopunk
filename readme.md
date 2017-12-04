@@ -211,6 +211,7 @@ TODO
 #### Second priority
 
 * BaseKing
+* CLEFIA
 * E2
 * Grand Cru
 * Hierocrypt
