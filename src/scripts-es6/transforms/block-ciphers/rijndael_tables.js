@@ -2,7 +2,7 @@ import { BlockCipherTransform } from "./block-cipher";
 import { TransformError } from "../transforms";
 import { bytesToInt32sBE, checkSize } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
-import { ror, rolBytes } from "../../cryptopunk.bitarith";
+import { ror } from "../../cryptopunk.bitarith";
 import { getRijndaelMulTable, getRijndaelSboxes } from "../shared/rijndael";
 
 // Pure implementation of Rijndael (AES) allowing
@@ -11,9 +11,6 @@ import { getRijndaelMulTable, getRijndaelSboxes } from "../shared/rijndael";
 // - the higher block sizes of Rijndael: 160, 192, 224, 256
 // - additional specified key sizes: 160, 224
 // - 2-20 rounds
-
-// Rijndael uses a lot of Galois field math. Most of this can be reduced to table lookups - see rijndael_tables.js for an example.
-// However, this implementation is intended to show what's actually going on math-wise.
 
 const KEY_SIZES = [128, 160, 192, 224, 256];
 const BLOCK_SIZES = [128, 160, 192, 224, 256];
@@ -35,120 +32,49 @@ const ROUND_CONSTANTS = [
 	0x72, 0xe4, 0xd3, 0xbd, 0x61, 0xc2, 0x9f, 0x25, 0x4a, 0x94, 0x33, 0x66, 0xcc, 0x83, 0x1d, 0x3a
 ];
 
-const SHIFTS = {
-	128: [0, 1, 2, 3],
-	160: [0, 1, 2, 3],
-	192: [0, 1, 2, 3],
-	224: [0, 1, 2, 4],
-	256: [0, 1, 3, 4]
-};
-
 // Substitution box and Inverse Substitution boxes:
-let SBOX, ISBOX;
+let S_BOX, SI_BOX;
+// Precalculated MixColumns lookup tables (Rijndael finite field arithmetic)
+const ENC_T1 = [], ENC_T2 = [], ENC_T3 = [], ENC_T4 = [];
+// Precalculated InvMixColumns lookup tables (Rijndael finite field arithmetic)
+const DEC_T5 = [], DEC_T6 = [], DEC_T7 = [], DEC_T8 = [];
 
 // Precalculates s-boxes and transformation tables
 function precompute()
 {
-	if (SBOX)
+	if (S_BOX)
 	{
 		// Already calculated
 		return;
 	}
 
-	[SBOX, ISBOX] = getRijndaelSboxes();
-}
+	const
+		encTables = [ENC_T1, ENC_T2, ENC_T3, ENC_T4], 
+		decTables = [DEC_T5, DEC_T6, DEC_T7, DEC_T8];
 
-function addRoundKey(state, key)
-{
-	// AddRoundKey adds round key to state (mod 2, i.e. XOR)
-	xorBytes(state, key);
-}
+	[S_BOX, SI_BOX] = getRijndaelSboxes();
 
-function subBytes(state)
-{
-	// SubBytes substitutes bytes using the S-box
-	for (let i = 0; i < state.length; i++)
+	// Compute MixColumns and InvMixColumns lookups
+	const a2 = getRijndaelMulTable(2);
+	for (let x = 0; x < 256; x++)
 	{
-		state[i] = SBOX[state[i]];
-	}
-}
+		const s = S_BOX[x];
+		const x2 = a2[x];
+		const x4 = a2[x2];
+		const x8 = a2[x4];
+		// s, s, s*3, s*2:
+		let tEnc = a2[s] * 0x00000101 ^ s * 0x01010100;
+		// si*9, si*13, si*11, si*14:
+		let tDec = x8 * 0x01010101 ^ x4 * 0x00010001 ^ x2 * 0x00000101 ^ x * 0x01010100;
 
-function invSubBytes(state)
-{
-	// InvSubBytes substitutes bytes using the inverted S-box
-	for (let i = 0; i < state.length; i++)
-	{
-		state[i] = ISBOX[state[i]];
-	}
-}
-
-function shiftRows(state)
-{
-	// ShiftRows shifts (actually rotates) each row a predefined amount of bytes
-	const columns = state.columns;
-	const shifts = state.shifts;
-	// Yes, could skip row 1, since its shift is always 0
-	for (let rowIndex = 0; rowIndex < 4; rowIndex++)
-	{
-		const startIndex = rowIndex * columns;
-		const row = state.subarray(startIndex, startIndex + columns);
-		rolBytes(row, shifts[rowIndex]);
-	}
-}
-
-function invShiftRows(state, shifts)
-{
-	// InvShiftRows shifts (actually rotates) each row a predefined amount of bytes
-	const columns = state.columns;
-	const shifts = state.shifts;
-	// Yes, could skip row 1, since its shift is always 0
-	for (let rowIndex = 0; rowIndex < 4; rowIndex++)
-	{
-		const startIndex = rowIndex * columns;
-		const row = state.subarray(startIndex, startIndex + columns);
-		rolBytes(row, columns - shifts[rowIndex]);
-	}
-}
-
-function mixColumns(state, columns)
-{
-	// MixColumns works on each column, which is considered as a polynomial over GF(2^8) modulo x^4 + 1
-	// The column is multiplied by the fixed polynomial c(x) = {03}*x^3 + {01}*x^2 + {01}*x + 1
-	// This can instead be seen as multiplying a matrix with the column seen as a vector:
-	//
-	// [02 03 01 01]   [a0]
-	// [01 02 03 01] * [a1]
-	// [01 01 02 03]   [a2]
-	// [03 01 01 02]   [a3]
-	//
-	// In other words:
-	// b0 = {02} * a0 + {03} * a1 + {01} * a2 + {01} * a3
-	// b1 = {01} * a0 + {02} * a1 + {03} * a2 + {01} * a3
-	// b2 = {01} * a0 + {01} * a1 + {02} * a2 + {03} * a3
-	// b3 = {03} * a0 + {01} * a1 + {01} * a2 + {02} * a3
-	//
-	// Remember that we're dealing with Galois field addition multiplication. With the MixColumns coefficients of {01}, {02} and {03}
-	// these are relatively simple computations:
-	// {01} * x = x
-	// {02} * x = x << 1 (reduced by Rijndael polynomial if exceeding 0xff, i.e. x ^= 0x11b)
-	// {03} * x = ({02} * x) ^ x
-	// {x} + {y} = x ^ y
-
-	const columns = state.columns;
-
-	const row1 = columns;
-	const row2 = columns * 2;
-	const row3 = columns * 3;
-	for (let col = 0; col < columns; col++)
-	{
-		const b0 = gfMul(2, state[col       ]) ^ gfMul(3, state[col + row1]);
-		const b1 = gfMul(2, state[col + row1]) ^ gfMul(3, state[col + row2]);
-		const b3 = gfMul(2, state[col + row2]) ^ gfMul(3, state[col + row3]);
-		const b4 = gfMul(2, state[col + row3]) ^ gfMul(3, state[col       ]);
-		state[col] = b0;
-		state[col + row1] = b1;
-		state[col + row2] = b2;
-		state[col + row3] = b3;
+		for (let i = 0; i < 4; i++)
+		{
+			// ROR 8
+			tEnc = ror(tEnc, 8);
+			tDec = ror(tDec, 8);
+			encTables[i][x] = tEnc;
+			decTables[i][s] = tDec;
+		}
 	}
 }
 
@@ -164,14 +90,19 @@ class RijndaelBaseTransform extends BlockCipherTransform
 	transform(bytes, keyBytes)
 	{
 		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
-		this.checkBytesSize("Block size", keyBytes, BLOCK_SIZES);
 
-		// Precalculate s-boxes
+		const blockSize = this.options.blockSize;
+		const requirement = checkSize(blockSize, BLOCK_SIZES);
+		if (requirement)
+		{
+			throw new TransformError(`Block size must be ${requirement} bits. Was ${blockSize} bits`);
+		}
+
+		// Precalculate tables (once, stored for later use)
 		precompute();
 
-		const blockLength = bytes.length;
-		const blockSize = blockLength * 8;
 		const keySize = keyBytes.length * 8;
+		const blockLength = blockSize / 8;
 
 		let roundCount = this.options.rounds;
 		if (roundCount === 0)
@@ -182,29 +113,63 @@ class RijndaelBaseTransform extends BlockCipherTransform
 
 		const roundKeys = this.prepareRoundKeys(keyBytes, roundCount, blockLength / 4);
 
-		return this.transformBlocks(bytes, blockSize, roundKeys, blockSize);
+		return this.transformBlocks(bytes, blockSize, roundKeys);
 	}
 
-	transformBlock(block, dest, destOffset, roundKeys, blockSize)
+	transformBlock(block, dest, destOffset, roundKeys)
 	{
-		const state = Uint8Array.from(block);
-		
-		const rounds = roundKeys.length - 1;
-		state.shifts = SHIFTS[blockSize];
-		state.columns = state.length / 4;
-		
-		addRoundKey(state, roundKeys[0]);
-		for (let r = 1; r < rounds; r++)
+		const stateSize = block.length / 4;
+		const roundCount = roundKeys.length - 1;
+
+		// Get constants specific to encryption/decryption:
+		const [BO1, BO2, BO3, T1, T2, T3, T4, sBox] = this.getDirectionSpecific(stateSize);
+
+		const text = bytesToInt32sBE(block);
+
+		// Round 1:
+		for (let i = 0; i < stateSize; i++)
 		{
-			subBytes(state);
-			shiftRows(state);
-			mixColumns(state);
-			addRoundKey(state, roundKeys[r]);
+			text[i] ^= roundKeys[0][i];
 		}
 
-		subBytes(state);
-		shiftRows(state);
-		addRoundKey(state, roundKeys[rounds]);
+		const temp = new Array(stateSize);
+
+		// Round 2 to (N-1):
+		for (let round = 1; round < roundCount; round++)
+		{
+			for (let index = 0; index < stateSize; index++)
+			{
+				temp[index] = (
+					T1[(text[index                      ] >>> 24) & 0xff] ^
+					T2[(text[mod(index + BO1, stateSize)] >>> 16) & 0xff] ^
+					T3[(text[mod(index + BO2, stateSize)] >>>  8) & 0xff] ^
+					T4[(text[mod(index + BO3, stateSize)]       ) & 0xff] ^
+					roundKeys[round][index]
+				);
+			}
+			// Apply result to text
+			for (let index = 0; index < stateSize; index++)
+			{
+				text[index] = temp[index];
+			}
+		}
+
+		// Round N
+		for (let index = 0; index < stateSize; index++)
+		{
+			const key = roundKeys[roundCount][index];
+			const value =
+				sBox[text[index                      ] >>> 24 & 0xff] << 24 ^
+				sBox[text[mod(index + BO1, stateSize)] >>> 16 & 0xff] << 16 ^
+				sBox[text[mod(index + BO2, stateSize)] >>>  8 & 0xff] <<  8 ^
+				sBox[text[mod(index + BO3, stateSize)]        & 0xff] ^
+				key;
+
+			dest[destOffset++] = value >> 24 & 0xff;
+			dest[destOffset++] = value >> 16 & 0xff;
+			dest[destOffset++] = value >>  8 & 0xff;
+			dest[destOffset++] = value & 0xff;
+		}
 	}
 
 	prepareRoundKeys(keyBytes, roundCount, stateSize)

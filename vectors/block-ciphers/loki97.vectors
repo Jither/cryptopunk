@@ -3863,7 +3863,7 @@ c: 6c5af70eab5fcac3a9f7f268b5caa94b
 
 # From: http://www-08.nist.gov/encryption/aes/round1/testvals/loki97-vals.zip - ecb_tbl.txt
 
-# The key is fixed to a value which results in SK[0] to SK[3] all being 0.
+# "The key is fixed to a value which results in SK[0] to SK[3] all being 0.
 # The PT's range over all 8192 values for lowest S1 box, and all 2048
 # values for lowest S2 box, both in column Sa of the nonlinear function f.
 # Though S1 and S2 are used multiple times in various combinations, for
@@ -3871,7 +3871,7 @@ c: 6c5af70eab5fcac3a9f7f268b5caa94b
 # suffices to exhaustively test all their values once.  Only keysize=256
 # is given, since for other sizes there is no easy way to identify the
 # inputs to a given S-box, since there are no known keys which set the
-# first few subkeys to zero.
+# first few subkeys to zero."
 
 title   : NIST Tables KAT #{index}
 
