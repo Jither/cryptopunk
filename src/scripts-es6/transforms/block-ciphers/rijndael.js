@@ -118,24 +118,36 @@ function invSubBytes(state)
 	}
 }
 
-function _shiftRow(state, columns, rowIndex, shift)
+// Does a juggling inplace byte shift of a single row in a matrix represented as a 1-dimensional array,
+// where *columns* are consecutive bytes.
+// I.e., the *row*'s bytes will be spread across the array in intervals:
+//
+// a e i m q <-- shift orientation -->
+// b f j n r
+// c g k o s
+// d h l p t
+//
+// ... is represented as:
+//
+// a b c d e f g h i j k l m n o p q r s t
+function _shiftRow(state, rows, columns, rowIndex, shift)
 {
 	const setCount = gcd(shift, columns);
 	
 	for (let start = 0; start < setCount; start++)
 	{
 		let dest = start;
-		const temp = state[rowIndex + start * 4];
+		const temp = state[rowIndex + start * rows];
 
 		for (;;)
 		{
 			const source = (dest + shift) % columns;
 			if (source === start)
 			{
-				state[rowIndex + dest * 4] = temp;
+				state[rowIndex + dest * rows] = temp;
 				break;
 			}
-			state[rowIndex + dest * 4] = state[rowIndex + source * 4];
+			state[rowIndex + dest * rows] = state[rowIndex + source * rows];
 			dest = source;
 		}
 	}
@@ -151,7 +163,7 @@ function shiftRows(state)
 	for (let rowIndex = 1; rowIndex < 4; rowIndex++)
 	{
 		const shift = shifts[rowIndex];
-		_shiftRow(state, columns, rowIndex, shift);
+		_shiftRow(state, 4, columns, rowIndex, shift);
 	}
 }
 
@@ -165,7 +177,7 @@ function invShiftRows(state)
 	for (let rowIndex = 1; rowIndex < 4; rowIndex++)
 	{
 		const shift = columns - shifts[rowIndex];
-		_shiftRow(state, columns, rowIndex, shift);
+		_shiftRow(state, 4, columns, rowIndex, shift);
 	}
 }
 
@@ -312,9 +324,10 @@ class RijndaelBaseTransform extends BlockCipherTransform
 		// Rijndael uses round keys the same length as the block length
 		// It needs rounds + 1 keys
 		// In the specification, round key generation is looked at as filling
-		// in a matrix, W, with 4 byte rows and ((rounds + 1) * block length / 4) columns.
-		// This abstraction allows a simpler algorithm because the user key will always
-		// fit a whole number of columns, but may not fit a whole number of round keys.
+		// in a byte matrix, W, with 4 rows and ((rounds + 1) * block length / 4) columns.
+		// This abstraction allows for a simpler algorithm because the user key will always
+		// fit a whole number of columns (key length is always a multiple of 4), but may
+		// not fit a whole number of round keys (if key length isn't a multiple of block length).
 
 		const rkNeeded = rounds + 1;
 		const stateColumns = blockLength / 4;

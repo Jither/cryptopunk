@@ -2,10 +2,12 @@ import { BlockCipherTransform } from "./block-cipher";
 import { int32sToBytesBE } from "../../cryptopunk.utils";
 import { SBOX_ENC, SBOX_DEC} from "./shark-square_shared";
 import { gfLog2Tables256 } from "../../cryptopunk.galois";
+import { xorBytes } from "../../cryptopunk.bitarith";
 
 const ROUNDS = 6;
 const ROUND_KEYS = ROUNDS + 1;
 
+// TODO: Align this more with Rijndael
 // TODO: SHARK Affine
 
 const G = [
@@ -136,10 +138,7 @@ class SharkTransform extends BlockCipherTransform
 		for (let r = 0; r < ROUNDS - 1; r++)
 		{
 			const key = keys[r];
-			for (let i = 0; i < 8; i++)
-			{
-				result[i] ^= key[i];
-			}
+			xorBytes(result, key);
 
 			temp.fill(0);
 			for (let i = 0; i < 8; i++)
@@ -197,10 +196,7 @@ class SharkTransform extends BlockCipherTransform
 		{
 			iv = this.crypt(iv, tempKeys, SBOX_ENC, CBOX_ENC);
 			const keyWord = keyWords[r];
-			for (let i = 0; i < 8; i++)
-			{
-				iv[i] ^= keyWord[i];
-			}
+			xorBytes(iv, keyWord);
 			result[r] = iv;
 		}
 		// Transfrom the last key:

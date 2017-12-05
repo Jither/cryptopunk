@@ -4,6 +4,8 @@ import { rol, ror } from "../../cryptopunk.bitarith";
 import { SBOX_ENC, SBOX_DEC } from "./shark-square_shared";
 import { gfLog2Tables256 } from "../../cryptopunk.galois";
 
+// TODO: Implement this without tables (a la Rijndael) - it's much closer to Rijndael if we do
+
 const ROUNDS = 8;
 const ROUND_KEYS = ROUNDS + 1;
 
