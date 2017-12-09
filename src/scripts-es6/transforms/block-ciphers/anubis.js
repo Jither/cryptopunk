@@ -1,5 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
+import { xorBytes } from "../../cryptopunk.bitarith";
+import { gfMulTable } from "../../cryptopunk.galois";
 
 const KEY_SIZES = [128, 160, 192, 224, 256, 288, 320];
 
@@ -58,71 +59,123 @@ const S_BOXES = {
 	"anubis": S_BOX
 };
 
-// Precomputed tables - indexed by variant name:
-const TABLES = {};
+const ANUBIS_POLYNOMIAL = 0x11d;
 
-// Multiplies x by 2, 4, 6 - in GF(2^8) field
-function gfMul(x)
+// GF(2^8) multiplication tables:
+let MUL2, MUL4, MUL6, MUL8;
+
+// Precalculates GF(2^8) multiplication tables
+function precompute()
 {
-	let x2 = x << 1;
-	if (x2 >= 0x100)
+	if (MUL2)
 	{
-		x2 ^= 0x11d;
+		return;
 	}
-	let x4 = x2 << 1;
-	if (x4 >= 0x100)
-	{
-		x4 ^= 0x11d;
-	}
-	const x6 = x4 ^ x2;
-
-	return [x2, x4, x6];
+	MUL2 = gfMulTable(2, ANUBIS_POLYNOMIAL);
+	MUL4 = gfMulTable(4, ANUBIS_POLYNOMIAL);
+	MUL6 = gfMulTable(6, ANUBIS_POLYNOMIAL);
+	MUL8 = gfMulTable(8, ANUBIS_POLYNOMIAL);
 }
 
-// TODO: Remove transformation tables (do transformations directly in cipher)
-// Precalculates s-boxes and transformation tables
-function precompute(variant)
+// Internally, Anubis' key and state are viewed as Nx4 matrices, where the byte array
+// is mapped to the matrix: b[i,j] = a[4 * i + j]
+//
+// In other words:
+// [00 01 02 03]
+// [04 05 06 07]
+// [08 09 10 11]
+// [12 13 14 15]
+// [16 17 18 19]
+// ...
+// Note that this is the opposite row/column mapping of Rijndael (4xN)
+
+// Nonlinear layer γ ("SubBytes")
+function gamma(state, sbox)
 {
-	const tables = TABLES[variant];
-	if (tables)
+	// Substitute using S-box:
+	for (let i = 0; i < state.length; i++)
 	{
-		// Already calculated
-		return tables;
+		state[i] = sbox[state[i]];
 	}
-	const sbox = S_BOXES[variant];
-	
-	const T0 = new Uint32Array(256),
-		T1 = new Uint32Array(256),
-		T2 = new Uint32Array(256),
-		T3 = new Uint32Array(256),
-		T4 = new Uint32Array(256),
-		T5 = new Uint32Array(256);
-	
-	for (let i = 0; i < 256; i++)
+}
+
+// Transposition τ (Transpose matrix)
+// This is only used for the round function (square matrix)
+// π essentially takes its place in the key schedule
+function tau(state)
+{
+	// TODO: general utility function
+	// Transpose matrix:
+	[state[1], state[4]] = [state[4], state[1]];
+	[state[2], state[8]] = [state[8], state[2]];
+	[state[3], state[12]] = [state[12], state[3]];
+	[state[6], state[9]] = [state[9], state[6]];
+	[state[7], state[13]] = [state[13], state[7]];
+	[state[11], state[14]] = [state[14], state[11]];
+}
+
+// Linear diffusion θ
+function theta(state, rows)
+{
+	// Multiply (in GF(2^8)) by:
+	// [01 02 04 06]
+	// [02 01 06 04]
+	// [04 06 01 02]
+	// [06 04 02 01]
+	let index = 0;
+	for (let row = 0; row < rows; row++)
 	{
-		const s1 = sbox[i];
+		const
+			a0 = state[index],
+			a1 = state[index + 1],
+			a2 = state[index + 2],
+			a3 = state[index + 3];
 
-		const [s2, s4, s6] = gfMul(s1);
-		const [i2, i4, i6] = gfMul(i);
+		state[index++] =      a0  ^ MUL2[a1] ^ MUL4[a2] ^ MUL6[a3];
+		state[index++] = MUL2[a0] ^      a1  ^ MUL6[a2] ^ MUL4[a3];
+		state[index++] = MUL4[a0] ^ MUL6[a1] ^      a2  ^ MUL2[a3];
+		state[index++] = MUL6[a0] ^ MUL4[a1] ^ MUL2[a2] ^      a3 ;
+	}
+}
 
-		let i8 = i4 << 1;
-		
-		if (i8 >= 0x100)
+// Cyclical permutation π ("ShiftColumns")
+// Rotate each column, j, down by j positions
+// From a byte array perspective, this "ShiftColumns" operation is exactly equivalent to Rijndael's ShiftRows, since
+// columns and rows of the state are "swapped" in Anubis compared to Rijndael
+function pi(state, rows)
+{
+	// TODO: Inplace (use Rijndael's ShiftRows)
+	const temp = new Uint8Array(state.length);
+
+	for (let col = 0; col < 4; col++)
+	{
+		for (let row = 0; row < rows; row++)
 		{
-			i8 ^= 0x11d;
+			const source = row * 4 + col;
+			const dest = ((row + col) % rows) * 4 + col;
+			temp[dest] = state[source];
 		}
-				
-		T0[i] = (s1 << 24) | (s2 << 16) | (s4 << 8) | s6;
-		T1[i] = (s2 << 24) | (s1 << 16) | (s6 << 8) | s4;
-		T2[i] = (s4 << 24) | (s6 << 16) | (s1 << 8) | s2;
-		T3[i] = (s6 << 24) | (s4 << 16) | (s2 << 8) | s1;
-		T4[i] = (s1 << 24) | (s1 << 16) | (s1 << 8) | s1;
-		T5[i] = ( i << 24) | (i2 << 16) | (i6 << 8) | i8;
 	}
+	state.set(temp);
+}
 
-	TABLES[variant] = [T0, T1, T2, T3, T4, T5];
-
-	return TABLES[variant];
+// Key extraction ω
+function omega(state, rows)
+{
+	// TODO: Inplace?
+	const k = new Uint8Array(16);
+	for (let row = rows - 1; row >= 0; row--)
+	{
+		for (let r = 0; r < 4; r++)
+		{
+			const a = state[row * 4 + r];
+			k[r     ] ^= a;
+			k[r +  4] = MUL2[k[r +  4]] ^ a;
+			k[r +  8] = MUL6[k[r +  8]] ^ a;
+			k[r + 12] = MUL8[k[r + 12]] ^ a;
+		}
+	}
+	return k;
 }
 
 class AnubisBaseTransform extends BlockCipherTransform
@@ -135,123 +188,86 @@ class AnubisBaseTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
+		precompute();
+
+		// TODO: Cache keys
 		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
 
-		// Precalculate tables (once, stored for later use)
-		const tables = precompute(this.options.variant);
+		const roundKeys = this.prepareRoundKeys(keyBytes);
 
-		const roundKeys = this.prepareRoundKeys(keyBytes, tables);
-
-		return this.transformBlocks(bytes, 128, roundKeys, tables);
+		return this.transformBlocks(bytes, 128, roundKeys);
 	}
 
-	prepareRoundKeys(keyBytes, tables)
+	prepareRoundKeys(keyBytes)
 	{
-		const [T0, T1, T2, T3, T4, T5] = tables;
+		const sbox = S_BOXES[this.options.variant];
+		const rows = keyBytes.length / 4;
 
-		const keyWordCount = keyBytes.length / 4;
-		const kappa = bytesToInt32sBE(keyBytes);
-		const inter = new Uint32Array(keyWordCount);
+		const rounds = 8 + rows;
 
-		const rounds = 8 + keyWordCount;
-
-		const roundKeys = new Array(rounds + 1);
-
-		const k = new Uint32Array(4);
-		for (let r = 0;  r < roundKeys.length; r++)
+		const k = new Array(rounds + 1);
+		k[0] = Uint8Array.from(keyBytes);
+		
+		// Key evolutions ψ[cr]
+		for (let r = 1; r < k.length; r++)
 		{
-			const kappaN = kappa[keyWordCount - 1];
-			for (let i = 0; i < 4; i++)
-			{
-				k[i] = T4[(kappaN >>> (24 - i * 8)) & 0xff];
-			}
+			k[r] = Uint8Array.from(k[r - 1]);
+			gamma(k[r], sbox);
+			pi(k[r], rows);
+			theta(k[r], rows);
 
-			for (let j = keyWordCount - 2; j >= 0; j--)
+			// Round constant addition σ[cr]
+			for (let j = 0; j < 4; j++)
 			{
-				for (let i = 0; i < 4; i++)
-				{
-					const ki = k[i];
-					k[i] = T4[(kappa[j] >>> (24 - i * 8)) & 0xff] ^
-						(T5[ ki >>> 24        ] & 0xff000000) ^
-						(T5[(ki >>> 16) & 0xff] & 0x00ff0000) ^
-						(T5[(ki >>>  8) & 0xff] & 0x0000ff00) ^
-						(T5[(ki       ) & 0xff] & 0x000000ff);
-				}
-			}
-
-			roundKeys[r] = Uint32Array.from(k);
-
-			for (let i = 0; i < keyWordCount; i++)
-			{
-				inter[i] =
-					T0[(kappa[i] >>> 24)       ] ^
-					T1[(kappa[(keyWordCount + i - 1) % keyWordCount] >>> 16) & 0xff] ^
-					T2[(kappa[(keyWordCount + i - 2) % keyWordCount] >>>  8) & 0xff] ^
-					T3[(kappa[(keyWordCount + i - 3) % keyWordCount]       ) & 0xff];
-			}
-
-			kappa[0] =
-				(T0[4 * r    ] & 0xff000000) ^
-				(T1[4 * r + 1] & 0x00ff0000) ^
-				(T2[4 * r + 2] & 0x0000ff00) ^
-				(T3[4 * r + 3] & 0x000000ff) ^
-				inter[0];
-			
-			for (let i = 1; i < keyWordCount; i++)
-			{
-				kappa[i] = inter[i];
+				const cr = sbox[4 * (r - 1) + j];
+				k[r][j] ^= cr;
 			}
 		}
+		
+		// Key selections φ
+		for (let r = 0; r < k.length; r++)
+		{
+			gamma(k[r], sbox);
+			// TODO: Inplace?
+			k[r] = omega(k[r], rows);
+			tau(k[r]);
+		}
 
-		return roundKeys;
+		return k;
 	}
 
-	transformBlock(block, dest, destOffset, roundKeys, tables)
+	transformBlock(block, dest, destOffset, roundKeys)
 	{
-		const [T0, T1, T2, T3] = tables;
-
-		const state = bytesToInt32sBE(block);
-		const inter = new Uint32Array(state.length);
+		const state = Uint8Array.from(block);
+		const sbox = S_BOXES[this.options.variant];
 
 		const rounds = roundKeys.length - 1;
 
-		for (let i = 0; i < 4; i++)
-		{
-			state[i] ^= roundKeys[0][i];
-		}
+		// Key addition σ[K0]
+		xorBytes(state, roundKeys[0]);
 
 		// N-1 rounds:
 		for (let r = 1; r < rounds; r++)
 		{
-			for (let i = 0; i < 4; i++)
-			{
-				const shift = 24 - (i * 8);
-				inter[i] = 
-					T0[(state[0] >>> shift) & 0xff] ^
-					T1[(state[1] >>> shift) & 0xff] ^
-					T2[(state[2] >>> shift) & 0xff] ^
-					T3[(state[3] >>> shift) & 0xff] ^
-					roundKeys[r][i];
-			}
-			for (let i = 0; i < 4; i++)
-			{
-				state[i] = inter[i];
-			}
+			// Nonlinear layer γ
+			gamma(state, sbox);
+			// Transposition τ
+			tau(state);
+			// Linear diffusion θ
+			theta(state, 4);
+			// Key addition σ[Kr]
+			xorBytes(state, roundKeys[r]);
 		}
 
 		// Last round:
-		for (let i = 0; i < 4; i++)
-		{
-			const shift = 24 - (i * 8);
-			inter[i] = 
-				(T0[(state[0] >>> shift) & 0xff] & 0xff000000) ^
-				(T1[(state[1] >>> shift) & 0xff] & 0x00ff0000) ^
-				(T2[(state[2] >>> shift) & 0xff] & 0x0000ff00) ^
-				(T3[(state[3] >>> shift) & 0xff] & 0x000000ff) ^
-				roundKeys[rounds][i];
-		}
+		// Nonlinear layer γ
+		gamma(state, sbox);
+		// Transposition τ
+		tau(state);
+		// Key addition σ[KR]
+		xorBytes(state, roundKeys[rounds]);
 
-		dest.set(int32sToBytesBE(inter), destOffset);
+		dest.set(state, destOffset);
 	}
 }
 
@@ -272,28 +288,20 @@ class AnubisDecryptTransform extends AnubisBaseTransform
 	}
 
 	// Invert key schedule for decryption:
-	prepareRoundKeys(keyBytes, tables)
+	prepareRoundKeys(keyBytes)
 	{
-		const [T0, T1, T2, T3, T4] = tables;
-
-		const roundKeys = super.prepareRoundKeys(keyBytes, tables);
+		const roundKeys = super.prepareRoundKeys(keyBytes);
+		const rows = keyBytes.length / 4;
 		const rounds = roundKeys.length - 1;
-		// Reverse order of round keys:
-		roundKeys.reverse();
 
-		// Replace round keys 1 to N-1 with their inverted version:
+		// Replace RK 1 to N-1 with θ(RK):
 		for (let r = 1; r < rounds; r++)
 		{
-			for (let i = 0; i < 4; i++)
-			{
-				const v = roundKeys[r][i];
-				roundKeys[r][i] =
-					T0[T4[(v >>> 24)       ] & 0xff] ^
-					T1[T4[(v >>> 16) & 0xff] & 0xff] ^
-					T2[T4[(v >>>  8) & 0xff] & 0xff] ^
-					T3[T4[(v       ) & 0xff] & 0xff];
-			}
+			theta(roundKeys[r], rows);
 		}
+
+		// Reverse order of round keys:
+		roundKeys.reverse();
 
 		return roundKeys;
 	}

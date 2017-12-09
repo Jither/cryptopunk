@@ -3,6 +3,7 @@ import { int64sToBytesBE, bytesToInt64sBE } from "../../cryptopunk.utils";
 import { ror64, shr64, xor64 } from "../../cryptopunk.bitarith";
 
 // TODO: This is INSANELY inefficient and wasteful in terms of the 64-bit math
+// TODO: Maybe align this with Rijndael (and use byte arrays rather than 64-bit objects)
 
 const WHIRLPOOL_0 = "whirlpool-0";
 const WHIRLPOOL_T = "whirlpool-t";

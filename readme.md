@@ -208,7 +208,7 @@ TODO
 * RC5, RC6 (16/64 bit word sizes)
 * Serpent-0
 
-#### Second priority
+#### Block Ciphers: Second priority
 
 * BaseKing
 * CLEFIA
@@ -227,20 +227,22 @@ TODO
 * Shark-A
 * Unicorn-A, Unicorn-E
 
-#### Third priority
+#### Block Ciphers: Third priority
 
 * Akelarre
 * ARIA 0.8/0.9? (If vectors can be found)
 * BassOmatic
+* BEAR / LION
 * Chiasmus?
 * CS2-Cipher
+* CRISP
 * Diamond2
 * FEA-M
 * HPC-1 / HPC-2
 * Mercy
 * MESH
 * MMB
-* MULTI2
+* MULTI-S01
 * New Data Seal
 * NUSH
 * Rainbow
@@ -259,10 +261,14 @@ TODO
 
 * Achterbahn
 * E0
+* Enocoro
 * F-FCSR
 * FISH
 * HC-128 / HC-256
 * ISAAC
+* KCipher-2
+* Leviathan
+* LILI-128
 * MUGI
 * PANAMA
 * Helix / Phelix
@@ -306,20 +312,29 @@ TODO
 
 * BLAKE2X, BLAKE2sp, BLAKE2bp
 * Blue Midnight Wish (BMW)
-* DHA-256
-* ECOH
 * FSB
-* FORK-256
 * Fugue
 * GOST R 34.11-94
 * HAS-V
+* LASH
 * MD6
+* N-Hash
 * RadioGatún
 * Skein
-* Snefru 1.0?
 * Spectral Hash
 * Streebog (GOST 34.11-2012)
 * SWIFFT
+
+#### Hashes: Second priority
+
+* DASH
+* DHA-256
+* ECOH
+* Edon-R
+* FFT-Hash / FFT-Hash II
+* FORK-256
+* Grindahl
+* Snefru 1.0?
 
 ### Key-Derivation Functions
 
