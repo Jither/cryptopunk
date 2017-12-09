@@ -1,6 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { xorBytes } from "../../cryptopunk.bitarith";
 import { gfMulTable } from "../../cryptopunk.galois";
+import { matrixShiftMinor } from "../../cryptopunk.matrix-array";
 
 const KEY_SIZES = [128, 160, 192, 224, 256, 288, 320];
 
@@ -14,8 +15,10 @@ const VARIANT_NAMES = [
 	"Anubis"
 ];
 
+// TODO: Precomputation of S-boxes
+
 // Tweaked S-box:
-const S_BOX = [
+const SBOX = [
 	0xba, 0x54, 0x2f, 0x74, 0x53, 0xd3, 0xd2, 0x4d, 0x50, 0xac, 0x8d, 0xbf, 0x70, 0x52, 0x9a, 0x4c,
 	0xea, 0xd5, 0x97, 0xd1, 0x33, 0x51, 0x5b, 0xa6, 0xde, 0x48, 0xa8, 0x99, 0xdb, 0x32, 0xb7, 0xfc,
 	0xe3, 0x9e, 0x91, 0x9b, 0xe2, 0xbb, 0x41, 0x6e, 0xa5, 0xcb, 0x6b, 0x95, 0xa1, 0xf3, 0xb1, 0x02,
@@ -35,7 +38,7 @@ const S_BOX = [
 ];
 
 // Original S-box:
-const S_BOX_0 = [
+const SBOX_0 = [
 	0xa7, 0xd3, 0xe6, 0x71, 0xd0, 0xac, 0x4d, 0x79, 0x3a, 0xc9, 0x91, 0xfc, 0x1e, 0x47, 0x54, 0xbd,
 	0x8c, 0xa5, 0x7a, 0xfb, 0x63, 0xb8, 0xdd, 0xd4, 0xe5, 0xb3, 0xc5, 0xbe, 0xa9, 0x88, 0x0c, 0xa2,
 	0x39, 0xdf, 0x29, 0xda, 0x2b, 0xa8, 0xcb, 0x4c, 0x4b, 0x22, 0xaa, 0x24, 0x41, 0x70, 0xa6, 0xf9,
@@ -54,9 +57,9 @@ const S_BOX_0 = [
 	0xef, 0xe9, 0xe8, 0xfd, 0x89, 0xd7, 0xc7, 0xb5, 0xa4, 0x2f, 0x95, 0x13, 0x0b, 0xf3, 0xe0, 0x37
 ];
 
-const S_BOXES = {
-	"anubis-0": S_BOX_0,
-	"anubis": S_BOX
+const SBOXES = {
+	"anubis-0": SBOX_0,
+	"anubis": SBOX
 };
 
 const ANUBIS_POLYNOMIAL = 0x11d;
@@ -80,17 +83,17 @@ function precompute()
 // Internally, Anubis' key and state are viewed as Nx4 matrices, where the byte array
 // is mapped to the matrix: b[i,j] = a[4 * i + j]
 //
-// In other words:
+// In other words, row-major order:
 // [00 01 02 03]
 // [04 05 06 07]
 // [08 09 10 11]
 // [12 13 14 15]
 // [16 17 18 19]
 // ...
-// Note that this is the opposite row/column mapping of Rijndael (4xN)
+// Note that this is the opposite mapping of Rijndael (4xN, column-major)
 
 // Nonlinear layer γ ("SubBytes")
-function gamma(state, sbox)
+function subBytes(state, sbox)
 {
 	// Substitute using S-box:
 	for (let i = 0; i < state.length; i++)
@@ -102,7 +105,7 @@ function gamma(state, sbox)
 // Transposition τ (Transpose matrix)
 // This is only used for the round function (square matrix)
 // π essentially takes its place in the key schedule
-function tau(state)
+function transpose(state)
 {
 	// TODO: general utility function
 	// Transpose matrix:
@@ -115,7 +118,7 @@ function tau(state)
 }
 
 // Linear diffusion θ
-function theta(state, rows)
+function mixRows(state, rows)
 {
 	// Multiply (in GF(2^8)) by:
 	// [01 02 04 06]
@@ -140,27 +143,25 @@ function theta(state, rows)
 
 // Cyclical permutation π ("ShiftColumns")
 // Rotate each column, j, down by j positions
-// From a byte array perspective, this "ShiftColumns" operation is exactly equivalent to Rijndael's ShiftRows, since
-// columns and rows of the state are "swapped" in Anubis compared to Rijndael
-function pi(state, rows)
+// From a byte array perspective, this "ShiftColumns" operation is equivalent to Rijndael's ShiftRows, since
+// columns and rows of the state are "swapped" in Anubis compared to Rijndael.
+// The only difference is that the shift is "positive" (down rather than left), and the shift amounts are
+// fixed for each column.
+function shiftColumns(state, rows)
 {
-	// TODO: Inplace (use Rijndael's ShiftRows)
-	const temp = new Uint8Array(state.length);
-
-	for (let col = 0; col < 4; col++)
+	for (let col = 1; col < 4; col++)
 	{
-		for (let row = 0; row < rows; row++)
-		{
-			const source = row * 4 + col;
-			const dest = ((row + col) % rows) * 4 + col;
-			temp[dest] = state[source];
-		}
+		matrixShiftMinor(state, rows, 4, col, col);
 	}
-	state.set(temp);
 }
 
 // Key extraction ω
-function omega(state, rows)
+// Converts Nx4 key state matrix to 4x4 through a linear mapping:
+// [ 01    01    01    01    01 ..  01       ]
+// [ 01    02    02^2  02^3  02^4   02^(N-1) ] * K
+// [ 01    06    06^2  06^3  06^4   06^(N-1) ]
+// [ 01    08    08^2  08^3  08^4   08^(N-1) ]
+function extractKey(state, rows)
 {
 	// TODO: Inplace?
 	const k = new Uint8Array(16);
@@ -200,7 +201,7 @@ class AnubisBaseTransform extends BlockCipherTransform
 
 	prepareRoundKeys(keyBytes)
 	{
-		const sbox = S_BOXES[this.options.variant];
+		const sbox = SBOXES[this.options.variant];
 		const rows = keyBytes.length / 4;
 
 		const rounds = 8 + rows;
@@ -212,9 +213,9 @@ class AnubisBaseTransform extends BlockCipherTransform
 		for (let r = 1; r < k.length; r++)
 		{
 			k[r] = Uint8Array.from(k[r - 1]);
-			gamma(k[r], sbox);
-			pi(k[r], rows);
-			theta(k[r], rows);
+			subBytes(k[r], sbox);
+			shiftColumns(k[r], rows);
+			mixRows(k[r], rows);
 
 			// Round constant addition σ[cr]
 			for (let j = 0; j < 4; j++)
@@ -227,10 +228,10 @@ class AnubisBaseTransform extends BlockCipherTransform
 		// Key selections φ
 		for (let r = 0; r < k.length; r++)
 		{
-			gamma(k[r], sbox);
+			subBytes(k[r], sbox);
 			// TODO: Inplace?
-			k[r] = omega(k[r], rows);
-			tau(k[r]);
+			k[r] = extractKey(k[r], rows);
+			transpose(k[r]);
 		}
 
 		return k;
@@ -239,7 +240,7 @@ class AnubisBaseTransform extends BlockCipherTransform
 	transformBlock(block, dest, destOffset, roundKeys)
 	{
 		const state = Uint8Array.from(block);
-		const sbox = S_BOXES[this.options.variant];
+		const sbox = SBOXES[this.options.variant];
 
 		const rounds = roundKeys.length - 1;
 
@@ -249,22 +250,15 @@ class AnubisBaseTransform extends BlockCipherTransform
 		// N-1 rounds:
 		for (let r = 1; r < rounds; r++)
 		{
-			// Nonlinear layer γ
-			gamma(state, sbox);
-			// Transposition τ
-			tau(state);
-			// Linear diffusion θ
-			theta(state, 4);
-			// Key addition σ[Kr]
+			subBytes(state, sbox);
+			transpose(state);
+			mixRows(state, 4);
 			xorBytes(state, roundKeys[r]);
 		}
 
 		// Last round:
-		// Nonlinear layer γ
-		gamma(state, sbox);
-		// Transposition τ
-		tau(state);
-		// Key addition σ[KR]
+		subBytes(state, sbox);
+		transpose(state);
 		xorBytes(state, roundKeys[rounds]);
 
 		dest.set(state, destOffset);
@@ -297,7 +291,7 @@ class AnubisDecryptTransform extends AnubisBaseTransform
 		// Replace RK 1 to N-1 with θ(RK):
 		for (let r = 1; r < rounds; r++)
 		{
-			theta(roundKeys[r], rows);
+			mixRows(roundKeys[r], rows);
 		}
 
 		// Reverse order of round keys:
@@ -310,6 +304,6 @@ class AnubisDecryptTransform extends AnubisBaseTransform
 export {
 	AnubisEncryptTransform,
 	AnubisDecryptTransform,
-	S_BOX,
-	S_BOX_0
+	SBOX,
+	SBOX_0
 };

@@ -1,9 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
-import { S_BOX, S_BOX_0 } from "./anubis";
-import { TransformError } from "../transforms";
-
-// TODO: UNFINISHED
+import { SBOX, SBOX_0 } from "./anubis";
+import { gfMulTable } from "../../cryptopunk.galois";
+import { xorBytes } from "../../cryptopunk.bitarith";
 
 const VARIANT_VALUES = [
 	"khazad-0",
@@ -15,239 +13,169 @@ const VARIANT_NAMES = [
 	"KHAZAD"
 ];
 
-const S_BOXES = {
-	"khazad-0": S_BOX_0,
-	"khazad": S_BOX
+// Khazad (and tweak) shares S-boxes with Anubis (and tweak)
+const SBOXES = {
+	"khazad-0": SBOX_0,
+	"khazad": SBOX
 };
 
-const TABLESlo = {};
-const TABLEShi = {};
+const KHAZAD_POLYNOMIAL = 0x11d;
 
-// Multiplies x by 3, 4, 5, 6, 7, 8 - in GF(2^8) field
-function gfMul(x)
+// Generator matrix for mix:
+const GEN_MATRIX = [
+	[1, 3, 4, 5, 6, 8, 11, 7],
+	[3, 1, 5, 4, 8, 6, 7, 11],
+	[4, 5, 1, 3, 11, 7, 6, 8],
+	[5, 4, 3, 1, 7, 11, 8, 6],
+	[6, 8, 11, 7, 1, 3, 4, 5],
+	[8, 6, 7, 11, 3, 1, 5, 4],
+	[11, 7, 6, 8, 4, 5, 1, 3],
+	[7, 11, 8, 6, 5, 4, 3, 1]
+];
+
+let MULTIPLIERS;
+
+function precompute()
 {
-	let x2 = x << 1;
-	if (x2 >= 0x100)
+	if (MULTIPLIERS)
 	{
-		x2 ^= 0x11d;
-	}
-	const x3 = x2 ^ x;
-	let x4 = x2 << 1;
-	if (x4 >= 0x100)
-	{
-		x4 ^= 0x11d;
-	}
-	const x5 = x4 ^ x;
-	const x6 = x4 ^ x2;
-	const x7 = x6 ^ x;
-	let x8 = x4 << 1;
-	if (x8 >= 0x100)
-	{
-		x8 ^= 0x11d;
+		return;
 	}
 
-	const x11 = x8 ^ x2 ^ x;
+	const MUL3 = gfMulTable(3, KHAZAD_POLYNOMIAL);
+	const MUL4 = gfMulTable(4, KHAZAD_POLYNOMIAL);
+	const MUL5 = gfMulTable(5, KHAZAD_POLYNOMIAL);
+	const MUL6 = gfMulTable(6, KHAZAD_POLYNOMIAL);
+	const MUL7 = gfMulTable(7, KHAZAD_POLYNOMIAL);
+	const MUL8 = gfMulTable(8, KHAZAD_POLYNOMIAL);
+	const MULb = gfMulTable(11, KHAZAD_POLYNOMIAL);
 
-	return [x3, x4, x5, x6, x7, x8, x11];
+	MULTIPLIERS = [];
+	const multipliers = [null, null, null, MUL3, MUL4, MUL5, MUL6, MUL7, MUL8, null, null, MULb];
+
+	for (const row of GEN_MATRIX)
+	{
+		const mulRow = new Array(8);
+		for (let i = 0; i < row.length; i++)
+		{
+			const mul = row[i];
+			mulRow[i] = mul ? multipliers[mul] : null;
+		}
+		MULTIPLIERS.push(mulRow);
+	}
 }
 
-// TODO: Remove transformation tables (do transformations directly in cipher)
-function precompute(variant)
+// Nonlinear layer γ ("SubBytes")
+function subBytes(state, sbox)
 {
-	const tablesHi = TABLEShi[variant];
-	const tablesLo = TABLESlo[variant];
-	if (tablesHi)
+	// Substitute using S-box:
+	for (let i = 0; i < state.length; i++)
 	{
-		return { hi: tablesHi, lo: tablesLo };
+		state[i] = sbox[state[i]];
 	}
-	const sbox = S_BOXES[variant];
-
-	const T0hi = new Uint32Array(256);
-	const T0lo = new Uint32Array(256);
-	const T1hi = new Uint32Array(256);
-	const T1lo = new Uint32Array(256);
-	const T2hi = new Uint32Array(256);
-	const T2lo = new Uint32Array(256);
-	const T3hi = new Uint32Array(256);
-	const T3lo = new Uint32Array(256);
-	const T4hi = new Uint32Array(256);
-	const T4lo = new Uint32Array(256);
-	const T5hi = new Uint32Array(256);
-	const T5lo = new Uint32Array(256);
-	const T6hi = new Uint32Array(256);
-	const T6lo = new Uint32Array(256);
-	const T7hi = new Uint32Array(256);
-	const T7lo = new Uint32Array(256);
-
-	for (let i = 0; i < 256; i++)
-	{
-		const s1 = sbox[i];
-		const [s3, s4, s5, s6, s7, s8, s11] = gfMul(s1);
-
-		T0hi[i] = (s1  << 24) | (s3  << 16) | (s4  << 8) | s5;
-		T0lo[i] = (s6  << 24) | (s8  << 16) | (s11 << 8) | s7;
-
-		T1hi[i] = (s3  << 24) | (s1  << 16) | (s5  << 8) | s4;
-		T1lo[i] = (s8  << 24) | (s6  << 16) | (s7  << 8) | s11;
-
-		T2hi[i] = (s4  << 24) | (s5  << 16) | (s1  << 8) | s3;
-		T2lo[i] = (s11 << 24) | (s7  << 16) | (s6  << 8) | s8;
-
-		T3hi[i] = (s5  << 24) | (s4  << 16) | (s3  << 8) | s1;
-		T3lo[i] = (s7  << 24) | (s11 << 16) | (s8  << 8) | s6;
-
-		T4hi[i] = (s6  << 24) | (s8  << 16) | (s11 << 8) | s7;
-		T4lo[i] = (s1  << 24) | (s3  << 16) | (s11 << 8) | s5;
-
-		T5hi[i] = (s8  << 24) | (s6  << 16) | (s7  << 8) | s11;
-		T5lo[i] = (s3  << 24) | (s1  << 16) | (s5  << 8) | s4;
-
-		T6hi[i] = (s11 << 24) | (s7  << 16) | (s6  << 8) | s8;
-		T6lo[i] = (s4  << 24) | (s5  << 16) | (s1  << 8) | s3;
-
-		T7hi[i] = (s7  << 24) | (s11 << 16) | (s8  << 8) | s6;
-		T7lo[i] = (s5  << 24) | (s4  << 16) | (s3  << 8) | s1;
-	}
-
-	TABLEShi[variant] = [T0hi, T1hi, T2hi, T3hi, T4hi, T5hi, T6hi, T7hi];
-	TABLESlo[variant] = [T0lo, T1lo, T2lo, T3lo, T4lo, T5lo, T6lo, T7lo];
-
-	return { hi: TABLEShi[variant], lo: TABLESlo[variant] };
 }
 
-class KhazadBaseTransform extends BlockCipherTransform
+// Linear diffusion θ
+function mix(state)
+{
+	// Multiply (in GF(2^8)) by:
+	// [01 03 04 05 06 08 0b 07]
+	// [03 01 05 04 08 06 07 0b]
+	// [04 05 01 03 0b 07 06 08]
+	// [05 04 03 01 07 0b 08 06]
+	// [06 08 0b 07 01 03 04 05]
+	// [08 06 07 0b 03 01 05 04]
+	// [0b 07 06 08 04 05 01 03]
+	// [07 0b 08 06 05 04 03 01]
+	const b = new Uint8Array(8); // Uint8Array.from(state);
+
+	for (let row = 0; row < 8; row++)
+	{
+		const muls = MULTIPLIERS[row];
+		const a = state[row];
+		for (let col = 0; col < 8; col++)
+		{
+			const mul = muls[col];
+			b[col] ^= mul ? mul[a] : a;
+		}
+	}
+	state.set(b);
+}
+
+class KhazadTransform extends BlockCipherTransform
 {
 	constructor(decrypt)
 	{
 		super(decrypt);
 		this.addOption("variant", "Variant", "khazad", { type: "select", values: VARIANT_VALUES, texts: VARIANT_NAMES });
-		throw new TransformError("Not implemented");
+		this.addOption("rounds", "Rounds", 8, { min: 1 });
 	}
 
 	transform(bytes, keyBytes)
 	{
+		precompute();
+
 		this.checkBytesSize("Key", keyBytes, 128);
 
-		// Precalculate tables (once, stored for later use)
-		const tables = precompute(this.options.variant);
+		const roundKeys = this.prepareRoundKeys(keyBytes, this.options.rounds);
 
-		const roundKeys = this.prepareRoundKeys(keyBytes, tables);
-
-		return this.transformBlocks(bytes, 128, roundKeys, tables);
+		return this.transformBlocks(bytes, 64, roundKeys);
 	}
 
-	prepareRoundKeys(keyBytes, tables)
+	prepareRoundKeys(keyBytes, rounds)
 	{
-		const [T0, T1, T2, T3, T4, T5] = tables;
+		const k = new Array(rounds + 1);
+		const sbox = SBOXES[this.options.variant];
 
-		const keyWordCount = keyBytes.length / 4;
-		const kappa = bytesToInt32sBE(keyBytes);
-		const inter = new Uint32Array(keyWordCount);
+		k[-2] = keyBytes.subarray(0, 8);
+		k[-1] = keyBytes.subarray(8, 16);
 
-		const rounds = 8 + keyWordCount;
-
-		const roundKeys = new Array(rounds + 1);
-
-		const k = new Uint32Array(4);
-		for (let r = 0;  r < roundKeys.length; r++)
+		for (let r = 0; r < rounds + 1; r++)
 		{
-			const kappaN = kappa[keyWordCount - 1];
-			for (let i = 0; i < 4; i++)
-			{
-				k[i] = T4[(kappaN >>> (24 - i * 8)) & 0xff];
-			}
+			k[r] = Uint8Array.from(k[r - 1]);
+			subBytes(k[r], sbox);
+			mix(k[r]);
 
-			for (let j = keyWordCount - 2; j >= 0; j--)
+			for (let i = 0; i < 8; i++)
 			{
-				for (let i = 0; i < 4; i++)
-				{
-					const ki = k[i];
-					k[i] = T4[(kappa[j] >>> (24 - i * 8)) & 0xff] ^
-						(T5[ ki >>> 24        ] & 0xff000000) ^
-						(T5[(ki >>> 16) & 0xff] & 0x00ff0000) ^
-						(T5[(ki >>>  8) & 0xff] & 0x0000ff00) ^
-						(T5[(ki       ) & 0xff] & 0x000000ff);
-				}
+				const cr = sbox[8 * r + i];
+				k[r][i] ^= cr;
 			}
-
-			roundKeys[r] = Uint32Array.from(k);
-
-			for (let i = 0; i < keyWordCount; i++)
-			{
-				inter[i] =
-					T0[(kappa[i] >>> 24)       ] ^
-					T1[(kappa[(keyWordCount + i - 1) % keyWordCount] >>> 16) & 0xff] ^
-					T2[(kappa[(keyWordCount + i - 2) % keyWordCount] >>>  8) & 0xff] ^
-					T3[(kappa[(keyWordCount + i - 3) % keyWordCount]       ) & 0xff];
-			}
-
-			kappa[0] =
-				(T0[4 * r    ] & 0xff000000) ^
-				(T1[4 * r + 1] & 0x00ff0000) ^
-				(T2[4 * r + 2] & 0x0000ff00) ^
-				(T3[4 * r + 3] & 0x000000ff) ^
-				inter[0];
-			
-			for (let i = 1; i < keyWordCount; i++)
-			{
-				kappa[i] = inter[i];
-			}
+			xorBytes(k[r], k[r - 2]);
 		}
 
-		return roundKeys;
+		return k;
 	}
 
-	transformBlock(block, dest, destOffset, roundKeys, tables)
+	transformBlock(block, dest, destOffset, roundKeys)
 	{
-		const [T0, T1, T2, T3] = tables;
+		const state = Uint8Array.from(block);
 
-		const state = bytesToInt32sBE(block);
-		const inter = new Uint32Array(state.length);
+		const sbox = SBOXES[this.options.variant];
 
 		const rounds = roundKeys.length - 1;
 
-		for (let i = 0; i < 4; i++)
-		{
-			state[i] ^= roundKeys[0][i];
-		}
+		// Key addition σ[K0]
+		xorBytes(state, roundKeys[0]);
 
 		// N-1 rounds:
 		for (let r = 1; r < rounds; r++)
 		{
-			for (let i = 0; i < 4; i++)
-			{
-				const shift = 24 - (i * 8);
-				inter[i] = 
-					T0[(state[0] >>> shift) & 0xff] ^
-					T1[(state[1] >>> shift) & 0xff] ^
-					T2[(state[2] >>> shift) & 0xff] ^
-					T3[(state[3] >>> shift) & 0xff] ^
-					roundKeys[r][i];
-			}
-			for (let i = 0; i < 4; i++)
-			{
-				state[i] = inter[i];
-			}
+			subBytes(state, sbox);
+			mix(state);
+			xorBytes(state, roundKeys[r]);
 		}
 
 		// Last round:
-		for (let i = 0; i < 4; i++)
-		{
-			const shift = 24 - (i * 8);
-			inter[i] = 
-				(T0[(state[0] >>> shift) & 0xff] & 0xff000000) ^
-				(T1[(state[1] >>> shift) & 0xff] & 0x00ff0000) ^
-				(T2[(state[2] >>> shift) & 0xff] & 0x0000ff00) ^
-				(T3[(state[3] >>> shift) & 0xff] & 0x000000ff) ^
-				roundKeys[rounds][i];
-		}
+		subBytes(state, sbox);
+		xorBytes(state, roundKeys[rounds]);
 
-		dest.set(int32sToBytesBE(inter), destOffset);
+		dest.set(state, destOffset);
 	}
 }
 
 
-class KhazadEncryptTransform extends KhazadBaseTransform
+class KhazadEncryptTransform extends KhazadTransform
 {
 	constructor()
 	{
@@ -255,7 +183,7 @@ class KhazadEncryptTransform extends KhazadBaseTransform
 	}
 }
 
-class KhazadDecryptTransform extends KhazadBaseTransform
+class KhazadDecryptTransform extends KhazadTransform
 {
 	constructor()
 	{
@@ -263,28 +191,18 @@ class KhazadDecryptTransform extends KhazadBaseTransform
 	}
 
 	// Invert key schedule for decryption:
-	prepareRoundKeys(keyBytes, tables)
+	prepareRoundKeys(keyBytes, rounds)
 	{
-		const [T0, T1, T2, T3, T4] = tables;
+		const roundKeys = super.prepareRoundKeys(keyBytes, rounds);
 
-		const roundKeys = super.prepareRoundKeys(keyBytes, tables);
-		const rounds = roundKeys.length - 1;
-		// Reverse order of round keys:
-		roundKeys.reverse();
-
-		// Replace round keys 1 to N-1 with their inverted version:
+		// Replace RK 1 to N-1 with θ(RK):
 		for (let r = 1; r < rounds; r++)
 		{
-			for (let i = 0; i < 4; i++)
-			{
-				const v = roundKeys[r][i];
-				roundKeys[r][i] =
-					T0[T4[(v >>> 24)       ] & 0xff] ^
-					T1[T4[(v >>> 16) & 0xff] & 0xff] ^
-					T2[T4[(v >>>  8) & 0xff] & 0xff] ^
-					T3[T4[(v       ) & 0xff] & 0xff];
-			}
+			mix(roundKeys[r]);
 		}
+
+		// Reverse order of round keys:
+		roundKeys.reverse();
 
 		return roundKeys;
 	}

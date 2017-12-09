@@ -4,7 +4,7 @@ import { getRijndaelSboxes } from "../shared/rijndael";
 import { gfMulTable, gfExp2Table256 } from "../../cryptopunk.galois";
 import { checkSize } from "../../cryptopunk.utils";
 import { TransformError } from "../transforms";
-import { gcd } from "../../cryptopunk.math";
+import { matrixShiftMinor } from "../../cryptopunk.matrix-array";
 
 // Rijndael uses a lot of Galois field math. Most of this can be reduced to table lookups - see rijndael_tables.js for an example.
 // However, this implementation, like the others in this project, is intended to show what's actually going on math-wise.
@@ -118,44 +118,9 @@ function invSubBytes(state)
 	}
 }
 
-// Does a juggling inplace byte shift of a single row in a matrix represented as a 1-dimensional array,
-// where *columns* are consecutive bytes.
-// I.e., the *row*'s bytes will be spread across the array in intervals:
-//
-// a e i m q <-- shift orientation -->
-// b f j n r
-// c g k o s
-// d h l p t
-//
-// ... is represented as:
-//
-// a b c d e f g h i j k l m n o p q r s t
-function _shiftRow(state, rows, columns, rowIndex, shift)
-{
-	const setCount = gcd(shift, columns);
-	
-	for (let start = 0; start < setCount; start++)
-	{
-		let dest = start;
-		const temp = state[rowIndex + start * rows];
-
-		for (;;)
-		{
-			const source = (dest + shift) % columns;
-			if (source === start)
-			{
-				state[rowIndex + dest * rows] = temp;
-				break;
-			}
-			state[rowIndex + dest * rows] = state[rowIndex + source * rows];
-			dest = source;
-		}
-	}
-}
-
 function shiftRows(state)
 {
-	// ShiftRows circular shifts each row a predefined amount of bytes
+	// ShiftRows circular shifts each row a predefined amount of bytes LEFT
 	const columns = state.columns;
 	const shifts = state.shifts;
 	
@@ -163,21 +128,21 @@ function shiftRows(state)
 	for (let rowIndex = 1; rowIndex < 4; rowIndex++)
 	{
 		const shift = shifts[rowIndex];
-		_shiftRow(state, 4, columns, rowIndex, shift);
+		matrixShiftMinor(state, columns, 4, rowIndex, -shift);
 	}
 }
 
 function invShiftRows(state)
 {
-	// InvShiftRows circular shifts each row a predefined amount of bytes
+	// InvShiftRows circular shifts each row a predefined amount of bytes RIGHT
 	const columns = state.columns;
 	const shifts = state.shifts;
 	
 	// We skip row 0, since its shift is always 0
 	for (let rowIndex = 1; rowIndex < 4; rowIndex++)
 	{
-		const shift = columns - shifts[rowIndex];
-		_shiftRow(state, 4, columns, rowIndex, shift);
+		const shift = shifts[rowIndex];
+		matrixShiftMinor(state, columns, 4, rowIndex, shift);
 	}
 }
 
