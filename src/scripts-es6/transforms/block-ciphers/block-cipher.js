@@ -1,5 +1,6 @@
 import { Transform, TransformError } from "../transforms";
-import { checkSize } from "../../cryptopunk.utils";
+import { checkSize, bytesToHex } from "../../cryptopunk.utils";
+import cache from "../../cryptopunk.cache";
 
 class BlockCipherTransform extends Transform
 {
@@ -15,12 +16,27 @@ class BlockCipherTransform extends Transform
 	checkBytesSize(name, bytes, requiredSize)
 	{
 		const size = bytes.length * 8;
+		this.checkSize(name, size, requiredSize);
+		return size;
+	}
+
+	checkSize(name, size, requiredSize)
+	{
 		const requirement = checkSize(size, requiredSize);
 		if (requirement)
 		{
 			throw new TransformError(`${name} size must be ${requirement} bits. Was: ${size} bits.`);
 		}
-		return size;
+	}
+
+	cacheKeys(prefix, factory, keyBytes, ...rest)
+	{
+		const params = rest.join("_");
+		const direction = this.decrypt ? "dec" : "enc";
+		const keyHex = bytesToHex(keyBytes);
+		const cacheKey = `${prefix}_${keyHex}_${params}_${direction}`;
+
+		return cache.getOrAdd(cacheKey, factory);
 	}
 
 	transformBlocks(bytes, blockSize, ...rest)

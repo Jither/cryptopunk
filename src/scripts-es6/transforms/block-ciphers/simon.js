@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { checkSize, readNWord, writeNWord } from "../../cryptopunk.utils";
+import { readNWord, writeNWord } from "../../cryptopunk.utils";
 import { and64, not64, xor64, ror16, ror24, ror, ror48, ror64, rol16, rol24, rol, rol48, rol64, ONE_64, ZERO_64 } from "../../cryptopunk.bitarith";
 
 const BLOCK_SIZES = [
@@ -200,11 +199,7 @@ class SimonTransform extends BlockCipherTransform
 	transform(bytes, keyBytes)
 	{
 		const blockSize = this.options.blockSize;
-		const requirement = checkSize(blockSize, BLOCK_SIZES);
-		if (requirement)
-		{
-			throw new TransformError(`Block size must be ${requirement} bits. Was: ${blockSize} bits.`);
-		}
+		this.checkSize("Block size", blockSize, BLOCK_SIZES);
 		
 		const validKeySizes = KEY_SIZES_BY_BLOCK_SIZE[blockSize];
 		const keySize = this.checkBytesSize("Key", keyBytes, validKeySizes);

@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { bytesToInt32sBE, checkSize } from "../../cryptopunk.utils";
+import { bytesToInt32sBE } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
 import { ror } from "../../cryptopunk.bitarith";
 import { getRijndaelMulTable, getRijndaelSboxes } from "../shared/rijndael";
@@ -89,14 +88,9 @@ class RijndaelBaseTransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
-
 		const blockSize = this.options.blockSize;
-		const requirement = checkSize(blockSize, BLOCK_SIZES);
-		if (requirement)
-		{
-			throw new TransformError(`Block size must be ${requirement} bits. Was ${blockSize} bits`);
-		}
+		this.checkBytesSize("Key", keyBytes, KEY_SIZES);
+		this.checkSize("Block size", blockSize, BLOCK_SIZES);
 
 		// Precalculate tables (once, stored for later use)
 		precompute();

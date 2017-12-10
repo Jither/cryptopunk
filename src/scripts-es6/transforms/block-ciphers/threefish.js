@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { checkSize, bytesToInt64sLE, int64sToBytesLE } from "../../cryptopunk.utils";
+import { bytesToInt64sLE, int64sToBytesLE } from "../../cryptopunk.utils";
 import { add64, rol64, ror64, sub64, xor64 } from "../../cryptopunk.bitarith";
 
 // 1.1 - 1.2 Pre-tweak constant (2^^64 / 3)
@@ -107,15 +106,9 @@ class ThreefishTransform extends BlockCipherTransform
 	{
 		const blockSize = this.options.blockSize;
 
-		checkSize(blockSize, BLOCK_SIZES);
+		this.checkSize("Block size", blockSize, BLOCK_SIZES);
 		
-		const keySize = keyBytes.length * 8;
-		const keyRequirement = checkSize(keySize, blockSize);
-		if (keyRequirement)
-		{
-			throw new TransformError(`Key size must be ${keyRequirement} bits (same as block size). Was: ${keySize} bits.`);
-		}
-		
+		this.checkBytesSize("Key", keyBytes, blockSize);
 		this.checkBytesSize("Tweak", tweakBytes, 128);
 
 		const rounds = ROUNDS_BY_BLOCK_SIZE[blockSize];

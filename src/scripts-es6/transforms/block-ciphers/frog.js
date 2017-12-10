@@ -1,10 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import cache from "../../cryptopunk.cache";
-import { bytesToHex } from "../../cryptopunk.utils";
 import { RandProvider } from "../shared/rand";
-
-const CACHE_PREFIX = "FROG";
 
 const RANDOM_SEED = [];
 
@@ -106,18 +101,17 @@ class FrogTransform extends BlockCipherTransform
 	transform(bytes, keyBytes)
 	{
 		precompute();
-		
-		if (keyBytes.length < 5 || keyBytes.length > 125)
-		{
-			throw new TransformError(`Key size must be between 5 bytes (40 bits) and 125 bytes (1000 bits). Was: ${keyBytes.length}.`);
-		}
+
+		this.checkBytesSize("Key", keyBytes, { min: 5, max: 125 });
 
 		const blockLength = this.options.blockSize / 8;
-		const keyHex = bytesToHex(keyBytes);
-		const direction = this.decrypt ? "dec" : "enc";
-		const cacheKey = `${CACHE_PREFIX}_${keyHex}_${direction}_${blockLength}_${this.options.rounds}`;
-		const keys = cache.getOrAdd(cacheKey, () => 
-			this.generateKeys(keyBytes, blockLength, this.options.rounds)
+
+		const keys = this.cacheKeys(
+			"FROG",
+			() => this.generateKeys(keyBytes, blockLength, this.options.rounds),
+			keyBytes,
+			blockLength,
+			this.options.rounds
 		);
 
 		return this.transformBlocks(bytes, this.options.blockSize, keys);

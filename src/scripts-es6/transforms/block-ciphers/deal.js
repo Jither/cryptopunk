@@ -1,16 +1,12 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { DesEncryptTransform } from "./des";
 import { xorBytes } from "../../cryptopunk.bitarith";
-import cache from "../../cryptopunk.cache";
-import { bytesToHex } from "../../cryptopunk.utils";
 
 const ROUNDS_BY_KEYSIZE = {
 	128: 6,
 	192: 6,
 	256: 8
 };
-
-const CACHE_PREFIX = "DEAL";
 
 // Fixed DES key for generating sub keys
 const K = Uint8Array.from([0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef]);
@@ -31,10 +27,12 @@ class DealTransform extends BlockCipherTransform
 		const keySize = keyBytes.length * 8;
 		const rounds = ROUNDS_BY_KEYSIZE[keySize];
 
-		const direction = this.decrypt ? "dec" : "enc";
-		const keyHex = bytesToHex(keyBytes);
-		const cacheKey = `${CACHE_PREFIX}_${keyHex}_${direction}`;
-		const subKeys = cache.getOrAdd(cacheKey, () => this.generateSubKeys(keyBytes, rounds));
+		const subKeys = this.cacheKeys(
+			"DEAL",
+			() => this.generateSubKeys(keyBytes, rounds),
+			keyBytes,
+			rounds
+		);
 
 		return this.transformBlocks(bytes, 128, subKeys, rounds);
 	}

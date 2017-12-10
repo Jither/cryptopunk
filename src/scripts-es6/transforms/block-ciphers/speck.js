@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { checkSize, readNWord, writeNWord } from "../../cryptopunk.utils";
+import { readNWord, writeNWord } from "../../cryptopunk.utils";
 import { add, add64, sub64, xor64, rol64, ror64, rol48, ror48 } from "../../cryptopunk.bitarith";
 
 const BLOCK_SIZES = [
@@ -111,11 +110,8 @@ class SpeckTransform extends BlockCipherTransform
 	transform(bytes, keyBytes)
 	{
 		const blockSize = this.options.blockSize;
-		const requirement = checkSize(blockSize, BLOCK_SIZES);
-		if (requirement)
-		{
-			throw new TransformError(`Block size must be ${requirement} bits. Was: ${blockSize} bits.`);
-		}
+		this.checkSize("Block size", blockSize, BLOCK_SIZES);
+
 		const validKeySizes = KEY_SIZES_BY_BLOCK_SIZE[blockSize];
 		const keySize = this.checkBytesSize("Key", keyBytes, validKeySizes);
 

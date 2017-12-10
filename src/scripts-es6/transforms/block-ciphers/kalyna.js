@@ -1,8 +1,6 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { matrixShiftMinor } from "../../cryptopunk.matrix-array";
 import { gfMulTable } from "../../cryptopunk.galois";
-import { checkSize } from "../../cryptopunk.utils";
-import { TransformError } from "../transforms";
 import { xorBytes, rolBytes } from "../../cryptopunk.bitarith";
 
 const BLOCK_SIZES = [128, 256, 512];
@@ -328,12 +326,7 @@ class KalynaTransform extends BlockCipherTransform
 		precompute();
 		const blockSize = this.options.blockSize;
 
-		const requirement = checkSize(blockSize, BLOCK_SIZES);
-		if (requirement)
-		{
-			throw new TransformError(`Block size must be ${requirement} bits. Was ${blockSize} bits`);
-		}
-
+		this.checkSize("Block size", blockSize, BLOCK_SIZES);
 		this.checkBytesSize("Key", keyBytes, KEY_SIZES_BY_BLOCK_SIZE[blockSize]);
 
 		let rounds = this.options.rounds;
@@ -343,7 +336,13 @@ class KalynaTransform extends BlockCipherTransform
 			rounds = RECOMMENDED_ROUND_COUNTS[keyBytes.length * 8];
 		}
 
-		const roundKeys = this.prepareRoundKeys(keyBytes, blockSize, rounds);
+		const roundKeys = this.cacheKeys(
+			"Kalyna",
+			() => this.prepareRoundKeys(keyBytes, blockSize, rounds),
+			keyBytes,
+			blockSize,
+			rounds
+		);
 
 		return this.transformBlocks(bytes, blockSize, roundKeys);
 	}

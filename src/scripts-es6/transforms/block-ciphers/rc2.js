@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { TransformError } from "../transforms";
-import { int16sToBytesLE, bytesToInt16sLE, checkSize } from "../../cryptopunk.utils";
+import { int16sToBytesLE, bytesToInt16sLE } from "../../cryptopunk.utils";
 import { rol16, ror16 } from "../../cryptopunk.bitarith";
 
 const PITABLE = [
@@ -98,11 +97,7 @@ class Rc2Transform extends BlockCipherTransform
 	transform(bytes, keyBytes)
 	{
 		this.checkBytesSize("Key", keyBytes, { min: 8, max: 1024 });
-		const requirement = checkSize(this.options.effectiveKeySize, { min: 1, max: 1024 });
-		if (requirement)
-		{
-			throw new TransformError(`Effective key size must be ${requirement} bits. Was: ${this.options.effectiveKeySize} bits.`);
-		}
+		this.checkSize("Effective key size", this.options.effectiveKeySize, { min: 1, max: 1024 });
 
 		const subKeys = this.generateSubKeys(keyBytes);
 

@@ -3,8 +3,6 @@ import { rol } from "../../cryptopunk.bitarith";
 import cache from "../../cryptopunk.cache";
 import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
 
-const CACHE_PREFIX = "CubeHash";
-
 class CubeHashTransform extends HashTransform
 {
 	constructor()
@@ -24,7 +22,7 @@ class CubeHashTransform extends HashTransform
 		const rounds = this.options.rounds;
 		const initRounds = this.options.initRounds;
 
-		const cacheKey = `${CACHE_PREFIX}_${outputLength}_${blockLength}_${rounds}_${initRounds}`;
+		const cacheKey = `CubeHash_${outputLength}_${blockLength}_${rounds}_${initRounds}`;
 		
 		// Clone state from cache so we don't mutate it:
 		const state = Uint32Array.from(cache.getOrAdd(cacheKey, () => this.initState(outputLength, blockLength, rounds, initRounds)));

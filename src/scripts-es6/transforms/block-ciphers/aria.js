@@ -1,8 +1,7 @@
 import { TransformError } from "../transforms";
 import { BlockCipherTransform } from "./block-cipher";
 import { xorBytes, rorBytes } from "../../cryptopunk.bitarith";
-import { hexToBytes, bytesToHex } from "../../cryptopunk.utils";
-import cache from "../../cryptopunk.cache";
+import { hexToBytes } from "../../cryptopunk.utils";
 import { getRijndaelSboxes } from "../shared/rijndael";
 
 const
@@ -10,8 +9,6 @@ const
 	C1 = hexToBytes("517cc1b727220a94fe13abe8fa9a6ee0"),
 	C2 = hexToBytes("6db14acc9e21c820ff28b1d5ef5de2b0"),
 	C3 = hexToBytes("db92371d2126e9700324977504e8c90e");
-
-const CACHE_PREFIX = "ARIA";
 
 const ROUNDS_VALUES = [0, 2, 4, 6, 8, 10, 12, 14, 16];
 const ROUNDS_NAMES = ["Recommended", "2", "4", "6", "8", "10", "12", "14", "16"];
@@ -180,12 +177,11 @@ class AriaTransform extends BlockCipherTransform
 			throw new TransformError(`Number of rounds must be even and between 2 and 16. Was: ${rounds}.`);
 		}
 
-		const direction = this.decrypt ? "dec" : "enc";
-		const keyHex = bytesToHex(keyBytes);
-		const cacheKey = `${CACHE_PREFIX}_${keyHex}_${direction}_${rounds}`;
-
-		const keys = cache.getOrAdd(cacheKey,
-			() => this.generateKeys(keyBytes, rounds)
+		const keys = this.cacheKeys(
+			"ARIA",
+			() => this.generateKeys(keyBytes, rounds),
+			keyBytes,
+			rounds
 		);
 
 		return this.transformBlocks(bytes, 128, keys, rounds);
