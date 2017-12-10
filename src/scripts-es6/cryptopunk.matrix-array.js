@@ -24,6 +24,10 @@ function matrixShiftMinor(matrix, majors, minors, minorIndex, shift)
 	{
 		shift += majors;
 	}
+	if (shift === 0)
+	{
+		return;
+	}
 	const setCount = gcd(shift, majors);
 	
 	for (let start = 0; start < setCount; start++)

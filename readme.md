@@ -64,6 +64,7 @@ Supported
 * ICE
 * IDEA
 * "Iraqi"
+* Kalyna (128, 256, 512 key and block sizes; variable rounds)
 * KASUMI (variable rounds)
 * KHAZAD (variable rounds)
 * Khufu, Khafre (both with the actual S-boxes)
@@ -217,7 +218,6 @@ TODO
 * Grand Cru
 * Hierocrypt
 * IDEA NXT
-* Kalyna
 * MacGuffin
 * MISTY2
 * S-1

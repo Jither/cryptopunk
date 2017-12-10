@@ -48,6 +48,7 @@ import * as iraqi from "./transforms/block-ciphers/iraqi";
 import * as jh from "./transforms/hashes/jh";
 import * as jis from "./transforms/char-encodings/jis";
 import * as k12 from "./transforms/hashes/kangaroo-twelve";
+import * as kalyna from "./transforms/block-ciphers/kalyna";
 import * as kasumi from "./transforms/block-ciphers/kasumi";
 import * as keccak from "./transforms/hashes/keccak";
 import * as khazad from "./transforms/block-ciphers/khazad";
@@ -375,6 +376,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(ice.IceDecryptTransform, "IceDecrypt", "ICE", "ICE Decrypt")
 	.addItem(idea.IdeaDecryptTransform, "IdeaDecrypt", "IDEA", "IDEA Decrypt")
 	.addItem(iraqi.IraqiDecryptTransform, "IraqiDecrypt", "Iraqi", "Iraqi Decrypt")
+	.addItem(kalyna.KalynaDecryptTransform, "KalynaDecrypt", "Kalyna", "Kalyna Decrypt")
 	.addItem(kasumi.KasumiDecryptTransform, "KasumiDecrypt", "KASUMI", "KASUMI Decrypt")
 	.addItem(khazad.KhazadDecryptTransform, "KhazadDecrypt", "KHAZAD", "KHAZAD Decrypt")
 	.addItem(khufu.KhafreDecryptTransform, "KhafreDecrypt", "Khafre", "Khafre Decrypt")
@@ -433,6 +435,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(ice.IceEncryptTransform, "IceEncrypt", "ICE", "ICE Encrypt")
 	.addItem(idea.IdeaEncryptTransform, "IdeaEncrypt", "IDEA", "IDEA Encrypt")
 	.addItem(iraqi.IraqiEncryptTransform, "IraqiEncrypt", "Iraqi", "Iraqi Encrypt")
+	.addItem(kalyna.KalynaEncryptTransform, "KalynaEncrypt", "Kalyna", "Kalyna Encrypt")
 	.addItem(kasumi.KasumiEncryptTransform, "KasumiEncrypt", "KASUMI", "KASUMI Encrypt")
 	.addItem(khazad.KhazadEncryptTransform, "KhazadEncrypt", "KHAZAD", "KHAZAD Encrypt")
 	.addItem(khufu.KhafreEncryptTransform, "KhafreEncrypt", "Khafre", "Khafre Encrypt")

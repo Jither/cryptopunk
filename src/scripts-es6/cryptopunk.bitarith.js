@@ -194,6 +194,7 @@ function or64(...terms)
 
 function rorBytes(bytes, count)
 {
+	count = count % (bytes.length * 8);
 	if (count === 0)
 	{
 		return;
@@ -243,6 +244,7 @@ function rorBytes(bytes, count)
 
 function rolBytes(bytes, count)
 {
+	count = count % (bytes.length * 8);
 	if (count === 0)
 	{
 		return;
