@@ -41,6 +41,7 @@ import * as grøstl from "./transforms/hashes/grøstl";
 import * as has160 from "./transforms/hashes/has-160";
 import * as haval from "./transforms/hashes/haval";
 import * as hex from "./transforms/hex";
+import * as hierocrypt from "./transforms/block-ciphers/hierocrypt";
 import * as hill from "./transforms/classical/hill";
 import * as ice from "./transforms/block-ciphers/ice";
 import * as idea from "./transforms/block-ciphers/idea";
@@ -54,6 +55,7 @@ import * as keccak from "./transforms/hashes/keccak";
 import * as khazad from "./transforms/block-ciphers/khazad";
 import * as khufu from "./transforms/block-ciphers/khufu";
 import * as kuznyechik from "./transforms/block-ciphers/kuznyechik";
+import * as lea from "./transforms/block-ciphers/lea";
 import * as letterNumber from "./transforms/classical/letter-number";
 import * as loki from "./transforms/block-ciphers/loki";
 import * as loki97 from "./transforms/block-ciphers/loki97";
@@ -382,6 +384,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(khufu.KhafreDecryptTransform, "KhafreDecrypt", "Khafre", "Khafre Decrypt")
 	.addItem(khufu.KhufuDecryptTransform, "KhufuDecrypt", "Khufu", "Khufu Decrypt")
 	.addItem(kuznyechik.KuznyechikDecryptTransform, "KuznyechikDecrypt", "Kuznyechik", "Kuznyechik Decrypt")
+	.addItem(lea.LeaDecryptTransform, "LeaDecrypt", "LEA", "LEA Decrypt")
 	.addItem(loki.LokiDecryptTransform, "LokiDecrypt", "LOKI", "LOKI Decrypt")
 	.addItem(loki97.Loki97DecryptTransform, "Loki97Decrypt", "LOKI97", "LOKI97 Decrypt")	
 	.addItem(lucifer.LuciferDecryptTransform, "LuciferDecrypt", "LUCIFER", "LUCIFER Decrypt")
@@ -441,6 +444,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(khufu.KhafreEncryptTransform, "KhafreEncrypt", "Khafre", "Khafre Encrypt")
 	.addItem(khufu.KhufuEncryptTransform, "KhufuEncrypt", "Khufu", "Khufu Encrypt")
 	.addItem(kuznyechik.KuznyechikEncryptTransform, "KuznyechikEncrypt", "Kuznyechik", "Kuznyechik Encrypt")
+	.addItem(lea.LeaEncryptTransform, "LeaEncrypt", "LEA", "LEA Encrypt")
 	.addItem(loki.LokiEncryptTransform, "LokiEncrypt", "LOKI", "LOKI Encrypt")
 	.addItem(loki97.Loki97EncryptTransform, "Loki97Encrypt", "LOKI97", "LOKI97 Encrypt")
 	.addItem(lucifer.LuciferEncryptTransform, "LuciferEncrypt", "LUCIFER", "LUCIFER Encrypt")
@@ -479,7 +483,8 @@ palette.addCategory("WIP Decrypt")
 //	.addItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt")
 	.addItem(nativeAes.NativeAesCtrDecryptTransform, "NativeAesCtrDecrypt", "AES (CTR)", "AES (CTR) Decrypt")
 	.addItem(nativeAes.NativeAesGcmDecryptTransform, "NativeAesGcmDecrypt", "AES (GCM)", "AES (GCM) Decrypt")
-	.addItem(akelarre.AkelarreDecryptTransform, "AkelarreDecrypt", "Akelarre", "Akelarre Decrypt");
+	.addItem(akelarre.AkelarreDecryptTransform, "AkelarreDecrypt", "Akelarre", "Akelarre Decrypt")
+	.addItem(hierocrypt.HierocryptDecryptTransform, "HierocryptDecrypt", "Hierocrypt", "Hierocrypt Decrypt");
 
 palette.addCategory("WIP Encrypt")
 	.addItem(nativeAes.NativeAesCbcEncryptTransform, "NativeAesCbcEncrypt", "AES (CBC)", "AES (CBC) Encrypt")
@@ -487,5 +492,6 @@ palette.addCategory("WIP Encrypt")
 	.addItem(nativeAes.NativeAesCtrEncryptTransform, "NativeAesCtrEncrypt", "AES (CTR)", "AES (CTR) Encrypt")
 	.addItem(nativeAes.NativeAesGcmEncryptTransform, "NativeAesGcmEncrypt", "AES (GCM)", "AES (GCM) Encrypt")
 	.addItem(akelarre.AkelarreEncryptTransform, "AkelarreEncrypt", "Akelarre", "Akelarre Encrypt")
+	.addItem(hierocrypt.HierocryptEncryptTransform, "HierocryptEncrypt", "Hierocrypt", "Hierocrypt Encrypt")
 	.addItem(nativeRsa.NativeRsaOaepEncryptTransform, "NativeRsaOaepEncrypt", "RSA (OAEP)", "RSA (OAEP) Encrypt");
 
