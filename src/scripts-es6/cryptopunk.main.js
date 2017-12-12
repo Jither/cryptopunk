@@ -21,6 +21,7 @@ import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
 import * as chacha from "./transforms/stream-ciphers/chacha";
+import * as clefia from "./transforms/block-ciphers/clefia";
 import * as codepages from "./transforms/char-encodings/codepages";
 import * as columns from "./transforms/classical/columns";
 import * as condi from "./transforms/classical/condi";
@@ -367,6 +368,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(camellia.CamelliaDecryptTransform, "CamelliaDecrypt", "Camellia", "Camellia Decrypt")
 	.addItem(cast128.Cast128DecryptTransform, "Cast128Decrypt", "CAST-128", "CAST-128 Decrypt")
 	.addItem(cast256.Cast256DecryptTransform, "Cast256Decrypt", "CAST-256", "CAST-256 Decrypt")
+	.addItem(clefia.ClefiaDecryptTransform, "ClefiaDecrypt", "CLEFIA", "CLEFIA Decrypt")
 	.addItem(crypton.CryptonDecryptTransform, "CryptonDecrypt", "Crypton", "Crypton Decrypt")
 	.addItem(csCipher.CsCipherDecryptTransform, "CsCipherDecrypt", "CS-Cipher", "CS-Cipher Decrypt")
 	.addItem(deal.DealDecryptTransform, "DealDecrypt", "DEAL", "DEAL Decrypt")
@@ -427,6 +429,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(camellia.CamelliaEncryptTransform, "CamelliaEncrypt", "Camellia", "Camellia Encrypt")
 	.addItem(cast128.Cast128EncryptTransform, "Cast128Encrypt", "CAST-128", "CAST-128 Encrypt")
 	.addItem(cast256.Cast256EncryptTransform, "Cast256Encrypt", "CAST-256", "CAST-256 Encrypt")
+	.addItem(clefia.ClefiaEncryptTransform, "ClefiaEncrypt", "CLEFIA", "CLEFIA Encrypt")
 	.addItem(crypton.CryptonEncryptTransform, "CryptonEncrypt", "Crypton", "Crypton Encrypt")
 	.addItem(csCipher.CsCipherEncryptTransform, "CsCipherEncrypt", "CS-Cipher", "CS-Cipher Encrypt")
 	.addItem(deal.DealEncryptTransform, "DealEncrypt", "DEAL", "DEAL Encrypt")

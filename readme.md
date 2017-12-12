@@ -54,6 +54,7 @@ Supported
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
+* CLEFIA
 * Crypton (0.5; 1.0 uncertain correctness)
 * CS-Cipher
 * DEAL
@@ -215,7 +216,6 @@ TODO
 #### Block Ciphers: Second priority
 
 * BaseKing
-* CLEFIA
 * E2
 * Grand Cru
 * Hierocrypt
