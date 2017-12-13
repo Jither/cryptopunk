@@ -1,4 +1,4 @@
-import { BlockCipherTransform } from "./block-cipher";
+import { BlockCipherTransform } from "../block-ciphers/block-cipher";
 import { bytesToInt32sBE } from "../../cryptopunk.utils";
 import { mod } from "../../cryptopunk.math";
 import { ror } from "../../cryptopunk.bitarith";

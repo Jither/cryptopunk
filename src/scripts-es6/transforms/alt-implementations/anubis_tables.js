@@ -1,4 +1,4 @@
-import { BlockCipherTransform } from "./block-cipher";
+import { BlockCipherTransform } from "../block-ciphers/block-cipher";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { gfMulTable } from "../../cryptopunk.galois";
 
