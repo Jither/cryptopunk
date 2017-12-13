@@ -93,6 +93,7 @@ import * as ripemdN from "./transforms/hashes/ripemd-n";
 import * as rotx from "./transforms/classical/rotx";
 import * as safer from "./transforms/block-ciphers/safer";
 import * as salsa20 from "./transforms/stream-ciphers/salsa20";
+import * as seed from "./transforms/block-ciphers/seed";
 import * as serpent from "./transforms/block-ciphers/serpent";
 import * as sha1 from "./transforms/hashes/sha-1";
 import * as sha2 from "./transforms/hashes/sha-2";
@@ -405,6 +406,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(redpike.RedPikeDecryptTransform, "RedPikeDecrypt", "Red Pike", "Red Pike Decrypt")
 	.addItem(rijndael.RijndaelDecryptTransform, "RijndaelDecrypt", "Rijndael", "Rijndael Decrypt")
 	.addItem(safer.SaferDecryptTransform, "SaferDecrypt", "SAFER", "SAFER Decrypt")
+	.addItem(seed.SeedDecryptTransform, "SeedDecrypt", "SEED", "SEED Decrypt")
 	.addItem(serpent.SerpentDecryptTransform, "SerpentDecrypt", "Serpent", "Serpent Decrypt")
 	.addItem(shacal.ShacalDecryptTransform, "ShacalDecrypt", "SHACAL", "SHACAL Decrypt")
 	.addItem(shark.SharkDecryptTransform, "SharkDecrypt", "SHARK", "SHARK Decrypt")
@@ -466,6 +468,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(redpike.RedPikeEncryptTransform, "RedPikeEncrypt", "Red Pike", "Red Pike Encrypt")
 	.addItem(rijndael.RijndaelEncryptTransform, "RijndaelEncrypt", "Rijndael", "Rijndael Encrypt")
 	.addItem(safer.SaferEncryptTransform, "SaferEncrypt", "SAFER", "SAFER Encrypt")
+	.addItem(seed.SeedEncryptTransform, "SeedEncrypt", "SEED", "SEED Encrypt")
 	.addItem(serpent.SerpentEncryptTransform, "SerpentEncrypt", "Serpent", "Serpent Encrypt")
 	.addItem(shacal.ShacalEncryptTransform, "ShacalEncrypt", "SHACAL", "SHACAL Encrypt")
 	.addItem(shark.SharkEncryptTransform, "SharkEncrypt", "SHARK", "SHARK Encrypt")

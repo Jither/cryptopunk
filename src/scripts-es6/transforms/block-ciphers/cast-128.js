@@ -372,7 +372,7 @@ class Cast128Transform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		this.checkBytesSize("Key", keyBytes, [40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128]);
+		this.checkBytesSize("Key", keyBytes, { min: 40, max: 128, step: 8 });
 		const rounds = keyBytes.length > 10 ? 16 : 12;
 		const subKeys = this.generateSubKeys(keyBytes, rounds);
 
@@ -454,5 +454,6 @@ class Cast128DecryptTransform extends Cast128Transform
 
 export {
 	Cast128EncryptTransform,
-	Cast128DecryptTransform
+	Cast128DecryptTransform,
+	S1, S2, S3, S4
 };
