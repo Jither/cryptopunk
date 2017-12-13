@@ -102,7 +102,7 @@ class FrogTransform extends BlockCipherTransform
 	{
 		precompute();
 
-		this.checkBytesSize("Key", keyBytes, { min: 5, max: 125 });
+		this.checkBytesSize("Key", keyBytes, { min: 40, max: 1000, step: 8 });
 
 		const blockLength = this.options.blockSize / 8;
 
