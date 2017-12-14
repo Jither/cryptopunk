@@ -93,7 +93,7 @@ Supported
 * SEED
 * Serpent (including tnepreS)
 * SHACAL ("SHACAL-0", SHACAL-1, SHACAL-2)
-* Shark-E
+* Shark (Shark-E(xor) and Shark-A(ffine))
 * Simon
 * Skipjack (including NESSIE variant)
 * Speck
@@ -226,7 +226,6 @@ TODO
 * S-1
 * SAFER+ / SAFER++
 * SC2000
-* Shark-A
 * Unicorn-A, Unicorn-E
 
 #### Block Ciphers: Third priority
