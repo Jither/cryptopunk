@@ -90,6 +90,7 @@ Supported
 * Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * SAFER (K-64, K-128, SK-40, SK-64, SK-128; variable rounds)
+* SC2000
 * SEED
 * Serpent (including tnepreS)
 * SHACAL ("SHACAL-0", SHACAL-1, SHACAL-2)
@@ -225,7 +226,6 @@ TODO
 * MISTY2
 * S-1
 * SAFER+ / SAFER++
-* SC2000
 * Unicorn-A, Unicorn-E
 
 #### Block Ciphers: Third priority
