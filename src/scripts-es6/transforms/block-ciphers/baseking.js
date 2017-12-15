@@ -72,6 +72,7 @@ function theta(a)
 	}
 }
 
+// TODO: Check: These are more likely to be ror16, not rol16
 // Bit permutation π1: [0, 8, 1, 15, 5, 10, 7, 6, 13, 14, 2, 3]
 function pi1(a)
 {

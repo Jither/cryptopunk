@@ -8,6 +8,49 @@ class HashTransform extends Transform
 		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash");
 	}
+
+	transformBlocks(bytes, blockLength, ...rest)
+	{
+		const blockCount = Math.floor(bytes.length / blockLength) + 1;
+
+		for (let blockIndex = 0; blockIndex < blockCount; blockIndex++)
+		{
+			const offset = blockIndex * blockLength;
+			let block = bytes.subarray(offset, offset + blockLength);
+			if (blockIndex === blockCount - 1)
+			{
+				// Last block - pad it
+				const paddedBlock = block = this.padBlock(block, { messageLength: bytes.length, blockLength: blockLength });
+				// Padding may turn the block into two (if there is not enough
+				// space for padding). In that case, we need to transform both.
+				// Contract: Returned padded block length will always be a multiple
+				// of the hash's block length.
+				if (block.length > blockLength)
+				{
+					// First transform last message block
+					block = paddedBlock.subarray(0, blockLength);
+					this.transformBlock(block, ...rest);
+
+					// And then the padding block
+					block = paddedBlock.subarray(blockLength, blockLength * 2);
+				}
+			}
+			this.transformBlock(block, ...rest);
+		}
+	}
+
+	// Simple default padding: Simply append 1-bit.
+	// Always add padding, even if message is already multiple of block length.
+	padBlock(block, parameters)
+	{
+		const blockLength = parameters.blockLength;
+		const length = block.length + 1 > blockLength ? blockLength * 2 : blockLength;
+		const result = new Uint8Array(length);
+		result.set(block);
+		result[block.length] = 0x80;
+
+		return result;
+	}
 }
 
 class MdHashTransform extends HashTransform
@@ -34,36 +77,10 @@ class MdHashTransform extends HashTransform
 
 	transformBlocks(bytes, ...rest)
 	{
-		const blockLength = this.blockLength;
-		const blockCount = Math.floor(bytes.length / blockLength) + 1;
-
-		for (let blockIndex = 0; blockIndex < blockCount; blockIndex++)
-		{
-			const offset = blockIndex * blockLength;
-			let block = bytes.subarray(offset, offset + blockLength);
-			if (blockIndex === blockCount - 1)
-			{
-				// Last block - pad it
-				const paddedBlock = block = this.padBlock(block, bytes.length, ...rest);
-				// Padding may turn the block into two (if there is not enough
-				// space for padding). In that case, we need to transform both.
-				// Contract: Returned padded block length will always be a multiple
-				// of the hash's block length.
-				if (block.length > blockLength)
-				{
-					// First transform last message block
-					block = paddedBlock.subarray(0, blockLength);
-					this.transformBlock(block, ...rest);
-
-					// And then the padding block
-					block = paddedBlock.subarray(blockLength, blockLength * 2);
-				}
-			}
-			this.transformBlock(block, ...rest);
-		}
+		super.transformBlocks(bytes, this.blockLength, ...rest);
 	}
 
-	padBlock(block, messageLength, ...rest)
+	padBlock(block, parameters)
 	{
 		const blockLength = this.blockLength;
 
@@ -100,7 +117,7 @@ class MdHashTransform extends HashTransform
 			result[length + paddingLength - 1] |= this.paddingEndBit;
 		}
 
-		this.writeSuffix(result, length + paddingLength, messageLength, ...rest);
+		this.writeSuffix(result, length + paddingLength, parameters.messageLength);
 
 		return result;
 	}

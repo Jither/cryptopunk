@@ -27,36 +27,12 @@ class CubeHashTransform extends HashTransform
 		// Clone state from cache so we don't mutate it:
 		const state = Uint32Array.from(cache.getOrAdd(cacheKey, () => this.initState(outputLength, blockLength, rounds, initRounds)));
 
-		this.transformBlocks(bytes, state, blockLength);
+		this.transformBlocks(bytes, blockLength, state);
 
 		state[31] ^= 0x1;
 		this.transformState(state, this.options.finalRounds);
 
 		return int32sToBytesLE(state).subarray(0, outputLength);
-	}
-
-	transformBlocks(bytes, state, blockLength)
-	{
-		const blockCount = Math.floor(bytes.length / blockLength) + 1;
-
-		for (let blockIndex = 0; blockIndex < blockCount; blockIndex++)
-		{
-			const offset = blockIndex * blockLength;
-			let block = bytes.subarray(offset, offset + blockLength);
-
-			if (blockIndex === blockCount - 1)
-			{
-				const paddedBlock = block = this.padBlock(block, blockLength);
-
-				if (block.length > blockLength)
-				{
-					block = paddedBlock.subarray(0, blockLength);
-					this.transformBlock(block, state);
-					block = paddedBlock.subarray(blockLength);
-				}
-			}
-			this.transformBlock(block, state);
-		}
 	}
 
 	initState(outputLength, blockLength, rounds, initRounds)
@@ -67,16 +43,6 @@ class CubeHashTransform extends HashTransform
 		state[2] = rounds;
 		this.transformState(state, initRounds);
 		return state;
-	}
-
-	padBlock(block, blockLength)
-	{
-		const length = block.length + 1 > blockLength ? blockLength * 2 : blockLength;
-		const result = new Uint8Array(length);
-		result.set(block);
-		result[block.length] = 0x80;
-
-		return result;
 	}
 
 	transformState(state, rounds)

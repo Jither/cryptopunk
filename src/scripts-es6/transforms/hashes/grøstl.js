@@ -357,7 +357,7 @@ class GrøstlTransform extends MdHashTransform
 	}
 
 	// Grøstl pads the same way as MD4 et al, but the suffix is the number of message blocks rather than the bit length
-	padBlock(block, messageLength)
+	padBlock(block, parameters)
 	{
 		const blockLength = this.blockLength;
 
@@ -376,7 +376,7 @@ class GrøstlTransform extends MdHashTransform
 		// Add "1-bit":
 		result[length] = this.paddingStartBit;
 
-		const blockCount = (messageLength + paddingLength + this.suffixLength) / blockLength;
+		const blockCount = (parameters.messageLength + paddingLength + this.suffixLength) / blockLength;
 
 		// Note: We only handle 2^32 blocks
 		const offset = result.length - 4;
