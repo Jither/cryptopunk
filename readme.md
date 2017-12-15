@@ -51,11 +51,12 @@ Supported
 * 3DES
 * Anubis (128, 160, 192, 224, 256, 288 and 320 key sizes; Anubis-0 and tweak variants)
 * ARIA (128, 192 and 256 key sizes; variable rounds)
+* BaseKing (uncertain correctness)
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
 * CLEFIA
-* Crypton (0.5; 1.0 uncertain correctness)
+* Crypton (0.5, 1.0; uncertain correctness for 1.0)
 * CS-Cipher
 * DEAL
 * DES (64 bit with parity or 56 bit without)
@@ -217,7 +218,6 @@ TODO
 
 #### Block Ciphers: Second priority
 
-* BaseKing
 * E2
 * Grand Cru
 * Hierocrypt

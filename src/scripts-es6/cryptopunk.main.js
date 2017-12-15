@@ -9,6 +9,7 @@ import * as anubis from "./transforms/block-ciphers/anubis";
 import * as aria from "./transforms/block-ciphers/aria";
 import * as ascii from "./transforms/char-encodings/ascii";
 import * as adfgvx from "./transforms/classical/adfgvx";
+import * as baseking from "./transforms/block-ciphers/baseking";
 import * as baseN from "./transforms/base-n";
 import * as bifid from "./transforms/classical/bifid";
 import * as binary from "./transforms/binary";
@@ -366,6 +367,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(des.TripleDesDecryptTransform, "3DesDecrypt", "3DES", "3DES Decrypt")
 	.addItem(anubis.AnubisDecryptTransform, "AnubisDecrypt", "Anubis", "Anubis Decrypt")
 	.addItem(aria.AriaDecryptTransform, "AriaDecrypt", "ARIA", "ARIA Decrypt")
+	.addItem(baseking.BaseKingDecryptTransform, "BaseKingDecrypt", "BaseKing", "BaseKing Decrypt")
 	.addItem(blowfish.BlowfishDecryptTransform, "BlowfishDecrypt", "Blowfish", "Blowfish Decrypt")
 	.addItem(camellia.CamelliaDecryptTransform, "CamelliaDecrypt", "Camellia", "Camellia Decrypt")
 	.addItem(cast128.Cast128DecryptTransform, "Cast128Decrypt", "CAST-128", "CAST-128 Decrypt")
@@ -429,6 +431,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(des.TripleDesEncryptTransform, "3DesEncrypt", "3DES", "3DES Encrypt")
 	.addItem(anubis.AnubisEncryptTransform, "AnubisEncrypt", "Anubis", "Anubis Encrypt")
 	.addItem(aria.AriaEncryptTransform, "AriaEncrypt", "ARIA", "ARIA Encrypt")
+	.addItem(baseking.BaseKingEncryptTransform, "BaseKingEncrypt", "BaseKing", "BaseKing Encrypt")
 	.addItem(blowfish.BlowfishEncryptTransform, "BlowfishEncrypt", "Blowfish", "Blowfish Encrypt")
 	.addItem(camellia.CamelliaEncryptTransform, "CamelliaEncrypt", "Camellia", "Camellia Encrypt")
 	.addItem(cast128.Cast128EncryptTransform, "Cast128Encrypt", "CAST-128", "CAST-128 Encrypt")

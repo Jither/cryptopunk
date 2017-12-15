@@ -7,24 +7,28 @@ const ZERO_64 = { hi: 0, lo: 0 };
 function rol16(val, count)
 {
 	count = count % 16;
+	val = val & 0xffff;
 	return ((val << count) | (val >>> (16 - count))) & 0xffff;
 }
 
 function ror16(val, count)
 {
 	count = count % 16;
+	val = val & 0xffff;
 	return ((val >>> count) | (val << (16 - count))) & 0xffff;
 }
 
 function rol24(val, count)
 {
 	count = count % 24;
+	val = val & 0xffffff;
 	return ((val << count) | (val >>> (24 - count))) & 0x00ffffff;
 }
 
 function ror24(val, count)
 {
 	count = count % 24;
+	val = val & 0xffffff;
 	return ((val >>> count) | (val << (24 - count))) & 0x00ffffff;
 }
 
