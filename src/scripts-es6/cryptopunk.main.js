@@ -78,6 +78,7 @@ import * as nimbus from "./transforms/block-ciphers/nimbus";
 import * as noekeon from "./transforms/block-ciphers/noekeon";
 import * as numbers from "./transforms/numbers";
 import * as padding from "./transforms/tools/padding";
+import * as panama from "./transforms/hashes/panama";
 import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as present from "./transforms/block-ciphers/present";
@@ -287,6 +288,7 @@ palette.addCategory("Hashes")
 	.addItem(md2.Md2Transform, "Md2", "MD2", "MD2")
 	.addItem(md4.Md4Transform, "Md4", "MD4", "MD4")
 	.addItem(md5.Md5Transform, "Md5", "MD5", "MD5")
+	.addItem(panama.PanamaHashTransform, "PanamaHash", "Panama", "Panama")
 	.addItem(ripemd.RipeMdTransform, "RipeMd", "RIPEMD (original)", "RIPEMD (original)")
 	.addItem(ripemdN.RipeMdNTransform, "RipeMdN", "RIPEMD-N", "RIPEMD-N")
 	.addItem(sha1.Sha0Transform, "Sha0", "SHA-0", "SHA-0")

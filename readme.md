@@ -130,6 +130,7 @@ Supported
 * MD2
 * MD4
 * MD5
+* Panama
 * RIPEMD (original)
 * RIPEMD (128, 160, 256, 320)
 * SHA-0

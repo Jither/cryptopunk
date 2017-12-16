@@ -7,6 +7,8 @@ class HashTransform extends Transform
 		super();
 		this.addInput("bytes", "Message")
 			.addOutput("bytes", "Hash");
+
+		this.paddingStartBit = 0x80;
 	}
 
 	transformBlocks(bytes, blockLength, ...rest)
@@ -20,7 +22,7 @@ class HashTransform extends Transform
 			if (blockIndex === blockCount - 1)
 			{
 				// Last block - pad it
-				const paddedBlock = block = this.padBlock(block, { messageLength: bytes.length, blockLength: blockLength });
+				const paddedBlock = block = this.padBlock(block, { messageLength: bytes.length, blockLength });
 				// Padding may turn the block into two (if there is not enough
 				// space for padding). In that case, we need to transform both.
 				// Contract: Returned padded block length will always be a multiple
@@ -47,7 +49,7 @@ class HashTransform extends Transform
 		const length = block.length + 1 > blockLength ? blockLength * 2 : blockLength;
 		const result = new Uint8Array(length);
 		result.set(block);
-		result[block.length] = 0x80;
+		result[block.length] = this.paddingStartBit;
 
 		return result;
 	}
@@ -66,8 +68,6 @@ class MdHashTransform extends HashTransform
 		this.blockSize = blockSize;
 		this.endianness = endianness || "LE";
 		this.suffixLength = suffixLength || 8;
-
-		this.paddingStartBit = 0x80;
 	}
 
 	get blockLength()

@@ -1,0 +1,366 @@
+mode    : hash
+hash    : PanamaHashTransform
+m-format: hex
+h-format: hex
+
+# From: http://www.drdobbs.com/security/the-panama-cryptographic-function/security/sourcecode/the-panama-cryptographic-function/30201477
+# Note that the original panatest.c outputs in reversed byte order
+# The vectors below agree with e.g. Crypto++
+
+title  : Panama Set 1
+
+m: 
+h: aa0cc954 d757d7ac 7779ca33 42334ca4 71abd47d 5952ac91 ed837ecd 5b16922b
+
+m: 00
+h: a645a907 369d7703 27e15eb0 b0632119 73adf6fd 6bb9dd6b 2b3d9dfe de153f02
+
+m: 0000
+h: 35129823 595e6aa6 1045daea 1d233c0a be3d121e c281ecba 3915f869 fe095fd9
+
+m: 000000
+h: 45a01ae8 d72d5323 5b5c7e26 280ebac3 2ba63798 033532a0 960e9851 afb0840a
+
+m: 00000000
+h: 6781dfd1 6bcc28d9 8d3a044e 94f52093 dacf94da 863bedec 7308721e 4d5152bc
+
+m: 00000000 00
+h: 224b3502 729aa59d 8bdd4045 7f17257f 25b6f928 0d763d40 093e62ee 63bd6e3f
+
+m: 00000000 0000
+h: e8f0621c 6d3a3f31 e92d3582 cf7b0220 a12cbb2e 4fc3fbba 904d70e3 04b939c3
+
+m: 00000000 000000
+h: 230e0f8c a7192640 526d9b63 b1803e09 2312dd21 4ab8ddd3 c4368bf7 1033054a
+
+m: 00000000 00000000
+h: 8deed26b cd2c8d96 e2eb8197 25e997cf 0866a644 edd84d77 3e04d7a0 752fedc1
+
+m: 00000000 00000000 00
+h: 554c6579 57941b83 25eeb3aa 385770e4 730cc819 97a35207 5da45df8 be7a1e86
+
+m: 00000000 00000000 0000
+h: bf0e3e96 2324a353 3ba5b379 c991c167 17d26934 587a5c75 41ff4e12 c401071b
+
+m: 00000000 00000000 000000
+h: 3a8784bd 2eb871fe e28678dd 86ab4ae0 b9dc9189 4dee923d 99651711 95a0bb42
+
+m: 00000000 00000000 00000000
+h: 3e0c2fd0 89750301 37e55371 25e56177 689ad92b 43404ddd cc467cf3 b3789f27
+
+m: 00000000 00000000 00000000 00
+h: 03f1dbe2 6484db59 fb841b98 3326e6bf 9731a31b 97a63e60 b3ae0e44 c3a32fb9
+
+m: 00000000 00000000 00000000 0000
+h: 26476238 e1795747 cf91f954 2c1499e9 ea2127b9 370caf60 71c77713 4b852fc1
+
+m: 00000000 00000000 00000000 000000
+h: c5d6302d 7d6c3a16 68d323f6 4d48736a a60417ea a412e2d5 4baee840 add8f996
+
+m: 00000000 00000000 00000000 00000000
+h: d57b744c 9ca137b4 6060faf1 50c193b1 23cc5a63 983c7e5b ce5f69fc 0e606d6f
+
+m: 00000000 00000000 00000000 00000000 00
+h: 310e794e e44237ea 5e982a37 e407f739 55e8713a 6b773080 1c2e9c43 9522a580
+
+m: 00000000 00000000 00000000 00000000 0000
+h: 6339eb07 2e00c925 385ee7d0 13916e13 9ccc5d6a 13bb1ba1 3a63eae6 f378d3a3
+
+m: 00000000 00000000 00000000 00000000 000000
+h: 52d2ce1b 8063b9e1 762c6bb8 c013b4e0 5e68a56c 1d2d5bc3 e73113c1 dea85812
+
+m: 00000000 00000000 00000000 00000000 00000000
+h: b470b73e 0410005b 176f022a 5dc06371 6fab3db1 11d50cb7 1dfcc401 ef306666
+
+m: 00000000 00000000 00000000 00000000 00000000 00
+h: 36baea98 c47321b6 99479fdf 97e00c17 f90b3d17 a6006793 ac3495ac 2ea7f704
+
+m: 00000000 00000000 00000000 00000000 00000000 0000
+h: f13ae4cf 09e93076 9c225747 15645c2a 062435df a7ed014d eb1b4765 b9d10343
+
+m: 00000000 00000000 00000000 00000000 00000000 000000
+h: cc126246 0d9c9f7e ebb9a251 320c37ec cec4e97b 598ac1ab 508dc958 f31c204c
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000
+h: cceb7e50 66f28916 d850d166 afb98813 0e907779 ca698f4f 0898035f cb875a72
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00
+h: 6111d6bc 7cb89d7f a5de3709 a61c4d6d a9a40655 64e82f87 a8476459 4727393e
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 0000
+h: 1dc4d500 60ae1428 0f07af1a 62dedfa0 6d8d5d10 43d46fd5 5c4a51cb 849cc2dd
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 000000
+h: a3f39a6e 4d1883b3 3dee4d90 4c8ea1a3 f3157aa4 4ca844dc 8adc134a 8cc3558b
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+h: 3636c4bf e6583a93 ef1cc47f d9d83432 cabfa8c6 b45994bc c0f2ee18 53128682
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00
+h: 65b05fd4 95597be5 8e70ae65 1cf6d746 c43380e5 f8d8b0db 551945e4 805c194e
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000
+h: 994072d9 b9ee038e b04e244e 47618c0e 24a87fda 2eecb205 b6da1d8b 8fe17559
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 000000
+h: 1635adac 260acea3 e05e7bc9 f9626067 f03861ba a9d792b2 d84dfeae cc5ac2e7
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+h: e9484cf7 b34cec36 3649ba74 434c9e20 bf544b1d a5087773 d7394cda 19c49697
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00
+h: cc0a82fb 5a23e920 7be1bbe9 fdc87d1d 615a632a 014ae191 40cf239a a580ab48
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000
+h: 0f6d8bae 133660da da9f8c66 9fbc3903 97054e0c 949938d8 1670ab40 c9613c68
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 000000
+h: 8b5b63ad 20dd0d8f e9852275 37eaeff3 aea92a3a 4b17f6f9 c9a315b6 0f33ed8e
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+h: 88b62a4e 38348080 4c713249 dccbf53b a431bdaa c4ea223e ccc3ef5c 1b91551b
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00
+h: a4cf5151 e1f888b1 340ff2d3 4aa2062a 5f235186 0c718d78 9ff75a51 e776773f
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000
+h: ca98a175 86885c7e b5f9976f 8e735db6 8d530c08 edbdc0e2 cca3cfca d30fbfd3
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 000000
+h: 9b7193fb 40e6026a 569ac14c 0776373f 6ac018c7 30deec85 8ec8cc90 3ad44ffc
+
+m: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+h: 3c285d7e dcfded9b bc3dc732 c5fd90ab f6869d41 59cb7c52 a555d7f4 5bf1b7d1
+
+title  : Panama Set 2
+
+m: 
+h: aa0cc954 d757d7ac 7779ca33 42334ca4 71abd47d 5952ac91 ed837ecd 5b16922b
+
+m: ff
+h: 5b97ecc5 5828c238 ff78b64b 448cc7a3 bc801c4b 7216c30a e4dc32d6 fd15ccff
+
+m: ffff
+h: 90a7943c 80d1fac4 a4475eb6 aa988792 61d2eea1 d1f9b408 a23c359c 654a5af6
+
+m: ffffff
+h: fa3f3aa5 c4580216 e4151f5d 46a36f5f f5fbd574 b778e13a cb292de6 ea52d512
+
+m: ffffffff
+h: 341a6221 2c51cf5b 1cda6cb5 385d901d 56077138 a762b4b4 cc2f245f 9dde958c
+
+m: ffffffff ff
+h: a4a5d43d d6b2b064 02954e84 62b1f63d eb5d30e0 36d92138 0b52b613 fe2f815f
+
+m: ffffffff ffff
+h: c14c53f3 875ffe03 674e8817 02c9eebd f02528a2 17aceba2 9a48d9dc f35c80a5
+
+m: ffffffff ffffff
+h: 920fb293 16cb74f1 f0cec7f4 cdf9f7e9 2b5f3aad a1f26597 815aeb24 fe39ded4
+
+m: ffffffff ffffffff
+h: 20364cb3 5562ef5a 544d9a93 35df9992 c99f1691 77867d50 440ca8b6 65f19630
+
+m: ffffffff ffffffff ff
+h: 58aca752 e8188a13 479f0eaf c73585ca 75df91ce bd00985d f3ed1191 e89c5001
+
+m: ffffffff ffffffff ffff
+h: 6d8bd5a0 4af676c7 27fddce0 d35ab94f 71dca196 4616ddf8 ac3c10ce e00d996b
+
+m: ffffffff ffffffff ffffff
+h: c9b4381e 18416209 44e576f7 6b9daee7 8bdc0205 6f53fee4 d8d17332 72f178e5
+
+m: ffffffff ffffffff ffffffff
+h: 6b4d05e6 273ff95d 92cc2429 d8e97a73 8972dcda 1ad2c755 bfb846c8 bbfb5394
+
+m: ffffffff ffffffff ffffffff ff
+h: ec93a2a1 6b5b0baa 29da111f 45efd3b1 0d608949 c6a0864a bb19a013 5436e0ed
+
+m: ffffffff ffffffff ffffffff ffff
+h: 451d31c6 d10381e4 a4c65c45 e78080d5 3a549a89 9e4a3f7a 285ff08c 65d956a9
+
+m: ffffffff ffffffff ffffffff ffffff
+h: 78334ef2 619f6e08 2133cfcc c2aa00d7 f01fd9fe 277bdedd 134e5c98 7489c22c
+
+m: ffffffff ffffffff ffffffff ffffffff
+h: 59bfeef8 c8a9ebc3 96bbc9e7 0521db09 c1605c99 7fb7d2de bd66ada3 3a03696f
+
+m: ffffffff ffffffff ffffffff ffffffff ff
+h: 5b6c4eed b110116b faab6034 3b9e2172 31321e21 d0c57fd1 75a29d25 5dafc697
+
+m: ffffffff ffffffff ffffffff ffffffff ffff
+h: 81531f70 e82688ee d5125044 5814c7a0 3261127f 7e62c953 ca697bba 5a1b4684
+
+m: ffffffff ffffffff ffffffff ffffffff ffffff
+h: c71a854b 3be40151 a1374999 1b530a5d 6e17700b d905ab6b f8610f8b 29ee4be2
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff
+h: d4f1b6fe 5bcf39cc 326e0fef f66fa1ea 5bc96904 a3b49f77 c1dbd047 2ea24da6
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ff
+h: de23526a fe3a00e8 484e97df b7fa2777 ac177409 ff6aa1a4 fb2d6ec2 a60a7aae
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffff
+h: e337dbb8 b4e55162 fed7d40b 5099386e 84ee84b2 1557e8c3 97755db8 04fb803e
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffff
+h: c49e8d72 2fa2c14d 294d229d fa5c6374 97efbd09 59639ed5 475a2212 d12cab22
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
+h: 2511f772 f8a3cd9f ab9263b4 8eabae20 7b23a70b 0e963238 3bcaaec0 5adce4bd
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff
+h: f978cf09 0a4707d7 fc58cee0 e25a57a5 8fa3d4bf 4f11edfa fb5e2cb9 45aad412
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffff
+h: 635ffa29 c4d48bdd d559ff39 0f98f3aa e3ba2be3 3da50a3c be38a00f 6ac4c505
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffff
+h: 598be0be fcf44d7a b4e01f8c 5b5f571c 64d51513 8fe8579a 87315844 d1d263ce
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
+h: a0febb60 ff8ea8bb 2ecf78fb 2fca6169 908a6285 bfbeedbb 3fa8fb37 a4691e64
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff
+h: f386c69c 4e0856c4 2f2a93e0 b1416241 ba5018ab a985896a 6501cafb 4c5ec28e
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffff
+h: f95e7d72 d8056b21 f5592ef6 1639f985 261faebb 46a750b8 af10f6eb c340305c
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffff
+h: 1f4a32f6 803bfdd7 00d3d315 b7b68cf7 f71d8d18 b925757b dfa83a8e 0550544c
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
+h: ff5ff2aa 46458564 aa2eae5e af956fd5 49359e21 77b39600 f145c6e5 aba9ac47
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff
+h: 881e20c1 9ecf058d ee86c94f fbf8fca2 47c47367 2858fa55 c99c025c 79e9f04d
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffff
+h: 7b420608 64878522 047c0ace 6a4e5e51 423cf633 8ab0cf21 f14210c0 fa0eaf69
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffff
+h: 39814fe6 41cbee61 401e0903 c12c0118 4a5106d9 b13e8658 785410c6 8cb01f0a
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
+h: 19f5ec34 d188b2e2 d3ae0339 86a7259f d94cba98 a80f205d 275c689d 45559db6
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ff
+h: 390151ae 4b278a61 3c0f5f4e 6193a603 58eaaa85 ecce30f3 dac56363 85650bc8
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffff
+h: b1dc8820 e2470ae1 15de2399 8c57d34c 34296f2c 7e078ad1 0fe77a26 e0076007
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffff
+h: 8c8ad799 31888b69 eaadb2cb e34affba b8919f2d bd61cff3 55a6d272 024dc3bc
+
+m: ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff
+h: ed35a312 2a821f47 e68be246 9aaec6cc 9c88f4cf a42feea0 3d9747bc 787fb5a3
+
+m-format: ascii
+title   : Panama Set 3
+
+m: T
+h: 049d6983 07d8541f 22870dfa 0a551099 d3d02bc6 d57c610a 06a4585e d8d35ff8
+
+m: Th
+h: 0d8be64e c128dde9 bcad9b39 7bd84ce3 4634d241 8080fa6c 07c03f81 3c6d5428
+
+m: The
+h: 1476b7a9 e5271f9a f40f81df e3c694c3 dd53f15a 5633fc4e 2b082c73 885b72c7
+
+m: The q
+h: 57e5bb90 368f9d2b a8cbfd9f 1709c50d 1a069472 b1d5e975 fe3d3beb 9e556d74
+
+m: The qu
+h: 8d1ac2bb 25266f73 a9e03eed b171d7dc 806a1f93 fcdf2ca1 ec936e1a 47da21b5
+
+m: The qui
+h: 27d5f8a6 67b7668d 2de8cb9d e1956015 09542054 84fed2cd 02242738 d841af52
+
+m: The quic
+h: 5b38e2fe 77d69980 e2f23921 0f3a59e7 f56471f3 40e47aad f70dec6d ba502a34
+
+m: The quick
+h: 15ce7837 f9cec225 7cdcb1c3 925e0191 1c0f50f5 bbb45b39 ccfa13dc 1ce8e85e
+
+m: The quick b
+h: 26972d55 4923ae23 e4c14c59 3574ca19 54d8fd09 0f3ea402 a65a375f c7cd9636
+
+m: The quick br
+h: 67071d9e bd30b1ff c921a549 d05c6294 ba7d2757 adb91f52 06d1e80d ea74d3dd
+
+m: The quick bro
+h: 90d80b69 deb85dca 721baabb e441c0a7 120f8b2c eb3051b0 2a42a571 9d8974b4
+
+m: The quick brow
+h: d1397fd3 fecf5f12 05acd52c 8b3db149 a72d4def a5a41ef8 e32f07b3 5ecaf011
+
+m: The quick brown
+h: e772862b 65f6a6e8 ea08071f 3806a87d 62d971ab 52901917 acb07374 6af5ed1f
+
+m: The quick brown f
+h: f66e0f52 28ec649c d0bc8980 4a22a348 1af080e3 0911daf1 9f7d62cd 0c1af2aa
+
+m: The quick brown fo
+h: acfe2976 df7769d4 c426cf59 8241eb9a 2342f595 02835ffb 4cd5c390 efaecd2d
+
+m: The quick brown fox
+h: d96cf7d3 1ac53be2 a197e4cc 0c5e9b8b d05fd90f f9f51d4a 06d3d90a 895dbc6b
+
+m: The quick brown fox j
+h: abbfdbf6 d30f237d 241acdb1 34c0a71f a455de95 b6e51d4c 37660fc1 4b08de7b
+
+m: The quick brown fox ju
+h: a9c73bdb 8d410e73 51d38e8d 7b365026 137448d0 70f255b2 f10097f3 461c1b57
+
+m: The quick brown fox jum
+h: a2bacbcc e33e6efd 54dad0d5 7188802c f581f4e1 27665ea4 fe388dc3 96b02600
+
+m: The quick brown fox jump
+h: dae058a5 6523d839 4b971cfa 51da6e18 89b1d3fd 34ceb2ca d0baafe0 5e2ece5b
+
+m: The quick brown fox jumps
+h: 270dc6ba 347b1878 7aba1598 01739d4d 203f2b3d 1b7ff4f6 a47ea838 7a7aa6d5
+
+m: The quick brown fox jumps o
+h: 181393f8 fc9dbbb9 02a12cdf 3c5586b8 483bd98f 29e2f2a6 ba169b5e 4f22be41
+
+m: The quick brown fox jumps ov
+h: 664d8bf3 2dca1994 4feab3dd f1dc8801 a1dcedd2 2abb6d11 0fc0016d 9dcebbe1
+
+m: The quick brown fox jumps ove
+h: 901859b4 24d4e69c 9d3f06dc ee84fab6 ec1d85a2 b769eace c902a888 a8cb75e5
+
+m: The quick brown fox jumps over
+h: b5640f45 a341d9c9 142212bf 1b229e2d 67fb499e 0ee62d26 90967e34 4f0bc697
+
+m: The quick brown fox jumps over t
+h: 96cb00ff 9cde3e4d 42610487 daceabe7 6fb0db04 03090e8c 9853d7d8 4d82b93c
+
+m: The quick brown fox jumps over th
+h: 4875c61a 379abfc0 009371bd 3ae5e072 09467bc3 420bacff 8b220e81 11653e98
+
+m: The quick brown fox jumps over the
+h: b680d75c bd2724c4 2baf8461 8aee5106 d329e938 c86499eb 051b8737 f71bf3e7
+
+m: The quick brown fox jumps over the l
+h: d2ca39d2 1ea3be97 01ed3706 e4332c85 994c42e4 75ca6a47 e151ed61 304f3aca
+
+m: The quick brown fox jumps over the la
+h: cbbd2af9 0bb06dc9 eece83fb 070eb56d 7aeb7c67 a9f732a1 d13be84c f92485a5
+
+m: The quick brown fox jumps over the laz
+h: 193eb86a 595c076e b90714c7 44ffeb88 014df9c9 4a227d76 569d7a34 64d8e4d4
+
+m: The quick brown fox jumps over the lazy
+h: dddeb7ce 31c2f090 a179b7ed 78e4f6a3 0ae94e46 496c2f17 99a30210 2cce8ecb
+
+m: The quick brown fox jumps over the lazy d
+h: 301df75e 3f2e2164 25db2089 f8329a4e 6b448667 97442591 2ba96e32 9188b4e4
+
+m: The quick brown fox jumps over the lazy do
+h: f25043ad 2f192928 4430c2ec 36732bbf 9894bdcd 9a00ae02 94eebd5c 9b3d9b27
+
+m: The quick brown fox jumps over the lazy dog
+h: 5f5ca355 b90ac622 b0aa7e65 4ef5f27e 9e751114 15b48b8a fe3add1c 6b89cba1
