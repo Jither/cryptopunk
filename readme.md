@@ -131,7 +131,7 @@ Supported
 * MD4
 * MD5
 * Panama
-* RadioGatún (all byte sized word sizes, i.e. 8, 16, 24, 32, 40, 48, 56, 64)
+* RadioGatún (all byte sized word sizes, i.e. 8, 16, 24, 32, 40, 48, 56, 64; variable output size)
 * RIPEMD (original)
 * RIPEMD (128, 160, 256, 320)
 * SHA-0

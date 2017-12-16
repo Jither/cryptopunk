@@ -85,7 +85,8 @@ class RadioGatunTransform extends HashTransform
 	constructor()
 	{
 		super();
-		this.addOption("wordSize", "Word size in bits", 64, { min: 8, max: 64, step: 8 });
+		this.addOption("wordSize", "Word size", 64, { min: 8, max: 64, step: 8 });
+		this.addOption("outputSize", "Output size", 256, { min: 8, step: 8 });
 		this.addOption("symmetric", "Symmetric", false);
 		this.paddingStartBit = 0x01;
 	}
@@ -103,8 +104,9 @@ class RadioGatunTransform extends HashTransform
 		}
 
 		let offset = 0;
-		const result = new Uint8Array(32);
-		while (offset < 32)
+		const outputLength = this.options.outputSize / 8;
+		const result = new Uint8Array(outputLength);
+		while (offset < outputLength)
 		{
 			this.roundFunction(context);
 			offset = this.outputFunction(context, result, offset);
