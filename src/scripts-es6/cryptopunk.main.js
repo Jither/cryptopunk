@@ -83,6 +83,7 @@ import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as present from "./transforms/block-ciphers/present";
 import * as rabbit from "./transforms/stream-ciphers/rabbit";
+import * as radiogatun from "./transforms/hashes/radiogatun";
 import * as railfence from "./transforms/classical/railfence";
 import * as rc2 from "./transforms/block-ciphers/rc2";
 import * as rc4 from "./transforms/stream-ciphers/rc4";
@@ -289,6 +290,7 @@ palette.addCategory("Hashes")
 	.addItem(md4.Md4Transform, "Md4", "MD4", "MD4")
 	.addItem(md5.Md5Transform, "Md5", "MD5", "MD5")
 	.addItem(panama.PanamaHashTransform, "PanamaHash", "Panama", "Panama")
+	.addItem(radiogatun.RadioGatunTransform, "RadioGatun", "RadioGatún", "RadioGatún")
 	.addItem(ripemd.RipeMdTransform, "RipeMd", "RIPEMD (original)", "RIPEMD (original)")
 	.addItem(ripemdN.RipeMdNTransform, "RipeMdN", "RIPEMD-N", "RIPEMD-N")
 	.addItem(sha1.Sha0Transform, "Sha0", "SHA-0", "SHA-0")

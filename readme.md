@@ -131,6 +131,7 @@ Supported
 * MD4
 * MD5
 * Panama
+* RadioGatún (all byte sized word sizes, i.e. 8, 16, 24, 32, 40, 48, 56, 64)
 * RIPEMD (original)
 * RIPEMD (128, 160, 256, 320)
 * SHA-0
@@ -321,7 +322,6 @@ TODO
 * LASH
 * MD6
 * N-Hash
-* RadioGatún
 * Skein
 * Spectral Hash
 * Streebog (GOST 34.11-2012)
