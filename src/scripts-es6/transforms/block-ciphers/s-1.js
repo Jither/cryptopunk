@@ -77,8 +77,9 @@ class S1Transform extends BlockCipherTransform
 
 	generateKeys(keyBytes)
 	{
-		const keys = new Array(32);
-		for (let r = 0; r < 32; r++)
+		const keys = new Array(5);
+		// TODO: The original key schedule actually repeats every 5 rounds, so no need for 32 round keys
+		for (let r = 0; r < 5; r++)
 		{
 			const key = keys[r] = new Uint8Array(6);
 			for (let j = 0; j < 6; j++)
@@ -113,7 +114,7 @@ class S1EncryptTransform extends S1Transform
 			// Doesn't make sense to use 2 * i for keys, which begs the question:
 			// Is r even supposed to be 2 * i? So there's an option for that.
 			const r = this.options.doubleR ? i * 2 : i;
-			const key = keys[i];
+			const key = keys[i % 5];
 			const g0index = key[0] ^ state[(r + 4) % 8];
 			const g1index = key[1] ^ state[(r + 5) % 8];
 			const startF = G0[g0index % G0.length] + G1[g1index % G1.length] * 2;
@@ -155,7 +156,7 @@ class S1DecryptTransform extends S1Transform
 			// Doesn't make sense to use 2 * i for keys, which begs the question:
 			// Is r even supposed to be 2 * i? So there's an option for that.
 			const r = this.options.doubleR ? i * 2 : i;
-			const key = keys[i];
+			const key = keys[i % 5];
 			const g0index = key[0] ^ state[(r + 4) % 8];
 			const g1index = key[1] ^ state[(r + 5) % 8];
 
