@@ -1,6 +1,5 @@
 import { HashTransform } from "./hash";
 import { rorBytes, xorBytes } from "../../cryptopunk.bitarith";
-import { bytesToHex } from "../../cryptopunk.utils";
 
 // TODO: Clean-up
 

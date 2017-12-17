@@ -90,6 +90,7 @@ Supported
 * RC6
 * Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
+* S-1
 * SAFER (K-64, K-128, SK-40, SK-64, SK-128; variable rounds)
 * SC2000
 * SEED
@@ -226,7 +227,6 @@ TODO
 * IDEA NXT
 * MacGuffin
 * MISTY2
-* S-1
 * SAFER+ / SAFER++
 * Unicorn-A, Unicorn-E
 
@@ -319,6 +319,7 @@ TODO
 * Fugue
 * GOST R 34.11-94
 * HAS-V
+* LAKE
 * LASH
 * MD6
 * N-Hash
@@ -336,6 +337,7 @@ TODO
 * FFT-Hash / FFT-Hash II
 * FORK-256
 * Grindahl
+* SMASH
 * Snefru 1.0?
 
 ### Key-Derivation Functions

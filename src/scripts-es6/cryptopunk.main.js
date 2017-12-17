@@ -94,6 +94,7 @@ import * as rijndael from "./transforms/block-ciphers/rijndael";
 import * as ripemd from "./transforms/hashes/ripemd";
 import * as ripemdN from "./transforms/hashes/ripemd-n";
 import * as rotx from "./transforms/classical/rotx";
+import * as s1 from "./transforms/block-ciphers/s-1";
 import * as safer from "./transforms/block-ciphers/safer";
 import * as salsa20 from "./transforms/stream-ciphers/salsa20";
 import * as sc2000 from "./transforms/block-ciphers/sc2000";
@@ -412,6 +413,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(rc6.Rc6DecryptTransform, "Rc6Decrypt", "RC6", "RC6 Decrypt")
 	.addItem(redpike.RedPikeDecryptTransform, "RedPikeDecrypt", "Red Pike", "Red Pike Decrypt")
 	.addItem(rijndael.RijndaelDecryptTransform, "RijndaelDecrypt", "Rijndael", "Rijndael Decrypt")
+	.addItem(s1.S1DecryptTransform, "S1Decrypt", "S-1", "S-1 Decrypt")
 	.addItem(safer.SaferDecryptTransform, "SaferDecrypt", "SAFER", "SAFER Decrypt")
 	.addItem(sc2000.Sc2000DecryptTransform, "Sc2000Decrypt", "SC2000", "SC2000 Decrypt")
 	.addItem(seed.SeedDecryptTransform, "SeedDecrypt", "SEED", "SEED Decrypt")
@@ -476,6 +478,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(rc6.Rc6EncryptTransform, "Rc6Encrypt", "RC6", "RC6 Encrypt")
 	.addItem(redpike.RedPikeEncryptTransform, "RedPikeEncrypt", "Red Pike", "Red Pike Encrypt")
 	.addItem(rijndael.RijndaelEncryptTransform, "RijndaelEncrypt", "Rijndael", "Rijndael Encrypt")
+	.addItem(s1.S1EncryptTransform, "S1Encrypt", "S-1", "S-1 Encrypt")
 	.addItem(safer.SaferEncryptTransform, "SaferEncrypt", "SAFER", "SAFER Encrypt")
 	.addItem(sc2000.Sc2000EncryptTransform, "Sc2000Encrypt", "SC2000", "SC2000 Encrypt")
 	.addItem(seed.SeedEncryptTransform, "SeedEncrypt", "SEED", "SEED Encrypt")
