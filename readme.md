@@ -64,6 +64,7 @@ Supported
 * DFC, DFCv2 (128 bit block size)
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
 * FROG (40-1000 bit key sizes; 64-1024 bit block sizes; variable rounds)
+* Hierocrypt-L1
 * ICE
 * IDEA
 * "Iraqi"
@@ -223,7 +224,7 @@ TODO
 
 * E2
 * Grand Cru
-* Hierocrypt
+* Hierocrypt-3
 * IDEA NXT
 * MacGuffin
 * MISTY2

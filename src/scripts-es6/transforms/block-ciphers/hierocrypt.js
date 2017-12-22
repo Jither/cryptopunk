@@ -1,6 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { gfExp256, gfMulTable } from "../../cryptopunk.galois";
-import { bytesToHex } from "../../cryptopunk.utils";
 import { permutateBits, xorBytes } from "../../cryptopunk.bitarith";
 import { ROOTS } from "../shared/constants";
 
@@ -18,22 +17,6 @@ const H = [
 ];
 
 let G;
-
-/*
-const MDS = [
-	0xc4, 0x65, 0xc8, 0x8b,
-	0x8b, 0xc4, 0x65, 0xc8,
-	0xc8, 0x8b, 0xc4, 0x65,
-	0x65, 0xc8, 0x8b, 0xc4
-];
-
-const MDS_INV = [
-	0x82, 0xc4, 0x34, 0xf6,
-	0xf6, 0x82, 0xc4, 0x34,
-	0x34, 0xf6, 0x82, 0xc4,
-	0xc4, 0x34, 0xf6, 0x82
-];
-*/
 
 // Hierocrypt-L1
 
@@ -75,17 +58,6 @@ const MDSH3_INV = [
 
 let MULc4, MUL65, MULc8, MUL8b;
 let MUL82, MUL34, MULf6;
-
-function print(header, ...rest)
-{
-	let x = "";
-	for (let i = 0; i < rest.length; i++)
-	{
-		x += bytesToHex(rest[i]) + " ";
-	}
-
-	console.log(header + ":", x);
-}
 
 function precompute()
 {
@@ -513,9 +485,16 @@ class HierocryptDecryptTransform extends HierocryptTransform
 		const keys = super.generateKeys(keyBytes, rounds);
 		keys.reverse();
 
-		// 0 - [rounds - 2]: MDSLinv row/word 3+4
-		// 1 - [rounds - 1]: MDSHinv
-		// [rounds - 1]    : MDSLinv row/word 3+4
+		for (let r = 0; r < rounds; r++)
+		{
+			if (r > 0)
+			{
+				MDSH(keys[r].subarray(0, 8), MDSH1_INV);
+			}
+			keys[r].set(keys[r + 1].subarray(8), 8);
+			MDSLinv(keys[r].subarray(8));
+		}
+
 		return keys;
 	}
 }
