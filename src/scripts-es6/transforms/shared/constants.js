@@ -26,6 +26,7 @@ export const ROOTS = {
 	SQRT5_DIV4  : 0x8f1bbcdc, // 2^30 * SQRT(5)
 	SQRT7_DIV4  : 0xa953fd4e, // 2^30 * SQRT(7)
 	SQRT10_DIV4 : 0xca62c1d6, // 2^30 * SQRT(10)
+	SQRT15_DIV4 : 0xf7def58a, // 2^30 * SQRT(15)
 
 	// First 32 bits of the fractions of square roots of the first 8 prime numbers:
 	SQRT2       : 0x6a09e667, // 2^32 * SQRT(FRAC(2))

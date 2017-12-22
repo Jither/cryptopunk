@@ -521,7 +521,21 @@ function modInv64(a)
 	return u;
 }
 
-
+// Permutates bits in x based on p array
+// p array indices the source bit position (right-most bit = 0)
+// for each destination bit (left to right).
+// That is, [7, 6, 5, 4, 3, 2, 1, 0] would make no change
+function permutateBits(x, p)
+{
+	let result = 0;
+	for (let i = 0; i < p.length; i++)
+	{
+		result <<= 1;
+		const b = (x >>> p[i]) & 1;
+		result |= b;
+	}
+	return result;
+}
 
 // Parity of 32 bit word: Sum of bits mod 2
 function parity32(x)
@@ -565,6 +579,7 @@ export {
 	xorBytes,
 	mirror,
 	mirror64,
+	permutateBits,
 	ONE_64,
 	TWO_64,
 	ZERO_64

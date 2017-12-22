@@ -43,6 +43,32 @@ function gfExp2Table256(modulo)
 	return exp;
 }
 
+function gfExp256(x, n, modulo)
+{
+	if (x === 0)
+	{
+		return 0;
+	}
+	if (x === 1)
+	{
+		return x;
+	}
+	let result = 1;
+	while (n)
+	{
+		if (n & 1)
+		{
+			result = gfMul(result, x, modulo);
+		}
+		n >>>= 1;
+		if (n)
+		{
+			x = gfMul(x, x, modulo);
+		}
+	}
+	return result;
+}
+
 // Returns a*b mod modulo in GF(size)
 // Default size = 256
 function gfMul(a, b, modulo, size)
@@ -85,5 +111,6 @@ export {
 	gfExp2Table256,
 	gfLog2Tables256,
 	gfMulTable,
+	gfExp256,
 	gfMul
 };

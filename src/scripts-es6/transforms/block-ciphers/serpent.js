@@ -41,6 +41,8 @@ const VARIANT_NAMES = [
 // isbox6: 15, 10, 1, 13, 5, 3, 6, 0, 4, 9, 14, 7, 2, 12, 8, 11,
 // isbox7: 3, 0, 6, 13, 9, 14, 15, 8, 5, 12, 11, 7, 10, 1, 4, 2
 
+
+
 function sbox0(v)
 {
 	const [a, b, c, d] = v;
