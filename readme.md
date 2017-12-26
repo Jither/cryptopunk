@@ -77,6 +77,7 @@ Supported
 * LOKI89/91
 * LOKI97
 * LUCIFER (Sorkin and Outerbridge variants)
+* MacGuffin
 * Madryga
 * MAGENTA
 * Magma (GOST 28147-89)
@@ -225,7 +226,6 @@ TODO
 * E2
 * Grand Cru
 * IDEA NXT
-* MacGuffin
 * MISTY2
 * SAFER+ / SAFER++
 * Unicorn-A, Unicorn-E
