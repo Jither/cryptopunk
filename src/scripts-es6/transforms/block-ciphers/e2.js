@@ -1,14 +1,14 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { gfExp256 } from "../../cryptopunk.galois";
-import { bytesToHex, int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
-import { xorBytes, modInv32, mul } from "../../cryptopunk.bitarith";
+import { bytesToHex, int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
+import { xorBytes, modInv32, mul, rorBytes } from "../../cryptopunk.bitarith";
 
 const E2_POLYNOMIAL = 0x11b;
 const ROUNDS = 12;
 
 let SBOX;
 
-const V = Uint8Array.of(0x67, 0x45, 0x23, 0x01, 0xef, 0xcd, 0xab, 0x89);
+const V = Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef);
 
 let K3, K4;
 
@@ -17,43 +17,34 @@ function print(header, x)
 	console.log(header + ":", bytesToHex(x));
 }
 
-function endianSwap(a)
-{
-	for (let i = 0; i < a.length; i += 4)
-	{
-		[a[i], a[i + 3]] = [a[i + 3], a[i]];
-		[a[i + 1], a[i + 2]] = [a[i + 2], a[i + 1]];
-	}
-}
-
 function multiply(a, b)
 {
-	let [a0, a1, a2, a3] = bytesToInt32sLE(a);
-	const [b0, b1, b2, b3] = bytesToInt32sLE(b);
+	let [a0, a1, a2, a3] = bytesToInt32sBE(a);
+	const [b0, b1, b2, b3] = bytesToInt32sBE(b);
 	a0 = mul(a0, b0 | 1);
 	a1 = mul(a1, b1 | 1);
 	a2 = mul(a2, b2 | 1);
 	a3 = mul(a3, b3 | 1);
 
-	int32sToBytesLE([a0, a1, a2, a3], a);
+	int32sToBytesBE([a0, a1, a2, a3], a);
 }
 
 function div(a, b)
 {
-	let [a0, a1, a2, a3] = bytesToInt32sLE(a);
-	const [b0, b1, b2, b3] = bytesToInt32sLE(b);
+	let [a0, a1, a2, a3] = bytesToInt32sBE(a);
+	const [b0, b1, b2, b3] = bytesToInt32sBE(b);
 	a0 = mul(modInv32(b0 | 1), a0) & 0xffffffff;
 	a1 = mul(modInv32(b1 | 1), a1) & 0xffffffff;
 	a2 = mul(modInv32(b2 | 1), a2) & 0xffffffff;
 	a3 = mul(modInv32(b3 | 1), a3) & 0xffffffff;
 
-	int32sToBytesLE([a0, a1, a2, a3], a);
+	int32sToBytesBE([a0, a1, a2, a3], a);
 }
 
 function swapBytes(a)
 {
-	[a[0], a[4]] = [a[4], a[0]];
-	[a[2], a[6]] = [a[6], a[2]];
+	[a[3], a[7]] = [a[7], a[3]];
+	[a[1], a[5]] = [a[5], a[1]];
 }
 
 function swapLR(a)
@@ -70,17 +61,17 @@ function swapLR(a)
 
 function unknownPerm(a)
 {
-	let temp = a[0];
-	a[0] = a[6];
-	a[6] = a[4];
-	a[4] = a[2];
-	a[2] = temp;
-
-	temp = a[1];
-	a[1] = a[3];
+	let temp = a[3];
 	a[3] = a[5];
 	a[5] = a[7];
-	a[7] = temp;
+	a[7] = a[1];
+	a[1] = temp;
+
+	temp = a[2];
+	a[2] = a[0];
+	a[0] = a[6];
+	a[6] = a[4];
+	a[4] = temp;
 }
 
 // Initial transformation
@@ -106,10 +97,10 @@ function BP(a)
 	temp = a[6];
 	a[6] = a[14];
 	a[14] = temp;*/
-	[a[1], a[9]] = [a[9], a[1]];
 	[a[2], a[10]] = [a[10], a[2]];
-	[a[4], a[12]] = [a[12], a[4]];
-	[a[5], a[13]] = [a[13], a[5]];
+	[a[1], a[9]] = [a[9], a[1]];
+	[a[7], a[15]] = [a[15], a[7]];
+	[a[6], a[14]] = [a[14], a[6]];
 
 	/*
 	const u = (a ^ c) & 0x00ffff00;
@@ -144,10 +135,10 @@ function invBP(a)
 	a[6] = a[14];
 	a[14] = temp;
 	*/
-	[a[1], a[9]] = [a[9], a[1]];
 	[a[2], a[10]] = [a[10], a[2]];
-	[a[4], a[12]] = [a[12], a[4]];
-	[a[5], a[13]] = [a[13], a[5]];
+	[a[1], a[9]] = [a[9], a[1]];
+	[a[7], a[15]] = [a[15], a[7]];
+	[a[6], a[14]] = [a[14], a[6]];
 
 	/*
 	const u = (a ^ c) & 0xff0000ff;
@@ -162,37 +153,30 @@ function invBP(a)
 // Byte rotate left
 function BRL(a)
 {
-	const temp = a[0];
-	for (let i = 0; i < a.length - 1; i++)
-	{
-		a[i] = a[i + 1];
-	}
-	a[a.length - 1] = temp;
+	rorBytes(a, 8);
 }
 
 function P(a)
 {
-	// Note that the spec is Little Endian!
-	// This means that z1-z4 actually corresponds to a[3]-a[0], and z5-z8 = a[7]-a[4]
-	a[4] ^= a[0];
-	a[5] ^= a[1];
-	a[6] ^= a[2];
 	a[7] ^= a[3];
+	a[6] ^= a[2];
+	a[5] ^= a[1];
+	a[4] ^= a[0];
 
-	a[0] ^= a[6];
-	a[1] ^= a[7];
-	a[2] ^= a[4];
 	a[3] ^= a[5];
+	a[2] ^= a[4];
+	a[1] ^= a[7];
+	a[0] ^= a[6];
 
-	a[4] ^= a[1];
-	a[5] ^= a[2];
-	a[6] ^= a[3];
-	a[7] ^= a[0];
+	a[7] ^= a[2];
+	a[6] ^= a[1];
+	a[5] ^= a[0];
+	a[4] ^= a[3];
 
-	a[0] ^= a[4];
-	a[1] ^= a[5];
-	a[2] ^= a[6];
 	a[3] ^= a[7];
+	a[2] ^= a[6];
+	a[1] ^= a[5];
+	a[0] ^= a[4];
 }
 
 function S(a)
@@ -210,7 +194,7 @@ function F(a, key)
 	xorBytes(a, key.subarray(0, 8));
 	print("keyx1", a);
 	S(a);
-	// Another permutation that needs to go...
+	// TODO: Remove this permutation:
 	swapBytes(a);
 	print("sub  ", a);
 	P(a);
@@ -219,8 +203,10 @@ function F(a, key)
 	print("keyx2", a);
 	S(a);
 	BRL(a);
+	// TODO: Remove this permutation:
 	unknownPerm(a);
 	print("sbrl ", a);
+	// TODO: Remove this permutation:
 	[a[0], a[4]] = [a[4], a[0]];
 	[a[1], a[5]] = [a[5], a[1]];
 	[a[2], a[6]] = [a[6], a[2]];
@@ -287,8 +273,6 @@ class E2Transform extends BlockCipherTransform
 	{
 		const state = Uint8Array.from(block);
 		
-		endianSwap(state);
-
 		xorBytes(state, keys[ROUNDS]);
 		print("xor  ", state);
 		multiply(state, keys[ROUNDS + 1]);
@@ -310,6 +294,7 @@ class E2Transform extends BlockCipherTransform
 			[left, right] = [right, left];
 		}
 
+		// TODO: Remove this permutation?
 		swapLR(state);
 		invBP(state);
 		print("bp-1", state);
@@ -318,8 +303,6 @@ class E2Transform extends BlockCipherTransform
 		xorBytes(state, keys[ROUNDS + 3]);
 		print("xor ", state);
 
-		endianSwap(state);
-		
 		dest.set(state, destOffset);
 	}
 
@@ -327,7 +310,6 @@ class E2Transform extends BlockCipherTransform
 	{
 		const k = new Uint8Array(32);
 		k.set(keyBytes);
-		endianSwap(k);
 
 		switch (keyBytes.length)
 		{
@@ -341,12 +323,14 @@ class E2Transform extends BlockCipherTransform
 			case 32:
 				break;
 		}
+
 		const keys = new Array(ROUNDS + 4);
 		for (let i = 0; i < keys.length; i++)
 		{
 			keys[i] = new Uint8Array(16);
 		}
 		const v = Uint8Array.from(V);
+
 		const y = new Uint8Array(32);
 		G(k, v, y);
 
@@ -354,12 +338,12 @@ class E2Transform extends BlockCipherTransform
 		{
 			G(k, v, y);
 
-			let b = Math.floor(i / 2) * 4 + 3 - (i % 2) * 2;
+			let b = Math.floor(i / 2) * 4 + (i % 2) * 2;
 			for (let half = 0; half < 2; half++)
 			{
 				for (let l = 0; l < 4; l++)
 				{
-					const s1 = half * 16 + (3 - l);
+					const s1 = half * 16 + l;
 					const s2 = s1 + 8;
 					const s3 = s1 + 4;
 					const s4 = s1 + 12;
@@ -368,11 +352,11 @@ class E2Transform extends BlockCipherTransform
 					keys[l * 2 + 8][b] = y[s3];
 					keys[l * 2 + 9][b] = y[s4];
 				}
-				b--;
+				b++;
 			}
 		}
 
-		// Not sure where this permutation is described...
+		// TODO: Remove this permutation:
 		for (let i = 0; i < 12; i++)
 		{
 			const key = keys[i];
@@ -405,6 +389,7 @@ class E2DecryptTransform extends E2Transform
 	{
 		let keys = super.generateKeys(keyBytes);
 		
+		// Reverse round keys and prewhitening keys separately:
 		keys = keys.slice(0, ROUNDS).reverse().concat(keys.slice(ROUNDS).reverse());
 
 		return keys;
