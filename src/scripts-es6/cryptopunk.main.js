@@ -33,6 +33,7 @@ import * as cubehash from "./transforms/hashes/cubehash";
 import * as deal from "./transforms/block-ciphers/deal";
 import * as des from "./transforms/block-ciphers/des";
 import * as dfc from "./transforms/block-ciphers/dfc";
+import * as e2 from "./transforms/block-ciphers/e2";
 import * as ebcdic from "./transforms/char-encodings/ebcdic";
 import * as endianness from "./transforms/tools/endianness";
 import * as enigma from "./transforms/mechanical/enigma";
@@ -507,6 +508,7 @@ palette.addCategory("WIP Decrypt")
 //	.addItem(nativeAes.NativeAesCfbDecryptTransform, "AES (CFB-8)", "AES (CFB-8) Decrypt")
 	.addItem(nativeAes.NativeAesCtrDecryptTransform, "NativeAesCtrDecrypt", "AES (CTR)", "AES (CTR) Decrypt")
 	.addItem(nativeAes.NativeAesGcmDecryptTransform, "NativeAesGcmDecrypt", "AES (GCM)", "AES (GCM) Decrypt")
+	.addItem(e2.E2DecryptTransform, "E2Decrypt", "E2", "E2 Decrypt")
 	.addItem(akelarre.AkelarreDecryptTransform, "AkelarreDecrypt", "Akelarre", "Akelarre Decrypt");
 
 palette.addCategory("WIP Encrypt")
@@ -515,5 +517,6 @@ palette.addCategory("WIP Encrypt")
 	.addItem(nativeAes.NativeAesCtrEncryptTransform, "NativeAesCtrEncrypt", "AES (CTR)", "AES (CTR) Encrypt")
 	.addItem(nativeAes.NativeAesGcmEncryptTransform, "NativeAesGcmEncrypt", "AES (GCM)", "AES (GCM) Encrypt")
 	.addItem(akelarre.AkelarreEncryptTransform, "AkelarreEncrypt", "Akelarre", "Akelarre Encrypt")
+	.addItem(e2.E2EncryptTransform, "E2Encrypt", "E2", "E2 Encrypt")
 	.addItem(nativeRsa.NativeRsaOaepEncryptTransform, "NativeRsaOaepEncrypt", "RSA (OAEP)", "RSA (OAEP) Encrypt");
 

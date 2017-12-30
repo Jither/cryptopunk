@@ -1,5 +1,5 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { bytesToInt16sLE, int16sToBytesLE, int16sToHex } from "../../cryptopunk.utils";
+import { bytesToInt16sLE, int16sToBytesLE } from "../../cryptopunk.utils";
 
 const ROUNDS = 32;
 const ZERO_KEY = [0, 0, 0];
