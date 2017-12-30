@@ -1,7 +1,7 @@
 import { BlockCipherTransform } from "./block-cipher";
 import { gfExp256 } from "../../cryptopunk.galois";
-import { bytesToHex, int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
-import { xorBytes, modInv32, mul, rorBytes } from "../../cryptopunk.bitarith";
+import { int32sToBytesBE, bytesToInt32sBE } from "../../cryptopunk.utils";
+import { xorBytes, modInv32, mul, rolBytes } from "../../cryptopunk.bitarith";
 
 const E2_POLYNOMIAL = 0x11b;
 const ROUNDS = 12;
@@ -11,11 +11,6 @@ let SBOX;
 const V = Uint8Array.of(0x01, 0x23, 0x45, 0x67, 0x89, 0xab, 0xcd, 0xef);
 
 let K3, K4;
-
-function print(header, x)
-{
-	console.log(header + ":", bytesToHex(x));
-}
 
 function multiply(a, b)
 {
@@ -41,12 +36,6 @@ function div(a, b)
 	int32sToBytesBE([a0, a1, a2, a3], a);
 }
 
-function swapBytes(a)
-{
-	[a[3], a[7]] = [a[7], a[3]];
-	[a[1], a[5]] = [a[5], a[1]];
-}
-
 function swapLR(a)
 {
 	[a[0], a[8]] = [a[8], a[0]];
@@ -59,25 +48,10 @@ function swapLR(a)
 	[a[7], a[15]] = [a[15], a[7]];
 }
 
-function unknownPerm(a)
-{
-	let temp = a[3];
-	a[3] = a[5];
-	a[5] = a[7];
-	a[7] = a[1];
-	a[1] = temp;
-
-	temp = a[2];
-	a[2] = a[0];
-	a[0] = a[6];
-	a[6] = a[4];
-	a[4] = temp;
-}
-
 // Initial transformation
 function BP(a)
 {
-	/*
+	
 	let temp = a[1];
 	a[1] = a[5];
 	a[5] = a[9];
@@ -96,25 +70,12 @@ function BP(a)
 
 	temp = a[6];
 	a[6] = a[14];
-	a[14] = temp;*/
-	[a[2], a[10]] = [a[10], a[2]];
-	[a[1], a[9]] = [a[9], a[1]];
-	[a[7], a[15]] = [a[15], a[7]];
-	[a[6], a[14]] = [a[14], a[6]];
-
-	/*
-	const u = (a ^ c) & 0x00ffff00;
-	const v = (b ^ d) & 0x0000ffff;
-	a ^= u;
-	c ^= u;
-	b ^= v;
-	d ^= v;
-	*/
+	a[14] = temp;
 }
 
 function invBP(a)
 {
-	/*
+	
 	let temp = a[1];
 	a[1] = a[13];
 	a[13] = a[9];
@@ -134,26 +95,6 @@ function invBP(a)
 	temp = a[6];
 	a[6] = a[14];
 	a[14] = temp;
-	*/
-	[a[2], a[10]] = [a[10], a[2]];
-	[a[1], a[9]] = [a[9], a[1]];
-	[a[7], a[15]] = [a[15], a[7]];
-	[a[6], a[14]] = [a[14], a[6]];
-
-	/*
-	const u = (a ^ c) & 0xff0000ff;
-	const v = (b ^ d) & 0xffff0000;
-	a ^= u;
-	c ^= u;
-	b ^= v;
-	d ^= v;
-	*/
-}
-
-// Byte rotate left
-function BRL(a)
-{
-	rorBytes(a, 8);
 }
 
 function P(a)
@@ -189,28 +130,14 @@ function S(a)
 
 function F(a, key)
 {
-	print("a    ", a);
-	print("key  ", key);
 	xorBytes(a, key.subarray(0, 8));
-	print("keyx1", a);
 	S(a);
-	// TODO: Remove this permutation:
-	swapBytes(a);
-	print("sub  ", a);
 	P(a);
-	print("spx  ", a);
+
 	xorBytes(a, key.subarray(8, 16));
-	print("keyx2", a);
 	S(a);
-	BRL(a);
-	// TODO: Remove this permutation:
-	unknownPerm(a);
-	print("sbrl ", a);
-	// TODO: Remove this permutation:
-	[a[0], a[4]] = [a[4], a[0]];
-	[a[1], a[5]] = [a[5], a[1]];
-	[a[2], a[6]] = [a[6], a[2]];
-	[a[3], a[7]] = [a[7], a[3]];
+	// Byte Rotate Left:
+	rolBytes(a, 8);
 }
 
 function G(x, v, y)
@@ -274,11 +201,9 @@ class E2Transform extends BlockCipherTransform
 		const state = Uint8Array.from(block);
 		
 		xorBytes(state, keys[ROUNDS]);
-		print("xor  ", state);
+
 		multiply(state, keys[ROUNDS + 1]);
-		print("mul  ", state);
 		BP(state);
-		print("bp  ", state);
 
 		const temp = new Uint8Array(8);
 		let left = state.subarray(0, 8);
@@ -287,21 +212,19 @@ class E2Transform extends BlockCipherTransform
 		for (let r = 0; r < ROUNDS; r++)
 		{
 			temp.set(right);
+
 			F(temp, keys[r]);
 			xorBytes(left, temp);
-			print("F " + r + " L", left);
-			print("F " + r + " R", right);
+
 			[left, right] = [right, left];
 		}
 
-		// TODO: Remove this permutation?
 		swapLR(state);
+
 		invBP(state);
-		print("bp-1", state);
+
 		div(state, keys[ROUNDS + 2]);
-		print("div ", state);
 		xorBytes(state, keys[ROUNDS + 3]);
-		print("xor ", state);
 
 		dest.set(state, destOffset);
 	}
@@ -356,16 +279,6 @@ class E2Transform extends BlockCipherTransform
 			}
 		}
 
-		// TODO: Remove this permutation:
-		for (let i = 0; i < 12; i++)
-		{
-			const key = keys[i];
-			swapBytes(key);
-		}
-		for (let i = 0; i < 16; i++)
-		{
-			print("key " + i, keys[i]);
-		}
 		return keys;
 	}
 }

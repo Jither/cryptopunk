@@ -62,6 +62,7 @@ Supported
 * DES (64 bit with parity or 56 bit without)
 * DES-X
 * DFC, DFCv2 (128 bit block size)
+* E2
 * FEAL (FEAL-4, FEAL-8, FEAL-NX) (64 and 128 bit key sizes; variable rounds)
 * FROG (40-1000 bit key sizes; 64-1024 bit block sizes; variable rounds)
 * Hierocrypt (Hierocrypt-L1 and Hierocrypt-3 variants)
@@ -223,7 +224,6 @@ TODO
 
 #### Block Ciphers: Second priority
 
-* E2
 * Grand Cru
 * IDEA NXT
 * MISTY2
