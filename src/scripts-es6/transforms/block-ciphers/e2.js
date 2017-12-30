@@ -400,6 +400,15 @@ class E2DecryptTransform extends E2Transform
 	{
 		super(true);
 	}
+
+	generateKeys(keyBytes)
+	{
+		let keys = super.generateKeys(keyBytes);
+		
+		keys = keys.slice(0, ROUNDS).reverse().concat(keys.slice(ROUNDS).reverse());
+
+		return keys;
+	}
 }
 
 export {
