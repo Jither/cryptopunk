@@ -1,3 +1,5 @@
+import { parity8 } from "./cryptopunk.bitarith";
+
 // Returns two tables for a GF(2^8) field:
 // - logarithm table for log2(i)
 // - exponential (anti-logarithm) table for 2^i
@@ -107,10 +109,53 @@ function gfMulTable(a, modulo, size)
 	return result;
 }
 
+// Affine transformation in GF(2^8), i.e.:
+// A*x + b
+// Where A is an 8x8 bit matrix (represented as 8 bytes in row order)
+// ... and b is a bit vector (a byte)
+// Vectors and rows are Most Significant Byte First.
+// (Note that this is the opposite of the usual Rijndael byte notation
+// - for entries of A; x; b; and result)
+// e.g.:
+//          A                    b
+// [ 1 0 0 0 1 1 1 1 ]          [1]   [ 1 0 0 0 1 0 1 0 ] ^ 1 = 0
+// [ 1 1 0 0 0 1 1 1 ]          [1]   [ 1 1 0 0 0 0 1 0 ] ^ 1 = 0
+// [ 1 1 1 0 0 0 1 1 ]          [0]   [ 1 1 0 0 0 0 1 0 ] ^ 0 = 1
+// [ 1 1 1 1 0 0 0 1 ] * {CA} + [0]   [ 1 1 0 0 0 0 0 0 ] ^ 0 = 0 = {00101110} = {2E}
+// [ 1 1 1 1 1 0 0 0 ]          [0]   [ 1 1 0 0 1 0 0 0 ] ^ 0 = 1
+// [ 0 1 1 1 1 1 0 0 ]          [1]   [ 0 1 0 0 1 0 0 0 ] ^ 1 = 1
+// [ 0 0 1 1 1 1 1 0 ]          [1]   [ 0 0 0 0 1 0 1 0 ] ^ 1 = 1
+// [ 0 0 0 1 1 1 1 1 ]          [0]   [ 0 0 0 0 1 0 1 0 ] ^ 0 = 0
+//
+// ... is represented as:
+// x      = 0xca
+// matrix = [0x8f, 0xc7, 0xe3, 0xf1, 0xf8, 0x7c, 0x3e, 0x1f]
+// b      = 0xc6
+// result = 0x2e
+//
+// This example is equivalent to calculating the Rijndael affine transformation for:
+// x = 0x53 (0xca bit-reversed)
+// b = 0x63 (0xc6 bit-reversed)
+// result = 0x74 (0x2e bit-reversed)
+function gfAffine(x, matrix, b)
+{
+	let result = 0;
+	for (let i = 0; i < 8; i++)
+	{
+		let p = parity8(x & matrix[i]);
+		p ^= (b & 0x80) ? 1 : 0;
+		b <<= 1;
+		result <<= 1;
+		result |= p;
+	}
+	return result;
+}
+
 export {
 	gfExp2Table256,
 	gfLog2Tables256,
 	gfMulTable,
 	gfExp256,
-	gfMul
+	gfMul,
+	gfAffine
 };

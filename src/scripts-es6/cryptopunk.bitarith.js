@@ -537,6 +537,16 @@ function permutateBits(x, p)
 	return result;
 }
 
+// Parity of 8 bit word: Sum of bits mod 2
+function parity8(x)
+{
+	x ^= x >>> 4;
+	x ^= x >>> 2;
+	x ^= x >>> 1;
+	return x & 1;
+}
+
+
 // Parity of 32 bit word: Sum of bits mod 2
 function parity32(x)
 {
@@ -558,6 +568,7 @@ export {
 	mul64,
 	not64,
 	or64,
+	parity8,
 	parity32,
 	rol,
 	rol16,

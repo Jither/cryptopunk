@@ -51,7 +51,6 @@ function swapLR(a)
 // Initial transformation
 function BP(a)
 {
-	
 	let temp = a[1];
 	a[1] = a[5];
 	a[5] = a[9];
@@ -75,7 +74,6 @@ function BP(a)
 
 function invBP(a)
 {
-	
 	let temp = a[1];
 	a[1] = a[13];
 	a[13] = a[9];
