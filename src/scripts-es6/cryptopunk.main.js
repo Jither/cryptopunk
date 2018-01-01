@@ -125,6 +125,7 @@ import * as trifid from "./transforms/classical/trifid";
 import * as twofish from "./transforms/block-ciphers/twofish";
 import * as unicode from "./transforms/char-encodings/unicode";
 import * as unicornA from "./transforms/block-ciphers/unicorn-a";
+import * as unicornE from "./transforms/block-ciphers/unicorn-e";
 import * as vigenere from "./transforms/classical/vigenere";
 import * as whirlpool from "./transforms/hashes/whirlpool";
 import * as xor from "./transforms/stream-ciphers/xor";
@@ -381,6 +382,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(cast128.Cast128DecryptTransform, "Cast128Decrypt", "CAST-128", "CAST-128 Decrypt")
 	.addItem(cast256.Cast256DecryptTransform, "Cast256Decrypt", "CAST-256", "CAST-256 Decrypt")
 	.addItem(unicornA.UnicornADecryptTransform, "UnicornADecrypt", "CipherUnicorn-A", "CipherUnicorn-A Decrypt")
+	.addItem(unicornE.UnicornEDecryptTransform, "UnicornEDecrypt", "CipherUnicorn-E", "CipherUnicorn-E Decrypt")
 	.addItem(clefia.ClefiaDecryptTransform, "ClefiaDecrypt", "CLEFIA", "CLEFIA Decrypt")
 	.addItem(crypton.CryptonDecryptTransform, "CryptonDecrypt", "Crypton", "Crypton Decrypt")
 	.addItem(csCipher.CsCipherDecryptTransform, "CsCipherDecrypt", "CS-Cipher", "CS-Cipher Decrypt")
@@ -450,6 +452,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(cast128.Cast128EncryptTransform, "Cast128Encrypt", "CAST-128", "CAST-128 Encrypt")
 	.addItem(cast256.Cast256EncryptTransform, "Cast256Encrypt", "CAST-256", "CAST-256 Encrypt")
 	.addItem(unicornA.UnicornAEncryptTransform, "UnicornAEncrypt", "CipherUnicorn-A", "CipherUnicorn-A Encrypt")
+	.addItem(unicornE.UnicornEEncryptTransform, "UnicornEEncrypt", "CipherUnicorn-E", "CipherUnicorn-E Encrypt")
 	.addItem(clefia.ClefiaEncryptTransform, "ClefiaEncrypt", "CLEFIA", "CLEFIA Encrypt")
 	.addItem(crypton.CryptonEncryptTransform, "CryptonEncrypt", "Crypton", "Crypton Encrypt")
 	.addItem(csCipher.CsCipherEncryptTransform, "CsCipherEncrypt", "CS-Cipher", "CS-Cipher Encrypt")

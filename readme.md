@@ -55,7 +55,7 @@ Supported
 * Blowfish
 * Camellia
 * CAST-128, CAST-256
-* CipherUnicorn-A
+* CipherUnicorn-A, CipherUnicorn-E
 * CLEFIA
 * Crypton (0.5, 1.0; uncertain correctness for 1.0)
 * CS-Cipher
@@ -228,8 +228,8 @@ TODO
 * Grand Cru
 * IDEA NXT
 * MISTY2
+* Prince
 * SAFER+ / SAFER++
-* CipherUnicorn-E
 
 #### Block Ciphers: Third priority
 

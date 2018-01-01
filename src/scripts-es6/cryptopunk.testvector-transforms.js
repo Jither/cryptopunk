@@ -80,6 +80,8 @@ import * as threefish from "./transforms/block-ciphers/threefish";
 import * as threeway from "./transforms/block-ciphers/3-way";
 import * as treyfer from "./transforms/block-ciphers/treyfer";
 import * as twofish from "./transforms/block-ciphers/twofish";
+import * as unicornA from "./transforms/block-ciphers/unicorn-a";
+import * as unicornE from "./transforms/block-ciphers/unicorn-e";
 import * as xtea from "./transforms/block-ciphers/xtea";
 import * as xxtea from "./transforms/block-ciphers/xxtea";
 
@@ -226,6 +228,8 @@ addTransformsFrom(threefish);
 addTransformsFrom(threeway);
 addTransformsFrom(treyfer);
 addTransformsFrom(twofish);
+addTransformsFrom(unicornA);
+addTransformsFrom(unicornE);
 addTransformsFrom(xtea);
 addTransformsFrom(xxtea);
 

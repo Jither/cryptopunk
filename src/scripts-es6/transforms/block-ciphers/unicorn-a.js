@@ -1,41 +1,12 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { gfExp256, gfAffine } from "../../cryptopunk.galois";
 import { bytesToInt32sBE, int32sToBytesBE } from "../../cryptopunk.utils";
 import { mul } from "../../cryptopunk.bitarith";
+import { SBOX1, SBOX2, SBOX3, SBOX4, precomputeSboxes } from "./unicorn_shared";
 
 const C0 = 0x7e167289,
 	C1 = 0xfe21464b;
 
 const ROUNDS = 16;
-
-let SBOX1, SBOX2, SBOX3, SBOX4;
-
-function precomputeSbox(matrix, c, modulo, d)
-{
-	const result = new Uint8Array(256);
-	for (let x = 0; x < 256; x++)
-	{
-		// (x + c) ^ -1 (in GF(2^8)):
-		const a = gfExp256(x ^ c, 254, modulo);
-		// a * matrix + d (in GF(2^8)):
-		result[x] = gfAffine(a, matrix, d);
-	}
-
-	return result;
-}
-
-function precompute()
-{
-	if (SBOX1)
-	{
-		return;
-	}
-
-	SBOX1 = precomputeSbox([0x23, 0x4e, 0x9c, 0xb1, 0x49, 0xd8, 0xc6, 0xe4], 233, 0x11d,  28);
-	SBOX2 = precomputeSbox([0x7e, 0x2a, 0xef, 0x52, 0x34, 0xa2, 0x70, 0xd7],  26, 0x165, 171);
-	SBOX3 = precomputeSbox([0x32, 0x04, 0x8f, 0x83, 0x89, 0x67, 0xcf, 0x3b],  43, 0x14d, 155);
-	SBOX4 = precomputeSbox([0x34, 0x20, 0xba, 0xd0, 0x66, 0xd7, 0xb2, 0xa8], 200, 0x171,  47);
-}
 
 function A3(x0, x1)
 {
@@ -62,8 +33,8 @@ function MT(x0, x1)
 
 function F(xl, xr, fk, sk)
 {
-	let wk0 = (sk[0] + xr);
-	let wk1 = (sk[1] + xl);
+	let wk0 = (sk[0] + xr) & 0xffffffff;
+	let wk1 = (sk[1] + xl) & 0xffffffff;
 
 	wk0 = mul(wk0, C0);
 	wk1 ^= Tn(wk0, 0);
@@ -110,7 +81,7 @@ class UnicornATransform extends BlockCipherTransform
 
 	transform(bytes, keyBytes)
 	{
-		precompute();
+		precomputeSboxes();
 
 		this.checkBytesSize("Key", keyBytes, [128, 192, 256]);
 
