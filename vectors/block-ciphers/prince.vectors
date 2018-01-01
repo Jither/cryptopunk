@@ -1,0 +1,50 @@
+mode    : encrypt-decrypt
+encrypt : PrinceEncryptTransform
+decrypt : PrinceDecryptTransform
+k-format: hex
+p-format: hex
+c-format: hex
+
+# From: Paper (https://eprint.iacr.org/2012/529.pdf)
+
+title   : Paper
+
+k: 0000000000000000 0000000000000000
+p: 0000000000000000
+c: 818665aa0d02dfda
+
+k: 0000000000000000 0000000000000000
+p: ffffffffffffffff
+c: 604ae6ca03c20ada
+
+k: ffffffffffffffff 0000000000000000
+p: 0000000000000000
+c: 9fb51935fc3df524
+
+k: 0000000000000000 ffffffffffffffff
+p: 0000000000000000
+c: 78a54cbe737bb7ef
+
+k: 0000000000000000 fedcba9876543210
+p: 0123456789abcdef
+c: ae25ad3ca8fa9ccf
+
+# From: Sebastien Riou additional vectors (https://github.com/sebastien-riou/prince-c-ref/blob/master/test/main.cpp)
+
+title   : Sebastien Riou
+
+k: 0011223344556677 8899aabbccddeeff
+p: 0123456789abcdef
+c: d6dcb5978de756ee
+
+k: 0112233445566778 899aabbccddeeff0
+p: 0123456789abcdef 
+c: 392f599f46761cd3
+
+k: 0112233445566778 899aabbccddeeff0
+p: f0123456789abcde
+c: 4fb5e332b9b409bb
+
+k: d8cdb78070b4c55a 818665aa0d02dfda
+p: 69c4e0d86a7b0430
+c: 43c6b256d79de7e8

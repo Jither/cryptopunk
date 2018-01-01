@@ -89,6 +89,7 @@ Supported
 * Nimbus
 * NOEKEON
 * PRESENT
+* Prince (variable rounds)
 * RC2
 * RC5
 * RC6
@@ -228,7 +229,6 @@ TODO
 * Grand Cru
 * IDEA NXT
 * MISTY2
-* Prince
 * SAFER+ / SAFER++
 
 #### Block Ciphers: Third priority

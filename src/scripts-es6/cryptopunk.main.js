@@ -84,6 +84,7 @@ import * as panama from "./transforms/hashes/panama";
 import * as playfair from "./transforms/classical/playfair";
 import * as polybius from "./transforms/classical/polybius";
 import * as present from "./transforms/block-ciphers/present";
+import * as prince from "./transforms/block-ciphers/prince";
 import * as rabbit from "./transforms/stream-ciphers/rabbit";
 import * as radiogatun from "./transforms/hashes/radiogatun";
 import * as railfence from "./transforms/classical/railfence";
@@ -417,6 +418,7 @@ palette.addCategory("Block cipher decryption")
 	.addItem(nimbus.NimbusDecryptTransform, "NimbusDecrypt", "Nimbus", "Nimbus Decrypt")
 	.addItem(noekeon.NoekeonDecryptTransform, "NoekeonDecrypt", "NOEKEON", "NOEKEON Decrypt")
 	.addItem(present.PresentDecryptTransform, "PresentDecrypt", "PRESENT", "PRESENT Decrypt")
+	.addItem(prince.PrinceDecryptTransform, "PrinceDecrypt", "Prince", "Prince Decrypt")
 	.addItem(rc2.Rc2DecryptTransform, "Rc2Decrypt", "RC2", "RC2 Decrypt")
 	.addItem(rc5.Rc5DecryptTransform, "Rc5Decrypt", "RC5", "RC5 Decrypt")
 	.addItem(rc6.Rc6DecryptTransform, "Rc6Decrypt", "RC6", "RC6 Decrypt")
@@ -487,6 +489,7 @@ palette.addCategory("Block cipher encryption")
 	.addItem(nimbus.NimbusEncryptTransform, "NimbusEncrypt", "Nimbus", "Nimbus Encrypt")
 	.addItem(noekeon.NoekeonEncryptTransform, "NoekeonEncrypt", "NOEKEON", "NOEKEON Encrypt")
 	.addItem(present.PresentEncryptTransform, "PresentEncrypt", "PRESENT", "PRESENT Encrypt")
+	.addItem(prince.PrinceEncryptTransform, "PrinceEncrypt", "Prince", "Prince Encrypt")
 	.addItem(rc2.Rc2EncryptTransform, "Rc2Encrypt", "RC2", "RC2 Encrypt")
 	.addItem(rc5.Rc5EncryptTransform, "Rc5Encrypt", "RC5", "RC5 Encrypt")
 	.addItem(rc6.Rc6EncryptTransform, "Rc6Encrypt", "RC6", "RC6 Encrypt")
