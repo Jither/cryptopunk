@@ -196,104 +196,6 @@ function or64(...terms)
 	return result;
 }
 
-function rorBytes(bytes, count)
-{
-	count = count % (bytes.length * 8);
-	if (count === 0)
-	{
-		return;
-	}
-
-	const byteCount = Math.floor(count / 8);
-	const bitCount = count % 8;
-	const length = bytes.length;
-	
-	if (byteCount > 0)
-	{
-		// Juggling algorithm for inplace shifting of bytes
-		const setCount = gcd(byteCount, length);
-
-		for (let start = 0; start < setCount; start++)
-		{
-			let dest = start;
-			const temp = bytes[start];
-
-			for (;;)
-			{
-				// dest - count will obviously be negative for dest < count
-				// Add length to get positive modulo (as opposed to remainder)
-				const source = (dest - byteCount + length) % length;
-				if (source === start)
-				{
-					bytes[dest] = temp;
-					break;
-				}
-				bytes[dest] = bytes[source];
-				dest = source;
-			}
-		}
-	}
-
-	if (bitCount > 0)
-	{
-		const temp = bytes[length - 1];
-		for (let dest = length - 1; dest >= 0; dest--)
-		{
-			const source = dest - 1;
-			const val = source < 0 ? temp : bytes[source];
-			bytes[dest] = ((bytes[dest] >>> bitCount) | val << (8 - bitCount)) & 0xff;
-		}
-	}
-}
-
-function rolBytes(bytes, count)
-{
-	count = count % (bytes.length * 8);
-	if (count === 0)
-	{
-		return;
-	}
-
-	const byteCount = Math.floor(count / 8);
-	const bitCount = count % 8;
-	const length = bytes.length;
-	
-	if (byteCount > 0)
-	{
-		// Juggling algorithm for inplace shifting of bytes
-		const setCount = gcd(byteCount, length);
-
-		for (let start = 0; start < setCount; start++)
-		{
-			let dest = start;
-			const temp = bytes[start];
-
-			for (;;)
-			{
-				const source = (dest + byteCount) % length;
-				if (source === start)
-				{
-					bytes[dest] = temp;
-					break;
-				}
-				bytes[dest] = bytes[source];
-				dest = source;
-			}
-		}
-	}
-
-	if (bitCount > 0)
-	{
-		const temp = bytes[0];
-		for (let dest = 0; dest < length; dest++)
-		{
-			const source = dest + 1;
-			const val = source >= length ? temp : bytes[source];
-			bytes[dest] = ((bytes[dest] << bitCount) | val >> (8 - bitCount)) & 0xff;
-		}
-	}
-}
-
 function rol64(val, count)
 {
 	const result = {};
@@ -454,6 +356,134 @@ function xor64(...terms)
 	return result;
 }
 
+function addBytes(a, b)
+{
+	let carry = 0;
+	for (let i = 7; i >= 0; i--)
+	{
+		const r = a[i] + b[i] + carry;
+		carry = r >> 8;
+		a[i] = r & 0xff;
+	}
+}
+
+function subBytes(a, b)
+{
+	let borrow = 0;
+	for (let i = 7; i >= 0; i--)
+	{
+		const r = a[i] - b[i] - borrow;
+		borrow = r < 0;
+		a[i] = r & 0xff;
+	}
+}
+
+function notBytes(a)
+{
+	for (let i = 0; i < a.length; i++)
+	{
+		a[i] = ~a[i];
+	}
+}
+
+function rorBytes(bytes, count)
+{
+	count = count % (bytes.length * 8);
+	if (count === 0)
+	{
+		return;
+	}
+
+	const byteCount = Math.floor(count / 8);
+	const bitCount = count % 8;
+	const length = bytes.length;
+	
+	if (byteCount > 0)
+	{
+		// Juggling algorithm for inplace shifting of bytes
+		const setCount = gcd(byteCount, length);
+
+		for (let start = 0; start < setCount; start++)
+		{
+			let dest = start;
+			const temp = bytes[start];
+
+			for (;;)
+			{
+				// dest - count will obviously be negative for dest < count
+				// Add length to get positive modulo (as opposed to remainder)
+				const source = (dest - byteCount + length) % length;
+				if (source === start)
+				{
+					bytes[dest] = temp;
+					break;
+				}
+				bytes[dest] = bytes[source];
+				dest = source;
+			}
+		}
+	}
+
+	if (bitCount > 0)
+	{
+		const temp = bytes[length - 1];
+		for (let dest = length - 1; dest >= 0; dest--)
+		{
+			const source = dest - 1;
+			const val = source < 0 ? temp : bytes[source];
+			bytes[dest] = ((bytes[dest] >>> bitCount) | val << (8 - bitCount)) & 0xff;
+		}
+	}
+}
+
+function rolBytes(bytes, count)
+{
+	count = count % (bytes.length * 8);
+	if (count === 0)
+	{
+		return;
+	}
+
+	const byteCount = Math.floor(count / 8);
+	const bitCount = count % 8;
+	const length = bytes.length;
+	
+	if (byteCount > 0)
+	{
+		// Juggling algorithm for inplace shifting of bytes
+		const setCount = gcd(byteCount, length);
+
+		for (let start = 0; start < setCount; start++)
+		{
+			let dest = start;
+			const temp = bytes[start];
+
+			for (;;)
+			{
+				const source = (dest + byteCount) % length;
+				if (source === start)
+				{
+					bytes[dest] = temp;
+					break;
+				}
+				bytes[dest] = bytes[source];
+				dest = source;
+			}
+		}
+	}
+
+	if (bitCount > 0)
+	{
+		const temp = bytes[0];
+		for (let dest = 0; dest < length; dest++)
+		{
+			const source = dest + 1;
+			const val = source >= length ? temp : bytes[source];
+			bytes[dest] = ((bytes[dest] << bitCount) | val >> (8 - bitCount)) & 0xff;
+		}
+	}
+}
+
 function xorBytes(dest, ...terms)
 {
 	const destLength = dest.length;
@@ -561,12 +591,14 @@ function parity32(x)
 export {
 	add,
 	add64,
+	addBytes,
 	and64,
 	modInv32,
 	modInv64,
 	mul,
 	mul64,
 	not64,
+	notBytes,
 	or64,
 	parity8,
 	parity32,
@@ -586,6 +618,7 @@ export {
 	shr64,
 	sub,
 	sub64,
+	subBytes,
 	xor64,
 	xorBytes,
 	mirror,
