@@ -1,8 +1,8 @@
 import { BlockCipherTransform } from "./block-cipher";
-import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
-import { add, rol, ror } from "../../cryptopunk.bitarith";
+import { addBytes, rolBytes, xorBytes, combineBytesLE, splitBytesLE, subBytes, rorBytes } from "../../cryptopunk.bitarith";
 
-// TODO: 32 and 128 bit block sizes
+// This implementation uses byte arrays for values in order to allow all the supported word lengths.
+// See alternative implementation rc5_32-bit-words.js for a simpler 32-bit word size version using plain JS numbers.
 
 const BLOCK_SIZES = [
 	32,
@@ -10,13 +10,20 @@ const BLOCK_SIZES = [
 	128
 ];
 
-//const P_16 = 0xb7e1;
-const P_32 = 0xb7e15163;
-//const P_64 = { hi: 0xb7e15162, lo: 0x8aed2a6d };
+// P by word size
+// NOTE that these are rounded from e and the golden ratio, and hence the 32 bit P isn't just the first 32 bits of the 64 bit P
+// Specifically, the last byte of P32 differs from P64
+const P = {
+	16: Uint8Array.of(0xb7, 0xe1),
+	32: Uint8Array.of(0xb7, 0xe1, 0x51, 0x63),
+	64: Uint8Array.of(0xb7, 0xe1, 0x51, 0x62, 0x8a, 0xed, 0x2a, 0x6b)
+};
 
-//const Q_16 = 0x9e37;
-const Q_32 = 0x9e3779b9;
-//const Q_64 = { hi: 0x9E3779B9, lo: 0x7F4A7C15 };
+const Q = {
+	16: Uint8Array.of(0x9e, 0x37),
+	32: Uint8Array.of(0x9e, 0x37, 0x79, 0xb9),
+	64: Uint8Array.of(0x9e, 0x37, 0x79, 0xb9, 0x7f, 0x4a, 0x7c, 0x15)
+};
 
 class Rc5BaseTransform extends BlockCipherTransform
 {
@@ -34,43 +41,73 @@ class Rc5BaseTransform extends BlockCipherTransform
 		const keyWordCount = Math.ceil(Math.max(keyLength, 1) / wordLength);
 
 		const L = new Array(keyWordCount);
-		L.fill(0);
-		for (let i = keyLength - 1; i >= 0; i--)
+		// Fill L array with 0 words
+		for (let i = 0; i < keyWordCount; i++)
 		{
-			const index = Math.floor(i / wordLength);
-			L[index] <<= 8;
-			L[index] |= keyBytes[i];
+			L[i] = new Uint8Array(wordLength);
+		}
+
+		// Populate L array with Little Endian words from key bytes
+		let bIndex = 0, kIndex = -1, lIndex = -1;
+		let l;
+		while (bIndex < keyLength)
+		{
+			if (lIndex < 0)
+			{
+				kIndex++;
+				l = L[kIndex];
+				lIndex = wordLength - 1;
+			}
+			l[lIndex] = keyBytes[bIndex];
+			lIndex--;
+			bIndex++;
 		}
 
 		const roundKeyCount = this.roundKeyCount;
 
+		// Only use <wordLength> bytes from P and Q
+		const PW = P[wordSize];
+		const QW = Q[wordSize];
+
 		const S = new Array(roundKeyCount);
-		S[0] = P_32;
+		S[0] = Uint8Array.from(PW);
 
 		for (let i = 1; i < roundKeyCount; i++)
 		{
-			S[i] = add(S[i - 1], Q_32);
+			S[i] = Uint8Array.from(S[i - 1]);
+			addBytes(S[i], QW);
 		}
 
 		let i = 0,
-			j = 0,
-			a = 0,
-			b = 0;
+			j = 0;
+		const
+			a = new Uint8Array(wordLength),
+			b = new Uint8Array(wordLength);
+
+		const lastByte = wordLength - 1;
 
 		const keySchedulingCount = Math.max(roundKeyCount, keyWordCount) * 3;
 
 		for (let index = 0; index < keySchedulingCount; index++)
 		{
-			a = S[i] = rol(add(S[i], a, b), 3);
-			b = L[j] = rol(add(L[j], a, b), add(a, b) % wordSize);
+			addBytes(S[i], a, b);
+			rolBytes(S[i], 3);
+			a.set(S[i]);
+			addBytes(L[j], a, b);
+			const rotate = (a[lastByte] + b[lastByte]) % wordSize;
+			rolBytes(L[j], rotate);
+			b.set(L[j]);
 			i = (i + 1) % roundKeyCount;
 			j = (j + 1) % keyWordCount;
 		}
+
 		return S;
 	}
 
 	transform(bytes, keyBytes)
 	{
+		this.checkBytesSize("Key", keyBytes, { min: 0, max: 2040, step: 8 });
+
 		const subKeys = this.generateSubKeys(keyBytes);
 
 		return this.transformBlocks(bytes, this.options.blockSize, subKeys);
@@ -108,23 +145,28 @@ class Rc5EncryptTransform extends Rc5Transform
 	transformBlock(block, dest, destOffset, subKeys)
 	{
 		const wordSize = this.wordSize;
+		const wordLength = wordSize / 8;
+		const lastByte = wordLength - 1;
 		const rounds = this.options.rounds;
 
-		let [a, b] = bytesToInt32sLE(block);
-		a = add(a, subKeys[0]);
-		b = add(b, subKeys[1]);
+		const [a, b] = splitBytesLE(block, wordLength);
+		addBytes(a, subKeys[0]);
+		addBytes(b, subKeys[1]);
 
 		for (let i = 1; i <= rounds; i++)
 		{
-			// Rotating by a and b, which are 32-bit numbers, we explicitly use e.g. a % wordSize.
-			// This makes the similarity to 16 and 64 bit word sizes more clear, although it isn't
-			// actually necessary - the rol/ror functions use javascript's shift operators, which
-			// only look at the the lowest 5 bits of the count anyway.
-			a = add(rol(a ^ b, b % wordSize), subKeys[2 * i]);
-			b = add(rol(b ^ a, a % wordSize), subKeys[2 * i + 1]);
+			xorBytes(a, b);
+			const rotA = b[lastByte] % wordSize;
+			rolBytes(a, rotA);
+			addBytes(a, subKeys[2 * i]);
+
+			xorBytes(b, a);
+			const rotB = a[lastByte] % wordSize;
+			rolBytes(b, rotB);
+			addBytes(b, subKeys[2 * i + 1]);
 		}
 
-		dest.set(int32sToBytesLE([a, b]), destOffset);
+		dest.set(combineBytesLE([a, b]), destOffset);
 	}
 }
 
@@ -138,20 +180,29 @@ class Rc5DecryptTransform extends Rc5Transform
 	transformBlock(block, dest, destOffset, subKeys)
 	{
 		const wordSize = this.wordSize;
+		const wordLength = wordSize / 8;
+		const lastByte = wordLength - 1;
 		const rounds = this.options.rounds;
 
-		let [a, b] = bytesToInt32sLE(block);
+		const [a, b] = splitBytesLE(block, wordLength);
 
 		for (let i = rounds; i >= 1; i--)
 		{
-			b = ror(add(b, -subKeys[2 * i + 1]), a % wordSize) ^ a;
-			a = ror(add(a, -subKeys[2 * i]), b % wordSize) ^ b;
+			subBytes(b, subKeys[2 * i + 1]);
+			const rotB = a[lastByte] % wordSize;
+			rorBytes(b, rotB);
+			xorBytes(b, a);
+
+			subBytes(a, subKeys[2 * i]);
+			const rotA = b[lastByte] % wordSize;
+			rorBytes(a, rotA);
+			xorBytes(a, b);
 		}
 
-		b = add(b, -subKeys[1]);
-		a = add(a, -subKeys[0]);
+		subBytes(b, subKeys[1]);
+		subBytes(a, subKeys[0]);
 
-		dest.set(int32sToBytesLE([a, b]), destOffset);
+		dest.set(combineBytesLE([a, b]), destOffset);
 	}
 }
 

@@ -1,5 +1,5 @@
 import { MdHashTransform } from "./hash";
-import { xorBytes, rolBytes, rorBytes, addBytes, subBytes, notBytes } from "../../cryptopunk.bitarith";
+import { xorBytes, rolBytes, rorBytes, addBytes, mulBytesSmall, subBytes, notBytes, splitBytesLE, combineBytesLE } from "../../cryptopunk.bitarith";
 
 // TODO: Cleanup
 
@@ -23,43 +23,6 @@ const INITIAL_STATE = [
 ];
 
 let T1, T2, T3, T4;
-
-function splitBytesLE(x, length)
-{
-	const result = new Array(x.length / length);
-	let index = 0;
-	for (let i = 0; i < x.length; i += length)
-	{
-		result[index] = Uint8Array.from(x.subarray(i, i + length));
-		result[index].reverse();
-		index++;
-	}
-	return result;
-}
-
-function combineBytesLE(x)
-{
-	const count = x.length;
-	const length = x[0].length;
-	const result = new Uint8Array(count * length);
-	for (let i = 0; i < count; i++)
-	{
-		result.set(x[i], length * i);
-		result.subarray(i * length, (i + 1) * length).reverse();
-	}
-	return result;
-}
-
-function mulBytes(x, mul)
-{
-	let carry = 0;
-	for (let i = 7; i >= 0; i--)
-	{
-		const r = x[i] * mul + carry;
-		carry = r >> 8;
-		x[i] = r & 0xff;
-	}
-}
 
 function shlBytes(a, n)
 {
@@ -99,7 +62,7 @@ function gen(str, passes)
 	}
 
 	const seed = splitBytesLE(tempStr, 8);
-	
+
 	const x = new Array(seed.length);
 	for (let i = 0; i < seed.length; i++)
 	{
@@ -183,7 +146,7 @@ function round(v, x, mul)
 	xorBytes(temp, T1[c[0]]);
 	addBytes(b, temp);
 	
-	mulBytes(b, mul);
+	mulBytesSmall(b, mul);
 
 	// Rotate a, b, c - 1 word left
 	v[0] = b; v[1] = c; v[2] = a;

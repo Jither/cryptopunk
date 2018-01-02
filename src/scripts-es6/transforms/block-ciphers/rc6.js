@@ -1,8 +1,8 @@
 import { Rc5BaseTransform } from "./rc5";
-import { int32sToBytesLE, bytesToInt32sLE } from "../../cryptopunk.utils";
-import { add, mul, rol, ror } from "../../cryptopunk.bitarith";
+import { splitBytesLE, addBytes, addBytesSmall, rolBytes, xorBytes, mulBytes, mulBytesSmall, combineBytesLE, subBytes, rorBytes } from "../../cryptopunk.bitarith";
 
-// TODO: 64 and 256 bit block sizes
+// This implementation uses byte arrays for values in order to allow all the supported word lengths.
+// See alternative implementation rc6_32-bit-words.js for a simpler 32-bit word size version using plain JS numbers.
 
 const BLOCK_SIZES = [
 	64,
@@ -40,31 +40,50 @@ class Rc6EncryptTransform extends Rc6Transform
 	transformBlock(block, dest, destOffset, subKeys)
 	{
 		const wordSize = this.wordSize;
+		const wordLength = wordSize / 8;
+		const lastByte = wordLength - 1;
 		const rounds = this.options.rounds;
 
 		const rot = Math.log2(wordSize);
 
-		let [a, b, c, d] = bytesToInt32sLE(block);
-		b = add(b, subKeys[0]);
-		d = add(d, subKeys[1]);
+		const t = new Uint8Array(wordLength),
+			u = new Uint8Array(wordLength);
+
+		let [a, b, c, d] = splitBytesLE(block, wordLength);
+		addBytes(b, subKeys[0]);
+		addBytes(d, subKeys[1]);
 
 		for (let i = 1; i <= rounds; i++)
 		{
-			// 2 * b + 1 will stay well within 2^53 limit, so we can use javascript multiplication.
-			// Multiplying the result with b, however, will not. Hence the mul() function call.
-			// TODO: Math.imul can be used instead
-			const t = rol(mul(b, (2 * b + 1)), rot);
-			const u = rol(mul(d, (2 * d + 1)), rot);
-			a = add(rol(a ^ t, u % wordSize), subKeys[2 * i]);
-			c = add(rol(c ^ u, t % wordSize), subKeys[2 * i + 1]);
+			t.set(b);
+			mulBytesSmall(t, 2);
+			addBytesSmall(t, 1);
+			mulBytes(t, b);
+			rolBytes(t, rot);
+
+			u.set(d);
+			mulBytesSmall(u, 2);
+			addBytesSmall(u, 1);
+			mulBytes(u, d);
+			rolBytes(u, rot);
+
+			xorBytes(a, t);
+			const rotA = u[lastByte] % wordSize;
+			rolBytes(a, rotA);
+			addBytes(a, subKeys[2 * i]);
+
+			xorBytes(c, u);
+			const rotC = t[lastByte] % wordSize;
+			rolBytes(c, rotC);
+			addBytes(c, subKeys[2 * i + 1]);
 
 			[a, b, c, d] = [b, c, d, a];
 		}
 
-		a = add(a, subKeys[2 * rounds + 2]);
-		c = add(c, subKeys[2 * rounds + 3]);
+		addBytes(a, subKeys[2 * rounds + 2]);
+		addBytes(c, subKeys[2 * rounds + 3]);
 
-		dest.set(int32sToBytesLE([a, b, c, d]), destOffset);
+		dest.set(combineBytesLE([a, b, c, d]), destOffset);
 	}
 }
 
@@ -78,28 +97,50 @@ class Rc6DecryptTransform extends Rc6Transform
 	transformBlock(block, dest, destOffset, subKeys)
 	{
 		const wordSize = this.wordSize;
+		const wordLength = wordSize / 8;
+		const lastByte = wordLength - 1;
 		const rounds = this.options.rounds;
 
 		const rot = Math.log2(wordSize);
 
-		let [a, b, c, d] = bytesToInt32sLE(block);
-		c = add(c, -subKeys[2 * rounds + 3]);
-		a = add(a, -subKeys[2 * rounds + 2]);
+		const t = new Uint8Array(wordLength),
+			u = new Uint8Array(wordLength);
+
+		let [a, b, c, d] = splitBytesLE(block, wordLength);
+		subBytes(c, subKeys[2 * rounds + 3]);
+		subBytes(a, subKeys[2 * rounds + 2]);
 
 		for (let i = rounds; i >= 1; i--)
 		{
 			[a, b, c, d] = [d, a, b, c];
 
-			const u = rol(mul(d, (2 * d + 1)), rot);
-			const t = rol(mul(b, (2 * b + 1)), rot);
-			c = ror(add(c, -subKeys[2 * i + 1]), t % wordSize) ^ u;
-			a = ror(add(a, -subKeys[2 * i]), u % wordSize) ^ t;
+			u.set(d);
+			mulBytesSmall(u, 2);
+			addBytesSmall(u, 1);
+			mulBytes(u, d);
+			rolBytes(u, rot);
+
+			t.set(b);
+			mulBytesSmall(t, 2);
+			addBytesSmall(t, 1);
+			mulBytes(t, b);
+			rolBytes(t, rot);
+
+			subBytes(c, subKeys[2 * i + 1]);
+			const rotC = t[lastByte] % wordSize;
+			rorBytes(c, rotC);
+			xorBytes(c, u);
+
+			subBytes(a, subKeys[2 * i]);
+			const rotA = u[lastByte] % wordSize;
+			rorBytes(a, rotA);
+			xorBytes(a, t);
 		}
 
-		d = add(d, -subKeys[1]);
-		b = add(b, -subKeys[0]);
+		subBytes(d, subKeys[1]);
+		subBytes(b, subKeys[0]);
 
-		dest.set(int32sToBytesLE([a, b, c, d]), destOffset);
+		dest.set(combineBytesLE([a, b, c, d]), destOffset);
 	}
 }
 

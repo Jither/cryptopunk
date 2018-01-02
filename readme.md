@@ -91,8 +91,8 @@ Supported
 * PRESENT
 * Prince (variable rounds)
 * RC2
-* RC5
-* RC6
+* RC5 (16, 32, 64 word sizes; variable rounds)
+* RC6 (16, 32, 64 word sizes; variable rounds)
 * Red Pike
 * Rijndael (128, 160, 192, 224, 256 key *and* block sizes; variable rounds)
 * S-1
@@ -221,7 +221,6 @@ TODO
 
 ### Block Ciphers
 
-* RC5, RC6 (16/64 bit word sizes)
 * Serpent-0
 
 #### Block Ciphers: Second priority
@@ -268,11 +267,13 @@ TODO
 * Enocoro
 * F-FCSR
 * FISH
+* Grain
 * HC-128 / HC-256
 * ISAAC
 * KCipher-2
 * Leviathan
 * LILI-128
+* MICKEY
 * MUGI
 * PANAMA
 * Helix / Phelix
@@ -284,6 +285,7 @@ TODO
 * SNOW
 * SOBER, SOBER-128
 * SOSEMANUK
+* Trivium
 * VEST
 * VMPC
 * WAKE

@@ -356,25 +356,77 @@ function xor64(...terms)
 	return result;
 }
 
-function addBytes(a, b)
+function addBytes(a, ...rest)
+{
+	const last = a.length - 1;
+	for (const b of rest)
+	{
+		let carry = 0;
+		for (let i = last; i >= 0; i--)
+		{
+			const r = a[i] + b[i] + carry;
+			carry = r >> 8;
+			a[i] = r & 0xff;
+		}
+	}
+}
+
+function addBytesSmall(a, small)
 {
 	let carry = 0;
-	for (let i = 7; i >= 0; i--)
+	for (let i = a.length - 1; i >= 0; i--)
 	{
-		const r = a[i] + b[i] + carry;
+		const r = a[i] + small + carry;
 		carry = r >> 8;
 		a[i] = r & 0xff;
+		if (carry === 0)
+		{
+			break;
+		}
 	}
 }
 
 function subBytes(a, b)
 {
+	const last = a.length - 1;
 	let borrow = 0;
-	for (let i = 7; i >= 0; i--)
+	for (let i = last; i >= 0; i--)
 	{
 		const r = a[i] - b[i] - borrow;
 		borrow = r < 0;
 		a[i] = r & 0xff;
+	}
+}
+
+// TODO: Optimize
+function mulBytes(a, b)
+{
+	const last = a.length - 1;
+	const answer = new Uint8Array(a.length);
+
+	for (let ai = last; ai >= 0; ai--)
+	{
+		let carry = 0;
+		let answerIndex = ai;
+		for (let bi = last; bi >= 0; bi--)
+		{
+			const r = a[ai] * b[bi] + carry + answer[answerIndex];
+			carry = r >> 8;
+			answer[answerIndex--] = r & 0xff;
+		}
+	}
+
+	a.set(answer);
+}
+
+function mulBytesSmall(x, small)
+{
+	let carry = 0;
+	for (let i = x.length - 1; i >= 0; i--)
+	{
+		const r = x[i] * small + carry;
+		carry = r >> 8;
+		x[i] = r & 0xff;
 	}
 }
 
@@ -502,6 +554,32 @@ function xorBytes(dest, ...terms)
 	}
 }
 
+function splitBytesLE(x, length)
+{
+	const result = new Array(x.length / length);
+	let index = 0;
+	for (let i = 0; i < x.length; i += length)
+	{
+		result[index] = Uint8Array.from(x.subarray(i, i + length));
+		result[index].reverse();
+		index++;
+	}
+	return result;
+}
+
+function combineBytesLE(x)
+{
+	const count = x.length;
+	const length = x[0].length;
+	const result = new Uint8Array(count * length);
+	for (let i = 0; i < count; i++)
+	{
+		result.set(x[i], length * i);
+		result.subarray(i * length, (i + 1) * length).reverse();
+	}
+	return result;
+}
+
 function mirror(value, bits)
 {
 	let result = 0;
@@ -592,11 +670,14 @@ export {
 	add,
 	add64,
 	addBytes,
+	addBytesSmall,
 	and64,
 	modInv32,
 	modInv64,
 	mul,
 	mul64,
+	mulBytes,
+	mulBytesSmall,
 	not64,
 	notBytes,
 	or64,
@@ -621,6 +702,8 @@ export {
 	subBytes,
 	xor64,
 	xorBytes,
+	splitBytesLE,
+	combineBytesLE,
 	mirror,
 	mirror64,
 	permutateBits,
