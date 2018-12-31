@@ -9,45 +9,49 @@
     "build": "webpack",
     "build-benchmarks": "webpack --config webpack.benchmarks.config.js",
     "build-vectors": "webpack --config webpack.vectors.config.js",
-    "deploy": "webpack -p",
+    "deploy": "webpack -p --mode production",
     "dev": "webpack --watch",
     "sandbox": "webpack --watch --config webpack.sandbox.config.js",
     "vectors": "webpack --config webpack.vectors.config.js && victor vectors --transforms vectors/transforms.js"
   },
   "devDependencies": {
-    "ava": "^0.16.0",
-    "babel-core": "^6.26.0",
-    "babel-loader": "^7.1.2",
-    "babel-plugin-module-resolver": "^2.2.0",
-    "babel-preset-env": "^1.6.0",
-    "benchmark": "^2.1.1",
-    "copy-webpack-plugin": "^4.0.1",
-    "css-loader": "^0.28.5",
-    "eslint": "^4.5.0",
-    "eslint-loader": "^1.9.0",
-    "extract-text-webpack-plugin": "^3.0.0",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/register": "^7.0.0",
+    "ava": "^1.0.0",
+    "babel-loader": "^8.0.4",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "benchmark": "^2.1.4",
+    "copy-webpack-plugin": "^4.6.0",
+    "css-loader": "^2.1.0",
+    "eslint": "^5.11.1",
+    "eslint-loader": "^2.1.1",
     "figures": "^2.0.0",
-    "node-sass": "^4.5.3",
-    "sass-loader": "^6.0.6",
-    "style-loader": "^0.18.2",
-    "webpack": "^3.5.5"
+    "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.11.0",
+    "sass-loader": "^7.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.1.2"
   },
   "ava": {
     "require": [
-      "babel-register"
+      "@babel/register"
     ],
     "babel": {
-      "babelrc": true,
-      "plugins": [
-        [
-          "module-resolver",
-          {
-            "root": [
-              "src/scripts-es6"
-            ]
-          }
+      "testOptions": {
+        "babelrc": true,
+        "plugins": [
+          [
+            "module-resolver",
+            {
+              "root": [
+                "src/scripts-es6"
+              ]
+            }
+          ]
         ]
-      ]
+      }
     },
     "files": [
       "tests/**/*.js"

@@ -23,7 +23,7 @@ test("Gauss-Jordan dimension 3", testGaussJordan,
 	19
 );
 
-test("Gauss-Jordan dimension 3", testGaussJordan,
+test("Gauss-Jordan dimension 3 - 2", testGaussJordan,
 	[
 		[17, 17, 5],
 		[21, 18, 21],
@@ -68,7 +68,7 @@ test("Gauss-Jordan dimension 2", testGaussJordan,
 	7
 );
 
-test("Gauss-Jordan dimension 2", testGaussJordan,
+test("Gauss-Jordan dimension 2 - 2", testGaussJordan,
 	[
 		[0, 1], 
 		[1, 1]

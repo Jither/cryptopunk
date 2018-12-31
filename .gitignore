@@ -12,3 +12,4 @@ references/**/obj/
 vectors/transforms.js.map
 vectors/transforms.js
 deploy/
+node_modules/

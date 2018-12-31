@@ -2,7 +2,7 @@ import test from "ava";
 import { Rot47Transform, RotXEncryptTransform, RotXDecryptTransform } from "transforms/classical/rotx";
 import { TransformError } from "transforms/transforms";
 
-test("Decrypt handles empty string gracefully", t => {
+test("Encrypt handles empty string gracefully", t => {
 	const tf = new RotXEncryptTransform();
 
 	t.is(tf.transform(""), "");

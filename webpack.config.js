@@ -1,13 +1,16 @@
 const path = require('path');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+	mode: 'development',
     entry: './src/scripts-es6/cryptopunk.main.js',
     output: {
         filename: 'scripts/cryptopunk.js',
         path: path.resolve(__dirname, 'deploy')
-    },
+	},
+	performance: { hints: false },
+
     module: {
         rules: [
             {
@@ -18,10 +21,13 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'sass-loader']
-                })
+                use: [
+					{
+						loader: MiniCSSExtractPlugin.loader
+					},
+					'css-loader',
+					'sass-loader'
+				]
             },
             {
                 test: /\.js$/,
@@ -31,7 +37,9 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin('styles/[name].css'),
+        new MiniCSSExtractPlugin({
+			filename: 'styles/[name].css'
+		}),
         new CopyPlugin([
             { from: "src/cryptopunk.html" }
         ])

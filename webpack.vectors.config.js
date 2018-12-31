@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = {
-    entry: './src/scripts-es6/cryptopunk.testvector-transforms.js',
+	mode: 'production',
+	entry: './src/scripts-es6/cryptopunk.testvector-transforms.js',
+	performance: { hints: false },
     output: {
         filename: 'transforms.js',
         path: path.resolve(__dirname, 'vectors')

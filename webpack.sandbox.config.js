@@ -2,6 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+	mode: 'development',
     entry: './src/scripts-es6/sandbox.js',
     output: {
         filename: 'scripts/sandbox.js',

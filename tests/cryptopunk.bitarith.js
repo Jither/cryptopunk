@@ -43,7 +43,7 @@ test("sub64 subtracts correctly - overflow"    , assert64, sub64, "eeeeeeeeeeeee
 test("sub64 subtracts correctly - overflow 1"  , assert64, sub64, "ffffffffffffffff", "0000000000000000", "0000000000000001");
 
 test("mul64 multiplies correctly"              , assert64, mul64, "1c71c71c38e38e39", "0000000055555555", "0000000055555555");
-test("mul64 multiplies correctly"              , assert64, mul64, "fffffffe00000001", "00000000ffffffff", "00000000ffffffff");
+test("mul64 multiplies correctly - signed"     , assert64, mul64, "fffffffe00000001", "00000000ffffffff", "00000000ffffffff");
 test("mul64 multiplies correctly - overflow"   , assert64, mul64, "28f5c283d70a3d71", "0000000999999999", "0000000999999999");
 test("mul64 multiplies correctly - overflow 2" , assert64, mul64, "fffffffffffffffe", "0000000000000002", "ffffffffffffffff");
 
