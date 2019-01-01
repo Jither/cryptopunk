@@ -178,6 +178,7 @@ main > section
 {
 	flex: 0 0 200px;
 	overflow-y: auto;
+	user-select: none;
 	@include minimal-scrollbar();
 }
 
@@ -186,15 +187,22 @@ main > section
 	flex: 0 0 350px;
 }
 
-#nodes
+#workarea
 {
 	flex: 1 1 auto;
 	position: relative;
+	overflow: hidden;
+}
+
+#nodes
+{
+	position: absolute;
+	min-width: 100%;
+	min-height: 100%;
 	background-color: $editor-back-color;
 	background-size: 60px 60px;
 	background-position: 50% 50%;
 	background-image: linear-gradient(to right, $grid-color 1px, transparent 2px), linear-gradient(to bottom, $grid-color 1px, transparent 2px);
-	overflow: hidden;
 
 	svg
 	{
@@ -204,6 +212,7 @@ main > section
 	  left:0px;
 	  width:100%;
 	  height:100%;
+	  overflow: visible;
 	}
 }
 
@@ -362,6 +371,11 @@ main > section
 			opacity: 0;
 		}
 	}
+}
+
+.panning
+{
+	cursor: grabbing;
 }
 
 #palette

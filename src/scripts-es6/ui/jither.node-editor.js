@@ -563,6 +563,7 @@ class Node
 			if (this.requestedFrame)
 			{
 				window.cancelAnimationFrame(this.requestedFrame);
+				this.requestedFrame = null;
 			}
 			this.requestedFrame = window.requestAnimationFrame(() => {
 				this.element.style.left = this.dragOriginX + dX + "px";
@@ -637,6 +638,18 @@ class Node
 
 class NodeEditor
 {
+	get absoluteOffset()
+	{
+		let x = 0, y = 0, element = this.element;
+		while (element)
+		{
+			x += element.offsetLeft;
+			y += element.offsetTop;
+			element = element.offsetParent;
+		}
+		return {x, y};
+	}
+
 	constructor(element)
 	{
 		// Unique ID for each socket in the editor (used for saving connections)
@@ -657,9 +670,14 @@ class NodeEditor
 
 		this.selectedNodeChanged = new Signal();
 
-		this.wiringMoveListener = this.mouseMoveListener.bind(this);
-		this.wiringClickListener = this.clickListener.bind(this);
+		this._panningPosition = { x: 0, y: 0 };
+
+		this._boundWiringMoveListener = this.wiringMouseMoveListener.bind(this);
+		this._boundWiringClickListener = this.wiringClickListener.bind(this);
+		this._boundPanningMouseUpListener = this.panningMouseUpListener.bind(this);
+		this._boundPanningMouseMoveListener = this.panningMouseMoveListener.bind(this);
 		this.element.addEventListener("click", this.editorClickListener.bind(this));
+		this.element.addEventListener("mousedown", this.panningMouseDownListener.bind(this));
 	}
 
 	addNode(name)
@@ -748,8 +766,8 @@ class NodeEditor
 
 		socket.select();
 
-		document.addEventListener("mousemove", this.wiringMoveListener);
-		document.addEventListener("click", this.wiringClickListener);
+		document.addEventListener("mousemove", this._boundWiringMoveListener);
+		document.addEventListener("click", this._boundWiringClickListener);
 	}
 
 	endWiring(socket2)
@@ -771,8 +789,8 @@ class NodeEditor
 	{
 		if (this.wiringFromSocket)
 		{
-			document.removeEventListener("mousemove", this.wiringMoveListener);
-			document.removeEventListener("click", this.wiringClickListener);
+			document.removeEventListener("mousemove", this._boundWiringMoveListener);
+			document.removeEventListener("click", this._boundWiringClickListener);
 
 			this.element.classList.remove("wiring");
 
@@ -782,7 +800,7 @@ class NodeEditor
 		}
 	}
 
-	clickListener(e)
+	wiringClickListener(e)
 	{
 		if (this.wiringFromSocket)
 		{
@@ -791,6 +809,20 @@ class NodeEditor
 				return;
 			}
 			this.stopWiring();
+		}
+	}
+
+	wiringMouseMoveListener(e)
+	{
+		if (this.wiringFromSocket)
+		{
+			const path = this.wiringPath;
+			const connectPoint = this.wiringFromPoint;
+			const offset = this.absoluteOffset;
+			const point = { x: e.clientX - offset.x, y: e.clientY - offset.y };
+			// Input socket point should be second argument always
+			const pathStr = this.wiringFromSocket.type === INPUT ? createPathStr(point, connectPoint) : createPathStr(connectPoint, point);
+			path.setAttributeNS(null, "d", pathStr);
 		}
 	}
 
@@ -804,16 +836,67 @@ class NodeEditor
 		this.selectNode(null);
 	}
 
-	mouseMoveListener(e)
+	panningMouseDownListener(e)
 	{
-		if (this.wiringFromSocket)
+		if (e.target !== this.element)
 		{
-			const path = this.wiringPath;
-			const connectPoint = this.wiringFromPoint;
-			const point = { x: e.pageX - this.element.offsetLeft, y: e.pageY - this.element.offsetTop };
-			// Input socket point should be second argument always
-			const pathStr = this.wiringFromSocket.type === INPUT ? createPathStr(point, connectPoint) : createPathStr(connectPoint, point);
-			path.setAttributeNS(null, "d", pathStr);
+			// Only pan when clicking the actual editor surface
+			return;
+		}
+
+		this.startPanning(e.clientX, e.clientY);
+	}
+
+	panningMouseUpListener(e)
+	{
+		this.endPanning(e.clientX, e.clientY);
+	}
+
+	panningMouseMoveListener(e)
+	{
+		this.pan(e.clientX, e.clientY);
+	}
+
+	startPanning(originX, originY)
+	{
+		this.element.classList.add("panning");
+		this._panningOrigin = { x: originX, y: originY };
+
+		document.addEventListener("mouseup", this._boundPanningMouseUpListener);
+		document.addEventListener("mousemove", this._boundPanningMouseMoveListener);
+	}
+
+	endPanning(x, y)
+	{
+		this.element.classList.remove("panning");
+		document.removeEventListener("mouseup", this._boundPanningMouseUpListener);
+		document.removeEventListener("mousemove", this._boundPanningMouseMoveListener);
+
+		const deltaX = x - this._panningOrigin.x;
+		const deltaY = y - this._panningOrigin.y;
+		this._panningPosition.x += deltaX;
+		this._panningPosition.y += deltaY;
+	}
+
+	pan(x, y)
+	{
+		if (this._requestedPanningFrame)
+		{
+			window.cancelAnimationFrame(this._requestedPanningFrame);
+			this._requestedPanningFrame = null;
+		}
+		else
+		{
+			this._requestedPanningFrame = window.requestAnimationFrame(() =>
+			{
+				const deltaX = x - this._panningOrigin.x;
+				const deltaY = y - this._panningOrigin.y;
+				const panX = this._panningPosition.x + deltaX;
+				const panY = this._panningPosition.y + deltaY;
+				this.element.style.left = panX + "px";
+				this.element.style.top = panY + "px";
+				//this.element.style.transform = `translate(${panX}px,${panY}px)`;
+			});
 		}
 	}
 
