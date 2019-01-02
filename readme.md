@@ -122,6 +122,10 @@ Supported
 * Salsa20 (variable rounds, including Salsa20/8 and Salsa20/12; 80, 128 and 256 key sizes) and XSalsa20
 * Simple XOR
 
+### Asymmetric Ciphers
+
+* Simple textbook RSA (operating on big integers)
+
 ### Hashes
 
 * BLAKE (224, 256, 384, 512)

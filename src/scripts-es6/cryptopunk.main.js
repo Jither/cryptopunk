@@ -118,6 +118,7 @@ import * as square from "./transforms/block-ciphers/square";
 import * as stringManipulation from "./transforms/tools/string-manipulation";
 import * as substitution from "./transforms/classical/simple-substitution";
 import * as tea from "./transforms/block-ciphers/tea";
+import * as textbookrsa from "./transforms/rsa/textbook-rsa";
 import * as threefish from "./transforms/block-ciphers/threefish";
 import * as threeway from "./transforms/block-ciphers/3-way";
 import * as tiger from "./transforms/hashes/tiger";
@@ -212,7 +213,8 @@ palette.addCategory("Generators")
 	.addItem(generators.HexInputGenerator, "HexInput", "Hex Input")
 	.addItem(generators.KeyedAlphabetGenerator, "KeyedAlphabet", "Keyed Alphabet")
 	.addItem(generators.NullBytesGenerator, "NullBytes", "Null Bytes")
-	.addItem(generators.RandomBytesGenerator, "RandomBytes", "Random Bytes");
+	.addItem(generators.RandomBytesGenerator, "RandomBytes", "Random Bytes")
+	.addItem(generators.BigIntegerGenerator, "BigIntegerInput", "Big Integer Input");
 
 palette.addCategory("Text to bytes")
 	.addItem(ascii.AsciiToBytesTransform, "AsciiToBytes", "ASCII", "ASCII > Bytes")
@@ -513,6 +515,12 @@ palette.addCategory("Block cipher encryption")
 	.addItem(twofish.TwofishEncryptTransform, "TwofishEncrypt", "Twofish", "Twofish Encrypt")
 	.addItem(xtea.XTeaEncryptTransform, "XTeaEncrypt", "XTEA", "XTEA Encrypt")
 	.addItem(xxtea.XXTeaEncryptTransform, "XXTeaEncrypt", "XXTEA", "XXTEA Encrypt");
+
+palette.addCategory("Asymmetric Decrypt")
+	.addItem(textbookrsa.TextbookRSADecryptTransform, "TextbookRSADecrypt", "Textbook RSA", "Textbook RSA Decrypt");
+
+palette.addCategory("Asymmetric Encrypt")
+	.addItem(textbookrsa.TextbookRSAEncryptTransform, "TextbookRSAEncrypt", "Textbook RSA", "Textbook RSA Encrypt");
 
 palette.addCategory("WIP Decrypt")
 	.addItem(nativeAes.NativeAesCbcDecryptTransform, "NativeAesCbcDecrypt", "AES (CBC)", "AES (CBC) Decrypt")

@@ -1,6 +1,7 @@
 import { Signal } from "../jither.signals";
 import { toVisualControlCodes } from "../cryptopunk.strings";
 import { TransformError } from "../transforms/transforms";
+import bigint from "../jither.bigint";
 
 class NodeController
 {
@@ -80,6 +81,9 @@ class NodeController
 						// This is to ensure that transforms don't mutate the array
 						// (For development/testing purposes)
 						// Object.freeze(value);
+						break;
+					case "bigint":
+						value = bigint(0);
 						break;
 				}
 			}
@@ -189,10 +193,22 @@ class NodeController
 			{
 				throw new Error("Node input received no value");
 			}
-			this.node.contentElement.innerText = typeof output === "string" ? toVisualControlCodes(output) : this.toHex(output);
+			this.node.contentElement.innerText = this.getOutputString(output);
 		}
 
 		this.nodeOutputChanged.dispatch(this.node);
+	}
+
+	getOutputString(output)
+	{
+		switch (typeof output)
+		{
+			case "string": return toVisualControlCodes(output);
+			case "bytes": return this.toHex(output);
+			case "bigint": return output.toString();
+			default:
+				return output.toString();
+		}
 	}
 
 	inputValueChangedListener(/*socket, value*/)

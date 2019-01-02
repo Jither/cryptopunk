@@ -1,6 +1,7 @@
-import { Transform } from "./transforms";
+import { Transform, TransformError } from "./transforms";
 import { removeWhiteSpace } from "../cryptopunk.strings";
 import { HexToBytesTransform } from "./hex";
+import bigint from "../jither.bigint";
 
 class KeyboardInputGenerator extends Transform
 {
@@ -32,6 +33,29 @@ class HexInputGenerator extends Transform
 	transform()
 	{
 		return this.hexToBytesTransform.transform(this.options.input);
+	}
+}
+
+class BigIntegerGenerator extends Transform
+{
+	constructor()
+	{
+		super();
+		this
+			.addOutput("bigint", "Big Integer")
+			.addOption("input", "Input", "0");
+	}
+
+	transform()
+	{
+		try
+		{
+			return bigint(this.options.input || "0");
+		}
+		catch (e)
+		{
+			throw new TransformError(e.message);
+		}
 	}
 }
 
@@ -120,5 +144,6 @@ export {
 	HexInputGenerator,
 	KeyedAlphabetGenerator,
 	RandomBytesGenerator,
-	NullBytesGenerator
+	NullBytesGenerator,
+	BigIntegerGenerator
 };
