@@ -10,7 +10,8 @@ class BlockCipherTransform extends Transform
 		this.decrypt = decrypt;
 		this.addInput("bytes", decrypt ? "Ciphertext" : "Plaintext")
 			.addInput("bytes", "Key")
-			.addOutput("bytes", decrypt ? "Plaintext" : "Ciphertext");
+			.addOutput("bytes", decrypt ? "Plaintext" : "Ciphertext")
+			.addProperty("transform", "Cipher");
 	}
 
 	checkBytesSize(name, bytes, requiredSize)

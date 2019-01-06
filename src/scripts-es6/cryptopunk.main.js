@@ -21,6 +21,7 @@ import * as bytesManipulation from "./transforms/tools/bytes-manipulation";
 import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
+import * as cbc from "./transforms/modes/cbc";
 import * as chacha from "./transforms/stream-ciphers/chacha";
 import * as clefia from "./transforms/block-ciphers/clefia";
 import * as codepages from "./transforms/char-encodings/codepages";
@@ -373,6 +374,10 @@ palette.addCategory("Stream ciphers")
 	.addItem(rabbit.RabbitTransform, "Rabbit", "Rabbit", "Rabbit")
 	.addItem(salsa20.Salsa20Transform, "Salsa20", "Salsa20 / XSalsa20", "Salsa20")
 	.addItem(xor.XorTransform, "Xor", "XOR");
+
+palette.addCategory("Block cipher modes")
+	.addItem(cbc.CbcModeEncryptTransform, "CBCModeEncrypt", "CBC Encrypt", "CBC Encrypt")
+	.addItem(cbc.CbcModeDecryptTransform, "CBCModeDecrypt", "CBC Decrypt", "CBC Decrypt");
 
 palette.addCategory("Block cipher decryption")
 	.addItem(threeway.ThreeWayDecryptTransform, "ThreeWayDecrypt", "3-Way", "3-Way Decrypt")

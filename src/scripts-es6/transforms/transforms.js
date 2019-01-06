@@ -48,6 +48,18 @@ class Transform
 			writable: false,
 			value: []
 		});
+		Object.defineProperty(this, "properties", {
+			enumerable: true,
+			configurable: false,
+			writable: false,
+			value: []
+		});
+		Object.defineProperty(this, "propertyNames", {
+			enumerable: true,
+			configurable: false,
+			writable: false,
+			value: []
+		});
 	}
 
 	getTypeByValue(val)
@@ -102,6 +114,13 @@ class Transform
 		return this;
 	}
 
+	addProperty(type, name)
+	{
+		this.properties.push(type);
+		this.propertyNames.push(name || "Property #" + this.properties.length);
+		return this;
+	}
+	
 	setOptions(options)
 	{
 		for (const name in options)

@@ -15,6 +15,7 @@ class NodeController
 		this.options = Object.assign({}, transform.defaults);
 		this.inputs = transform.inputs || [];
 		this.outputs = transform.outputs || [];
+		this.properties = transform.properties || [];
 
 		this.nodeOutputChanged = new Signal();
 
@@ -31,6 +32,16 @@ class NodeController
 			this.node.addOutput(transform.outputNames[index])
 				.tags({ type: output })
 				.acceptsConnection(this.acceptsConnection.bind(this));
+			index++;
+		});
+
+		// TODO: For now, a single "property" is hardcoded: The transform itself
+		index = 0;
+		this.properties.forEach(prop => {
+			const output = this.node.addOutput(transform.propertyNames[index])
+				.tags({ type: prop })
+				.acceptsConnection(this.acceptsConnection.bind(this));
+			output.value = transform;
 			index++;
 		});
 
@@ -193,21 +204,19 @@ class NodeController
 			{
 				throw new Error("Node input received no value");
 			}
-			this.node.contentElement.innerText = this.getOutputString(output);
+			this.node.contentElement.innerText = this.getOutputString(this.outputs[0], this.node.outputs[0].value);
 		}
 
 		this.nodeOutputChanged.dispatch(this.node);
 	}
 
-	getOutputString(output)
+	getOutputString(type, value)
 	{
-		switch (typeof output)
+		switch (type)
 		{
-			case "string": return toVisualControlCodes(output);
-			case "bytes": return this.toHex(output);
-			case "bigint": return output.toString();
-			default:
-				return output.toString();
+			case "string": return toVisualControlCodes(value);
+			case "bytes": return this.toHex(value);
+			default: return value.toString();
 		}
 	}
 
