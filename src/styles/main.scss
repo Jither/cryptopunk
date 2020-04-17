@@ -441,11 +441,24 @@ main > section
 		font: $content-font-size Consolas;
 	}
 
-	.output-properties textarea
+	.output-properties
 	{
-		border: 0;
-		background: #c0c0c0;
-		color: #303030;
+		margin-bottom: $standard-padding;
+
+		textarea
+		{
+			border: 0;
+			background: #c0c0c0;
+			color: #303030;
+		}
+	}
+}
+
+#node-description
+{
+	div
+	{
+		white-space: pre-line;
 	}
 }
 

@@ -7,6 +7,8 @@ class PropertyPanel
 		this.element = element;
 		this.eleOptionsContainer = element.querySelector(".option-properties");
 		this.eleOutputsContainer = element.querySelector(".output-properties");
+		this.eleDescription = element.querySelector("#node-description");
+		this.eleDescriptionText = this.eleDescription.querySelector("div");
 		this.eleNodeName = element.querySelector(".node-name");
 		this.eleNodeTitle = element.querySelector(".node-title");
 		this.eleOutputs = [];
@@ -26,6 +28,7 @@ class PropertyPanel
 		this.eleOptionsContainer.innerHTML = "";
 		this.eleOutputsContainer.innerHTML = "";
 		this.eleNodeTitle.innerHTML = "";
+		this.eleDescriptionText.innerHTML = "";
 
 		for (let i = 0; i < this.element.children.length; i++)
 		{
@@ -52,6 +55,12 @@ class PropertyPanel
 
 		this.eleNodeTitle.value = node.title;
 		this.eleNodeName.innerText = node.name;
+
+		this.eleDescription.style.display = node.controller.description ? "block" : "none";
+		if (node.controller.description)
+		{
+			this.eleDescriptionText.innerText = node.controller.description;
+		}
 
 		node.removed.add(this.nodeRemovedListener);
 
@@ -108,17 +117,24 @@ class PropertyPanel
 		}
 
 		const outputs = this.currentNode.outputs;
-		for (let i = 0; i < outputs.length; i++)
+		let index = 0;
+		for (const output of outputs)
 		{
-			const value = outputs[i].value;
+			// Property outputs aren't applicable here
+			if (output.tags && output.tags.prop)
+			{
+				continue;
+			}
+			const value = output.value;
 			if (typeof value === "string")
 			{
-				this.eleOutputs[i].value = value;
+				this.eleOutputs[index].value = value;
 			}
 			else
 			{
-				this.eleOutputs[i].value = bytesToHex(value);
+				this.eleOutputs[index].value = bytesToHex(value);
 			}
+			index++;
 		}
 	}
 

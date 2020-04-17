@@ -16,6 +16,7 @@ class NodeController
 		this.inputs = transform.inputs || [];
 		this.outputs = transform.outputs || [];
 		this.properties = transform.properties || [];
+		this.description = transform.description || null;
 
 		this.nodeOutputChanged = new Signal();
 
@@ -39,7 +40,7 @@ class NodeController
 		index = 0;
 		this.properties.forEach(prop => {
 			const output = this.node.addOutput(transform.propertyNames[index])
-				.tags({ type: prop })
+				.tags({ type: prop, prop: true })
 				.acceptsConnection(this.acceptsConnection.bind(this));
 			output.value = transform;
 			index++;

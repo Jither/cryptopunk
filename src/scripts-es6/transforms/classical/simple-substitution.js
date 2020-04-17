@@ -1,8 +1,14 @@
 import { Transform, TransformError } from "../transforms";
 import { restoreFormatting, hasDualCaseCharacters } from "./cryptopunk.classical-utils";
+import { multiByteStringReverse } from "../../cryptopunk.strings";
 
 class SimpleSubstitutionTransform extends Transform
 {
+	get description()
+	{
+		return "Simple substitution cipher, mapping one alphabet to another.\n\nBy default, the source alphabet is the standard English alphabet. The substitution alphabet is Atbash (reversed alphabet) by default - also for custom source alphabets.";
+	}
+
 	constructor()
 	{
 		super();
@@ -17,7 +23,7 @@ class SimpleSubstitutionTransform extends Transform
 	transform(str, alphabet, substAlphabet)
 	{
 		alphabet = alphabet || "abcdefghijklmnopqrstuvwxyz";
-		substAlphabet = substAlphabet || "zyxwvutsrqponmlkjihgfedcba";
+		substAlphabet = substAlphabet || multiByteStringReverse(alphabet);
 
 		if (alphabet.length !== substAlphabet.length)
 		{

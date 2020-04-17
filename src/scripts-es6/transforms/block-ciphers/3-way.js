@@ -109,6 +109,11 @@ function addKey(a, keys, roundConstants, i)
 
 class ThreeWayTransform extends BlockCipherTransform
 {
+	get description()
+	{
+		return "Designed in 1994 by Joan Daemen. It is closely related to BaseKing: The two are variants of the same general cipher technique.";
+	}
+
 	constructor(decrypt)
 	{
 		super(decrypt);
