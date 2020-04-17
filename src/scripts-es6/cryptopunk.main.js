@@ -22,6 +22,7 @@ import * as camellia from "./transforms/block-ciphers/camellia";
 import * as cast128 from "./transforms/block-ciphers/cast-128";
 import * as cast256 from "./transforms/block-ciphers/cast-256";
 import * as cbc from "./transforms/modes/cbc";
+import * as cfb from "./transforms/modes/cfb";
 import * as chacha from "./transforms/stream-ciphers/chacha";
 import * as clefia from "./transforms/block-ciphers/clefia";
 import * as codepages from "./transforms/char-encodings/codepages";
@@ -80,6 +81,7 @@ import * as newdes from "./transforms/block-ciphers/newdes";
 import * as nimbus from "./transforms/block-ciphers/nimbus";
 import * as noekeon from "./transforms/block-ciphers/noekeon";
 import * as numbers from "./transforms/numbers";
+import * as ofb from "./transforms/modes/ofb";
 import * as padding from "./transforms/tools/padding";
 import * as panama from "./transforms/hashes/panama";
 import * as playfair from "./transforms/classical/playfair";
@@ -377,8 +379,11 @@ palette.addCategory("Stream ciphers")
 
 palette.addCategory("Block cipher modes")
 	.addItem(cbc.CbcModeEncryptTransform, "CBCModeEncrypt", "CBC Encrypt", "CBC Encrypt")
-	.addItem(cbc.CbcModeDecryptTransform, "CBCModeDecrypt", "CBC Decrypt", "CBC Decrypt");
-
+	.addItem(cbc.CbcModeDecryptTransform, "CBCModeDecrypt", "CBC Decrypt", "CBC Decrypt")
+	.addItem(cfb.CfbModeEncryptTransform, "CFBModeEncrypt", "CFB Encrypt", "CFB Encrypt")
+	.addItem(cfb.CfbModeDecryptTransform, "CFBModeDecrypt", "CFB Decrypt", "CFB Decrypt")
+	.addItem(ofb.OfbModeTransform, "OFBMode", "OFB", "OFB");
+	
 palette.addCategory("Block cipher decryption")
 	.addItem(threeway.ThreeWayDecryptTransform, "ThreeWayDecrypt", "3-Way", "3-Way Decrypt")
 	.addItem(des.TripleDesDecryptTransform, "3DesDecrypt", "3DES", "3DES Decrypt")

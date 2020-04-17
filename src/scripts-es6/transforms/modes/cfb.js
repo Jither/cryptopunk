@@ -1,8 +1,13 @@
 import { Transform, TransformError } from "../transforms";
 import { xorBytes } from "../../cryptopunk.bitarith";
 
-class CbcModeEncryptTransform extends Transform
+class CfbModeEncryptTransform extends Transform
 {
+	get description()
+	{
+		return "Note that CFB mode uses cipher's ENCRYPTION method for both encryption and decryption!";
+	}
+
 	constructor()
 	{
 		super();
@@ -36,19 +41,24 @@ class CbcModeEncryptTransform extends Transform
 			const paddedBlock = new Uint8Array(blockLength);
 			paddedBlock.set(block);
 
-			xorBytes(paddedBlock, iv);
-			const cipherBlock = cipher.transform(paddedBlock, key);
-			iv = cipherBlock;
+			const stream = cipher.transform(iv, key);
+			xorBytes(paddedBlock, stream);
+			iv = paddedBlock;
 
-			result.set(cipherBlock, offset);
+			result.set(paddedBlock, offset);
 		}
 
 		return result;
 	}
 }
 
-class CbcModeDecryptTransform extends Transform
+class CfbModeDecryptTransform extends Transform
 {
+	get description()
+	{
+		return "Note that CFB mode uses cipher's ENCRYPTION method for both encryption and decryption!";
+	}
+
 	constructor()
 	{
 		super();
@@ -75,6 +85,8 @@ class CbcModeDecryptTransform extends Transform
 
 		const blockCount = Math.ceil(ciphertext.length / blockLength);
 		const result = new Uint8Array(blockLength * blockCount);
+		const nextIV = new Uint8Array(iv.length);
+		nextIV.set(iv);
 
 		for (let offset = 0; offset < result.length; offset += blockLength)
 		{
@@ -82,11 +94,11 @@ class CbcModeDecryptTransform extends Transform
 			const paddedBlock = new Uint8Array(blockLength);
 			paddedBlock.set(block);
 
-			const plainBlock = cipher.transform(paddedBlock, key);
-			xorBytes(plainBlock, iv);
-			iv = paddedBlock;
+			const stream = cipher.transform(nextIV, key);
+			nextIV.set(paddedBlock);
+			xorBytes(paddedBlock, stream);
 
-			result.set(plainBlock, offset);
+			result.set(paddedBlock, offset);
 		}
 
 		return result;
@@ -94,6 +106,6 @@ class CbcModeDecryptTransform extends Transform
 }
 
 export {
-	CbcModeEncryptTransform,
-	CbcModeDecryptTransform
+	CfbModeEncryptTransform,
+	CfbModeDecryptTransform
 };
